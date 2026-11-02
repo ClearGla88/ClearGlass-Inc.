@@ -1,0 +1,43 @@
+name: Data Fabric Integrity
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'data/**'
+      - 'assets/js/clearglass-data-fabric.js'
+      - 'scripts/validate_data_fabric.py'
+      - '.github/workflows/data-fabric-integrity.yml'
+      - 'intelligence-platform.html'
+  push:
+    branches: [main]
+    paths:
+      - 'data/**'
+      - 'assets/js/clearglass-data-fabric.js'
+      - 'scripts/validate_data_fabric.py'
+      - '.github/workflows/data-fabric-integrity.yml'
+      - 'intelligence-platform.html'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: data-fabric-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  integrity:
+    name: Validate governed data assets
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact revision
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Validate data fabric
+        run: python3 scripts/validate_data_fabric.py
+
+      - name: Syntax-check browser runtime
+        run: node --check assets/js/clearglass-data-fabric.js

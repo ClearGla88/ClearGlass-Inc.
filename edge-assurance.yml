@@ -1,0 +1,279 @@
+name: Edge Assurance
+
+on:
+  schedule:
+    - cron: "17 6 * * 2"
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Protected read/plan environment."
+        type: choice
+        required: true
+        default: staging
+        options: [staging, production]
+      base_url:
+        description: "Approved HTTPS edge hostname to probe."
+        type: string
+        required: true
+        default: "https://edge-staging.clearglassinc.com"
+      require_edge:
+        description: "Require Cloudflare and the expected security headers."
+        type: boolean
+        default: true
+      csp_mode:
+        description: "Expected CSP mode."
+        type: choice
+        required: true
+        default: report-only
+        options: [none, report-only, enforce]
+      run_drift:
+        description: "Also run a locked remote-state/provider drift plan."
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: edge-assurance-${{ inputs.environment || 'staging' }}
+  cancel-in-progress: false
+
+env:
+  TF_IN_AUTOMATION: "true"
+  TF_INPUT: "false"
+  TF_VERSION: "1.14.6"
+  TF_LINUX_AMD64_SHA256: "364c6ee08b0cb8fcbb28a115aacb2aa48e88abc56c149170bd65c2f75d98ea8d"
+
+jobs:
+  live:
+    name: DNS, TLS, proxy, headers, and bounded smoke
+    if: github.event_name == 'workflow_dispatch' || vars.EDGE_ASSURANCE_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: edge-${{ inputs.environment || 'staging' }}-plan
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+
+      - name: Validate approved bounded target
+        shell: bash
+        env:
+          BASE_URL: ${{ inputs.base_url || vars.EDGE_STAGING_BASE_URL }}
+          PUBLIC_HOSTNAME: ${{ vars.EDGE_PUBLIC_HOSTNAME }}
+          API_HOSTNAME: ${{ vars.EDGE_API_HOSTNAME }}
+          ADMIN_HOSTNAME: ${{ vars.EDGE_ADMIN_HOSTNAME }}
+          EXTRA_ALLOWED_HOSTS_JSON: ${{ vars.EDGE_SMOKE_ALLOWED_HOSTS_JSON }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, urllib.parse
+          parsed = urllib.parse.urlsplit(os.environ.get("BASE_URL", ""))
+          allowed = {
+              os.getenv("PUBLIC_HOSTNAME", ""),
+              os.getenv("API_HOSTNAME", ""),
+              os.getenv("ADMIN_HOSTNAME", ""),
+          }
+          extra = json.loads(os.getenv("EXTRA_ALLOWED_HOSTS_JSON", "") or "[]")
+          if not isinstance(extra, list) or not all(isinstance(item, str) for item in extra):
+              raise SystemExit("EDGE_SMOKE_ALLOWED_HOSTS_JSON must be a JSON string array")
+          allowed.update(extra)
+          allowed.discard("")
+          if parsed.scheme != "https" or parsed.hostname not in allowed or parsed.username or parsed.password:
+              raise SystemExit("Assurance target must be an approved HTTPS edge hostname without credentials")
+          print(f"Approved assurance target: {parsed.hostname}")
+          PY
+
+      - name: Run certificate, DNS, proxy, and smoke checks
+        shell: bash
+        env:
+          BASE_URL: ${{ inputs.base_url || vars.EDGE_STAGING_BASE_URL }}
+          REQUIRE_EDGE: ${{ github.event_name == 'schedule' || inputs.require_edge }}
+          CSP_MODE: ${{ inputs.csp_mode || vars.EDGE_EXPECTED_CSP_MODE || 'report-only' }}
+        run: |
+          set -euo pipefail
+          host=$(python3 -c 'import os, urllib.parse; print(urllib.parse.urlsplit(os.environ["BASE_URL"]).hostname)')
+          args=(
+            --base-url "$BASE_URL"
+            --expected-hostname "$host"
+            --csp-mode "$CSP_MODE"
+            --minimum-certificate-days 21
+            --output infra/edge/edge-assurance-result.json
+          )
+          smoke=(--base-url "$BASE_URL" --csp-mode "$CSP_MODE")
+          if [[ "$REQUIRE_EDGE" == "true" ]]; then
+            args+=(--require-cloudflare)
+            smoke+=(--require-edge)
+          fi
+          python3 infra/edge/scripts/assurance_check.py "${args[@]}"
+          python3 infra/edge/scripts/smoke_test.py "${smoke[@]}"
+          python3 infra/edge/scripts/negative_security_test.py --base-url "$BASE_URL" --dry-run
+
+      - name: Upload assurance evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: edge-assurance-${{ inputs.environment || 'staging' }}-${{ github.run_id }}
+          path: infra/edge/edge-assurance-result.json
+          retention-days: 90
+          if-no-files-found: warn
+
+  drift:
+    name: Locked Terraform/provider drift detection
+    if: >-
+      (github.event_name == 'schedule' && vars.EDGE_DRIFT_ENABLED == 'true') ||
+      (github.event_name == 'workflow_dispatch' && inputs.run_drift)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: edge-${{ inputs.environment || 'staging' }}-plan
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+
+      - name: Install Terraform with release checksum verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://releases.hashicorp.com/terraform/${TF_VERSION}"
+          archive="terraform_${TF_VERSION}_linux_amd64.zip"
+          curl --fail --silent --show-error --location "$base/$archive" -o "/tmp/$archive"
+          printf '%s  %s\n' "$TF_LINUX_AMD64_SHA256" "/tmp/$archive" | sha256sum --check --strict -
+          python3 - <<'PY'
+          import os, zipfile
+          archive = f"/tmp/terraform_{os.environ['TF_VERSION']}_linux_amd64.zip"
+          with zipfile.ZipFile(archive) as bundle:
+              bundle.extract("terraform", "/tmp/terraform-bin")
+          PY
+          sudo install -m 0755 /tmp/terraform-bin/terraform /usr/local/bin/terraform
+
+      - name: Prepare protected read-only plan inputs
+        shell: bash
+        env:
+          TARGET_ENV: ${{ inputs.environment || 'staging' }}
+          BACKEND_CONFIG_B64: ${{ secrets.EDGE_TF_BACKEND_CONFIG_B64 }}
+          CLOUDFLARE_EDGE_PLAN_TOKEN: ${{ secrets.CLOUDFLARE_EDGE_PLAN_TOKEN }}
+          EDGE_CLOUDFLARE_ACCOUNT_ID: ${{ vars.EDGE_CLOUDFLARE_ACCOUNT_ID }}
+          EDGE_CLOUDFLARE_ZONE_ID: ${{ vars.EDGE_CLOUDFLARE_ZONE_ID }}
+          EDGE_ZONE_NAME: ${{ vars.EDGE_ZONE_NAME }}
+          EDGE_PUBLIC_HOSTNAME: ${{ vars.EDGE_PUBLIC_HOSTNAME }}
+          EDGE_API_HOSTNAME: ${{ vars.EDGE_API_HOSTNAME }}
+          EDGE_ADMIN_HOSTNAME: ${{ vars.EDGE_ADMIN_HOSTNAME }}
+          EDGE_TRUSTED_IPV4_CIDRS_JSON: ${{ vars.EDGE_TRUSTED_IPV4_CIDRS_JSON }}
+          EDGE_TRUSTED_IPV6_CIDRS_JSON: ${{ vars.EDGE_TRUSTED_IPV6_CIDRS_JSON }}
+          EDGE_MONITORING_IPV4_CIDRS_JSON: ${{ vars.EDGE_MONITORING_IPV4_CIDRS_JSON }}
+          EDGE_MONITORING_IPV6_CIDRS_JSON: ${{ vars.EDGE_MONITORING_IPV6_CIDRS_JSON }}
+          EDGE_AUTOMATION_IPV4_CIDRS_JSON: ${{ vars.EDGE_AUTOMATION_IPV4_CIDRS_JSON }}
+          EDGE_AUTOMATION_IPV6_CIDRS_JSON: ${{ vars.EDGE_AUTOMATION_IPV6_CIDRS_JSON }}
+          EDGE_DENY_IPV4_CIDRS_JSON: ${{ vars.EDGE_DENY_IPV4_CIDRS_JSON }}
+          EDGE_DENY_IPV6_CIDRS_JSON: ${{ vars.EDGE_DENY_IPV6_CIDRS_JSON }}
+          EDGE_QUARANTINE_IPV4_CIDRS_JSON: ${{ vars.EDGE_QUARANTINE_IPV4_CIDRS_JSON }}
+          EDGE_QUARANTINE_IPV6_CIDRS_JSON: ${{ vars.EDGE_QUARANTINE_IPV6_CIDRS_JSON }}
+          EDGE_QUARANTINE_EXPIRES_AT: ${{ vars.EDGE_QUARANTINE_EXPIRES_AT }}
+          EDGE_TRUSTED_ASNS_JSON: ${{ vars.EDGE_TRUSTED_ASNS_JSON }}
+          EDGE_DENIED_ASNS_JSON: ${{ vars.EDGE_DENIED_ASNS_JSON }}
+          EDGE_CHALLENGE_ASNS_JSON: ${{ vars.EDGE_CHALLENGE_ASNS_JSON }}
+          EDGE_ALLOWED_COUNTRIES_JSON: ${{ vars.EDGE_ALLOWED_COUNTRIES_JSON }}
+          EDGE_DENIED_COUNTRIES_JSON: ${{ vars.EDGE_DENIED_COUNTRIES_JSON }}
+          EDGE_CHALLENGE_COUNTRIES_JSON: ${{ vars.EDGE_CHALLENGE_COUNTRIES_JSON }}
+          EDGE_GEO_EXCEPTION_COUNTRIES_JSON: ${{ vars.EDGE_GEO_EXCEPTION_COUNTRIES_JSON }}
+          EDGE_ANONYMOUS_NETWORK_IP_LIST_NAME: ${{ vars.EDGE_ANONYMOUS_NETWORK_IP_LIST_NAME }}
+          EDGE_TOR_EXIT_IP_LIST_NAME: ${{ vars.EDGE_TOR_EXIT_IP_LIST_NAME }}
+          EDGE_LOGPUSH_DESTINATION: ${{ secrets.EDGE_LOGPUSH_DESTINATION }}
+          EDGE_ORIGIN_AUTH_HEADER_NAME: ${{ vars.EDGE_ORIGIN_AUTH_HEADER_NAME }}
+          EDGE_ORIGIN_AUTH_HEADER_VALUE: ${{ secrets.EDGE_ORIGIN_AUTH_HEADER_VALUE }}
+          EDGE_CSP_REPORT_URI: ${{ vars.EDGE_CSP_REPORT_URI }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$BACKEND_CONFIG_B64" || -z "$CLOUDFLARE_EDGE_PLAN_TOKEN" ]]; then
+            echo "::error::Protected backend/provider read credentials are missing."
+            exit 1
+          fi
+          printf '%s' "$BACKEND_CONFIG_B64" | base64 --decode > /tmp/edge-backend.hcl
+          chmod 600 /tmp/edge-backend.hcl
+          grep -Eq '^[[:space:]]*use_lockfile[[:space:]]*=[[:space:]]*true' /tmp/edge-backend.hcl
+          if grep -Eqi '^[[:space:]]*(access_key|secret_key|token)[[:space:]]*=' /tmp/edge-backend.hcl; then
+            echo "::error::Backend credentials must not be embedded in backend configuration."
+            exit 1
+          fi
+          python3 infra/edge/scripts/render_runtime_config.py \
+            --policy-inputs "infra/edge/environments/${TARGET_ENV}.tfvars.json" \
+            --output infra/edge/ci.runtime.tfvars.json
+
+      - name: Detect provider or configuration drift
+        id: drift
+        shell: bash
+        env:
+          TARGET_ENV: ${{ inputs.environment || 'staging' }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_EDGE_PLAN_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.EDGE_TF_STATE_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.EDGE_TF_STATE_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.EDGE_TF_STATE_SESSION_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$AWS_ACCESS_KEY_ID" || -z "$AWS_SECRET_ACCESS_KEY" ]]; then
+            echo "::error::Remote-state credentials are missing."
+            exit 1
+          fi
+          terraform -chdir=infra/edge init -reconfigure -input=false -backend-config=/tmp/edge-backend.hcl
+          terraform -chdir=infra/edge validate
+          set +e
+          terraform -chdir=infra/edge plan \
+            -input=false \
+            -lock-timeout=5m \
+            -detailed-exitcode \
+            -var-file="environments/${TARGET_ENV}.tfvars.json" \
+            -var-file=ci.runtime.tfvars.json \
+            -out=edge-drift.tfplan
+          result=$?
+          set -e
+          echo "exit_code=$result" >> "$GITHUB_OUTPUT"
+          if [[ "$result" -eq 1 ]]; then
+            echo "::error::Terraform drift plan failed."
+            exit 1
+          fi
+          terraform -chdir=infra/edge show -no-color edge-drift.tfplan > infra/edge/edge-drift-plan.txt
+          if [[ "$result" -eq 2 ]]; then
+            echo "::warning::Terraform detected provider/configuration drift. Review the plan artifact."
+          else
+            echo "No Terraform/provider drift detected."
+          fi
+
+      - name: Upload drift evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: edge-drift-${{ inputs.environment || 'staging' }}-${{ github.run_id }}
+          path: infra/edge/edge-drift-plan.txt
+          retention-days: 90
+          if-no-files-found: warn
+
+      - name: Fail when drift needs review
+        if: steps.drift.outputs.exit_code == '2'
+        shell: bash
+        run: |
+          echo "::error::Edge drift detected; review the uploaded plan before any corrective apply."
+          exit 1
+
+      - name: Remove ephemeral sensitive inputs
+        if: always()
+        shell: bash
+        run: rm -f infra/edge/ci.runtime.tfvars.json /tmp/edge-backend.hcl

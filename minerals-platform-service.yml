@@ -1,0 +1,152 @@
+name: Minerals Platform Service
+
+on:
+  pull_request:
+    paths:
+      - 'apps/minerals-platform/**'
+      - '.github/workflows/minerals-platform-service.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/minerals-platform/**'
+      - '.github/workflows/minerals-platform-service.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: minerals-platform-service-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: apps/minerals-platform
+
+env:
+  NODE_ENV: test
+  AUTH_MODE: development
+  APP_BASE_URL: http://127.0.0.1:3000
+  PUBLIC_MINERALS_BASE_URL: https://www.clearglassinc.com
+  DATABASE_URL: postgresql://minerals:minerals@127.0.0.1:5432/minerals?schema=public
+  DIRECT_URL: postgresql://minerals:minerals@127.0.0.1:5432/minerals?schema=public
+  REDIS_URL: redis://127.0.0.1:6379
+  AUDIT_HASH_SECRET: ci-audit-key-not-for-production
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@1e60f620b9541d1245f94c18d8b1b417c4ba63a5 # v4.0.4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Validate Prisma schema
+        run: npx prisma validate
+
+      - name: Generate baseline migration candidate
+        run: npx prisma migrate diff --from-empty --to-schema prisma/schema.prisma --script --output generated-migration.sql
+
+      - name: Validate OpenAPI contract
+        run: npm run openapi:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Production build
+        run: npm run build
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: End-to-end and accessibility tests
+        run: npm run test:e2e
+
+      - name: Upload baseline migration candidate
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: minerals-platform-baseline-migration
+          path: apps/minerals-platform/generated-migration.sql
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload Playwright diagnostics
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: minerals-platform-playwright
+          path: |
+            apps/minerals-platform/playwright-report
+            apps/minerals-platform/test-results
+          if-no-files-found: ignore
+          retention-days: 7
+
+  database-integration:
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_DB: minerals
+          POSTGRES_USER: minerals
+          POSTGRES_PASSWORD: minerals
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U minerals -d minerals"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@1e60f620b9541d1245f94c18d8b1b417c4ba63a5 # v4.0.4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Enable PostGIS
+        run: npx prisma db execute --file prisma/init.sql --schema prisma/schema.prisma
+
+      - name: Build disposable integration schema
+        run: npx prisma db push --skip-generate
+
+      - name: Seed reference data
+        run: npm run db:seed
+
+      - name: Verify database counts
+        run: npx tsx scripts/check-database.ts

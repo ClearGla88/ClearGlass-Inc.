@@ -1,0 +1,71 @@
+name: Daily Marketing Content Workflow
+
+on:
+  schedule:
+    - cron: "0 12 * * *" # 12:00 UTC daily = 08:00 Toronto during EDT / 07:00 during EST
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Generate and validate content without opening the GitHub issue"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-marketing-content
+  cancel-in-progress: false
+
+jobs:
+  create-daily-page:
+    name: Generate daily content issue
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+
+      - name: Generate daily content bundle
+        run: python -m bots.content_engine
+
+      - name: Validate daily content bundle
+        run: python -m bots.content_validator
+
+      - name: Verify GitHub CLI
+        run: gh --version
+
+      - name: Create daily marketing issue page
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+        run: |
+          set -euo pipefail
+          if [ "$DRY_RUN" = "true" ]; then
+            python scripts/create_daily_marketing_issue.py --dry-run
+          else
+            python scripts/create_daily_marketing_issue.py
+          fi
+
+      - name: Publish workflow summary
+        if: always()
+        run: |
+          {
+            echo "## Daily Marketing Content"
+            echo
+            echo "- Schedule: every day at 12:00 UTC"
+            echo "- Output: GitHub issue with LinkedIn, Threads, X, email, and website copy"
+            echo "- Generator: \`python -m bots.content_engine\`"
+            echo "- Validator: \`python -m bots.content_validator\`"
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,782 @@
+name: Edge Security
+
+on:
+  pull_request:
+    paths:
+      - "infra/edge/**"
+      - "docs/edge-security-*.md"
+      - "docs/edge-provider-setup.md"
+      - "docs/dns-cutover-runbook.md"
+      - "docs/waf-policy-reference.md"
+      - "docs/incident-response-edge.md"
+      - "docs/rollback-and-recovery.md"
+      - "docs/edge-lockable-origin-migration.md"
+      - "tests/test_edge_security_policy.py"
+      - "tests/test_edge_observation_analysis.py"
+      - ".github/workflows/edge-security.yml"
+      - ".github/workflows/edge-state-import.yml"
+      - ".github/workflows/edge-assurance.yml"
+  push:
+    branches: [main]
+    paths:
+      - "infra/edge/**"
+      - "docs/edge-security-*.md"
+      - "docs/edge-provider-setup.md"
+      - "docs/dns-cutover-runbook.md"
+      - "docs/waf-policy-reference.md"
+      - "docs/incident-response-edge.md"
+      - "docs/rollback-and-recovery.md"
+      - "docs/edge-lockable-origin-migration.md"
+      - "tests/test_edge_security_policy.py"
+      - "tests/test_edge_observation_analysis.py"
+      - ".github/workflows/edge-security.yml"
+      - ".github/workflows/edge-state-import.yml"
+      - ".github/workflows/edge-assurance.yml"
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: "Validate, plan, apply, roll back to a reviewed config commit, or run live smoke tests."
+        type: choice
+        required: true
+        default: validate
+        options: [validate, plan, apply, rollback, smoke]
+      environment:
+        description: "Edge environment. Production mutation must pass the protected edge-production environment."
+        type: choice
+        required: true
+        default: staging
+        options: [staging, production]
+      config_ref:
+        description: "Rollback only: full 40-character commit SHA reachable from main."
+        type: string
+        required: false
+      change_ticket:
+        description: "Required for apply/rollback and emergency mode."
+        type: string
+        required: false
+      base_url:
+        description: "Approved public URL used by smoke/negative validation."
+        type: string
+        required: true
+        default: "https://www.clearglassinc.com"
+      emergency_mode:
+        description: "TEMPORARY challenge mode. Requires reviewed custom-WAF ownership and an expiry within 24 hours."
+        type: boolean
+        default: false
+      emergency_expires_at:
+        description: "Emergency only: RFC3339 UTC expiry no more than 24 hours away."
+        type: string
+        required: false
+      execute_negative_tests:
+        description: "Smoke only: execute bounded, low-volume negative probes."
+        type: boolean
+        default: false
+      expect_enforcement:
+        description: "Smoke only: fail if high-signal probes are allowed. Use only after reviewed enforcement."
+        type: boolean
+        default: false
+      csp_mode:
+        description: "Expected live CSP mode for smoke validation."
+        type: choice
+        required: true
+        default: report-only
+        options: [none, report-only, enforce]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: edge-security-${{ github.ref }}-${{ inputs.environment || 'validation' }}
+  cancel-in-progress: false
+
+env:
+  TF_IN_AUTOMATION: "true"
+  TF_INPUT: "false"
+  TF_VERSION: "1.14.6"
+  TF_LINUX_AMD64_SHA256: "364c6ee08b0cb8fcbb28a115aacb2aa48e88abc56c149170bd65c2f75d98ea8d"
+
+jobs:
+  validate:
+    name: Validate policy, tests, artifact CSP, and IaC
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+
+      - name: Validate neutral policy and regression tests
+        shell: bash
+        env:
+          BASE_URL: ${{ inputs.base_url || 'https://www.clearglassinc.com' }}
+          EDGE_ARTIFACT_ROOT: ${{ runner.temp }}/edge-pages-artifact
+        run: |
+          set -euo pipefail
+          python3 infra/edge/scripts/validate_policy.py
+          python3 tests/test_edge_security_policy.py -v
+          python3 tests/test_edge_observation_analysis.py -v
+          python3 -m py_compile infra/edge/scripts/*.py tests/test_edge_security_policy.py tests/test_edge_observation_analysis.py
+          python3 tools/build_pages.py "$EDGE_ARTIFACT_ROOT"
+          python3 infra/edge/scripts/audit_csp_sources.py --root "$EDGE_ARTIFACT_ROOT" --check
+          python3 infra/edge/scripts/negative_security_test.py --base-url "$BASE_URL" --dry-run
+          python3 infra/edge/scripts/validate_terraform_safety.py
+
+      - name: Reject committed secrets, local state, and generated runtime inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git ls-files infra/edge | grep -Eq '(^|/)(terraform\.tfvars(\.json)?|.*\.auto\.tfvars(\.json)?|ci\.runtime\.tfvars\.json|.*\.tfstate(\..*)?|.*\.tfplan)$'; then
+            echo "::error::Terraform runtime inputs, plans, or state must never be committed under infra/edge."
+            exit 1
+          fi
+          python3 - <<'PY'
+          import pathlib, re
+          roots = [
+              pathlib.Path("infra/edge"),
+              pathlib.Path(".github/workflows/edge-security.yml"),
+              pathlib.Path(".github/workflows/edge-state-import.yml"),
+              pathlib.Path(".github/workflows/edge-assurance.yml"),
+          ]
+          patterns = {
+              "private key": re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
+              "AWS access key": re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
+              "Stripe live key": re.compile(r"\bsk_live_[A-Za-z0-9]{16,}\b"),
+              "GitHub token": re.compile(r"\bgh[ps]_[A-Za-z0-9]{20,}\b"),
+          }
+          hits = []
+          for root in roots:
+              files = [root] if root.is_file() else [path for path in root.rglob("*") if path.is_file()]
+              for path in files:
+                  text = path.read_text(encoding="utf-8", errors="ignore")
+                  for label, pattern in patterns.items():
+                      if pattern.search(text):
+                          hits.append(f"{path}: possible {label}")
+          if hits:
+              raise SystemExit("\n".join(hits))
+          print("No high-confidence committed secret patterns detected in edge files.")
+          PY
+
+      - name: Install Terraform with release checksum verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://releases.hashicorp.com/terraform/${TF_VERSION}"
+          archive="terraform_${TF_VERSION}_linux_amd64.zip"
+          curl --fail --silent --show-error --location "$base/$archive" -o "/tmp/$archive"
+          printf '%s  %s\n' "$TF_LINUX_AMD64_SHA256" "/tmp/$archive" | sha256sum --check --strict -
+          python3 - <<'PY'
+          import os, zipfile
+          archive = f"/tmp/terraform_{os.environ['TF_VERSION']}_linux_amd64.zip"
+          with zipfile.ZipFile(archive) as bundle:
+              bundle.extract("terraform", "/tmp/terraform-bin")
+          PY
+          sudo install -m 0755 /tmp/terraform-bin/terraform /usr/local/bin/terraform
+          terraform version
+
+      - name: Terraform format, initialize without backend, and validate
+        shell: bash
+        run: |
+          set -euo pipefail
+          terraform -chdir=infra/edge fmt -check -diff -recursive
+          terraform -chdir=infra/edge init -backend=false -input=false
+          terraform -chdir=infra/edge validate
+
+  guard:
+    name: Change-control guard
+    if: github.event_name == 'workflow_dispatch' && contains(fromJSON('["plan","apply","rollback"]'), inputs.operation)
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout full history for rollback ancestry validation
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Validate deployment intent
+        shell: bash
+        env:
+          OPERATION: ${{ inputs.operation }}
+          TARGET_ENV: ${{ inputs.environment }}
+          CONFIG_REF: ${{ inputs.config_ref }}
+          CHANGE_TICKET: ${{ inputs.change_ticket }}
+          DISPATCH_REF: ${{ github.ref_name }}
+          EMERGENCY_MODE: ${{ inputs.emergency_mode }}
+          EMERGENCY_EXPIRES_AT: ${{ inputs.emergency_expires_at }}
+        run: |
+          set -euo pipefail
+          if [[ "$OPERATION" == "apply" || "$OPERATION" == "rollback" ]]; then
+            if [[ -z "${CHANGE_TICKET// }" ]]; then
+              echo "::error::A change_ticket is required for apply or rollback."
+              exit 1
+            fi
+          fi
+          if [[ -n "$CHANGE_TICKET" && ! "$CHANGE_TICKET" =~ ^[A-Za-z0-9][A-Za-z0-9._:/-]{1,127}$ ]]; then
+            echo "::error::change_ticket must be a conventional 2-128 character reference without whitespace."
+            exit 1
+          fi
+          if [[ "$OPERATION" != "rollback" && -n "$CONFIG_REF" ]]; then
+            echo "::error::config_ref is rollback-only."
+            exit 1
+          fi
+          if [[ "$OPERATION" == "rollback" ]]; then
+            if [[ ! "$CONFIG_REF" =~ ^[0-9a-fA-F]{40}$ ]]; then
+              echo "::error::Rollback requires a full 40-character commit SHA."
+              exit 1
+            fi
+            git cat-file -e "${CONFIG_REF}^{commit}"
+            if ! git merge-base --is-ancestor "$CONFIG_REF" origin/main; then
+              echo "::error::Rollback config_ref must be reachable from origin/main."
+              exit 1
+            fi
+          fi
+          if [[ "$TARGET_ENV" == "production" && ( "$OPERATION" == "apply" || "$OPERATION" == "rollback" ) && "$DISPATCH_REF" != "main" ]]; then
+            echo "::error::Production apply or rollback must be dispatched from main."
+            exit 1
+          fi
+          if [[ "$EMERGENCY_MODE" == "true" ]]; then
+            if [[ "$OPERATION" != "plan" && "$OPERATION" != "apply" ]]; then
+              echo "::error::Emergency mode is valid only for plan or apply."
+              exit 1
+            fi
+            if [[ -z "${CHANGE_TICKET// }" || -z "${EMERGENCY_EXPIRES_AT// }" ]]; then
+              echo "::error::Emergency mode requires change_ticket and emergency_expires_at."
+              exit 1
+            fi
+          fi
+          echo "Intent accepted: operation=$OPERATION environment=$TARGET_ENV ref=${CONFIG_REF:-${GITHUB_SHA}}"
+
+  plan:
+    name: Reviewable Terraform plan
+    if: github.event_name == 'workflow_dispatch' && contains(fromJSON('["plan","apply","rollback"]'), inputs.operation)
+    needs: [validate, guard]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: edge-${{ inputs.environment }}-plan
+    permissions:
+      contents: read
+    outputs:
+      plan_sha256: ${{ steps.planmeta.outputs.plan_sha256 }}
+      config_sha: ${{ steps.planmeta.outputs.config_sha }}
+      policy_version: ${{ steps.planmeta.outputs.policy_version }}
+      rollout_stage: ${{ steps.planmeta.outputs.rollout_stage }}
+      configuration_change_ticket: ${{ steps.planmeta.outputs.configuration_change_ticket }}
+      environment_config_sha256: ${{ steps.config.outputs.environment_config_sha256 }}
+      runtime_config_sha256: ${{ steps.config.outputs.runtime_config_sha256 }}
+      backend_config_sha256: ${{ steps.backend.outputs.backend_config_sha256 }}
+    steps:
+      - name: Checkout reviewed configuration
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          ref: ${{ inputs.config_ref || github.sha }}
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+
+      - name: Install Terraform with release checksum verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://releases.hashicorp.com/terraform/${TF_VERSION}"
+          archive="terraform_${TF_VERSION}_linux_amd64.zip"
+          curl --fail --silent --show-error --location "$base/$archive" -o "/tmp/$archive"
+          printf '%s  %s\n' "$TF_LINUX_AMD64_SHA256" "/tmp/$archive" | sha256sum --check --strict -
+          python3 - <<'PY'
+          import os, zipfile
+          archive = f"/tmp/terraform_{os.environ['TF_VERSION']}_linux_amd64.zip"
+          with zipfile.ZipFile(archive) as bundle:
+              bundle.extract("terraform", "/tmp/terraform-bin")
+          PY
+          sudo install -m 0755 /tmp/terraform-bin/terraform /usr/local/bin/terraform
+
+      - name: Prepare locked remote-state backend
+        id: backend
+        shell: bash
+        env:
+          BACKEND_CONFIG_B64: ${{ secrets.EDGE_TF_BACKEND_CONFIG_B64 }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$BACKEND_CONFIG_B64" ]]; then
+            echo "::error::EDGE_TF_BACKEND_CONFIG_B64 is missing. No provider plan or change was attempted."
+            exit 1
+          fi
+          printf '%s' "$BACKEND_CONFIG_B64" | base64 --decode > /tmp/edge-backend.hcl
+          chmod 600 /tmp/edge-backend.hcl
+          test -s /tmp/edge-backend.hcl
+          grep -Eq '^[[:space:]]*bucket[[:space:]]*=' /tmp/edge-backend.hcl
+          grep -Eq '^[[:space:]]*key[[:space:]]*=' /tmp/edge-backend.hcl
+          grep -Eq '^[[:space:]]*region[[:space:]]*=' /tmp/edge-backend.hcl
+          grep -Eq '^[[:space:]]*use_lockfile[[:space:]]*=[[:space:]]*true' /tmp/edge-backend.hcl
+          if grep -Eqi '^[[:space:]]*(access_key|secret_key|token)[[:space:]]*=' /tmp/edge-backend.hcl; then
+            echo "::error::Backend credentials must use protected environment secrets, not backend configuration."
+            exit 1
+          fi
+          echo "backend_config_sha256=$(sha256sum /tmp/edge-backend.hcl | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+      - name: Render protected runtime inputs
+        id: config
+        shell: bash
+        env:
+          TARGET_ENV: ${{ inputs.environment }}
+          EMERGENCY_MODE: ${{ inputs.emergency_mode }}
+          EMERGENCY_EXPIRES_AT: ${{ inputs.emergency_expires_at }}
+          EMERGENCY_OWNER: ${{ github.actor }}
+          CHANGE_TICKET: ${{ inputs.change_ticket }}
+          CLOUDFLARE_EDGE_PLAN_TOKEN: ${{ secrets.CLOUDFLARE_EDGE_PLAN_TOKEN }}
+          EDGE_CLOUDFLARE_ACCOUNT_ID: ${{ vars.EDGE_CLOUDFLARE_ACCOUNT_ID }}
+          EDGE_CLOUDFLARE_ZONE_ID: ${{ vars.EDGE_CLOUDFLARE_ZONE_ID }}
+          EDGE_ZONE_NAME: ${{ vars.EDGE_ZONE_NAME }}
+          EDGE_PUBLIC_HOSTNAME: ${{ vars.EDGE_PUBLIC_HOSTNAME }}
+          EDGE_API_HOSTNAME: ${{ vars.EDGE_API_HOSTNAME }}
+          EDGE_ADMIN_HOSTNAME: ${{ vars.EDGE_ADMIN_HOSTNAME }}
+          EDGE_TRUSTED_IPV4_CIDRS_JSON: ${{ vars.EDGE_TRUSTED_IPV4_CIDRS_JSON }}
+          EDGE_TRUSTED_IPV6_CIDRS_JSON: ${{ vars.EDGE_TRUSTED_IPV6_CIDRS_JSON }}
+          EDGE_MONITORING_IPV4_CIDRS_JSON: ${{ vars.EDGE_MONITORING_IPV4_CIDRS_JSON }}
+          EDGE_MONITORING_IPV6_CIDRS_JSON: ${{ vars.EDGE_MONITORING_IPV6_CIDRS_JSON }}
+          EDGE_AUTOMATION_IPV4_CIDRS_JSON: ${{ vars.EDGE_AUTOMATION_IPV4_CIDRS_JSON }}
+          EDGE_AUTOMATION_IPV6_CIDRS_JSON: ${{ vars.EDGE_AUTOMATION_IPV6_CIDRS_JSON }}
+          EDGE_DENY_IPV4_CIDRS_JSON: ${{ vars.EDGE_DENY_IPV4_CIDRS_JSON }}
+          EDGE_DENY_IPV6_CIDRS_JSON: ${{ vars.EDGE_DENY_IPV6_CIDRS_JSON }}
+          EDGE_QUARANTINE_IPV4_CIDRS_JSON: ${{ vars.EDGE_QUARANTINE_IPV4_CIDRS_JSON }}
+          EDGE_QUARANTINE_IPV6_CIDRS_JSON: ${{ vars.EDGE_QUARANTINE_IPV6_CIDRS_JSON }}
+          EDGE_QUARANTINE_EXPIRES_AT: ${{ vars.EDGE_QUARANTINE_EXPIRES_AT }}
+          EDGE_TRUSTED_ASNS_JSON: ${{ vars.EDGE_TRUSTED_ASNS_JSON }}
+          EDGE_DENIED_ASNS_JSON: ${{ vars.EDGE_DENIED_ASNS_JSON }}
+          EDGE_CHALLENGE_ASNS_JSON: ${{ vars.EDGE_CHALLENGE_ASNS_JSON }}
+          EDGE_ALLOWED_COUNTRIES_JSON: ${{ vars.EDGE_ALLOWED_COUNTRIES_JSON }}
+          EDGE_DENIED_COUNTRIES_JSON: ${{ vars.EDGE_DENIED_COUNTRIES_JSON }}
+          EDGE_CHALLENGE_COUNTRIES_JSON: ${{ vars.EDGE_CHALLENGE_COUNTRIES_JSON }}
+          EDGE_GEO_EXCEPTION_COUNTRIES_JSON: ${{ vars.EDGE_GEO_EXCEPTION_COUNTRIES_JSON }}
+          EDGE_ANONYMOUS_NETWORK_IP_LIST_NAME: ${{ vars.EDGE_ANONYMOUS_NETWORK_IP_LIST_NAME }}
+          EDGE_TOR_EXIT_IP_LIST_NAME: ${{ vars.EDGE_TOR_EXIT_IP_LIST_NAME }}
+          EDGE_LOGPUSH_DESTINATION: ${{ secrets.EDGE_LOGPUSH_DESTINATION }}
+          EDGE_ORIGIN_AUTH_HEADER_NAME: ${{ vars.EDGE_ORIGIN_AUTH_HEADER_NAME }}
+          EDGE_ORIGIN_AUTH_HEADER_VALUE: ${{ secrets.EDGE_ORIGIN_AUTH_HEADER_VALUE }}
+          EDGE_CSP_REPORT_URI: ${{ vars.EDGE_CSP_REPORT_URI }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$CLOUDFLARE_EDGE_PLAN_TOKEN" ]]; then
+            echo "::error::CLOUDFLARE_EDGE_PLAN_TOKEN is missing. No provider plan or change was attempted."
+            exit 1
+          fi
+          args=(
+            --policy-inputs "infra/edge/environments/${TARGET_ENV}.tfvars.json"
+            --output infra/edge/ci.runtime.tfvars.json
+          )
+          if [[ "$EMERGENCY_MODE" == "true" ]]; then
+            args+=(
+              --emergency
+              --emergency-expires-at "$EMERGENCY_EXPIRES_AT"
+              --emergency-owner "$EMERGENCY_OWNER"
+              --change-ticket "$CHANGE_TICKET"
+            )
+          fi
+          python3 infra/edge/scripts/render_runtime_config.py "${args[@]}"
+          echo "environment_config_sha256=$(sha256sum "infra/edge/environments/${TARGET_ENV}.tfvars.json" | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+          echo "runtime_config_sha256=$(sha256sum infra/edge/ci.runtime.tfvars.json | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+      - name: Initialize locked state and create plan
+        shell: bash
+        env:
+          TARGET_ENV: ${{ inputs.environment }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_EDGE_PLAN_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.EDGE_TF_STATE_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.EDGE_TF_STATE_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.EDGE_TF_STATE_SESSION_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$AWS_ACCESS_KEY_ID" || -z "$AWS_SECRET_ACCESS_KEY" ]]; then
+            echo "::error::Remote-state credentials are missing. No provider plan or change was attempted."
+            exit 1
+          fi
+          python3 infra/edge/scripts/validate_policy.py
+          terraform -chdir=infra/edge init -reconfigure -input=false -backend-config=/tmp/edge-backend.hcl
+          terraform -chdir=infra/edge validate
+          terraform -chdir=infra/edge plan \
+            -input=false \
+            -lock-timeout=5m \
+            -var-file="environments/${TARGET_ENV}.tfvars.json" \
+            -var-file=ci.runtime.tfvars.json \
+            -out=edge.tfplan
+          terraform -chdir=infra/edge show -no-color edge.tfplan > infra/edge/edge-plan.txt
+
+      - name: Record review metadata
+        id: planmeta
+        shell: bash
+        env:
+          OPERATOR: ${{ github.actor }}
+          TARGET_ENV: ${{ inputs.environment }}
+          OPERATION: ${{ inputs.operation }}
+          CHANGE_TICKET: ${{ inputs.change_ticket }}
+          BACKEND_SHA: ${{ steps.backend.outputs.backend_config_sha256 }}
+          ENV_CONFIG_SHA: ${{ steps.config.outputs.environment_config_sha256 }}
+          RUNTIME_CONFIG_SHA: ${{ steps.config.outputs.runtime_config_sha256 }}
+          EMERGENCY_MODE: ${{ inputs.emergency_mode }}
+          EMERGENCY_EXPIRES_AT: ${{ inputs.emergency_expires_at }}
+        run: |
+          set -euo pipefail
+          CONFIG_SHA=$(git rev-parse HEAD)
+          PLAN_SHA=$(sha256sum infra/edge/edge-plan.txt | awk '{print $1}')
+          POLICY_VERSION=$(python3 -c 'import json; print(json.load(open("infra/edge/policies/baseline.json"))["version"])')
+          ROLLOUT_STAGE=$(python3 -c 'import json, os; p="infra/edge/environments/" + os.environ["TARGET_ENV"] + ".tfvars.json"; print(json.load(open(p))["rollout_stage"])')
+          CONFIG_CHANGE_TICKET=$(python3 -c 'import json, os; p="infra/edge/environments/" + os.environ["TARGET_ENV"] + ".tfvars.json"; print(json.load(open(p))["deployment_change_ticket"])')
+          UTC_NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          export CONFIG_SHA PLAN_SHA POLICY_VERSION ROLLOUT_STAGE CONFIG_CHANGE_TICKET UTC_NOW
+          echo "config_sha=$CONFIG_SHA" >> "$GITHUB_OUTPUT"
+          echo "plan_sha256=$PLAN_SHA" >> "$GITHUB_OUTPUT"
+          echo "policy_version=$POLICY_VERSION" >> "$GITHUB_OUTPUT"
+          echo "rollout_stage=$ROLLOUT_STAGE" >> "$GITHUB_OUTPUT"
+          echo "configuration_change_ticket=$CONFIG_CHANGE_TICKET" >> "$GITHUB_OUTPUT"
+          python3 - <<'PY'
+          import json, os, pathlib
+          record = {
+              "policy_version": os.environ["POLICY_VERSION"],
+              "rollout_stage": os.environ["ROLLOUT_STAGE"],
+              "config_sha": os.environ["CONFIG_SHA"],
+              "plan_sha256": os.environ["PLAN_SHA"],
+              "backend_config_sha256": os.environ["BACKEND_SHA"],
+              "environment_config_sha256": os.environ["ENV_CONFIG_SHA"],
+              "runtime_config_sha256": os.environ["RUNTIME_CONFIG_SHA"],
+              "operator": os.environ["OPERATOR"],
+              "environment": os.environ["TARGET_ENV"],
+              "operation": os.environ["OPERATION"],
+              "change_ticket": os.environ.get("CHANGE_TICKET") or None,
+              "configuration_change_ticket": os.environ.get("CONFIG_CHANGE_TICKET") or None,
+              "emergency_mode": os.environ.get("EMERGENCY_MODE") == "true",
+              "emergency_expires_at": os.environ.get("EMERGENCY_EXPIRES_AT") or None,
+              "planned_at": os.environ["UTC_NOW"],
+              "dns_changes_performed": False,
+          }
+          pathlib.Path("infra/edge/edge-deployment-metadata.json").write_text(
+              json.dumps(record, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+          )
+          PY
+          {
+            echo "### Edge Terraform plan"
+            echo "- Environment: \`$TARGET_ENV\`"
+            echo "- Operation: \`$OPERATION\`"
+            echo "- Config SHA: \`$CONFIG_SHA\`"
+            echo "- Policy version: \`$POLICY_VERSION\`"
+            echo "- Rollout stage: \`$ROLLOUT_STAGE\`"
+            echo "- Plan SHA-256: \`$PLAN_SHA\`"
+            echo "- Operator: \`$OPERATOR\`"
+            echo "- Change ticket: \`${CHANGE_TICKET:-not-required-for-plan}\`"
+            echo "- Provider-side DNS is not managed by this workflow."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload reviewable plan evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: edge-plan-${{ inputs.environment }}-${{ github.run_id }}
+          path: |
+            infra/edge/edge-plan.txt
+            infra/edge/edge-deployment-metadata.json
+            infra/edge/environments/${{ inputs.environment }}.tfvars.json
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Remove ephemeral sensitive inputs
+        if: always()
+        shell: bash
+        run: rm -f infra/edge/ci.runtime.tfvars.json /tmp/edge-backend.hcl
+
+  apply:
+    name: Protected edge apply or rollback
+    if: github.event_name == 'workflow_dispatch' && contains(fromJSON('["apply","rollback"]'), inputs.operation)
+    needs: [validate, guard, plan]
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    environment:
+      name: edge-${{ inputs.environment }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout exact planned configuration
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          ref: ${{ needs.plan.outputs.config_sha }}
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+
+      - name: Install Terraform with release checksum verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://releases.hashicorp.com/terraform/${TF_VERSION}"
+          archive="terraform_${TF_VERSION}_linux_amd64.zip"
+          curl --fail --silent --show-error --location "$base/$archive" -o "/tmp/$archive"
+          printf '%s  %s\n' "$TF_LINUX_AMD64_SHA256" "/tmp/$archive" | sha256sum --check --strict -
+          python3 - <<'PY'
+          import os, zipfile
+          archive = f"/tmp/terraform_{os.environ['TF_VERSION']}_linux_amd64.zip"
+          with zipfile.ZipFile(archive) as bundle:
+              bundle.extract("terraform", "/tmp/terraform-bin")
+          PY
+          sudo install -m 0755 /tmp/terraform-bin/terraform /usr/local/bin/terraform
+
+      - name: Rebuild and bind protected configuration
+        shell: bash
+        env:
+          TARGET_ENV: ${{ inputs.environment }}
+          EMERGENCY_MODE: ${{ inputs.emergency_mode }}
+          EMERGENCY_EXPIRES_AT: ${{ inputs.emergency_expires_at }}
+          EMERGENCY_OWNER: ${{ github.actor }}
+          CHANGE_TICKET: ${{ inputs.change_ticket }}
+          BACKEND_CONFIG_B64: ${{ secrets.EDGE_TF_BACKEND_CONFIG_B64 }}
+          CLOUDFLARE_EDGE_APPLY_TOKEN: ${{ secrets.CLOUDFLARE_EDGE_APPLY_TOKEN }}
+          EDGE_CLOUDFLARE_ACCOUNT_ID: ${{ vars.EDGE_CLOUDFLARE_ACCOUNT_ID }}
+          EDGE_CLOUDFLARE_ZONE_ID: ${{ vars.EDGE_CLOUDFLARE_ZONE_ID }}
+          EDGE_ZONE_NAME: ${{ vars.EDGE_ZONE_NAME }}
+          EDGE_PUBLIC_HOSTNAME: ${{ vars.EDGE_PUBLIC_HOSTNAME }}
+          EDGE_API_HOSTNAME: ${{ vars.EDGE_API_HOSTNAME }}
+          EDGE_ADMIN_HOSTNAME: ${{ vars.EDGE_ADMIN_HOSTNAME }}
+          EDGE_TRUSTED_IPV4_CIDRS_JSON: ${{ vars.EDGE_TRUSTED_IPV4_CIDRS_JSON }}
+          EDGE_TRUSTED_IPV6_CIDRS_JSON: ${{ vars.EDGE_TRUSTED_IPV6_CIDRS_JSON }}
+          EDGE_MONITORING_IPV4_CIDRS_JSON: ${{ vars.EDGE_MONITORING_IPV4_CIDRS_JSON }}
+          EDGE_MONITORING_IPV6_CIDRS_JSON: ${{ vars.EDGE_MONITORING_IPV6_CIDRS_JSON }}
+          EDGE_AUTOMATION_IPV4_CIDRS_JSON: ${{ vars.EDGE_AUTOMATION_IPV4_CIDRS_JSON }}
+          EDGE_AUTOMATION_IPV6_CIDRS_JSON: ${{ vars.EDGE_AUTOMATION_IPV6_CIDRS_JSON }}
+          EDGE_DENY_IPV4_CIDRS_JSON: ${{ vars.EDGE_DENY_IPV4_CIDRS_JSON }}
+          EDGE_DENY_IPV6_CIDRS_JSON: ${{ vars.EDGE_DENY_IPV6_CIDRS_JSON }}
+          EDGE_QUARANTINE_IPV4_CIDRS_JSON: ${{ vars.EDGE_QUARANTINE_IPV4_CIDRS_JSON }}
+          EDGE_QUARANTINE_IPV6_CIDRS_JSON: ${{ vars.EDGE_QUARANTINE_IPV6_CIDRS_JSON }}
+          EDGE_QUARANTINE_EXPIRES_AT: ${{ vars.EDGE_QUARANTINE_EXPIRES_AT }}
+          EDGE_TRUSTED_ASNS_JSON: ${{ vars.EDGE_TRUSTED_ASNS_JSON }}
+          EDGE_DENIED_ASNS_JSON: ${{ vars.EDGE_DENIED_ASNS_JSON }}
+          EDGE_CHALLENGE_ASNS_JSON: ${{ vars.EDGE_CHALLENGE_ASNS_JSON }}
+          EDGE_ALLOWED_COUNTRIES_JSON: ${{ vars.EDGE_ALLOWED_COUNTRIES_JSON }}
+          EDGE_DENIED_COUNTRIES_JSON: ${{ vars.EDGE_DENIED_COUNTRIES_JSON }}
+          EDGE_CHALLENGE_COUNTRIES_JSON: ${{ vars.EDGE_CHALLENGE_COUNTRIES_JSON }}
+          EDGE_GEO_EXCEPTION_COUNTRIES_JSON: ${{ vars.EDGE_GEO_EXCEPTION_COUNTRIES_JSON }}
+          EDGE_ANONYMOUS_NETWORK_IP_LIST_NAME: ${{ vars.EDGE_ANONYMOUS_NETWORK_IP_LIST_NAME }}
+          EDGE_TOR_EXIT_IP_LIST_NAME: ${{ vars.EDGE_TOR_EXIT_IP_LIST_NAME }}
+          EDGE_LOGPUSH_DESTINATION: ${{ secrets.EDGE_LOGPUSH_DESTINATION }}
+          EDGE_ORIGIN_AUTH_HEADER_NAME: ${{ vars.EDGE_ORIGIN_AUTH_HEADER_NAME }}
+          EDGE_ORIGIN_AUTH_HEADER_VALUE: ${{ secrets.EDGE_ORIGIN_AUTH_HEADER_VALUE }}
+          EDGE_CSP_REPORT_URI: ${{ vars.EDGE_CSP_REPORT_URI }}
+          EXPECTED_BACKEND_SHA: ${{ needs.plan.outputs.backend_config_sha256 }}
+          EXPECTED_ENV_CONFIG_SHA: ${{ needs.plan.outputs.environment_config_sha256 }}
+          EXPECTED_RUNTIME_CONFIG_SHA: ${{ needs.plan.outputs.runtime_config_sha256 }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$BACKEND_CONFIG_B64" || -z "$CLOUDFLARE_EDGE_APPLY_TOKEN" ]]; then
+            echo "::error::Protected backend/provider credentials are missing. No provider change was attempted."
+            exit 1
+          fi
+          printf '%s' "$BACKEND_CONFIG_B64" | base64 --decode > /tmp/edge-backend.hcl
+          chmod 600 /tmp/edge-backend.hcl
+          grep -Eq '^[[:space:]]*use_lockfile[[:space:]]*=[[:space:]]*true' /tmp/edge-backend.hcl
+          args=(
+            --policy-inputs "infra/edge/environments/${TARGET_ENV}.tfvars.json"
+            --output infra/edge/ci.runtime.tfvars.json
+          )
+          if [[ "$EMERGENCY_MODE" == "true" ]]; then
+            args+=(
+              --emergency
+              --emergency-expires-at "$EMERGENCY_EXPIRES_AT"
+              --emergency-owner "$EMERGENCY_OWNER"
+              --change-ticket "$CHANGE_TICKET"
+            )
+          fi
+          python3 infra/edge/scripts/render_runtime_config.py "${args[@]}"
+          test "$(sha256sum /tmp/edge-backend.hcl | awk '{print $1}')" = "$EXPECTED_BACKEND_SHA"
+          test "$(sha256sum "infra/edge/environments/${TARGET_ENV}.tfvars.json" | awk '{print $1}')" = "$EXPECTED_ENV_CONFIG_SHA"
+          test "$(sha256sum infra/edge/ci.runtime.tfvars.json | awk '{print $1}')" = "$EXPECTED_RUNTIME_CONFIG_SHA"
+
+      - name: Recompute reviewed plan and apply with state lock
+        shell: bash
+        env:
+          TARGET_ENV: ${{ inputs.environment }}
+          EXPECTED_PLAN_SHA: ${{ needs.plan.outputs.plan_sha256 }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_EDGE_APPLY_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.EDGE_TF_STATE_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.EDGE_TF_STATE_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.EDGE_TF_STATE_SESSION_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$AWS_ACCESS_KEY_ID" || -z "$AWS_SECRET_ACCESS_KEY" ]]; then
+            echo "::error::Remote-state credentials are missing. No provider change was attempted."
+            exit 1
+          fi
+          python3 infra/edge/scripts/validate_policy.py
+          terraform -chdir=infra/edge init -reconfigure -input=false -backend-config=/tmp/edge-backend.hcl
+          terraform -chdir=infra/edge validate
+          terraform -chdir=infra/edge plan \
+            -input=false \
+            -lock-timeout=5m \
+            -var-file="environments/${TARGET_ENV}.tfvars.json" \
+            -var-file=ci.runtime.tfvars.json \
+            -out=edge-apply.tfplan
+          terraform -chdir=infra/edge show -no-color edge-apply.tfplan > infra/edge/edge-apply-plan.txt
+          ACTUAL_PLAN_SHA=$(sha256sum infra/edge/edge-apply-plan.txt | awk '{print $1}')
+          if [[ "$ACTUAL_PLAN_SHA" != "$EXPECTED_PLAN_SHA" ]]; then
+            echo "::error::Plan changed after review. Expected $EXPECTED_PLAN_SHA, got $ACTUAL_PLAN_SHA. Refusing deployment."
+            exit 1
+          fi
+          terraform -chdir=infra/edge apply -input=false -lock-timeout=5m edge-apply.tfplan
+
+      - name: Record deployment audit evidence
+        if: success()
+        shell: bash
+        env:
+          POLICY_VERSION: ${{ needs.plan.outputs.policy_version }}
+          ROLLOUT_STAGE: ${{ needs.plan.outputs.rollout_stage }}
+          CONFIG_CHANGE_TICKET: ${{ needs.plan.outputs.configuration_change_ticket }}
+          CONFIG_SHA: ${{ needs.plan.outputs.config_sha }}
+          PLAN_SHA: ${{ needs.plan.outputs.plan_sha256 }}
+          BACKEND_SHA: ${{ needs.plan.outputs.backend_config_sha256 }}
+          ENV_CONFIG_SHA: ${{ needs.plan.outputs.environment_config_sha256 }}
+          RUNTIME_CONFIG_SHA: ${{ needs.plan.outputs.runtime_config_sha256 }}
+          OPERATOR: ${{ github.actor }}
+          TARGET_ENV: ${{ inputs.environment }}
+          OPERATION: ${{ inputs.operation }}
+          CHANGE_TICKET: ${{ inputs.change_ticket }}
+          EMERGENCY_MODE: ${{ inputs.emergency_mode }}
+          EMERGENCY_EXPIRES_AT: ${{ inputs.emergency_expires_at }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          UTC_NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          export UTC_NOW
+          python3 - <<'PY'
+          import json, os, pathlib
+          record = {
+              "policy_version": os.environ["POLICY_VERSION"],
+              "rollout_stage": os.environ["ROLLOUT_STAGE"],
+              "config_sha": os.environ["CONFIG_SHA"],
+              "plan_sha256": os.environ["PLAN_SHA"],
+              "backend_config_sha256": os.environ["BACKEND_SHA"],
+              "environment_config_sha256": os.environ["ENV_CONFIG_SHA"],
+              "runtime_config_sha256": os.environ["RUNTIME_CONFIG_SHA"],
+              "operator": os.environ["OPERATOR"],
+              "environment": os.environ["TARGET_ENV"],
+              "operation": os.environ["OPERATION"],
+              "change_ticket": os.environ["CHANGE_TICKET"],
+              "configuration_change_ticket": os.environ.get("CONFIG_CHANGE_TICKET") or None,
+              "emergency_mode": os.environ.get("EMERGENCY_MODE") == "true",
+              "emergency_expires_at": os.environ.get("EMERGENCY_EXPIRES_AT") or None,
+              "run_url": os.environ["RUN_URL"],
+              "applied_at": os.environ["UTC_NOW"],
+              "dns_changes_performed": False,
+          }
+          pathlib.Path("infra/edge/edge-deployment-metadata.json").write_text(
+              json.dumps(record, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+          )
+          PY
+          {
+            echo "### Edge deployment audit record"
+            echo "- Policy version: \`$POLICY_VERSION\`"
+            echo "- Rollout stage: \`$ROLLOUT_STAGE\`"
+            echo "- Config SHA: \`$CONFIG_SHA\`"
+            echo "- Plan SHA-256: \`$PLAN_SHA\`"
+            echo "- Operator: \`$OPERATOR\`"
+            echo "- Environment: \`$TARGET_ENV\`"
+            echo "- Operation: \`$OPERATION\`"
+            echo "- Change ticket: \`$CHANGE_TICKET\`"
+            echo "- Applied at: \`$UTC_NOW\`"
+            echo "- DNS/provider-dashboard actions outside Terraform are not represented as completed."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload deployment audit evidence
+        if: success()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: edge-deployment-audit-${{ inputs.environment }}-${{ github.run_id }}
+          path: infra/edge/edge-deployment-metadata.json
+          retention-days: 365
+          if-no-files-found: error
+
+      - name: Remove ephemeral sensitive inputs
+        if: always()
+        shell: bash
+        run: rm -f infra/edge/ci.runtime.tfvars.json /tmp/edge-backend.hcl
+
+  smoke:
+    name: Live edge smoke test
+    if: github.event_name == 'workflow_dispatch' && inputs.operation == 'smoke'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: edge-${{ inputs.environment }}-plan
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+
+      - name: Validate approved smoke target
+        shell: bash
+        env:
+          BASE_URL: ${{ inputs.base_url }}
+          PUBLIC_HOSTNAME: ${{ vars.EDGE_PUBLIC_HOSTNAME }}
+          API_HOSTNAME: ${{ vars.EDGE_API_HOSTNAME }}
+          ADMIN_HOSTNAME: ${{ vars.EDGE_ADMIN_HOSTNAME }}
+          EXTRA_ALLOWED_HOSTS_JSON: ${{ vars.EDGE_SMOKE_ALLOWED_HOSTS_JSON }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, urllib.parse
+          parsed = urllib.parse.urlsplit(os.environ["BASE_URL"])
+          allowed = {
+              os.getenv("PUBLIC_HOSTNAME") or "www.clearglassinc.com",
+              os.getenv("API_HOSTNAME", ""),
+              os.getenv("ADMIN_HOSTNAME", ""),
+          }
+          extra = json.loads(os.getenv("EXTRA_ALLOWED_HOSTS_JSON", "") or "[]")
+          if not isinstance(extra, list) or not all(isinstance(item, str) for item in extra):
+              raise SystemExit("EDGE_SMOKE_ALLOWED_HOSTS_JSON must be a JSON string array")
+          allowed.update(extra)
+          allowed.discard("")
+          if parsed.scheme != "https" or parsed.hostname not in allowed or parsed.username or parsed.password:
+              raise SystemExit("Smoke target must be an approved HTTPS edge hostname without credentials")
+          print(f"Approved smoke target: {parsed.hostname}")
+          PY
+
+      - name: Verify live edge behavior
+        shell: bash
+        env:
+          BASE_URL: ${{ inputs.base_url }}
+          EXECUTE_NEGATIVE: ${{ inputs.execute_negative_tests }}
+          EXPECT_ENFORCEMENT: ${{ inputs.expect_enforcement }}
+          CSP_MODE: ${{ inputs.csp_mode }}
+        run: |
+          set -euo pipefail
+          python3 infra/edge/scripts/smoke_test.py --base-url "$BASE_URL" --require-edge --csp-mode "$CSP_MODE"
+          if [[ "$EXECUTE_NEGATIVE" == "true" ]]; then
+            args=(--base-url "$BASE_URL" --execute)
+            if [[ "$EXPECT_ENFORCEMENT" == "true" ]]; then
+              args+=(--expect-enforcement)
+            fi
+            python3 infra/edge/scripts/negative_security_test.py "${args[@]}"
+          else
+            python3 infra/edge/scripts/negative_security_test.py --base-url "$BASE_URL" --dry-run
+          fi

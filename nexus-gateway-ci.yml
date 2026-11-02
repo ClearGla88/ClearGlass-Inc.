@@ -1,0 +1,46 @@
+name: NEXUS Gateway CI
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'projects/nexus-gateway/**'
+      - '.github/workflows/nexus-gateway-ci.yml'
+  pull_request:
+    paths:
+      - 'projects/nexus-gateway/**'
+      - '.github/workflows/nexus-gateway-ci.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nexus-gateway-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: projects/nexus-gateway
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: projects/nexus-gateway/pyproject.toml
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[dev]'
+      - name: Compile
+        run: python -m compileall -q app tests
+      - name: Test
+        run: python -m pytest -q
+      - name: Lint
+        run: python -m ruff check .

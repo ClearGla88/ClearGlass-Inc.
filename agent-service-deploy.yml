@@ -1,0 +1,177 @@
+name: Deploy ClearGlass Agent Live
+
+# Deploys services/clearglass_agent_service (fly.toml app `clearglass-agent-service`)
+# to Fly.io. This is the workflow that services/clearglass_agent_service/DEPLOYMENT_TRIGGER.md
+# has always described: the `production-fly` GitHub Environment and fly.toml both
+# existed, but no workflow ever targeted them, so the environment sat orphaned.
+#
+# Shape follows the repo's governed-deploy convention: read-only preflight first,
+# release only behind a protected environment, explicit least-privilege token.
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "services/clearglass_agent_service/**"
+      - "fly.toml"
+      - ".github/workflows/agent-service-deploy.yml"
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Deployment target."
+        type: choice
+        options: ["fly"]
+        default: "fly"
+      dry_run:
+        description: "Build and validate without releasing."
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+# A production release must never be cancelled mid-flight by a newer push.
+concurrency:
+  group: agent-service-deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  # Bump deliberately to pin flyctl; "latest" tracks the current release.
+  FLYCTL_VERSION: "latest"
+  FLY_APP: "clearglass-agent-service"
+
+jobs:
+  preflight:
+    name: Preflight (import + image build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+
+      - name: Validate FastAPI application import
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install -r services/clearglass_agent_service/requirements.txt
+          # Import via the same module path the container's CMD uses.
+          PYTHONPATH=services python -c 'from clearglass_agent_service.main import app; print("app import OK")'
+
+      - name: Validate Docker image build
+        run: |
+          set -euo pipefail
+          docker build -f services/clearglass_agent_service/Dockerfile -t "${FLY_APP}:ci" .
+
+      - name: Record preflight result
+        run: |
+          {
+            echo "### ClearGlass Agent Service preflight"
+            echo "- FastAPI app import: PASS"
+            echo "- Docker image build: PASS"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    name: Deploy to Fly.io
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    environment:
+      name: production-fly
+      url: https://clearglass-agent-service.fly.dev
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      # Requirement 5 of DEPLOYMENT_TRIGGER.md: missing secrets must fail loudly
+      # with a diagnostic rather than half-deploying an unauthenticated service.
+      - name: Validate required secrets
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          CLEARGLASS_AGENT_API_KEYS: ${{ secrets.CLEARGLASS_AGENT_API_KEYS }}
+        run: |
+          set -euo pipefail
+          missing=()
+          [ -n "${FLY_API_TOKEN:-}" ] || missing+=("FLY_API_TOKEN")
+          [ -n "${CLEARGLASS_AGENT_API_KEYS:-}" ] || missing+=("CLEARGLASS_AGENT_API_KEYS")
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "::error::Cannot deploy ${FLY_APP}. Missing required secret(s): ${missing[*]}."
+            echo "Add them to the 'production-fly' environment (Settings > Environments > production-fly)."
+            exit 1
+          fi
+          echo "Required secrets present."
+
+      - name: Install flyctl
+        run: |
+          set -euo pipefail
+          if [ "${FLYCTL_VERSION}" = "latest" ]; then
+            curl -sSfL https://fly.io/install.sh | sh
+          else
+            curl -sSfL https://fly.io/install.sh | sh -s "${FLYCTL_VERSION}"
+          fi
+          echo "$HOME/.fly/bin" >> "$GITHUB_PATH"
+
+      - name: Report flyctl version
+        run: flyctl version
+
+      - name: Stage application secrets
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          CLEARGLASS_AGENT_API_KEYS: ${{ secrets.CLEARGLASS_AGENT_API_KEYS }}
+        run: |
+          set -euo pipefail
+          # --stage writes the secret without restarting machines; it is applied
+          # atomically by the release that follows.
+          flyctl secrets set --stage --app "${FLY_APP}" \
+            CLEARGLASS_AGENT_API_KEYS="${CLEARGLASS_AGENT_API_KEYS}"
+
+      - name: Deploy (dry run)
+        if: inputs.dry_run
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          echo "dry_run=true — building the release image without releasing it."
+          flyctl deploy --app "${FLY_APP}" --build-only --remote-only
+
+      - name: Deploy
+        if: ${{ !inputs.dry_run }}
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          flyctl deploy --app "${FLY_APP}" --remote-only
+
+      - name: Verify /health
+        if: ${{ !inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          url="https://${FLY_APP}.fly.dev/health"
+          # fly.toml sets min_machines_running = 0, so the first request may need
+          # to cold-start a machine. Retry before calling the deploy bad.
+          for attempt in 1 2 3 4 5 6; do
+            code=$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 30 "$url" || echo "000")
+            if [ "$code" = "200" ]; then
+              echo "Health check passed on attempt ${attempt}."
+              cat /tmp/health.json
+              {
+                echo "### ClearGlass Agent Service deploy"
+                echo "- Released: \`${FLY_APP}\`"
+                echo "- Health: PASS (${url})"
+              } >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            echo "Attempt ${attempt}: HTTP ${code} — retrying in 10s."
+            sleep 10
+          done
+          echo "::error::Health check never returned 200 at ${url}."
+          exit 1

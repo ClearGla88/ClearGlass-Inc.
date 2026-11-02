@@ -1,0 +1,83 @@
+name: Repository Health
+
+on:
+  pull_request:
+    paths:
+      - ".github/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pyproject.toml"
+      - "requirements.txt"
+      - "tools/build_pages.py"
+      - "scripts/verify_site.py"
+      - "scripts/production_probe.py"
+  push:
+    branches: ["main"]
+    paths:
+      - ".github/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pyproject.toml"
+      - "requirements.txt"
+      - "tools/build_pages.py"
+      - "scripts/verify_site.py"
+      - "scripts/production_probe.py"
+  schedule:
+    - cron: "31 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: repository-health-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Repository Health
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+      - name: Validate critical repository structure
+        run: |
+          set -euo pipefail
+          required=(index.html .nojekyll CNAME package.json package-lock.json pyproject.toml tools/build_pages.py scripts/verify_site.py scripts/production_probe.py)
+          missing=()
+          for path in "${required[@]}"; do
+            [[ -e "$path" ]] || missing+=("$path")
+          done
+          {
+            echo "### Repository structure"
+            echo ""
+            printf -- '- Workflow files: **%s**\n' "$(find .github/workflows -maxdepth 1 -name '*.yml' | wc -l)"
+            printf -- '- Root HTML documents: **%s**\n' "$(find . -maxdepth 1 -name '*.html' | wc -l)"
+          } >> "$GITHUB_STEP_SUMMARY"
+          if (( ${#missing[@]} )); then
+            printf '::error::Missing critical file: %s\n' "${missing[@]}"
+            exit 1
+          fi
+      - name: Verify deterministic dependency metadata
+        run: |
+          npm ci --ignore-scripts
+          npm run typecheck
+      - name: Validate workflows and Pages prerequisites
+        run: |
+          python scripts/workflow_doctor.py
+          python scripts/audit_github_actions.py
+          python scripts/verify_site.py
+          python tools/build_pages.py dist
+          test -s dist/index.html
+          test -f dist/.nojekyll
+          test -f dist/CNAME
+          {
+            echo ""
+            echo "### Pages prerequisites"
+            echo "Sanitized artifact built successfully; custom-domain and no-Jekyll markers are present."
+          } >> "$GITHUB_STEP_SUMMARY"

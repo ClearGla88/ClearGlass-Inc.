@@ -1,0 +1,199 @@
+name: Deploy Pages
+
+# Production deployment is manual while GitHub-hosted Actions are account-blocked.
+# The live site continues to publish through the repository's legacy Pages source.
+# Re-enabling Actions-backed production deployment requires an explicit Pages source
+# cutover and an intentional workflow_dispatch.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout site source
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify Pages source without mutating production
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsS \
+            -H 'Accept: application/vnd.github+json' \
+            -H 'X-GitHub-Api-Version: 2026-03-10' \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pages" \
+            -o /tmp/pages-source.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          data = json.loads(Path("/tmp/pages-source.json").read_text())
+          mode = data.get("build_type")
+          if mode != "workflow":
+              raise SystemExit(
+                  "Refusing Actions deployment: GitHub Pages build_type is "
+                  f"{mode!r}, not 'workflow'. Change the production Pages source "
+                  "only with explicit approval, then dispatch this workflow."
+              )
+          print("Pages publishing source is explicitly configured for GitHub Actions.")
+          PY
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: '3.12'
+
+      - name: Build sanitized site artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/build_pages.py dist
+
+          if [ ! -s dist/index.html ]; then
+            echo "::error file=dist/index.html::GitHub Pages artifact is missing a non-empty index.html"
+            exit 1
+          fi
+          test -f dist/.nojekyll
+          test -f dist/CNAME
+          chmod -R +rX dist
+
+          echo "Pages artifact built:"
+          du -sh dist
+          find dist -maxdepth 2 -type f | sort | sed -n '1,100p'
+
+      - name: Verify exact production artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p operations/reports
+          python3 scripts/verify_site.py \
+            --root dist \
+            --report "$GITHUB_WORKSPACE/operations/reports/pages-deploy-integrity.json"
+          echo "Production artifact integrity: PASS" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload build integrity diagnostics
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: pages-deploy-integrity
+          path: operations/reports/pages-deploy-integrity.json
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: dist
+
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: build
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure Pages deployment
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+
+      - name: Record deployment URL
+        run: echo "Published ${{ steps.deployment.outputs.page_url }}"
+
+  verify-production:
+    name: Production verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: deploy
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout verification tooling
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: '3.12'
+
+      - name: Resolve canonical production URL
+        id: target
+        shell: bash
+        env:
+          PAGES_URL: ${{ needs.deploy.outputs.page_url }}
+        run: |
+          set -euo pipefail
+          host="$(tr -d '\r\n[:space:]' < CNAME)"
+          if [ -z "$host" ]; then
+            echo "::error file=CNAME::CNAME is empty; production target cannot be verified."
+            exit 1
+          fi
+          case "$host" in
+            http://*|https://*) canonical="$host" ;;
+            *) canonical="https://$host" ;;
+          esac
+          echo "url=$canonical" >> "$GITHUB_OUTPUT"
+          {
+            echo "### ClearGlass production verification"
+            echo "- Pages deployment URL: ${PAGES_URL}"
+            echo "- Canonical production URL: ${canonical}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Probe canonical production routes
+        run: >-
+          python3 scripts/production_probe.py
+          "${{ steps.target.outputs.url }}"
+          --sitemap-limit 30
+          --report operations/reports/production-probe.json
+
+      - name: Record probe summary
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -s operations/reports/production-probe.json ]; then
+            echo "- Production probe report: NOT PRODUCED" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          from pathlib import Path
+          report = json.loads(Path("operations/reports/production-probe.json").read_text())
+          state = "PASS" if report.get("passed") else "FAIL"
+          print(f"- Production probe: {state}")
+          print(f"- URLs checked: {report.get('checked', 0)}")
+          PY
+
+      - name: Upload production verification report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: production-probe-report
+          path: operations/reports/production-probe.json
+          if-no-files-found: warn
+          retention-days: 14

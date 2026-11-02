@@ -1,0 +1,39 @@
+name: Auto Heal
+
+# Temporary circuit breaker.
+#
+# GitHub is currently refusing to start repository jobs because the account is
+# locked for billing. Auto Heal cannot repair a runner that GitHub never starts,
+# and attaching this workflow to the automation-write environment only creates
+# misleading failed deployment records. Keep the event wiring visible but skip
+# execution until account-level Actions access is restored.
+
+on:
+  workflow_run:
+    workflows:
+      - CI
+      - Security
+      - CodeQL
+      - Deploy Pages
+      - Policy Gate
+      - Site Integrity Guard
+    types: [completed]
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: auto-heal-${{ github.repository }}
+  cancel-in-progress: true
+
+jobs:
+  billing-lock-circuit-breaker:
+    name: Billing lock circuit breaker
+    if: ${{ false }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - run: echo "Auto Heal is paused until GitHub Actions account billing access is restored."

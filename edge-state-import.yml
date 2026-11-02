@@ -1,0 +1,217 @@
+name: Edge State Import
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Destination edge state. Production uses the protected production environment."
+        type: choice
+        required: true
+        default: staging
+        options: [staging, production]
+      change_ticket:
+        description: "Must match both the reviewed environment config and sealed import manifest."
+        type: string
+        required: true
+      manifest_sha256:
+        description: "SHA-256 of the decoded EDGE_TF_IMPORT_MANIFEST_B64 reviewed by the operator."
+        type: string
+        required: true
+      confirmation:
+        description: "Exact '<environment>:<change_ticket>:IMPORT'."
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: edge-state-${{ inputs.environment }}
+  cancel-in-progress: false
+
+env:
+  TF_IN_AUTOMATION: "true"
+  TF_INPUT: "false"
+  TF_VERSION: "1.14.6"
+  TF_LINUX_AMD64_SHA256: "364c6ee08b0cb8fcbb28a115aacb2aa48e88abc56c149170bd65c2f75d98ea8d"
+
+jobs:
+  import:
+    name: Protected single-owner import
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    environment:
+      name: edge-${{ inputs.environment }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout reviewed destination configuration
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+
+      - name: Validate reviewed import intent
+        shell: bash
+        env:
+          TARGET_ENV: ${{ inputs.environment }}
+          CHANGE_TICKET: ${{ inputs.change_ticket }}
+          MANIFEST_SHA256: ${{ inputs.manifest_sha256 }}
+          CONFIRMATION: ${{ inputs.confirmation }}
+        run: |
+          set -euo pipefail
+          [[ "$CHANGE_TICKET" =~ ^[A-Za-z0-9][A-Za-z0-9._:/-]{1,127}$ ]]
+          [[ "$MANIFEST_SHA256" =~ ^[0-9a-f]{64}$ ]]
+          test "$CONFIRMATION" = "${TARGET_ENV}:${CHANGE_TICKET}:IMPORT"
+          python3 infra/edge/scripts/validate_policy.py
+          python3 infra/edge/scripts/validate_terraform_safety.py
+
+      - name: Install Terraform with release checksum verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://releases.hashicorp.com/terraform/${TF_VERSION}"
+          archive="terraform_${TF_VERSION}_linux_amd64.zip"
+          curl --fail --silent --show-error --location "$base/$archive" -o "/tmp/$archive"
+          printf '%s  %s\n' "$TF_LINUX_AMD64_SHA256" "/tmp/$archive" | sha256sum --check --strict -
+          python3 - <<'PY'
+          import os, zipfile
+          archive = f"/tmp/terraform_{os.environ['TF_VERSION']}_linux_amd64.zip"
+          with zipfile.ZipFile(archive) as bundle:
+              bundle.extract("terraform", "/tmp/terraform-bin")
+          PY
+          sudo install -m 0755 /tmp/terraform-bin/terraform /usr/local/bin/terraform
+
+      - name: Unseal reviewed backend, manifest, and runtime inputs
+        shell: bash
+        env:
+          TARGET_ENV: ${{ inputs.environment }}
+          EXPECTED_MANIFEST_SHA256: ${{ inputs.manifest_sha256 }}
+          BACKEND_CONFIG_B64: ${{ secrets.EDGE_TF_BACKEND_CONFIG_B64 }}
+          IMPORT_MANIFEST_B64: ${{ secrets.EDGE_TF_IMPORT_MANIFEST_B64 }}
+          CLOUDFLARE_EDGE_APPLY_TOKEN: ${{ secrets.CLOUDFLARE_EDGE_APPLY_TOKEN }}
+          EDGE_CLOUDFLARE_ACCOUNT_ID: ${{ vars.EDGE_CLOUDFLARE_ACCOUNT_ID }}
+          EDGE_CLOUDFLARE_ZONE_ID: ${{ vars.EDGE_CLOUDFLARE_ZONE_ID }}
+          EDGE_ZONE_NAME: ${{ vars.EDGE_ZONE_NAME }}
+          EDGE_PUBLIC_HOSTNAME: ${{ vars.EDGE_PUBLIC_HOSTNAME }}
+          EDGE_API_HOSTNAME: ${{ vars.EDGE_API_HOSTNAME }}
+          EDGE_ADMIN_HOSTNAME: ${{ vars.EDGE_ADMIN_HOSTNAME }}
+          EDGE_TRUSTED_IPV4_CIDRS_JSON: ${{ vars.EDGE_TRUSTED_IPV4_CIDRS_JSON }}
+          EDGE_TRUSTED_IPV6_CIDRS_JSON: ${{ vars.EDGE_TRUSTED_IPV6_CIDRS_JSON }}
+          EDGE_MONITORING_IPV4_CIDRS_JSON: ${{ vars.EDGE_MONITORING_IPV4_CIDRS_JSON }}
+          EDGE_MONITORING_IPV6_CIDRS_JSON: ${{ vars.EDGE_MONITORING_IPV6_CIDRS_JSON }}
+          EDGE_AUTOMATION_IPV4_CIDRS_JSON: ${{ vars.EDGE_AUTOMATION_IPV4_CIDRS_JSON }}
+          EDGE_AUTOMATION_IPV6_CIDRS_JSON: ${{ vars.EDGE_AUTOMATION_IPV6_CIDRS_JSON }}
+          EDGE_DENY_IPV4_CIDRS_JSON: ${{ vars.EDGE_DENY_IPV4_CIDRS_JSON }}
+          EDGE_DENY_IPV6_CIDRS_JSON: ${{ vars.EDGE_DENY_IPV6_CIDRS_JSON }}
+          EDGE_QUARANTINE_IPV4_CIDRS_JSON: ${{ vars.EDGE_QUARANTINE_IPV4_CIDRS_JSON }}
+          EDGE_QUARANTINE_IPV6_CIDRS_JSON: ${{ vars.EDGE_QUARANTINE_IPV6_CIDRS_JSON }}
+          EDGE_QUARANTINE_EXPIRES_AT: ${{ vars.EDGE_QUARANTINE_EXPIRES_AT }}
+          EDGE_TRUSTED_ASNS_JSON: ${{ vars.EDGE_TRUSTED_ASNS_JSON }}
+          EDGE_DENIED_ASNS_JSON: ${{ vars.EDGE_DENIED_ASNS_JSON }}
+          EDGE_CHALLENGE_ASNS_JSON: ${{ vars.EDGE_CHALLENGE_ASNS_JSON }}
+          EDGE_ALLOWED_COUNTRIES_JSON: ${{ vars.EDGE_ALLOWED_COUNTRIES_JSON }}
+          EDGE_DENIED_COUNTRIES_JSON: ${{ vars.EDGE_DENIED_COUNTRIES_JSON }}
+          EDGE_CHALLENGE_COUNTRIES_JSON: ${{ vars.EDGE_CHALLENGE_COUNTRIES_JSON }}
+          EDGE_GEO_EXCEPTION_COUNTRIES_JSON: ${{ vars.EDGE_GEO_EXCEPTION_COUNTRIES_JSON }}
+          EDGE_ANONYMOUS_NETWORK_IP_LIST_NAME: ${{ vars.EDGE_ANONYMOUS_NETWORK_IP_LIST_NAME }}
+          EDGE_TOR_EXIT_IP_LIST_NAME: ${{ vars.EDGE_TOR_EXIT_IP_LIST_NAME }}
+          EDGE_LOGPUSH_DESTINATION: ${{ secrets.EDGE_LOGPUSH_DESTINATION }}
+          EDGE_ORIGIN_AUTH_HEADER_NAME: ${{ vars.EDGE_ORIGIN_AUTH_HEADER_NAME }}
+          EDGE_ORIGIN_AUTH_HEADER_VALUE: ${{ secrets.EDGE_ORIGIN_AUTH_HEADER_VALUE }}
+          EDGE_CSP_REPORT_URI: ${{ vars.EDGE_CSP_REPORT_URI }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$BACKEND_CONFIG_B64" || -z "$IMPORT_MANIFEST_B64" || -z "$CLOUDFLARE_EDGE_APPLY_TOKEN" ]]; then
+            echo "::error::Protected backend, manifest, or provider credential is missing. State was not changed."
+            exit 1
+          fi
+          printf '%s' "$BACKEND_CONFIG_B64" | base64 --decode > /tmp/edge-backend.hcl
+          printf '%s' "$IMPORT_MANIFEST_B64" | base64 --decode > /tmp/edge-import-manifest.json
+          chmod 600 /tmp/edge-backend.hcl /tmp/edge-import-manifest.json
+          test "$(sha256sum /tmp/edge-import-manifest.json | awk '{print $1}')" = "$EXPECTED_MANIFEST_SHA256"
+          grep -Eq '^[[:space:]]*use_lockfile[[:space:]]*=[[:space:]]*true' /tmp/edge-backend.hcl
+          if grep -Eqi '^[[:space:]]*(access_key|secret_key|token)[[:space:]]*=' /tmp/edge-backend.hcl; then
+            echo "::error::Backend credentials must not be embedded in backend configuration."
+            exit 1
+          fi
+          python3 infra/edge/scripts/render_runtime_config.py \
+            --policy-inputs "infra/edge/environments/${TARGET_ENV}.tfvars.json" \
+            --output infra/edge/ci.runtime.tfvars.json
+
+      - name: Initialize locked destination state and import
+        shell: bash
+        env:
+          TARGET_ENV: ${{ inputs.environment }}
+          CHANGE_TICKET: ${{ inputs.change_ticket }}
+          CONFIRMATION: ${{ inputs.confirmation }}
+          EDGE_CLOUDFLARE_ZONE_ID: ${{ vars.EDGE_CLOUDFLARE_ZONE_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_EDGE_APPLY_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.EDGE_TF_STATE_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.EDGE_TF_STATE_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.EDGE_TF_STATE_SESSION_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$AWS_ACCESS_KEY_ID" || -z "$AWS_SECRET_ACCESS_KEY" ]]; then
+            echo "::error::Remote-state credentials are missing. State was not changed."
+            exit 1
+          fi
+          terraform -chdir=infra/edge init -reconfigure -input=false -backend-config=/tmp/edge-backend.hcl
+          terraform -chdir=infra/edge validate
+          python3 infra/edge/scripts/import_state.py \
+            --manifest /tmp/edge-import-manifest.json \
+            --policy-inputs "infra/edge/environments/${TARGET_ENV}.tfvars.json" \
+            --runtime-inputs infra/edge/ci.runtime.tfvars.json \
+            --zone-id "$EDGE_CLOUDFLARE_ZONE_ID" \
+            --terraform-dir infra/edge \
+            --execute \
+            --confirmation "$CONFIRMATION"
+          terraform -chdir=infra/edge state list > infra/edge/imported-state-addresses.txt
+
+          set +e
+          terraform -chdir=infra/edge plan \
+            -input=false \
+            -lock-timeout=5m \
+            -detailed-exitcode \
+            -var-file="environments/${TARGET_ENV}.tfvars.json" \
+            -var-file=ci.runtime.tfvars.json \
+            -out=post-import.tfplan
+          plan_exit=$?
+          set -e
+          if [[ "$plan_exit" -eq 1 ]]; then
+            echo "::error::Post-import plan failed. Provider apply was not attempted."
+            exit 1
+          fi
+          terraform -chdir=infra/edge show -no-color post-import.tfplan > infra/edge/post-import-plan.txt
+          if [[ "$plan_exit" -eq 2 ]]; then
+            echo "::warning::Post-import provider changes remain. Review the artifact; this workflow did not apply them."
+          fi
+          {
+            echo "### Edge state import"
+            echo "- Environment: \`$TARGET_ENV\`"
+            echo "- Change ticket: \`$CHANGE_TICKET\`"
+            echo "- Imported state addresses: \`$(wc -l < infra/edge/imported-state-addresses.txt)\`"
+            echo "- Post-import plan exit: \`$plan_exit\` (0=no change, 2=review required)"
+            echo "- Provider apply: \`not run\`"
+            echo "- DNS mutation: \`not supported\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload import evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: edge-state-import-${{ inputs.environment }}-${{ github.run_id }}
+          path: |
+            infra/edge/imported-state-addresses.txt
+            infra/edge/post-import-plan.txt
+          retention-days: 365
+          if-no-files-found: error
+
+      - name: Remove ephemeral sensitive inputs
+        if: always()
+        shell: bash
+        run: rm -f infra/edge/ci.runtime.tfvars.json /tmp/edge-backend.hcl /tmp/edge-import-manifest.json
