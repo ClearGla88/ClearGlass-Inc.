@@ -1,0 +1,4367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="description" content="CLEARGLASS NEXUS · strategic intelligence dashboard with digital twin map, incident automation, analytics, logs, and persistent settings." />
+    <title>CLEARGLASS NEXUS · Strategic Intelligence Core · v2036.9</title>
+    <style>
+:root {
+    --bg-0: #030714;
+    --bg-1: rgba(6, 16, 34, 0.9);
+    --bg-2: rgba(9, 20, 44, 0.78);
+    --bg-3: rgba(13, 28, 58, 0.72);
+    --panel: rgba(10, 22, 45, 0.78);
+    --panel-strong: rgba(7, 18, 38, 0.92);
+    --panel-soft: rgba(15, 32, 66, 0.55);
+    --edge: rgba(64, 175, 255, 0.25);
+    --edge-strong: rgba(100, 205, 255, 0.42);
+    --text-0: #eef8ff;
+    --text-1: #c5dbf7;
+    --text-2: #88a9d4;
+    --text-3: #5e7ca6;
+    --accent: #46c8ff;
+    --accent-2: #7de7ff;
+    --accent-3: #1aa7ff;
+    --cyan: #29e5ff;
+    --green: #56f7c1;
+    --amber: #ffc85c;
+    --red: #ff6e82;
+    --shadow-lg: 0 18px 50px rgba(0, 0, 0, 0.45);
+    --shadow-sm: 0 8px 18px rgba(0, 0, 0, 0.22);
+    --glow: 0 0 24px rgba(70, 200, 255, 0.35);
+    --radius-xl: 30px;
+    --radius-lg: 22px;
+    --radius-md: 16px;
+    --radius-sm: 12px;
+    --blur-lg: blur(24px);
+    --blur-md: blur(14px);
+    --blur-sm: blur(8px);
+    --trans-fast: 0.18s ease;
+    --trans-mid: 0.32s cubic-bezier(.2,.9,.35,1);
+    --trans-slow: 0.55s cubic-bezier(.2,.9,.35,1);
+    --font-ui: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
+    --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(38, 85, 170, 0.28), transparent 32%),
+        radial-gradient(circle at 85% 15%, rgba(0, 180, 255, 0.18), transparent 24%),
+        radial-gradient(circle at 55% 85%, rgba(30, 120, 255, 0.18), transparent 26%),
+        linear-gradient(180deg, #040918 0%, #02050d 100%);
+    color: var(--text-0);
+    font-family: var(--font-ui);
+    font-size: 14px;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 32px 32px;
+    opacity: 0.16;
+    pointer-events: none;
+    z-index: 0;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 48%, rgba(0,0,0,0.42) 100%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.app-shell {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr;
+}
+
+.topbar {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 20px;
+    align-items: center;
+    padding: 16px 24px;
+    background: rgba(3, 10, 24, 0.8);
+    backdrop-filter: var(--blur-lg);
+    border-bottom: 1px solid var(--edge);
+    box-shadow: var(--shadow-sm);
+}
+
+.brand-block {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.brand-title {
+    font-size: 1.35rem;
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #ffffff 0%, #bce7ff 30%, #56d8ff 65%, #dff8ff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.brand-meta {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.pill,
+.badge,
+.chip,
+.mini-chip {
+    border: 1px solid var(--edge);
+    background: rgba(9, 20, 44, 0.45);
+    color: var(--text-1);
+    border-radius: 999px;
+    backdrop-filter: var(--blur-sm);
+}
+
+.badge {
+    padding: 6px 12px;
+    font-size: 0.65rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.topbar-center {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.global-search {
+    flex: 1;
+    min-width: 180px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(7, 16, 35, 0.72);
+    border: 1px solid var(--edge);
+    border-radius: 18px;
+    padding: 12px 14px;
+    color: var(--text-1);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.global-search input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text-0);
+    font: inherit;
+}
+
+.global-search input::placeholder {
+    color: var(--text-3);
+}
+
+.shortcut-hint {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-3);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 5px 8px;
+    background: rgba(255,255,255,0.03);
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.status-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 14px;
+    min-height: 40px;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 12px rgba(41,229,255,0.85);
+    animation: pulse 1.8s infinite;
+}
+
+.loadbar {
+    position: relative;
+    width: 90px;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.07);
+    overflow: hidden;
+}
+
+.loadbar > span {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 70%;
+    background: linear-gradient(90deg, var(--accent), var(--cyan));
+    border-radius: inherit;
+    animation: wave 2.2s infinite;
+}
+
+.shell-main {
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 78px 1fr 360px;
+    gap: 18px;
+    padding: 18px;
+}
+
+.nav-rail,
+.workspace,
+.sidebar {
+    min-height: 0;
+}
+
+.nav-rail {
+    background: rgba(3, 10, 24, 0.72);
+    border: 1px solid var(--edge);
+    border-radius: 26px;
+    backdrop-filter: var(--blur-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 0;
+    gap: 10px;
+    box-shadow: var(--shadow-sm);
+}
+
+.nav-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 18px;
+    border: 1px solid transparent;
+    display: grid;
+    place-items: center;
+    font-size: 1.25rem;
+    color: var(--text-2);
+    background: transparent;
+    transition: var(--trans-mid);
+    cursor: pointer;
+    position: relative;
+}
+
+.nav-btn:hover,
+.nav-btn.active {
+    color: var(--text-0);
+    background: rgba(70, 200, 255, 0.14);
+    border-color: rgba(70, 200, 255, 0.3);
+    transform: translateX(2px) scale(1.03);
+    box-shadow: var(--glow);
+}
+
+.nav-btn.active::before {
+    content: "";
+    position: absolute;
+    left: -12px;
+    top: 14px;
+    bottom: 14px;
+    width: 3px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--accent), var(--cyan));
+    box-shadow: 0 0 14px rgba(70, 200, 255, 0.75);
+}
+
+.workspace {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) 160px;
+    gap: 18px;
+}
+
+.kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(120px, 1fr));
+    gap: 14px;
+}
+
+.kpi-card,
+.panel,
+.stack-panel,
+.bottom-card,
+.modal-card,
+.drawer-card {
+    background: var(--panel);
+    border: 1px solid var(--edge);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: var(--blur-lg);
+}
+
+.kpi-card {
+    min-height: 102px;
+    border-radius: 24px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: var(--trans-mid);
+}
+
+.kpi-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.05) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.kpi-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--edge-strong);
+    box-shadow: var(--shadow-lg), var(--glow);
+}
+
+.kpi-card:hover::before {
+    transform: translateX(100%);
+}
+
+.kpi-label {
+    color: var(--text-2);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.kpi-value {
+    font-size: 1.92rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-family: var(--font-mono);
+    background: linear-gradient(135deg, #fff 0%, #cfeeff 35%, #59d4ff 80%, #f0fbff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.kpi-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.trend-up {
+    color: var(--green);
+}
+
+.trend-down {
+    color: var(--amber);
+}
+
+.trend-risk {
+    color: var(--red);
+}
+
+.main-grid {
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 18px;
+}
+
+.map-panel,
+.sidebar,
+.bottom-zone {
+    min-height: 0;
+}
+
+.panel {
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    background: linear-gradient(180deg, rgba(70,200,255,0.06), transparent);
+}
+
+.panel-title {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.panel-title h2,
+.panel-title h3 {
+    font-size: 0.92rem;
+    line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+}
+
+.panel-title small {
+    color: var(--text-3);
+}
+
+.header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.ghost-btn,
+.primary-btn,
+.toggle-btn,
+.icon-btn,
+.scenario-btn,
+.command-chip {
+    border-radius: 999px;
+    border: 1px solid var(--edge);
+    background: rgba(255,255,255,0.04);
+    color: var(--text-1);
+    transition: var(--trans-fast);
+    cursor: pointer;
+    font: inherit;
+}
+
+.ghost-btn,
+.primary-btn,
+.toggle-btn,
+.scenario-btn {
+    padding: 9px 14px;
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.icon-btn {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+}
+
+.primary-btn {
+    background: linear-gradient(135deg, rgba(70,200,255,0.18), rgba(41,229,255,0.08));
+    border-color: rgba(70,200,255,0.35);
+    color: var(--text-0);
+}
+
+.ghost-btn:hover,
+.primary-btn:hover,
+.toggle-btn:hover,
+.icon-btn:hover,
+.scenario-btn:hover,
+.command-chip:hover {
+    transform: translateY(-1px);
+    border-color: var(--edge-strong);
+    box-shadow: var(--glow);
+    color: var(--text-0);
+}
+
+.toggle-btn.active {
+    background: rgba(70,200,255,0.18);
+    border-color: rgba(70,200,255,0.48);
+    color: var(--text-0);
+}
+
+.map-wrap {
+    position: relative;
+    min-height: 0;
+    height: calc(100% - 70px);
+    background:
+        radial-gradient(circle at 20% 18%, rgba(70, 200, 255, 0.07), transparent 28%),
+        radial-gradient(circle at 75% 25%, rgba(0, 130, 255, 0.08), transparent 25%),
+        linear-gradient(180deg, rgba(5, 10, 24, 0.58), rgba(3, 7, 16, 0.88));
+}
+
+.map-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.map-overlay {
+    position: absolute;
+    inset: 18px 18px auto auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.overlay-card {
+    pointer-events: auto;
+    border-radius: 18px;
+    padding: 12px 14px;
+    background: rgba(6, 16, 36, 0.78);
+    border: 1px solid var(--edge);
+    min-width: 220px;
+}
+
+.overlay-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.overlay-stat {
+    padding: 10px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.overlay-stat strong {
+    font-size: 1.05rem;
+    font-family: var(--font-mono);
+}
+
+.map-tooltip {
+    position: absolute;
+    pointer-events: none;
+    min-width: 190px;
+    max-width: 240px;
+    border-radius: 16px;
+    background: rgba(3, 10, 24, 0.94);
+    border: 1px solid rgba(70,200,255,0.34);
+    box-shadow: var(--shadow-lg), var(--glow);
+    padding: 12px 14px;
+    font-size: 0.78rem;
+    opacity: 0;
+    transform: translate(-50%, -100%) scale(0.96);
+    transform-origin: bottom center;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    z-index: 20;
+}
+
+.map-tooltip.show {
+    opacity: 1;
+    transform: translate(-50%, -112%) scale(1);
+}
+
+.mini-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.mini-grid > div {
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 8px;
+}
+
+.sidebar {
+    display: grid;
+    grid-template-rows: minmax(0, 0.98fr) minmax(0, 1.08fr) minmax(0, 0.94fr);
+    gap: 18px;
+}
+
+.stack-panel {
+    border-radius: 28px;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    min-height: 0;
+}
+
+.stack-body {
+    min-height: 0;
+    overflow: auto;
+    padding: 14px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.stack-footer {
+    padding: 0 16px 16px;
+}
+
+.command-console {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.console-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 18px;
+    border: 1px solid var(--edge);
+    background: rgba(255,255,255,0.03);
+    padding: 12px 14px;
+}
+
+.console-input input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-0);
+    font: inherit;
+}
+
+.command-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.command-chip {
+    padding: 7px 11px;
+    font-size: 0.7rem;
+}
+
+.response-card,
+.incident-card,
+.log-row,
+.inspector-card,
+.metric-row,
+.task-row,
+.timeline-row,
+.matrix-row {
+    border-radius: 18px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+}
+
+.response-card {
+    padding: 12px 14px;
+    line-height: 1.5;
+}
+
+.incident-card {
+    padding: 14px;
+    display: grid;
+    gap: 10px;
+    cursor: pointer;
+    transition: var(--trans-fast);
+}
+
+.incident-card:hover,
+.incident-card.active {
+    transform: translateX(4px);
+    border-color: rgba(70,200,255,0.24);
+    background: rgba(70,200,255,0.08);
+}
+
+.incident-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.severity {
+    padding: 5px 9px;
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    width: fit-content;
+}
+
+.severity.low {
+    color: var(--green);
+    border-color: rgba(86,247,193,0.22);
+    background: rgba(86,247,193,0.08);
+}
+
+.severity.medium {
+    color: var(--amber);
+    border-color: rgba(255,200,92,0.2);
+    background: rgba(255,200,92,0.08);
+}
+
+.severity.high,
+.severity.critical {
+    color: var(--red);
+    border-color: rgba(255,110,130,0.2);
+    background: rgba(255,110,130,0.08);
+}
+
+.incident-meta,
+.muted,
+.small-muted {
+    color: var(--text-3);
+}
+
+.incident-score {
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+}
+
+.inspector-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.inspector-card {
+    padding: 12px;
+}
+
+.inspector-card strong {
+    display: block;
+    font-size: 1.08rem;
+    margin-top: 6px;
+    font-family: var(--font-mono);
+}
+
+.inspector-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.scenario-grid {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.bottom-zone {
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr) minmax(0, 0.8fr);
+    gap: 18px;
+}
+
+.bottom-card {
+    border-radius: 26px;
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    min-height: 0;
+}
+
+.bottom-body {
+    min-height: 0;
+    overflow: auto;
+    padding: 14px 16px 16px;
+}
+
+.log-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.log-row {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 12px;
+}
+
+.log-time {
+    font-family: var(--font-mono);
+    color: var(--text-2);
+    font-size: 0.76rem;
+}
+
+.log-priority {
+    padding: 5px 8px;
+    font-size: 0.66rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.03);
+    color: var(--text-2);
+}
+
+.canvas-wrap {
+    height: 100%;
+    min-height: 180px;
+    position: relative;
+}
+
+.chart-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.matrix-table {
+    display: grid;
+    gap: 8px;
+}
+
+.matrix-row {
+    display: grid;
+    grid-template-columns: 1.1fr 0.8fr 0.7fr 0.8fr;
+    gap: 10px;
+    padding: 10px 12px;
+    align-items: center;
+    font-size: 0.78rem;
+}
+
+.progress-line {
+    position: relative;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    overflow: hidden;
+}
+
+.progress-line > span {
+    position: absolute;
+    inset: 0 auto 0 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--accent), var(--cyan));
+}
+
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.task-row {
+    padding: 11px 12px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 10px;
+    align-items: center;
+    cursor: pointer;
+    transition: var(--trans-fast);
+}
+
+.task-row:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+.task-check {
+    width: 18px;
+    height: 18px;
+    border-radius: 6px;
+    border: 1px solid var(--edge);
+    display: grid;
+    place-items: center;
+    color: transparent;
+}
+
+.task-row.done .task-check {
+    background: rgba(86,247,193,0.14);
+    color: var(--green);
+    border-color: rgba(86,247,193,0.3);
+}
+
+.timeline-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.timeline-row {
+    padding: 10px 12px;
+    display: grid;
+    grid-template-columns: 74px 1fr;
+    gap: 10px;
+    align-items: start;
+}
+
+.timeline-stamp {
+    font-family: var(--font-mono);
+    color: var(--text-2);
+    font-size: 0.76rem;
+}
+
+.sidebar-scroll,
+.stack-body,
+.bottom-body,
+.modal-body {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(70,200,255,0.48) transparent;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(70,200,255,0.25);
+}
+
+.toast-layer {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-end;
+    pointer-events: none;
+}
+
+.toast {
+    max-width: 320px;
+    padding: 12px 14px;
+    border-radius: 18px;
+    background: rgba(3, 10, 24, 0.95);
+    border: 1px solid rgba(70,200,255,0.34);
+    box-shadow: var(--shadow-lg), var(--glow);
+    transform: translateY(16px);
+    opacity: 0;
+    transition: var(--trans-mid);
+    pointer-events: auto;
+}
+
+.toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: none;
+    place-items: center;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(8px);
+    padding: 20px;
+}
+
+.modal.show {
+    display: grid;
+}
+
+.modal-card {
+    width: min(760px, 100%);
+    min-height: 320px;
+    max-height: calc(100vh - 40px);
+    border-radius: 30px;
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+}
+
+.modal-head,
+.modal-foot {
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.modal-foot {
+    border-top: 1px solid rgba(255,255,255,0.05);
+    border-bottom: none;
+}
+
+.modal-body {
+    min-height: 0;
+    overflow: auto;
+    padding: 18px;
+    display: grid;
+    gap: 18px;
+}
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.setting-card {
+    padding: 16px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    display: grid;
+    gap: 12px;
+}
+
+.setting-card select,
+.setting-card input[type="range"],
+.setting-card input[type="text"],
+.setting-card textarea {
+    width: 100%;
+}
+
+select,
+textarea,
+input[type="text"] {
+    background: rgba(255,255,255,0.03);
+    color: var(--text-0);
+    border: 1px solid var(--edge);
+    border-radius: 14px;
+    padding: 11px 12px;
+    font: inherit;
+    outline: none;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+input[type="range"] {
+    accent-color: var(--accent);
+}
+
+.palette-grid {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.14);
+    cursor: pointer;
+    transition: var(--trans-fast);
+}
+
+.swatch:hover,
+.swatch.active {
+    transform: scale(1.08);
+    box-shadow: var(--glow);
+    border-color: rgba(255,255,255,0.32);
+}
+
+.drawer {
+    position: fixed;
+    top: 18px;
+    bottom: 18px;
+    right: 18px;
+    width: min(440px, calc(100vw - 36px));
+    z-index: 260;
+    display: none;
+    align-items: stretch;
+}
+
+.drawer.show {
+    display: flex;
+}
+
+.drawer-card {
+    width: 100%;
+    border-radius: 28px;
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+}
+
+.drawer-body {
+    min-height: 0;
+    overflow: auto;
+    padding: 18px;
+    display: grid;
+    gap: 16px;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.detail-grid .inspector-card {
+    min-height: 86px;
+}
+
+.footer-note {
+    font-size: 0.7rem;
+    color: var(--text-3);
+    text-align: right;
+}
+
+.screen-tag {
+    position: fixed;
+    left: 18px;
+    bottom: 18px;
+    z-index: 50;
+    font-size: 0.66rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    background: rgba(3,10,24,0.72);
+    border: 1px solid var(--edge);
+    border-radius: 999px;
+    padding: 7px 12px;
+    backdrop-filter: var(--blur-sm);
+}
+
+.hidden {
+    display: none !important;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(0.9);
+        opacity: 0.75;
+    }
+    50% {
+        transform: scale(1.18);
+        opacity: 1;
+    }
+}
+
+@keyframes wave {
+    0% { width: 58%; opacity: 0.82; }
+    50% { width: 84%; opacity: 1; }
+    100% { width: 58%; opacity: 0.82; }
+}
+
+@media (max-width: 1480px) {
+    .shell-main {
+        grid-template-columns: 72px 1fr 330px;
+    }
+
+    .kpi-strip {
+        grid-template-columns: repeat(3, minmax(130px, 1fr));
+    }
+
+    .bottom-zone {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 1180px) {
+    .shell-main {
+        grid-template-columns: 68px 1fr;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    .workspace {
+        grid-template-rows: auto minmax(0, 1fr) auto;
+    }
+}
+
+@media (max-width: 920px) {
+    .topbar {
+        grid-template-columns: 1fr;
+    }
+
+    .main-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kpi-strip {
+        grid-template-columns: repeat(2, minmax(120px, 1fr));
+    }
+
+    .settings-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .detail-grid,
+    .inspector-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+<body>
+    <div class="app-shell" id="app">
+        <header class="topbar">
+            <div class="brand-block">
+                <div class="brand-title">CLEARGLASS NEXUS · STRATEGIC INTELLIGENCE CORE</div>
+                <div class="brand-meta">
+                    <span class="badge">v2036.9</span>
+                    <span class="badge">single-file build</span>
+                    <span class="badge">state-driven</span>
+                    <span class="badge">persistent settings</span>
+                </div>
+            </div>
+            <div class="topbar-center">
+                <label class="global-search" aria-label="Global command search">
+                    <span>⌘</span>
+                    <input id="globalSearch" type="text" placeholder="Run a command, filter incidents, focus a district, or inspect a node" />
+                    <span class="shortcut-hint">/</span>
+                </label>
+            </div>
+            <div class="topbar-right">
+                <div class="pill status-pill">
+                    <span class="status-dot"></span>
+                    <span id="quantumStateText">COHERENT</span>
+                </div>
+                <div class="pill status-pill">
+                    <span>COMPUTE</span>
+                    <div class="loadbar"><span id="computeLoadBar"></span></div>
+                </div>
+                <div class="pill status-pill">
+                    <span id="latencyStatusText">LATENCY 7.8ms</span>
+                </div>
+                <button class="ghost-btn" id="openPaletteBtn">Command</button>
+                <button class="ghost-btn" id="openSettingsBtn">Settings</button>
+                <button class="primary-btn" id="exportSnapshotBtn">Export Snapshot</button>
+            </div>
+        </header>
+
+        <section class="shell-main">
+            <aside class="nav-rail" id="navRail"></aside>
+
+            <main class="workspace">
+                <section class="kpi-strip" id="kpiStrip"></section>
+
+                <section class="main-grid">
+                    <article class="panel map-panel">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <h2>Digital Twin Command Surface</h2>
+                                <small>Canvas-rendered topology with live risk, load, latency, and node selection</small>
+                            </div>
+                            <div class="header-actions" id="mapModeButtons"></div>
+                        </div>
+                        <div class="map-wrap" id="mapWrap">
+                            <canvas class="map-canvas" id="mapCanvas"></canvas>
+                            <div class="map-overlay">
+                                <div class="overlay-card">
+                                    <div class="small-muted">Sector Summary</div>
+                                    <div class="overlay-grid">
+                                        <div class="overlay-stat">
+                                            <div class="small-muted">Nodes</div>
+                                            <strong id="overlayNodes">0</strong>
+                                        </div>
+                                        <div class="overlay-stat">
+                                            <div class="small-muted">Links</div>
+                                            <strong id="overlayLinks">0</strong>
+                                        </div>
+                                        <div class="overlay-stat">
+                                            <div class="small-muted">Watch</div>
+                                            <strong id="overlayWatch">0</strong>
+                                        </div>
+                                        <div class="overlay-stat">
+                                            <div class="small-muted">Critical</div>
+                                            <strong id="overlayCritical">0</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="overlay-card" id="selectionSummaryCard">
+                                    <div class="small-muted">Selection</div>
+                                    <div id="selectionSummaryTitle">No node selected</div>
+                                    <div class="mini-grid" id="selectionSummaryGrid">
+                                        <div><div class="small-muted">Risk</div><strong>--</strong></div>
+                                        <div><div class="small-muted">Load</div><strong>--</strong></div>
+                                        <div><div class="small-muted">Health</div><strong>--</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="map-tooltip" id="mapTooltip"></div>
+                        </div>
+                    </article>
+
+                    <aside class="sidebar">
+                        <section class="stack-panel">
+                            <div class="panel-header">
+                                <div class="panel-title">
+                                    <h3>Command Console</h3>
+                                    <small>Command parsing, recommendations, and automation feedback</small>
+                                </div>
+                                <div class="header-actions">
+                                    <button class="icon-btn" id="clearConsoleBtn" title="Clear responses">⌫</button>
+                                </div>
+                            </div>
+                            <div class="stack-body">
+                                <div class="command-console">
+                                    <label class="console-input">
+                                        <span>▶</span>
+                                        <input id="consoleInput" type="text" placeholder="Type: show threat matrix, focus district 7, stabilize grid a" />
+                                    </label>
+                                    <div class="command-chips" id="commandChips"></div>
+                                </div>
+                                <div id="consoleResponses"></div>
+                            </div>
+                            <div class="stack-footer footer-note">
+                                Enter executes · click a chip for fast command injection
+                            </div>
+                        </section>
+
+                        <section class="stack-panel">
+                            <div class="panel-header">
+                                <div class="panel-title">
+                                    <h3>Incident Queue</h3>
+                                    <small>Severity-ranked incidents with score, ETA, and ownership</small>
+                                </div>
+                                <div class="header-actions">
+                                    <button class="toggle-btn active" data-incident-filter="all">All</button>
+                                    <button class="toggle-btn" data-incident-filter="critical">Critical</button>
+                                    <button class="toggle-btn" data-incident-filter="watch">Watch</button>
+                                </div>
+                            </div>
+                            <div class="stack-body" id="incidentList"></div>
+                            <div class="stack-footer">
+                                <div class="scenario-grid">
+                                    <button class="scenario-btn" data-action="stabilize">Stabilize</button>
+                                    <button class="scenario-btn" data-action="optimize">Optimize</button>
+                                    <button class="scenario-btn" data-action="conserve">Conserve</button>
+                                    <button class="scenario-btn" data-action="seal">Seal Perimeter</button>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="stack-panel">
+                            <div class="panel-header">
+                                <div class="panel-title">
+                                    <h3>Node Inspector</h3>
+                                    <small>Selection profile, counters, and direct actions</small>
+                                </div>
+                                <div class="header-actions">
+                                    <button class="icon-btn" id="openInspectorDrawerBtn" title="Expand inspector">⇱</button>
+                                </div>
+                            </div>
+                            <div class="stack-body">
+                                <div id="inspectorContent"></div>
+                            </div>
+                            <div class="stack-footer">
+                                <div class="inspector-actions">
+                                    <button class="ghost-btn" id="inspectorFocusBtn">Focus</button>
+                                    <button class="ghost-btn" id="inspectorMitigateBtn">Mitigate</button>
+                                    <button class="primary-btn" id="inspectorEscalateBtn">Escalate</button>
+                                </div>
+                            </div>
+                        </section>
+                    </aside>
+                </section>
+
+                <section class="bottom-zone">
+                    <article class="bottom-card">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <h3>Live Operations Log</h3>
+                                <small>Streaming actions, model refreshes, operator selections, and escalations</small>
+                            </div>
+                            <div class="header-actions">
+                                <button class="ghost-btn" id="pauseLogBtn">Pause</button>
+                                <button class="ghost-btn" id="flushLogBtn">Flush</button>
+                            </div>
+                        </div>
+                        <div class="bottom-body">
+                            <div class="log-feed" id="logFeed"></div>
+                        </div>
+                    </article>
+
+                    <article class="bottom-card">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <h3>Trend Analytics</h3>
+                                <small>Alerts, risk, energy, and throughput history</small>
+                            </div>
+                            <div class="header-actions" id="chartModeButtons"></div>
+                        </div>
+                        <div class="bottom-body">
+                            <div class="canvas-wrap">
+                                <canvas class="chart-canvas" id="chartCanvas"></canvas>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="bottom-card">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <h3>Threat Matrix & Tasks</h3>
+                                <small>Risk ranking, domain pressure, and active checklist</small>
+                            </div>
+                            <div class="header-actions">
+                                <button class="ghost-btn" id="shuffleChecklistBtn">Reshuffle</button>
+                            </div>
+                        </div>
+                        <div class="bottom-body">
+                            <div class="matrix-table" id="matrixTable"></div>
+                            <div style="height: 14px"></div>
+                            <div class="task-list" id="taskList"></div>
+                        </div>
+                    </article>
+                </section>
+            </main>
+        </section>
+    </div>
+
+    <div class="toast-layer" id="toastLayer"></div>
+    <div class="screen-tag">CLEARGLASS OPERATIONAL SURFACE</div>
+
+    <div class="modal" id="commandPaletteModal" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-head">
+                <div class="panel-title">
+                    <h3>Command Palette</h3>
+                    <small>Search commands, nodes, districts, incidents, and actions</small>
+                </div>
+                <button class="icon-btn" data-close-modal="commandPaletteModal">✕</button>
+            </div>
+            <div class="modal-body">
+                <label class="console-input">
+                    <span>⌘</span>
+                    <input id="paletteInput" type="text" placeholder="Search for a node, district, command, or incident" />
+                </label>
+                <div class="timeline-list" id="paletteResults"></div>
+            </div>
+            <div class="modal-foot">
+                <div class="small-muted">Enter executes the highlighted result. Esc closes.</div>
+                <button class="primary-btn" data-close-modal="commandPaletteModal">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="settingsModal" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-head">
+                <div class="panel-title">
+                    <h3>Settings & Persistence</h3>
+                    <small>Stored in localStorage. Visual tuning, simulation pace, and operator identity.</small>
+                </div>
+                <button class="icon-btn" data-close-modal="settingsModal">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-grid">
+                    <section class="setting-card">
+                        <div class="panel-title">
+                            <h3>Operator Profile</h3>
+                            <small>Stored locally for this browser session set</small>
+                        </div>
+                        <input id="operatorNameInput" type="text" placeholder="Operator name" />
+                        <textarea id="operatorNoteInput" placeholder="Operational note"></textarea>
+                    </section>
+
+                    <section class="setting-card">
+                        <div class="panel-title">
+                            <h3>Visual Accent</h3>
+                            <small>Changes the dashboard accent color and glow</small>
+                        </div>
+                        <div class="palette-grid" id="paletteSwatches"></div>
+                    </section>
+
+                    <section class="setting-card">
+                        <div class="panel-title">
+                            <h3>Simulation Tempo</h3>
+                            <small>Higher values produce more aggressive drift and alert churn</small>
+                        </div>
+                        <input id="tempoRange" type="range" min="1" max="10" step="1" />
+                        <div class="muted">Tempo: <span id="tempoValue">5</span></div>
+                    </section>
+
+                    <section class="setting-card">
+                        <div class="panel-title">
+                            <h3>Map Rendering</h3>
+                            <small>Choose default mode and node label density</small>
+                        </div>
+                        <select id="defaultModeSelect">
+                            <option value="all">All Domains</option>
+                            <option value="transport">Transit</option>
+                            <option value="security">Security</option>
+                            <option value="energy">Energy</option>
+                            <option value="environment">Environment</option>
+                            <option value="logistics">Logistics</option>
+                            <option value="comms">Comms</option>
+                        </select>
+                        <select id="labelDensitySelect">
+                            <option value="full">Full Labels</option>
+                            <option value="smart">Smart Labels</option>
+                            <option value="minimal">Minimal</option>
+                        </select>
+                    </section>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <div class="small-muted">Saving updates the live dashboard immediately.</div>
+                <div class="header-actions">
+                    <button class="ghost-btn" id="resetSettingsBtn">Reset</button>
+                    <button class="primary-btn" id="saveSettingsBtn">Save Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <aside class="drawer" id="inspectorDrawer">
+        <div class="drawer-card">
+            <div class="modal-head">
+                <div class="panel-title">
+                    <h3>Expanded Inspector</h3>
+                    <small>Deep view of the current selection, linked incidents, and history</small>
+                </div>
+                <button class="icon-btn" id="closeInspectorDrawerBtn">✕</button>
+            </div>
+            <div class="drawer-body" id="drawerContent"></div>
+            <div class="modal-foot">
+                <div class="small-muted">Use actions here to mutate the live state.</div>
+                <button class="primary-btn" id="drawerMitigateBtn">Mitigate Selected</button>
+            </div>
+        </div>
+    </aside>
+<script>
+    (() => {
+        "use strict";
+
+        const STORAGE_KEY = "clearglass.nexus.settings.v2036_9";
+
+        const CONSTANTS = Object.freeze({
+            FRAME_INTERVAL: 1000 / 40,
+            LOG_LIMIT: 42,
+            RESPONSE_LIMIT: 9,
+            HISTORY_LIMIT: 36,
+            TOAST_LIFE: 2800,
+            CHART_PADDING: 26,
+            MAP_LABEL_SKIP: 2
+        });
+
+        const NAV_ITEMS = [
+            { key: "overview", icon: "◈", label: "Overview" },
+            { key: "transport", icon: "🚆", label: "Transit" },
+            { key: "security", icon: "🛡", label: "Security" },
+            { key: "energy", icon: "⚡", label: "Energy" },
+            { key: "environment", icon: "🌿", label: "Environment" },
+            { key: "logistics", icon: "📦", label: "Logistics" },
+            { key: "comms", icon: "📡", label: "Comms" },
+            { key: "advisor", icon: "🧠", label: "Advisor" }
+        ];
+
+        const MAP_MODES = [
+            { key: "all", label: "All Domains" },
+            { key: "transport", label: "Transit" },
+            { key: "security", label: "Security" },
+            { key: "energy", label: "Energy" },
+            { key: "environment", label: "Environment" },
+            { key: "logistics", label: "Logistics" },
+            { key: "comms", label: "Comms" }
+        ];
+
+        const CHART_MODES = [
+            { key: "alerts", label: "Alerts" },
+            { key: "risk", label: "Risk" },
+            { key: "energy", label: "Energy" },
+            { key: "throughput", label: "Throughput" }
+        ];
+
+        const ACCENTS = [
+            "#46c8ff",
+            "#3edcff",
+            "#59f0ff",
+            "#77d1ff",
+            "#6aa7ff",
+            "#5df4c6",
+            "#f6b759",
+            "#ff7694"
+        ];
+
+        const DATA = {
+            nodes: [
+            {
+                        "id": "T-01",
+                        "name": "Transit Hub 1",
+                        "domain": "transport",
+                        "zone": "Transit",
+                        "district": "Harbor",
+                        "x": 97,
+                        "y": 89,
+                        "health": 89.6,
+                        "load": 70.7,
+                        "risk": 87,
+                        "status": "critical",
+                        "latency": 4.5,
+                        "throughput": 884,
+                        "uptime": 99.473,
+                        "capability": "adaptive routing"
+            },
+            {
+                        "id": "T-02",
+                        "name": "Transit Hub 2",
+                        "domain": "transport",
+                        "zone": "Transit",
+                        "district": "Apex",
+                        "x": 200,
+                        "y": 98,
+                        "health": 96.7,
+                        "load": 60.5,
+                        "risk": 79,
+                        "status": "watch",
+                        "latency": 6.2,
+                        "throughput": 909,
+                        "uptime": 98.471,
+                        "capability": "adaptive routing"
+            },
+            {
+                        "id": "T-03",
+                        "name": "Transit Hub 3",
+                        "domain": "transport",
+                        "zone": "Transit",
+                        "district": "Riverline",
+                        "x": 317,
+                        "y": 80,
+                        "health": 88.7,
+                        "load": 68.0,
+                        "risk": 18,
+                        "status": "stable",
+                        "latency": 6.4,
+                        "throughput": 869,
+                        "uptime": 98.931,
+                        "capability": "adaptive routing"
+            },
+            {
+                        "id": "T-04",
+                        "name": "Transit Hub 4",
+                        "domain": "transport",
+                        "zone": "Transit",
+                        "district": "Atlas",
+                        "x": 420,
+                        "y": 89,
+                        "health": 87.4,
+                        "load": 74.0,
+                        "risk": 32,
+                        "status": "stable",
+                        "latency": 9.3,
+                        "throughput": 465,
+                        "uptime": 99.969,
+                        "capability": "adaptive routing"
+            },
+            {
+                        "id": "T-05",
+                        "name": "Transit Hub 5",
+                        "domain": "transport",
+                        "zone": "Transit",
+                        "district": "Orion",
+                        "x": 537,
+                        "y": 98,
+                        "health": 94.2,
+                        "load": 68.3,
+                        "risk": 59,
+                        "status": "watch",
+                        "latency": 12.1,
+                        "throughput": 541,
+                        "uptime": 98.428,
+                        "capability": "adaptive routing"
+            },
+            {
+                        "id": "T-06",
+                        "name": "Transit Hub 6",
+                        "domain": "transport",
+                        "zone": "Transit",
+                        "district": "Harbor",
+                        "x": 640,
+                        "y": 80,
+                        "health": 95.9,
+                        "load": 55.3,
+                        "risk": 50,
+                        "status": "stable",
+                        "latency": 12.9,
+                        "throughput": 371,
+                        "uptime": 99.469,
+                        "capability": "adaptive routing"
+            },
+            {
+                        "id": "S-01",
+                        "name": "Security Cluster 1",
+                        "domain": "security",
+                        "zone": "Security",
+                        "district": "Atlas",
+                        "x": 115,
+                        "y": 157,
+                        "health": 95.2,
+                        "load": 60.3,
+                        "risk": 47,
+                        "status": "stable",
+                        "latency": 7.7,
+                        "throughput": 325,
+                        "uptime": 98.763,
+                        "capability": "anomaly classification"
+            },
+            {
+                        "id": "S-02",
+                        "name": "Security Cluster 2",
+                        "domain": "security",
+                        "zone": "Security",
+                        "district": "Orion",
+                        "x": 218,
+                        "y": 166,
+                        "health": 87.0,
+                        "load": 37.6,
+                        "risk": 80,
+                        "status": "watch",
+                        "latency": 5.8,
+                        "throughput": 684,
+                        "uptime": 99.624,
+                        "capability": "anomaly classification"
+            },
+            {
+                        "id": "S-03",
+                        "name": "Security Cluster 3",
+                        "domain": "security",
+                        "zone": "Security",
+                        "district": "Harbor",
+                        "x": 335,
+                        "y": 148,
+                        "health": 91.9,
+                        "load": 46.2,
+                        "risk": 47,
+                        "status": "stable",
+                        "latency": 11.9,
+                        "throughput": 404,
+                        "uptime": 98.808,
+                        "capability": "anomaly classification"
+            },
+            {
+                        "id": "S-04",
+                        "name": "Security Cluster 4",
+                        "domain": "security",
+                        "zone": "Security",
+                        "district": "Apex",
+                        "x": 438,
+                        "y": 157,
+                        "health": 97.6,
+                        "load": 47.2,
+                        "risk": 58,
+                        "status": "stable",
+                        "latency": 3.1,
+                        "throughput": 387,
+                        "uptime": 98.989,
+                        "capability": "anomaly classification"
+            },
+            {
+                        "id": "S-05",
+                        "name": "Security Cluster 5",
+                        "domain": "security",
+                        "zone": "Security",
+                        "district": "Riverline",
+                        "x": 555,
+                        "y": 166,
+                        "health": 90.9,
+                        "load": 81.9,
+                        "risk": 42,
+                        "status": "stable",
+                        "latency": 10.6,
+                        "throughput": 674,
+                        "uptime": 99.223,
+                        "capability": "anomaly classification"
+            },
+            {
+                        "id": "S-06",
+                        "name": "Security Cluster 6",
+                        "domain": "security",
+                        "zone": "Security",
+                        "district": "Atlas",
+                        "x": 658,
+                        "y": 148,
+                        "health": 90.5,
+                        "load": 34.2,
+                        "risk": 22,
+                        "status": "stable",
+                        "latency": 6.0,
+                        "throughput": 849,
+                        "uptime": 99.383,
+                        "capability": "anomaly classification"
+            },
+            {
+                        "id": "E-01",
+                        "name": "Energy Lattice 1",
+                        "domain": "energy",
+                        "zone": "Environment",
+                        "district": "Apex",
+                        "x": 97,
+                        "y": 225,
+                        "health": 96.5,
+                        "load": 49.8,
+                        "risk": 62,
+                        "status": "watch",
+                        "latency": 10.8,
+                        "throughput": 414,
+                        "uptime": 99.019,
+                        "capability": "predictive balancing"
+            },
+            {
+                        "id": "E-02",
+                        "name": "Energy Lattice 2",
+                        "domain": "energy",
+                        "zone": "Environment",
+                        "district": "Riverline",
+                        "x": 200,
+                        "y": 234,
+                        "health": 86.5,
+                        "load": 65.6,
+                        "risk": 61,
+                        "status": "watch",
+                        "latency": 13.3,
+                        "throughput": 718,
+                        "uptime": 99.011,
+                        "capability": "predictive balancing"
+            },
+            {
+                        "id": "E-03",
+                        "name": "Energy Lattice 3",
+                        "domain": "energy",
+                        "zone": "Environment",
+                        "district": "Atlas",
+                        "x": 317,
+                        "y": 216,
+                        "health": 96.9,
+                        "load": 45.6,
+                        "risk": 29,
+                        "status": "stable",
+                        "latency": 7.6,
+                        "throughput": 453,
+                        "uptime": 98.54,
+                        "capability": "predictive balancing"
+            },
+            {
+                        "id": "E-04",
+                        "name": "Energy Lattice 4",
+                        "domain": "energy",
+                        "zone": "Environment",
+                        "district": "Orion",
+                        "x": 420,
+                        "y": 225,
+                        "health": 94.5,
+                        "load": 28.6,
+                        "risk": 70,
+                        "status": "watch",
+                        "latency": 5.4,
+                        "throughput": 723,
+                        "uptime": 99.162,
+                        "capability": "predictive balancing"
+            },
+            {
+                        "id": "E-05",
+                        "name": "Energy Lattice 5",
+                        "domain": "energy",
+                        "zone": "Environment",
+                        "district": "Harbor",
+                        "x": 537,
+                        "y": 234,
+                        "health": 84.4,
+                        "load": 39.5,
+                        "risk": 68,
+                        "status": "watch",
+                        "latency": 7.2,
+                        "throughput": 703,
+                        "uptime": 99.618,
+                        "capability": "predictive balancing"
+            },
+            {
+                        "id": "E-06",
+                        "name": "Energy Lattice 6",
+                        "domain": "energy",
+                        "zone": "Environment",
+                        "district": "Apex",
+                        "x": 640,
+                        "y": 216,
+                        "health": 92.0,
+                        "load": 56.4,
+                        "risk": 32,
+                        "status": "stable",
+                        "latency": 7.4,
+                        "throughput": 651,
+                        "uptime": 98.838,
+                        "capability": "predictive balancing"
+            },
+            {
+                        "id": "L-01",
+                        "name": "Logistics Depot 1",
+                        "domain": "logistics",
+                        "zone": "Energy",
+                        "district": "Orion",
+                        "x": 115,
+                        "y": 293,
+                        "health": 96.6,
+                        "load": 82.8,
+                        "risk": 69,
+                        "status": "watch",
+                        "latency": 11.8,
+                        "throughput": 356,
+                        "uptime": 99.142,
+                        "capability": "thermal telemetry"
+            },
+            {
+                        "id": "L-02",
+                        "name": "Logistics Depot 2",
+                        "domain": "logistics",
+                        "zone": "Energy",
+                        "district": "Harbor",
+                        "x": 218,
+                        "y": 302,
+                        "health": 89.7,
+                        "load": 75.9,
+                        "risk": 18,
+                        "status": "stable",
+                        "latency": 6.2,
+                        "throughput": 471,
+                        "uptime": 98.844,
+                        "capability": "thermal telemetry"
+            },
+            {
+                        "id": "L-03",
+                        "name": "Logistics Depot 3",
+                        "domain": "logistics",
+                        "zone": "Energy",
+                        "district": "Apex",
+                        "x": 335,
+                        "y": 284,
+                        "health": 92.8,
+                        "load": 80.8,
+                        "risk": 53,
+                        "status": "stable",
+                        "latency": 3.1,
+                        "throughput": 562,
+                        "uptime": 98.614,
+                        "capability": "thermal telemetry"
+            },
+            {
+                        "id": "L-04",
+                        "name": "Logistics Depot 4",
+                        "domain": "logistics",
+                        "zone": "Energy",
+                        "district": "Riverline",
+                        "x": 438,
+                        "y": 293,
+                        "health": 97.5,
+                        "load": 29.2,
+                        "risk": 40,
+                        "status": "stable",
+                        "latency": 11.3,
+                        "throughput": 700,
+                        "uptime": 99.267,
+                        "capability": "thermal telemetry"
+            },
+            {
+                        "id": "L-05",
+                        "name": "Logistics Depot 5",
+                        "domain": "logistics",
+                        "zone": "Energy",
+                        "district": "Atlas",
+                        "x": 555,
+                        "y": 302,
+                        "health": 87.2,
+                        "load": 66.4,
+                        "risk": 38,
+                        "status": "stable",
+                        "latency": 11.9,
+                        "throughput": 483,
+                        "uptime": 99.114,
+                        "capability": "thermal telemetry"
+            },
+            {
+                        "id": "L-06",
+                        "name": "Logistics Depot 6",
+                        "domain": "logistics",
+                        "zone": "Energy",
+                        "district": "Orion",
+                        "x": 658,
+                        "y": 284,
+                        "health": 94.7,
+                        "load": 71.9,
+                        "risk": 13,
+                        "status": "stable",
+                        "latency": 11.5,
+                        "throughput": 668,
+                        "uptime": 98.504,
+                        "capability": "thermal telemetry"
+            },
+            {
+                        "id": "A-01",
+                        "name": "Atmospheric Sensor 1",
+                        "domain": "environment",
+                        "zone": "Logistics",
+                        "district": "Riverline",
+                        "x": 97,
+                        "y": 361,
+                        "health": 89.1,
+                        "load": 75.5,
+                        "risk": 48,
+                        "status": "stable",
+                        "latency": 7.9,
+                        "throughput": 898,
+                        "uptime": 99.098,
+                        "capability": "fleet arbitration"
+            },
+            {
+                        "id": "A-02",
+                        "name": "Atmospheric Sensor 2",
+                        "domain": "environment",
+                        "zone": "Logistics",
+                        "district": "Atlas",
+                        "x": 200,
+                        "y": 370,
+                        "health": 87.9,
+                        "load": 32.3,
+                        "risk": 43,
+                        "status": "stable",
+                        "latency": 7.5,
+                        "throughput": 482,
+                        "uptime": 99.253,
+                        "capability": "fleet arbitration"
+            },
+            {
+                        "id": "A-03",
+                        "name": "Atmospheric Sensor 3",
+                        "domain": "environment",
+                        "zone": "Logistics",
+                        "district": "Orion",
+                        "x": 317,
+                        "y": 352,
+                        "health": 86.2,
+                        "load": 57.5,
+                        "risk": 72,
+                        "status": "watch",
+                        "latency": 8.7,
+                        "throughput": 942,
+                        "uptime": 99.771,
+                        "capability": "fleet arbitration"
+            },
+            {
+                        "id": "A-04",
+                        "name": "Atmospheric Sensor 4",
+                        "domain": "environment",
+                        "zone": "Logistics",
+                        "district": "Harbor",
+                        "x": 420,
+                        "y": 361,
+                        "health": 96.9,
+                        "load": 56.7,
+                        "risk": 19,
+                        "status": "stable",
+                        "latency": 15.5,
+                        "throughput": 834,
+                        "uptime": 98.781,
+                        "capability": "fleet arbitration"
+            },
+            {
+                        "id": "A-05",
+                        "name": "Atmospheric Sensor 5",
+                        "domain": "environment",
+                        "zone": "Logistics",
+                        "district": "Apex",
+                        "x": 537,
+                        "y": 370,
+                        "health": 95.2,
+                        "load": 57.2,
+                        "risk": 31,
+                        "status": "stable",
+                        "latency": 12.5,
+                        "throughput": 826,
+                        "uptime": 99.797,
+                        "capability": "fleet arbitration"
+            },
+            {
+                        "id": "A-06",
+                        "name": "Atmospheric Sensor 6",
+                        "domain": "environment",
+                        "zone": "Logistics",
+                        "district": "Riverline",
+                        "x": 640,
+                        "y": 352,
+                        "health": 94.0,
+                        "load": 71.5,
+                        "risk": 65,
+                        "status": "watch",
+                        "latency": 7.8,
+                        "throughput": 942,
+                        "uptime": 99.176,
+                        "capability": "fleet arbitration"
+            },
+            {
+                        "id": "C-01",
+                        "name": "Comms Relay 1",
+                        "domain": "comms",
+                        "zone": "Comms",
+                        "district": "Harbor",
+                        "x": 115,
+                        "y": 429,
+                        "health": 85.3,
+                        "load": 60.2,
+                        "risk": 33,
+                        "status": "stable",
+                        "latency": 13.9,
+                        "throughput": 773,
+                        "uptime": 98.849,
+                        "capability": "mesh synchronization"
+            },
+            {
+                        "id": "C-02",
+                        "name": "Comms Relay 2",
+                        "domain": "comms",
+                        "zone": "Comms",
+                        "district": "Apex",
+                        "x": 218,
+                        "y": 438,
+                        "health": 84.4,
+                        "load": 34.2,
+                        "risk": 33,
+                        "status": "stable",
+                        "latency": 8.3,
+                        "throughput": 522,
+                        "uptime": 98.843,
+                        "capability": "mesh synchronization"
+            },
+            {
+                        "id": "C-03",
+                        "name": "Comms Relay 3",
+                        "domain": "comms",
+                        "zone": "Comms",
+                        "district": "Riverline",
+                        "x": 335,
+                        "y": 420,
+                        "health": 84.2,
+                        "load": 75.2,
+                        "risk": 25,
+                        "status": "stable",
+                        "latency": 14.1,
+                        "throughput": 429,
+                        "uptime": 99.089,
+                        "capability": "mesh synchronization"
+            },
+            {
+                        "id": "C-04",
+                        "name": "Comms Relay 4",
+                        "domain": "comms",
+                        "zone": "Comms",
+                        "district": "Atlas",
+                        "x": 438,
+                        "y": 429,
+                        "health": 93.3,
+                        "load": 76.3,
+                        "risk": 19,
+                        "status": "stable",
+                        "latency": 7.3,
+                        "throughput": 762,
+                        "uptime": 99.632,
+                        "capability": "mesh synchronization"
+            },
+            {
+                        "id": "C-05",
+                        "name": "Comms Relay 5",
+                        "domain": "comms",
+                        "zone": "Comms",
+                        "district": "Orion",
+                        "x": 555,
+                        "y": 438,
+                        "health": 93.3,
+                        "load": 83.9,
+                        "risk": 21,
+                        "status": "stable",
+                        "latency": 11.2,
+                        "throughput": 318,
+                        "uptime": 99.345,
+                        "capability": "mesh synchronization"
+            },
+            {
+                        "id": "C-06",
+                        "name": "Comms Relay 6",
+                        "domain": "comms",
+                        "zone": "Comms",
+                        "district": "Harbor",
+                        "x": 658,
+                        "y": 420,
+                        "health": 97.7,
+                        "load": 77.4,
+                        "risk": 51,
+                        "status": "stable",
+                        "latency": 7.3,
+                        "throughput": 352,
+                        "uptime": 98.593,
+                        "capability": "mesh synchronization"
+            }
+],
+            links: [
+            {
+                        "from": "T-01",
+                        "to": "T-02",
+                        "strength": 0.78
+            },
+            {
+                        "from": "T-01",
+                        "to": "S-01",
+                        "strength": 0.52
+            },
+            {
+                        "from": "T-02",
+                        "to": "T-03",
+                        "strength": 0.83
+            },
+            {
+                        "from": "T-02",
+                        "to": "S-02",
+                        "strength": 0.7
+            },
+            {
+                        "from": "T-03",
+                        "to": "T-04",
+                        "strength": 0.89
+            },
+            {
+                        "from": "T-03",
+                        "to": "S-03",
+                        "strength": 0.5
+            },
+            {
+                        "from": "T-04",
+                        "to": "T-05",
+                        "strength": 0.93
+            },
+            {
+                        "from": "T-04",
+                        "to": "S-04",
+                        "strength": 0.67
+            },
+            {
+                        "from": "T-05",
+                        "to": "T-06",
+                        "strength": 0.64
+            },
+            {
+                        "from": "T-05",
+                        "to": "S-05",
+                        "strength": 0.72
+            },
+            {
+                        "from": "T-06",
+                        "to": "S-06",
+                        "strength": 0.83
+            },
+            {
+                        "from": "S-01",
+                        "to": "S-02",
+                        "strength": 0.88
+            },
+            {
+                        "from": "S-01",
+                        "to": "E-01",
+                        "strength": 0.79
+            },
+            {
+                        "from": "S-02",
+                        "to": "S-03",
+                        "strength": 0.74
+            },
+            {
+                        "from": "S-02",
+                        "to": "E-02",
+                        "strength": 0.77
+            },
+            {
+                        "from": "S-03",
+                        "to": "S-04",
+                        "strength": 0.73
+            },
+            {
+                        "from": "S-03",
+                        "to": "E-03",
+                        "strength": 0.79
+            },
+            {
+                        "from": "S-04",
+                        "to": "S-05",
+                        "strength": 0.96
+            },
+            {
+                        "from": "S-04",
+                        "to": "E-04",
+                        "strength": 0.53
+            },
+            {
+                        "from": "S-05",
+                        "to": "S-06",
+                        "strength": 0.73
+            },
+            {
+                        "from": "S-05",
+                        "to": "E-05",
+                        "strength": 0.71
+            },
+            {
+                        "from": "S-06",
+                        "to": "E-06",
+                        "strength": 0.55
+            },
+            {
+                        "from": "E-01",
+                        "to": "E-02",
+                        "strength": 0.76
+            },
+            {
+                        "from": "E-01",
+                        "to": "L-01",
+                        "strength": 0.43
+            },
+            {
+                        "from": "E-02",
+                        "to": "E-03",
+                        "strength": 0.98
+            },
+            {
+                        "from": "E-02",
+                        "to": "L-02",
+                        "strength": 0.78
+            },
+            {
+                        "from": "E-03",
+                        "to": "E-04",
+                        "strength": 0.59
+            },
+            {
+                        "from": "E-03",
+                        "to": "L-03",
+                        "strength": 0.43
+            },
+            {
+                        "from": "E-04",
+                        "to": "E-05",
+                        "strength": 0.58
+            },
+            {
+                        "from": "E-04",
+                        "to": "L-04",
+                        "strength": 0.42
+            },
+            {
+                        "from": "E-05",
+                        "to": "E-06",
+                        "strength": 0.56
+            },
+            {
+                        "from": "E-05",
+                        "to": "L-05",
+                        "strength": 0.43
+            },
+            {
+                        "from": "E-06",
+                        "to": "L-06",
+                        "strength": 0.56
+            },
+            {
+                        "from": "L-01",
+                        "to": "L-02",
+                        "strength": 0.71
+            },
+            {
+                        "from": "L-01",
+                        "to": "A-01",
+                        "strength": 0.79
+            },
+            {
+                        "from": "L-02",
+                        "to": "L-03",
+                        "strength": 0.57
+            },
+            {
+                        "from": "L-02",
+                        "to": "A-02",
+                        "strength": 0.56
+            },
+            {
+                        "from": "L-03",
+                        "to": "L-04",
+                        "strength": 0.87
+            },
+            {
+                        "from": "L-03",
+                        "to": "A-03",
+                        "strength": 0.77
+            },
+            {
+                        "from": "L-04",
+                        "to": "L-05",
+                        "strength": 0.93
+            },
+            {
+                        "from": "L-04",
+                        "to": "A-04",
+                        "strength": 0.68
+            },
+            {
+                        "from": "L-05",
+                        "to": "L-06",
+                        "strength": 0.65
+            },
+            {
+                        "from": "L-05",
+                        "to": "A-05",
+                        "strength": 0.66
+            },
+            {
+                        "from": "L-06",
+                        "to": "A-06",
+                        "strength": 0.64
+            },
+            {
+                        "from": "A-01",
+                        "to": "A-02",
+                        "strength": 0.63
+            },
+            {
+                        "from": "A-01",
+                        "to": "C-01",
+                        "strength": 0.54
+            },
+            {
+                        "from": "A-02",
+                        "to": "A-03",
+                        "strength": 0.59
+            },
+            {
+                        "from": "A-02",
+                        "to": "C-02",
+                        "strength": 0.69
+            },
+            {
+                        "from": "A-03",
+                        "to": "A-04",
+                        "strength": 0.87
+            },
+            {
+                        "from": "A-03",
+                        "to": "C-03",
+                        "strength": 0.85
+            },
+            {
+                        "from": "A-04",
+                        "to": "A-05",
+                        "strength": 0.9
+            },
+            {
+                        "from": "A-04",
+                        "to": "C-04",
+                        "strength": 0.49
+            },
+            {
+                        "from": "A-05",
+                        "to": "A-06",
+                        "strength": 0.64
+            },
+            {
+                        "from": "A-05",
+                        "to": "C-05",
+                        "strength": 0.89
+            },
+            {
+                        "from": "A-06",
+                        "to": "C-06",
+                        "strength": 0.85
+            },
+            {
+                        "from": "C-01",
+                        "to": "C-02",
+                        "strength": 0.75
+            },
+            {
+                        "from": "C-02",
+                        "to": "C-03",
+                        "strength": 0.76
+            },
+            {
+                        "from": "C-03",
+                        "to": "C-04",
+                        "strength": 0.83
+            },
+            {
+                        "from": "C-04",
+                        "to": "C-05",
+                        "strength": 0.96
+            },
+            {
+                        "from": "C-05",
+                        "to": "C-06",
+                        "strength": 0.56
+            }
+],
+            incidents: [
+            {
+                        "id": "INC-001",
+                        "nodeId": "T-01",
+                        "title": "Pattern drift detected",
+                        "summary": "Harbor / Transit \u00b7 adaptive routing requires review.",
+                        "severity": "critical",
+                        "score": 83,
+                        "etaMin": 42,
+                        "owner": "Grid Lead",
+                        "state": "open",
+                        "createdAt": "14:38"
+            },
+            {
+                        "id": "INC-002",
+                        "nodeId": "T-02",
+                        "title": "Queue saturation projected",
+                        "summary": "Apex / Transit \u00b7 adaptive routing requires review.",
+                        "severity": "high",
+                        "score": 79,
+                        "etaMin": 34,
+                        "owner": "Control",
+                        "state": "contained",
+                        "createdAt": "14:18"
+            },
+            {
+                        "id": "INC-003",
+                        "nodeId": "T-03",
+                        "title": "Thermal variance outside band",
+                        "summary": "Riverline / Transit \u00b7 adaptive routing requires review.",
+                        "severity": "low",
+                        "score": 27,
+                        "etaMin": 39,
+                        "owner": "AutoOps",
+                        "state": "contained",
+                        "createdAt": "14:19"
+            },
+            {
+                        "id": "INC-004",
+                        "nodeId": "T-04",
+                        "title": "Transit congestion cascade",
+                        "summary": "Atlas / Transit \u00b7 adaptive routing requires review.",
+                        "severity": "low",
+                        "score": 32,
+                        "etaMin": 37,
+                        "owner": "Grid Lead",
+                        "state": "contained",
+                        "createdAt": "14:35"
+            },
+            {
+                        "id": "INC-005",
+                        "nodeId": "T-05",
+                        "title": "Unauthorized movement signature",
+                        "summary": "Orion / Transit \u00b7 adaptive routing requires review.",
+                        "severity": "medium",
+                        "score": 55,
+                        "etaMin": 26,
+                        "owner": "Signal Desk",
+                        "state": "monitoring",
+                        "createdAt": "14:35"
+            },
+            {
+                        "id": "INC-006",
+                        "nodeId": "T-06",
+                        "title": "Camera blind-angle event",
+                        "summary": "Harbor / Transit \u00b7 adaptive routing requires review.",
+                        "severity": "medium",
+                        "score": 46,
+                        "etaMin": 11,
+                        "owner": "Field Team",
+                        "state": "open",
+                        "createdAt": "14:36"
+            },
+            {
+                        "id": "INC-007",
+                        "nodeId": "S-01",
+                        "title": "Camera blind-angle event",
+                        "summary": "Atlas / Security \u00b7 anomaly classification requires review.",
+                        "severity": "medium",
+                        "score": 56,
+                        "etaMin": 5,
+                        "owner": "Control",
+                        "state": "contained",
+                        "createdAt": "14:53"
+            },
+            {
+                        "id": "INC-008",
+                        "nodeId": "S-02",
+                        "title": "Route arbitration conflict",
+                        "summary": "Orion / Security \u00b7 anomaly classification requires review.",
+                        "severity": "high",
+                        "score": 77,
+                        "etaMin": 44,
+                        "owner": "Control",
+                        "state": "contained",
+                        "createdAt": "14:55"
+            },
+            {
+                        "id": "INC-009",
+                        "nodeId": "S-03",
+                        "title": "Battery reserve degradation",
+                        "summary": "Harbor / Security \u00b7 anomaly classification requires review.",
+                        "severity": "medium",
+                        "score": 55,
+                        "etaMin": 12,
+                        "owner": "Control",
+                        "state": "open",
+                        "createdAt": "14:13"
+            },
+            {
+                        "id": "INC-010",
+                        "nodeId": "S-04",
+                        "title": "Air quality drop vector",
+                        "summary": "Apex / Security \u00b7 anomaly classification requires review.",
+                        "severity": "medium",
+                        "score": 56,
+                        "etaMin": 13,
+                        "owner": "AutoOps",
+                        "state": "contained",
+                        "createdAt": "14:47"
+            },
+            {
+                        "id": "INC-011",
+                        "nodeId": "S-05",
+                        "title": "Camera blind-angle event",
+                        "summary": "Riverline / Security \u00b7 anomaly classification requires review.",
+                        "severity": "low",
+                        "score": 47,
+                        "etaMin": 24,
+                        "owner": "AutoOps",
+                        "state": "open",
+                        "createdAt": "14:56"
+            },
+            {
+                        "id": "INC-012",
+                        "nodeId": "S-06",
+                        "title": "Route arbitration conflict",
+                        "summary": "Atlas / Security \u00b7 anomaly classification requires review.",
+                        "severity": "low",
+                        "score": 19,
+                        "etaMin": 9,
+                        "owner": "Field Team",
+                        "state": "open",
+                        "createdAt": "14:54"
+            },
+            {
+                        "id": "INC-013",
+                        "nodeId": "E-01",
+                        "title": "Unauthorized movement signature",
+                        "summary": "Apex / Environment \u00b7 predictive balancing requires review.",
+                        "severity": "medium",
+                        "score": 61,
+                        "etaMin": 18,
+                        "owner": "Control",
+                        "state": "open",
+                        "createdAt": "14:56"
+            },
+            {
+                        "id": "INC-014",
+                        "nodeId": "E-02",
+                        "title": "Transit congestion cascade",
+                        "summary": "Riverline / Environment \u00b7 predictive balancing requires review.",
+                        "severity": "medium",
+                        "score": 64,
+                        "etaMin": 5,
+                        "owner": "Grid Lead",
+                        "state": "open",
+                        "createdAt": "14:17"
+            },
+            {
+                        "id": "INC-015",
+                        "nodeId": "E-03",
+                        "title": "Mesh relay jitter spike",
+                        "summary": "Atlas / Environment \u00b7 predictive balancing requires review.",
+                        "severity": "low",
+                        "score": 28,
+                        "etaMin": 16,
+                        "owner": "Grid Lead",
+                        "state": "open",
+                        "createdAt": "14:39"
+            },
+            {
+                        "id": "INC-016",
+                        "nodeId": "E-04",
+                        "title": "Pattern drift detected",
+                        "summary": "Orion / Environment \u00b7 predictive balancing requires review.",
+                        "severity": "high",
+                        "score": 68,
+                        "etaMin": 39,
+                        "owner": "Grid Lead",
+                        "state": "contained",
+                        "createdAt": "14:11"
+            },
+            {
+                        "id": "INC-017",
+                        "nodeId": "E-05",
+                        "title": "Mesh relay jitter spike",
+                        "summary": "Harbor / Environment \u00b7 predictive balancing requires review.",
+                        "severity": "high",
+                        "score": 77,
+                        "etaMin": 44,
+                        "owner": "Field Team",
+                        "state": "open",
+                        "createdAt": "14:18"
+            },
+            {
+                        "id": "INC-018",
+                        "nodeId": "E-06",
+                        "title": "Transit congestion cascade",
+                        "summary": "Apex / Environment \u00b7 predictive balancing requires review.",
+                        "severity": "low",
+                        "score": 41,
+                        "etaMin": 39,
+                        "owner": "Grid Lead",
+                        "state": "contained",
+                        "createdAt": "14:32"
+            }
+],
+            presets: [
+            "show threat matrix",
+            "focus district 7",
+            "reroute fleet a12",
+            "stabilize grid a",
+            "inspect security cluster",
+            "list top risk nodes",
+            "engage energy conservation",
+            "open live log",
+            "center on harbor district",
+            "simulate camera anomaly"
+],
+            checklist: [
+            {
+                        "task": "Validate perimeter anomalies",
+                        "done": false
+            },
+            {
+                        "task": "Rebalance transport mesh",
+                        "done": true
+            },
+            {
+                        "task": "Audit environmental band drift",
+                        "done": false
+            },
+            {
+                        "task": "Confirm reserve energy margin",
+                        "done": true
+            },
+            {
+                        "task": "Clear route conflict backlog",
+                        "done": false
+            },
+            {
+                        "task": "Review comms relay jitter",
+                        "done": false
+            }
+],
+            history: {
+            "alerts": [
+                        13,
+                        24,
+                        10,
+                        22,
+                        22,
+                        15,
+                        16,
+                        21,
+                        16,
+                        27,
+                        28,
+                        18,
+                        22,
+                        28,
+                        28,
+                        12,
+                        17,
+                        22,
+                        27,
+                        11,
+                        14,
+                        22,
+                        22,
+                        20
+            ],
+            "risk": [
+                        72,
+                        53,
+                        57,
+                        70,
+                        76,
+                        42,
+                        70,
+                        45,
+                        78,
+                        55,
+                        54,
+                        46,
+                        77,
+                        78,
+                        48,
+                        73,
+                        81,
+                        82,
+                        36,
+                        41,
+                        70,
+                        35,
+                        65,
+                        57
+            ],
+            "energy": [
+                        1.64,
+                        1.73,
+                        1.7,
+                        1.33,
+                        1.63,
+                        1.63,
+                        1.78,
+                        1.63,
+                        1.41,
+                        1.68,
+                        1.58,
+                        1.23,
+                        1.18,
+                        1.54,
+                        1.18,
+                        1.23,
+                        1.42,
+                        1.59,
+                        1.26,
+                        1.59,
+                        1.41,
+                        1.32,
+                        1.32,
+                        1.57
+            ],
+            "throughput": [
+                        882,
+                        551,
+                        496,
+                        471,
+                        894,
+                        811,
+                        860,
+                        485,
+                        788,
+                        741,
+                        577,
+                        789,
+                        741,
+                        913,
+                        673,
+                        582,
+                        880,
+                        600,
+                        846,
+                        513,
+                        969,
+                        627,
+                        588,
+                        517
+            ]
+}
+        };
+
+        const state = {
+            nav: "overview",
+            mapMode: "all",
+            chartMode: "alerts",
+            incidentFilter: "all",
+            hoveredNodeId: null,
+            selectedNodeId: DATA.nodes[0]?.id || null,
+            selectedIncidentId: DATA.incidents[0]?.id || null,
+            logPaused: false,
+            paletteQuery: "",
+            consoleResponses: [],
+            logs: [],
+            tasks: structuredClone(DATA.checklist),
+            simulationTick: 0,
+            frameTime: 0,
+            pointer: { x: 0, y: 0, inside: false },
+            history: {
+                alerts: [...DATA.history.alerts],
+                risk: [...DATA.history.risk],
+                energy: [...DATA.history.energy],
+                throughput: [...DATA.history.throughput]
+            },
+            metrics: {
+                uptime: 99.987,
+                resolution: 4.2,
+                activeAlerts: 14,
+                co2: 412,
+                transit: 88,
+                energy: 1.42,
+                compute: 0.74,
+                latency: 7.8
+            },
+            settings: {
+                operatorName: "Operator",
+                operatorNote: "Hold signal integrity. Watch District 7 drift.",
+                accent: "#46c8ff",
+                tempo: 5,
+                defaultMode: "all",
+                labelDensity: "smart"
+            },
+            derived: {
+                visibleNodes: [],
+                visibleIncidents: [],
+                matrixRows: []
+            }
+        };
+
+        const refs = {};
+
+        function qs(id) {
+            return document.getElementById(id);
+        }
+
+        function clamp(value, min, max) {
+            return Math.min(max, Math.max(min, value));
+        }
+
+        function lerp(a, b, t) {
+            return a + (b - a) * t;
+        }
+
+        function rand(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        function randInt(min, max) {
+            return Math.floor(rand(min, max + 1));
+        }
+
+        function formatNumber(value, digits = 0) {
+            return Number(value).toFixed(digits);
+        }
+
+        function formatPercent(value, digits = 1) {
+            return `${Number(value).toFixed(digits)}%`;
+        }
+
+        function formatTimeStamp(date = new Date()) {
+            const h = String(date.getHours()).padStart(2, "0");
+            const m = String(date.getMinutes()).padStart(2, "0");
+            const s = String(date.getSeconds()).padStart(2, "0");
+            return `${h}:${m}:${s}`;
+        }
+
+        function severityClass(score) {
+            if (score >= 82) return "critical";
+            if (score >= 64) return "high";
+            if (score >= 42) return "medium";
+            return "low";
+        }
+
+        function loadSettings() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return;
+                const parsed = JSON.parse(raw);
+                state.settings = {
+                    ...state.settings,
+                    ...parsed
+                };
+            } catch (error) {
+                console.warn("Failed to load settings", error);
+            }
+        }
+
+        function saveSettings() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state.settings));
+            applyAccent(state.settings.accent);
+        }
+
+        function resetSettings() {
+            localStorage.removeItem(STORAGE_KEY);
+            state.settings = {
+                operatorName: "Operator",
+                operatorNote: "Hold signal integrity. Watch District 7 drift.",
+                accent: "#46c8ff",
+                tempo: 5,
+                defaultMode: "all",
+                labelDensity: "smart"
+            };
+            state.mapMode = state.settings.defaultMode;
+            syncSettingsForm();
+            saveSettings();
+            renderAll();
+            toast("Settings reset.");
+        }
+
+        function applyAccent(color) {
+            document.documentElement.style.setProperty("--accent", color);
+        }
+
+        function getNodeById(nodeId) {
+            return DATA.nodes.find((node) => node.id === nodeId) || null;
+        }
+
+        function getIncidentById(incidentId) {
+            return DATA.incidents.find((incident) => incident.id === incidentId) || null;
+        }
+
+        function computeDerived() {
+            state.derived.visibleNodes = DATA.nodes.filter((node) => {
+                if (state.nav !== "overview" && state.nav !== "advisor" && node.domain !== state.nav) return false;
+                if (state.mapMode !== "all" && node.domain !== state.mapMode) return false;
+                return true;
+            });
+
+            state.derived.visibleIncidents = DATA.incidents
+                .filter((incident) => {
+                    const node = getNodeById(incident.nodeId);
+                    if (!node) return false;
+                    if (state.nav !== "overview" && state.nav !== "advisor" && node.domain !== state.nav) return false;
+                    if (state.incidentFilter === "critical") return incident.score >= 82;
+                    if (state.incidentFilter === "watch") return incident.score >= 54;
+                    return true;
+                })
+                .sort((a, b) => b.score - a.score);
+
+            state.derived.matrixRows = [...DATA.nodes]
+                .sort((a, b) => b.risk - a.risk)
+                .slice(0, 7)
+                .map((node) => {
+                    return {
+                        nodeId: node.id,
+                        name: node.name,
+                        domain: node.domain,
+                        district: node.district,
+                        risk: node.risk,
+                        load: node.load
+                    };
+                });
+        }
+
+        function generateLogMessage() {
+            const node = DATA.nodes[randInt(0, DATA.nodes.length - 1)];
+            const incident = DATA.incidents[randInt(0, DATA.incidents.length - 1)];
+            const template = ["Predictive model refreshed for {district}", "Signal arbitration completed at {node}", "Load redistribution applied to {zone}", "Watch threshold tightened for {district}", "False positive suppressed at {node}", "Cross-domain confidence score recalibrated", "Environmental band deviation narrowed", "Incident {inc} escalated to {owner}", "Operator selected {node} inspector profile", "Latency envelope improved by {pct}%"][randInt(0, 9)];
+            return template
+                .replaceAll("{district}", node.district)
+                .replaceAll("{node}", node.id)
+                .replaceAll("{zone}", node.zone)
+                .replaceAll("{inc}", incident.id)
+                .replaceAll("{owner}", incident.owner)
+                .replaceAll("{pct}", String(randInt(3, 19)));
+        }
+
+        function seedLogs() {
+            for (let i = 0; i < 18; i += 1) {
+                pushLog(generateLogMessage(), i % 4 === 0 ? "watch" : i % 7 === 0 ? "critical" : "info", true);
+            }
+        }
+
+        function pushLog(message, priority = "info", silent = false) {
+            state.logs.unshift({
+                id: `log-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+                time: formatTimeStamp(),
+                message,
+                priority
+            });
+            state.logs = state.logs.slice(0, CONSTANTS.LOG_LIMIT);
+            if (!silent) renderLogs();
+        }
+
+        function pushResponse(title, body, level = "info") {
+            state.consoleResponses.unshift({
+                id: `rsp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+                title,
+                body,
+                level
+            });
+            state.consoleResponses = state.consoleResponses.slice(0, CONSTANTS.RESPONSE_LIMIT);
+            renderConsoleResponses();
+        }
+
+        function toast(message) {
+            const layer = refs.toastLayer;
+            const node = document.createElement("div");
+            node.className = "toast";
+            node.textContent = message;
+            layer.appendChild(node);
+            requestAnimationFrame(() => node.classList.add("show"));
+            setTimeout(() => {
+                node.classList.remove("show");
+                setTimeout(() => node.remove(), 240);
+            }, CONSTANTS.TOAST_LIFE);
+        }
+
+        function makeNav() {
+            refs.navRail.innerHTML = NAV_ITEMS.map((item) => `
+                <button class="nav-btn ${item.key === state.nav ? "active" : ""}" data-nav="${item.key}" title="${item.label}">
+                    <span>${item.icon}</span>
+                </button>
+            `).join("");
+        }
+
+        function makeMapModeButtons() {
+            refs.mapModeButtons.innerHTML = MAP_MODES.map((mode) => `
+                <button class="toggle-btn ${mode.key === state.mapMode ? "active" : ""}" data-map-mode="${mode.key}">
+                    ${mode.label}
+                </button>
+            `).join("");
+        }
+
+        function makeChartModeButtons() {
+            refs.chartModeButtons.innerHTML = CHART_MODES.map((mode) => `
+                <button class="toggle-btn ${mode.key === state.chartMode ? "active" : ""}" data-chart-mode="${mode.key}">
+                    ${mode.label}
+                </button>
+            `).join("");
+        }
+
+        function renderKPIs() {
+            const trendClasses = {
+                uptime: "trend-up",
+                resolution: "trend-down",
+                activeAlerts: "trend-risk",
+                co2: "trend-risk",
+                transit: "trend-up",
+                energy: "trend-down"
+            };
+
+            const cards = [
+                {
+                    key: "uptime",
+                    label: "Network Uptime",
+                    value: `${formatNumber(state.metrics.uptime, 3)}%`,
+                    trend: "+0.004%",
+                    trendClass: trendClasses.uptime,
+                    footer: "mesh stable"
+                },
+                {
+                    key: "resolution",
+                    label: "Incident Resolution",
+                    value: `${formatNumber(state.metrics.resolution, 1)} min`,
+                    trend: "-11%",
+                    trendClass: trendClasses.resolution,
+                    footer: "faster than baseline"
+                },
+                {
+                    key: "activeAlerts",
+                    label: "Active Alerts",
+                    value: `${Math.round(state.metrics.activeAlerts)}`,
+                    trend: `${DATA.incidents.filter((incident) => incident.score >= 82).length} critical`,
+                    trendClass: trendClasses.activeAlerts,
+                    footer: "queue pressure"
+                },
+                {
+                    key: "co2",
+                    label: "CO₂",
+                    value: `${Math.round(state.metrics.co2)} ppm`,
+                    trend: "+2.4",
+                    trendClass: trendClasses.co2,
+                    footer: "environmental drift"
+                },
+                {
+                    key: "transit",
+                    label: "Transit Efficiency",
+                    value: `${Math.round(state.metrics.transit)}%`,
+                    trend: "+5%",
+                    trendClass: trendClasses.transit,
+                    footer: "routes adjusted"
+                },
+                {
+                    key: "energy",
+                    label: "Energy Load",
+                    value: `${formatNumber(state.metrics.energy, 2)} GW`,
+                    trend: "-2%",
+                    trendClass: trendClasses.energy,
+                    footer: "reserve margin safe"
+                }
+            ];
+
+            refs.kpiStrip.innerHTML = cards.map((card) => `
+                <article class="kpi-card" data-kpi="${card.key}">
+                    <div class="kpi-label">${card.label}</div>
+                    <div class="kpi-value">${card.value}</div>
+                    <div class="kpi-meta-row">
+                        <span class="${card.trendClass}">${card.trend}</span>
+                        <span class="small-muted">${card.footer}</span>
+                    </div>
+                </article>
+            `).join("");
+        }
+
+        function renderCommandChips() {
+            refs.commandChips.innerHTML = DATA.presets.map((preset) => `
+                <button class="command-chip" data-preset="${preset}">${preset}</button>
+            `).join("");
+        }
+
+        function renderConsoleResponses() {
+            refs.consoleResponses.innerHTML = state.consoleResponses.map((item) => `
+                <div class="response-card">
+                    <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">
+                        <strong>${item.title}</strong>
+                        <span class="small-muted">${item.level.toUpperCase()}</span>
+                    </div>
+                    <div class="muted" style="margin-top:8px;">${item.body}</div>
+                </div>
+            `).join("");
+        }
+
+        function renderIncidents() {
+            refs.incidentList.innerHTML = state.derived.visibleIncidents.map((incident) => {
+                const node = getNodeById(incident.nodeId);
+                const active = incident.id === state.selectedIncidentId ? "active" : "";
+                return `
+                    <article class="incident-card ${active}" data-incident-id="${incident.id}">
+                        <div class="incident-top">
+                            <div>
+                                <div class="severity ${severityClass(incident.score)}">${severityClass(incident.score)}</div>
+                                <div style="margin-top:8px;font-weight:700;">${incident.title}</div>
+                            </div>
+                            <div class="incident-score">${incident.score}</div>
+                        </div>
+                        <div class="incident-meta">${incident.summary}</div>
+                        <div class="incident-meta">
+                            ${incident.id} · ${node ? node.district : "Unknown"} · ETA ${incident.etaMin}m · ${incident.owner}
+                        </div>
+                    </article>
+                `;
+            }).join("") || `<div class="response-card">No incidents match the current filter.</div>`;
+        }
+
+        function renderInspector() {
+            const node = getNodeById(state.selectedNodeId);
+            if (!node) {
+                refs.inspectorContent.innerHTML = `<div class="response-card">Select a node on the map or from an incident.</div>`;
+                refs.selectionSummaryTitle.textContent = "No node selected";
+                refs.selectionSummaryGrid.innerHTML = `
+                    <div><div class="small-muted">Risk</div><strong>--</strong></div>
+                    <div><div class="small-muted">Load</div><strong>--</strong></div>
+                    <div><div class="small-muted">Health</div><strong>--</strong></div>
+                `;
+                return;
+            }
+
+            const nodeIncidents = DATA.incidents.filter((incident) => incident.nodeId === node.id);
+            refs.selectionSummaryTitle.textContent = `${node.id} · ${node.name}`;
+            refs.selectionSummaryGrid.innerHTML = `
+                <div><div class="small-muted">Risk</div><strong>${node.risk}</strong></div>
+                <div><div class="small-muted">Load</div><strong>${formatNumber(node.load, 1)}%</strong></div>
+                <div><div class="small-muted">Health</div><strong>${formatNumber(node.health, 1)}%</strong></div>
+            `;
+
+            refs.inspectorContent.innerHTML = `
+                <div class="inspector-grid">
+                    <div class="inspector-card">
+                        <div class="small-muted">Node</div>
+                        <strong>${node.id}</strong>
+                        <div class="muted" style="margin-top:4px;">${node.name}</div>
+                    </div>
+                    <div class="inspector-card">
+                        <div class="small-muted">District</div>
+                        <strong>${node.district}</strong>
+                        <div class="muted" style="margin-top:4px;">${node.zone}</div>
+                    </div>
+                    <div class="inspector-card">
+                        <div class="small-muted">Health</div>
+                        <strong>${formatPercent(node.health, 1)}</strong>
+                        <div class="progress-line" style="margin-top:8px;"><span style="width:${node.health}%;"></span></div>
+                    </div>
+                    <div class="inspector-card">
+                        <div class="small-muted">Risk</div>
+                        <strong>${node.risk}</strong>
+                        <div class="progress-line" style="margin-top:8px;"><span style="width:${node.risk}%;"></span></div>
+                    </div>
+                    <div class="inspector-card">
+                        <div class="small-muted">Load</div>
+                        <strong>${formatPercent(node.load, 1)}</strong>
+                        <div class="muted" style="margin-top:6px;">${node.capability}</div>
+                    </div>
+                    <div class="inspector-card">
+                        <div class="small-muted">Latency</div>
+                        <strong>${formatNumber(node.latency, 1)} ms</strong>
+                        <div class="muted" style="margin-top:6px;">${node.throughput} msg/s</div>
+                    </div>
+                </div>
+                <div class="response-card">
+                    <strong>Linked incidents</strong>
+                    <div class="muted" style="margin-top:8px;">
+                        ${nodeIncidents.length ? nodeIncidents.map((item) => `${item.id} (${item.score})`).join(" · ") : "No linked incidents."}
+                    </div>
+                </div>
+                <div class="response-card">
+                    <strong>Operator note</strong>
+                    <div class="muted" style="margin-top:8px;">${state.settings.operatorNote}</div>
+                </div>
+            `;
+
+            renderDrawer();
+        }
+
+        function renderLogs() {
+            refs.logFeed.innerHTML = state.logs.map((log) => `
+                <div class="log-row">
+                    <div class="log-time">${log.time}</div>
+                    <div>${log.message}</div>
+                    <div class="log-priority">${log.priority}</div>
+                </div>
+            `).join("");
+        }
+
+        function renderMatrix() {
+            refs.matrixTable.innerHTML = state.derived.matrixRows.map((row) => `
+                <div class="matrix-row">
+                    <div>
+                        <div style="font-weight:700;">${row.name}</div>
+                        <div class="small-muted">${row.nodeId} · ${row.district}</div>
+                    </div>
+                    <div>${row.domain}</div>
+                    <div>${row.risk}</div>
+                    <div>
+                        <div class="progress-line"><span style="width:${row.load}%;"></span></div>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function renderTasks() {
+            refs.taskList.innerHTML = state.tasks.map((task, index) => `
+                <div class="task-row ${task.done ? "done" : ""}" data-task-index="${index}">
+                    <div class="task-check">✓</div>
+                    <div>${task.task}</div>
+                    <div class="small-muted">${task.done ? "done" : "open"}</div>
+                </div>
+            `).join("");
+        }
+
+        function renderPalette(query = "") {
+            const normalized = query.trim().toLowerCase();
+            const results = [];
+
+            DATA.presets.forEach((preset) => {
+                if (!normalized || preset.includes(normalized)) {
+                    results.push({
+                        type: "command",
+                        label: preset,
+                        meta: "preset command",
+                        action: () => executeCommand(preset)
+                    });
+                }
+            });
+
+            DATA.nodes.forEach((node) => {
+                const target = `${node.id} ${node.name} ${node.district} ${node.domain}`.toLowerCase();
+                if (!normalized || target.includes(normalized)) {
+                    results.push({
+                        type: "node",
+                        label: `${node.id} · ${node.name}`,
+                        meta: `${node.district} · risk ${node.risk}`,
+                        action: () => {
+                            selectNode(node.id);
+                            closeModal("commandPaletteModal");
+                        }
+                    });
+                }
+            });
+
+            DATA.incidents.forEach((incident) => {
+                const target = `${incident.id} ${incident.title} ${incident.summary}`.toLowerCase();
+                if (!normalized || target.includes(normalized)) {
+                    results.push({
+                        type: "incident",
+                        label: `${incident.id} · ${incident.title}`,
+                        meta: `${incident.owner} · ETA ${incident.etaMin}m`,
+                        action: () => {
+                            state.selectedIncidentId = incident.id;
+                            selectNode(incident.nodeId);
+                            closeModal("commandPaletteModal");
+                        }
+                    });
+                }
+            });
+
+            refs.paletteResults.innerHTML = results.slice(0, 18).map((result, index) => `
+                <div class="timeline-row" data-palette-index="${index}">
+                    <div class="timeline-stamp">${result.type.toUpperCase()}</div>
+                    <div>
+                        <div style="font-weight:700;">${result.label}</div>
+                        <div class="small-muted">${result.meta}</div>
+                    </div>
+                </div>
+            `).join("") || `<div class="response-card">No matches.</div>`;
+
+            refs.paletteResults.querySelectorAll("[data-palette-index]").forEach((row, index) => {
+                row.addEventListener("click", () => results[index]?.action());
+            });
+
+            refs.paletteResults.dataset.resultCount = String(results.length);
+            refs.paletteResults._results = results;
+        }
+
+        function syncSettingsForm() {
+            refs.operatorNameInput.value = state.settings.operatorName;
+            refs.operatorNoteInput.value = state.settings.operatorNote;
+            refs.tempoRange.value = String(state.settings.tempo);
+            refs.tempoValue.textContent = String(state.settings.tempo);
+            refs.defaultModeSelect.value = state.settings.defaultMode;
+            refs.labelDensitySelect.value = state.settings.labelDensity;
+            refs.paletteSwatches.innerHTML = ACCENTS.map((accent) => `
+                <button class="swatch ${accent === state.settings.accent ? "active" : ""}" data-swatch="${accent}" style="background:${accent};"></button>
+            `).join("");
+        }
+
+        function updateOverlaySummary() {
+            refs.overlayNodes.textContent = String(state.derived.visibleNodes.length);
+            refs.overlayLinks.textContent = String(DATA.links.filter((link) => {
+                return state.derived.visibleNodes.some((node) => node.id === link.from) &&
+                    state.derived.visibleNodes.some((node) => node.id === link.to);
+            }).length);
+            refs.overlayWatch.textContent = String(state.derived.visibleNodes.filter((node) => node.risk >= 54).length);
+            refs.overlayCritical.textContent = String(state.derived.visibleNodes.filter((node) => node.risk >= 82).length);
+        }
+
+        function renderDrawer() {
+            const node = getNodeById(state.selectedNodeId);
+            if (!node) {
+                refs.drawerContent.innerHTML = `<div class="response-card">No node selected.</div>`;
+                return;
+            }
+
+            const linked = DATA.links.filter((link) => link.from === node.id || link.to === node.id);
+            const nodeIncidents = DATA.incidents.filter((incident) => incident.nodeId === node.id);
+            const historyRows = state.logs.filter((log) => log.message.includes(node.id) || log.message.includes(node.district)).slice(0, 8);
+
+            refs.drawerContent.innerHTML = `
+                <div class="response-card">
+                    <strong>${node.id} · ${node.name}</strong>
+                    <div class="muted" style="margin-top:8px;">${node.district} · ${node.zone} · capability: ${node.capability}</div>
+                </div>
+
+                <div class="detail-grid">
+                    <div class="inspector-card">
+                        <div class="small-muted">Risk</div>
+                        <strong>${node.risk}</strong>
+                    </div>
+                    <div class="inspector-card">
+                        <div class="small-muted">Health</div>
+                        <strong>${formatPercent(node.health, 1)}</strong>
+                    </div>
+                    <div class="inspector-card">
+                        <div class="small-muted">Load</div>
+                        <strong>${formatPercent(node.load, 1)}</strong>
+                    </div>
+                    <div class="inspector-card">
+                        <div class="small-muted">Uptime</div>
+                        <strong>${formatPercent(node.uptime, 3)}</strong>
+                    </div>
+                    <div class="inspector-card">
+                        <div class="small-muted">Latency</div>
+                        <strong>${formatNumber(node.latency, 1)} ms</strong>
+                    </div>
+                    <div class="inspector-card">
+                        <div class="small-muted">Throughput</div>
+                        <strong>${node.throughput} msg/s</strong>
+                    </div>
+                </div>
+
+                <div class="response-card">
+                    <strong>Linked paths</strong>
+                    <div class="muted" style="margin-top:8px;">
+                        ${linked.length ? linked.map((path) => `${path.from} ⇄ ${path.to} (${Math.round(path.strength * 100)}%)`).join("<br>") : "No visible links."}
+                    </div>
+                </div>
+
+                <div class="response-card">
+                    <strong>Associated incidents</strong>
+                    <div class="muted" style="margin-top:8px;">
+                        ${nodeIncidents.length ? nodeIncidents.map((incident) => `${incident.id} · ${incident.title} · score ${incident.score}`).join("<br>") : "No associated incidents."}
+                    </div>
+                </div>
+
+                <div class="response-card">
+                    <strong>Recent history</strong>
+                    <div class="muted" style="margin-top:8px;">
+                        ${historyRows.length ? historyRows.map((row) => `${row.time} · ${row.message}`).join("<br>") : "No history yet."}
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(id) {
+            qs(id)?.classList.add("show");
+            qs(id)?.setAttribute("aria-hidden", "false");
+        }
+
+        function closeModal(id) {
+            qs(id)?.classList.remove("show");
+            qs(id)?.setAttribute("aria-hidden", "true");
+        }
+
+        function openDrawer() {
+            refs.inspectorDrawer.classList.add("show");
+        }
+
+        function closeDrawer() {
+            refs.inspectorDrawer.classList.remove("show");
+        }
+
+        function selectNode(nodeId) {
+            if (!getNodeById(nodeId)) return;
+            state.selectedNodeId = nodeId;
+            renderInspector();
+            drawMap();
+            toast(`Selected ${nodeId}`);
+        }
+
+        function mutateTask(index) {
+            const task = state.tasks[index];
+            if (!task) return;
+            task.done = !task.done;
+            renderTasks();
+            pushLog(`Checklist item "${task.task}" marked ${task.done ? "done" : "open"}.`, "info");
+            renderLogs();
+        }
+
+        function executeCommand(rawInput) {
+            const input = rawInput.trim();
+            if (!input) return;
+            const command = input.toLowerCase();
+
+            if (command.includes("show threat matrix")) {
+                state.chartMode = "risk";
+                makeChartModeButtons();
+                drawChart();
+                pushResponse("Threat Matrix", "Risk view prioritized. Top risk nodes moved to the matrix panel.", "info");
+                pushLog("Threat matrix requested by operator.", "info");
+                renderMatrix();
+                return;
+            }
+
+            if (command.includes("focus district")) {
+                const match = input.match(/district\s+([a-z0-9-]+)/i);
+                const token = match ? match[1].toLowerCase() : "7";
+                const target = DATA.nodes.find((node) => node.district.toLowerCase().includes(token));
+                if (target) {
+                    selectNode(target.id);
+                    pushResponse("District Focus", `Centered review around ${target.district} via ${target.id}.`, "info");
+                    pushLog(`Focused operational context on ${target.district}.`, "watch");
+                    return;
+                }
+            }
+
+            if (command.includes("inspect")) {
+                const token = input.replace(/inspect/i, "").trim().toLowerCase();
+                const target = DATA.nodes.find((node) =>
+                    node.id.toLowerCase().includes(token) ||
+                    node.name.toLowerCase().includes(token) ||
+                    node.domain.toLowerCase().includes(token)
+                );
+                if (target) {
+                    selectNode(target.id);
+                    pushResponse("Inspector", `Inspector opened for ${target.id} · ${target.name}.`, "info");
+                    return;
+                }
+            }
+
+            if (command.includes("stabilize")) {
+                applyScenario("stabilize");
+                return;
+            }
+
+            if (command.includes("optimize")) {
+                applyScenario("optimize");
+                return;
+            }
+
+            if (command.includes("conserve")) {
+                applyScenario("conserve");
+                return;
+            }
+
+            if (command.includes("reroute")) {
+                const target = DATA.nodes.find((node) => node.domain === "logistics") || DATA.nodes[0];
+                target.load = clamp(target.load - 6.2, 16, 100);
+                pushResponse("Reroute Applied", `${target.id} load reduced to ${formatNumber(target.load, 1)}%. Fleet arbitration updated.`, "success");
+                pushLog(`Logistics reroute pushed to ${target.id}.`, "watch");
+                renderAll();
+                return;
+            }
+
+            if (command.includes("list top risk")) {
+                const summary = state.derived.matrixRows.map((row) => `${row.nodeId} ${row.risk}`).join(" · ");
+                pushResponse("Top Risk Nodes", summary, "info");
+                return;
+            }
+
+            pushResponse("Command Parsed", `No direct automation bound. Kept as advisory note: "${input}".`, "watch");
+            pushLog(`Advisory command stored: "${input}".`, "info");
+        }
+
+        function applyScenario(action) {
+            const node = getNodeById(state.selectedNodeId) || DATA.nodes[0];
+            if (!node) return;
+
+            switch (action) {
+                case "stabilize":
+                    node.risk = clamp(node.risk - randInt(5, 11), 8, 99);
+                    node.health = clamp(node.health + rand(1.4, 3.1), 0, 100);
+                    state.metrics.activeAlerts = clamp(state.metrics.activeAlerts - randInt(1, 2), 6, 40);
+                    pushResponse("Stabilize", `${node.id} pressure reduced. Risk now ${node.risk}.`, "success");
+                    pushLog(`Stabilization routine executed on ${node.id}.`, "info");
+                    break;
+
+                case "optimize":
+                    node.load = clamp(node.load - rand(3.1, 8.6), 10, 100);
+                    node.throughput = Math.round(node.throughput + rand(18, 62));
+                    state.metrics.transit = clamp(state.metrics.transit + rand(1.2, 2.6), 40, 100);
+                    pushResponse("Optimize", `${node.id} throughput increased to ${node.throughput} msg/s.`, "success");
+                    pushLog(`Optimization pass improved throughput at ${node.id}.`, "info");
+                    break;
+
+                case "conserve":
+                    state.metrics.energy = clamp(state.metrics.energy - rand(0.04, 0.12), 0.8, 2.2);
+                    node.load = clamp(node.load - rand(2.0, 5.0), 10, 100);
+                    pushResponse("Conserve", `Energy load shifted to ${formatNumber(state.metrics.energy, 2)} GW.`, "success");
+                    pushLog(`Conservation mode applied around ${node.district}.`, "watch");
+                    break;
+
+                case "seal":
+                    node.risk = clamp(node.risk - randInt(2, 8), 5, 100);
+                    pushResponse("Seal Perimeter", `${node.district} perimeter constraints tightened.`, "watch");
+                    pushLog(`Perimeter control engaged around ${node.district}.`, "critical");
+                    break;
+
+                default:
+                    break;
+            }
+
+            DATA.incidents.forEach((incident) => {
+                if (incident.nodeId === node.id) {
+                    incident.score = clamp(incident.score - randInt(1, 7), 5, 99);
+                    incident.severity = severityClass(incident.score);
+                }
+            });
+
+            renderAll();
+            toast(`Scenario "${action}" executed.`);
+        }
+
+        function exportSnapshot() {
+            const payload = {
+                exportedAt: new Date().toISOString(),
+                settings: state.settings,
+                metrics: state.metrics,
+                selectedNode: getNodeById(state.selectedNodeId),
+                selectedIncident: getIncidentById(state.selectedIncidentId),
+                visibleIncidentCount: state.derived.visibleIncidents.length,
+                logs: state.logs.slice(0, 16),
+                tasks: state.tasks
+            };
+
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+            const href = URL.createObjectURL(blob);
+            const anchor = document.createElement("a");
+            anchor.href = href;
+            anchor.download = "clearglass-nexus-snapshot.json";
+            anchor.click();
+            URL.revokeObjectURL(href);
+            toast("Snapshot exported.");
+        }
+
+        function buildTooltip(node) {
+            if (!node) return "";
+            return `
+                <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">
+                    <strong>${node.id}</strong>
+                    <span class="severity ${severityClass(node.risk)}">${severityClass(node.risk)}</span>
+                </div>
+                <div class="muted" style="margin-top:8px;">${node.name} · ${node.district}</div>
+                <div class="mini-grid">
+                    <div><div class="small-muted">Risk</div><strong>${node.risk}</strong></div>
+                    <div><div class="small-muted">Load</div><strong>${formatNumber(node.load, 1)}%</strong></div>
+                    <div><div class="small-muted">Health</div><strong>${formatNumber(node.health, 1)}%</strong></div>
+                </div>
+            `;
+        }
+
+        function resizeCanvasToDisplaySize(canvas) {
+            const ratio = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            const width = Math.max(1, Math.round(rect.width * ratio));
+            const height = Math.max(1, Math.round(rect.height * ratio));
+            if (canvas.width !== width || canvas.height !== height) {
+                canvas.width = width;
+                canvas.height = height;
+            }
+            return { ratio, width, height };
+        }
+
+        function nodeVisible(node) {
+            return state.derived.visibleNodes.some((item) => item.id === node.id);
+        }
+
+        function domainColor(domain, alpha = 1) {
+            const accent = state.settings.accent;
+            const map = {
+                transport: `rgba(99, 214, 255, ${alpha})`,
+                security: `rgba(255, 110, 130, ${alpha})`,
+                energy: `rgba(255, 200, 92, ${alpha})`,
+                environment: `rgba(86, 247, 193, ${alpha})`,
+                logistics: `rgba(122, 208, 255, ${alpha})`,
+                comms: `rgba(171, 140, 255, ${alpha})`
+            };
+            return map[domain] || accent;
+        }
+
+        function getCanvasNodePosition(node, width, height) {
+            const x = (node.x / 800) * width;
+            const y = (node.y / 500) * height;
+            return { x, y };
+        }
+
+        function pickNodeAt(canvasX, canvasY, width, height) {
+            const visibleNodes = state.derived.visibleNodes;
+            for (let i = visibleNodes.length - 1; i >= 0; i -= 1) {
+                const node = visibleNodes[i];
+                const pos = getCanvasNodePosition(node, width, height);
+                const radius = node.id === state.selectedNodeId ? 13 : 11;
+                const dist = Math.hypot(canvasX - pos.x, canvasY - pos.y);
+                if (dist <= radius + 8) return node;
+            }
+            return null;
+        }
+
+        function drawMap() {
+            const canvas = refs.mapCanvas;
+            const ctx = canvas.getContext("2d");
+            const { ratio, width, height } = resizeCanvasToDisplaySize(canvas);
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.clearRect(0, 0, width, height);
+
+            const logicalWidth = width / ratio;
+            const logicalHeight = height / ratio;
+            ctx.scale(ratio, ratio);
+
+            // Background grid
+            ctx.save();
+            ctx.strokeStyle = "rgba(255,255,255,0.05)";
+            ctx.lineWidth = 1;
+            for (let x = 26; x < logicalWidth; x += 46) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, logicalHeight);
+                ctx.stroke();
+            }
+            for (let y = 22; y < logicalHeight; y += 42) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(logicalWidth, y);
+                ctx.stroke();
+            }
+            ctx.restore();
+
+            // Soft districts
+            const districtGroups = [...new Set(state.derived.visibleNodes.map((node) => node.district))];
+            districtGroups.forEach((district, index) => {
+                const nodes = state.derived.visibleNodes.filter((node) => node.district === district);
+                if (!nodes.length) return;
+                const xs = nodes.map((node) => getCanvasNodePosition(node, logicalWidth, logicalHeight).x);
+                const ys = nodes.map((node) => getCanvasNodePosition(node, logicalWidth, logicalHeight).y);
+                const minX = Math.min(...xs) - 28;
+                const minY = Math.min(...ys) - 22;
+                const maxX = Math.max(...xs) + 28;
+                const maxY = Math.max(...ys) + 22;
+
+                ctx.save();
+                const grad = ctx.createLinearGradient(minX, minY, maxX, maxY);
+                grad.addColorStop(0, `rgba(70,200,255,${0.05 + (index % 3) * 0.012})`);
+                grad.addColorStop(1, "rgba(255,255,255,0.01)");
+                ctx.fillStyle = grad;
+                roundRect(ctx, minX, minY, maxX - minX, maxY - minY, 24);
+                ctx.fill();
+                ctx.strokeStyle = "rgba(70,200,255,0.12)";
+                ctx.stroke();
+                ctx.fillStyle = "rgba(197,219,247,0.6)";
+                ctx.font = "11px var(--font-mono)";
+                ctx.fillText(district.toUpperCase(), minX + 14, minY + 16);
+                ctx.restore();
+            });
+
+            // Links
+            ctx.save();
+            DATA.links.forEach((link) => {
+                const fromNode = getNodeById(link.from);
+                const toNode = getNodeById(link.to);
+                if (!fromNode || !toNode) return;
+                if (!nodeVisible(fromNode) || !nodeVisible(toNode)) return;
+                const a = getCanvasNodePosition(fromNode, logicalWidth, logicalHeight);
+                const b = getCanvasNodePosition(toNode, logicalWidth, logicalHeight);
+                const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+                grad.addColorStop(0, domainColor(fromNode.domain, 0.16 + link.strength * 0.15));
+                grad.addColorStop(1, domainColor(toNode.domain, 0.16 + link.strength * 0.15));
+                ctx.strokeStyle = grad;
+                ctx.lineWidth = 1 + link.strength * 1.6;
+                ctx.setLineDash([4, 6]);
+                ctx.beginPath();
+                ctx.moveTo(a.x, a.y);
+                ctx.lineTo(b.x, b.y);
+                ctx.stroke();
+            });
+            ctx.restore();
+
+            const density = state.settings.labelDensity;
+
+            // Nodes
+            state.derived.visibleNodes.forEach((node, index) => {
+                const pos = getCanvasNodePosition(node, logicalWidth, logicalHeight);
+                const selected = node.id === state.selectedNodeId;
+                const hovered = node.id === state.hoveredNodeId;
+                const baseRadius = selected ? 9.2 : hovered ? 8.4 : 7.2;
+                const glowRadius = baseRadius * 2.9;
+
+                ctx.save();
+                const glow = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, glowRadius);
+                glow.addColorStop(0, domainColor(node.domain, selected ? 0.72 : 0.44));
+                glow.addColorStop(1, domainColor(node.domain, 0));
+                ctx.fillStyle = glow;
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, glowRadius, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = domainColor(node.domain, 0.95);
+                ctx.strokeStyle = selected ? "rgba(255,255,255,0.92)" : "rgba(255,255,255,0.22)";
+                ctx.lineWidth = selected ? 2.6 : 1.1;
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, baseRadius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                if (node.risk >= 82) {
+                    ctx.strokeStyle = "rgba(255,110,130,0.75)";
+                    ctx.lineWidth = 1.4;
+                    ctx.setLineDash([2, 5]);
+                    ctx.beginPath();
+                    ctx.arc(pos.x, pos.y, baseRadius + 5 + Math.sin(state.simulationTick / 6) * 1.5, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+
+                const shouldLabel =
+                    density === "full" ||
+                    (density === "smart" && index % CONSTANTS.MAP_LABEL_SKIP === 0) ||
+                    selected ||
+                    hovered;
+
+                if (shouldLabel) {
+                    ctx.font = "11px JetBrains Mono, monospace";
+                    ctx.fillStyle = selected ? "rgba(255,255,255,0.95)" : "rgba(160,190,220,0.8)";
+                    ctx.fillText(node.id, pos.x + 11, pos.y - 10);
+                }
+
+                ctx.restore();
+            });
+
+            // Tooltip
+            const hoveredNode = getNodeById(state.hoveredNodeId);
+            if (hoveredNode && refs.mapWrap.matches(":hover")) {
+                refs.mapTooltip.innerHTML = buildTooltip(hoveredNode);
+                refs.mapTooltip.style.left = `${state.pointer.x}px`;
+                refs.mapTooltip.style.top = `${state.pointer.y}px`;
+                refs.mapTooltip.classList.add("show");
+            } else {
+                refs.mapTooltip.classList.remove("show");
+            }
+        }
+
+        function roundRect(ctx, x, y, w, h, r) {
+            const radius = Math.min(r, w / 2, h / 2);
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.arcTo(x + w, y, x + w, y + h, radius);
+            ctx.arcTo(x + w, y + h, x, y + h, radius);
+            ctx.arcTo(x, y + h, x, y, radius);
+            ctx.arcTo(x, y, x + w, y, radius);
+            ctx.closePath();
+        }
+
+        function drawChart() {
+            const canvas = refs.chartCanvas;
+            const ctx = canvas.getContext("2d");
+            const { ratio, width, height } = resizeCanvasToDisplaySize(canvas);
+            const logicalWidth = width / ratio;
+            const logicalHeight = height / ratio;
+
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.clearRect(0, 0, width, height);
+            ctx.scale(ratio, ratio);
+
+            const padding = CONSTANTS.CHART_PADDING;
+            const plotX = padding;
+            const plotY = padding;
+            const plotW = logicalWidth - padding * 2;
+            const plotH = logicalHeight - padding * 2 - 12;
+
+            const series = state.history[state.chartMode];
+            const max = Math.max(...series);
+            const min = Math.min(...series);
+            const range = Math.max(1, max - min);
+
+            ctx.strokeStyle = "rgba(255,255,255,0.08)";
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 5; i += 1) {
+                const y = plotY + (plotH / 4) * i;
+                ctx.beginPath();
+                ctx.moveTo(plotX, y);
+                ctx.lineTo(plotX + plotW, y);
+                ctx.stroke();
+            }
+
+            ctx.beginPath();
+            series.forEach((value, index) => {
+                const x = plotX + (plotW / Math.max(1, series.length - 1)) * index;
+                const y = plotY + plotH - ((value - min) / range) * plotH;
+                if (index === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+
+            ctx.strokeStyle = state.settings.accent;
+            ctx.lineWidth = 2.6;
+            ctx.shadowBlur = 18;
+            ctx.shadowColor = state.settings.accent;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            ctx.lineTo(plotX + plotW, plotY + plotH);
+            ctx.lineTo(plotX, plotY + plotH);
+            ctx.closePath();
+
+            const fill = ctx.createLinearGradient(0, plotY, 0, plotY + plotH);
+            fill.addColorStop(0, "rgba(70,200,255,0.28)");
+            fill.addColorStop(1, "rgba(70,200,255,0)");
+            ctx.fillStyle = fill;
+            ctx.fill();
+
+            ctx.fillStyle = "rgba(197,219,247,0.8)";
+            ctx.font = "11px JetBrains Mono, monospace";
+            ctx.fillText(state.chartMode.toUpperCase(), plotX, 16);
+            ctx.fillText(`MIN ${formatNumber(min, state.chartMode === "energy" ? 2 : 0)}`, plotX, logicalHeight - 10);
+            ctx.fillText(`MAX ${formatNumber(max, state.chartMode === "energy" ? 2 : 0)}`, plotX + plotW - 88, logicalHeight - 10);
+        }
+
+        function renderStatusPills() {
+            refs.quantumStateText.textContent = state.metrics.activeAlerts > 20 ? "ELEVATED" : "COHERENT";
+            refs.computeLoadBar.style.width = `${Math.round(state.metrics.compute * 100)}%`;
+            refs.latencyStatusText.textContent = `LATENCY ${formatNumber(state.metrics.latency, 1)}ms`;
+        }
+
+        function updateMetrics() {
+            const tempoFactor = state.settings.tempo / 5;
+            state.metrics.uptime = clamp(state.metrics.uptime + rand(-0.002, 0.002) * tempoFactor, 99.91, 99.999);
+            state.metrics.resolution = clamp(state.metrics.resolution + rand(-0.12, 0.1) * tempoFactor, 2.7, 7.9);
+            state.metrics.activeAlerts = clamp(state.metrics.activeAlerts + rand(-1.2, 1.4) * tempoFactor, 8, 28);
+            state.metrics.co2 = clamp(state.metrics.co2 + rand(-2.4, 2.7) * tempoFactor, 394, 439);
+            state.metrics.transit = clamp(state.metrics.transit + rand(-1.5, 1.7) * tempoFactor, 72, 97);
+            state.metrics.energy = clamp(state.metrics.energy + rand(-0.04, 0.05) * tempoFactor, 1.02, 1.92);
+            state.metrics.compute = clamp(state.metrics.compute + rand(-0.03, 0.04) * tempoFactor, 0.42, 0.95);
+            state.metrics.latency = clamp(state.metrics.latency + rand(-0.6, 0.7) * tempoFactor, 3.2, 16.4);
+
+            DATA.nodes.forEach((node) => {
+                node.load = clamp(node.load + rand(-2.2, 2.4) * tempoFactor, 12, 97);
+                node.health = clamp(node.health + rand(-0.8, 0.6) * tempoFactor, 76, 100);
+                node.risk = clamp(Math.round(node.risk + rand(-3.6, 4.1) * tempoFactor), 6, 98);
+                node.latency = clamp(node.latency + rand(-0.6, 0.7) * tempoFactor, 1.8, 18.9);
+                node.throughput = clamp(Math.round(node.throughput + rand(-22, 24) * tempoFactor), 280, 1080);
+                node.status = node.risk > 80 ? "critical" : node.risk > 58 ? "watch" : "stable";
+            });
+
+            DATA.incidents.forEach((incident) => {
+                const node = getNodeById(incident.nodeId);
+                if (!node) return;
+                const target = Math.round((incident.score + node.risk) / 2 + rand(-4, 4));
+                incident.score = clamp(target, 8, 99);
+                incident.etaMin = clamp(Math.round(incident.etaMin + rand(-2, 3)), 2, 64);
+                incident.state = incident.score >= 82 ? "open" : incident.score >= 58 ? "monitoring" : "contained";
+                incident.severity = severityClass(incident.score);
+            });
+
+            state.history.alerts.push(Math.round(state.metrics.activeAlerts));
+            state.history.risk.push(Math.round(DATA.nodes.reduce((sum, node) => sum + node.risk, 0) / DATA.nodes.length));
+            state.history.energy.push(Number(formatNumber(state.metrics.energy, 2)));
+            state.history.throughput.push(Math.round(DATA.nodes.reduce((sum, node) => sum + node.throughput, 0) / DATA.nodes.length));
+
+            Object.keys(state.history).forEach((key) => {
+                state.history[key] = state.history[key].slice(-CONSTANTS.HISTORY_LIMIT);
+            });
+        }
+
+        function maybeGenerateLog() {
+            if (state.logPaused) return;
+            const priorityRoll = Math.random();
+            const priority = priorityRoll > 0.88 ? "critical" : priorityRoll > 0.66 ? "watch" : "info";
+            pushLog(generateLogMessage(), priority);
+        }
+
+        function maybeGenerateAlert() {
+            if (Math.random() < 0.34) return;
+            const candidate = DATA.nodes[randInt(0, DATA.nodes.length - 1)];
+            if (!candidate) return;
+            candidate.risk = clamp(candidate.risk + randInt(-2, 6), 6, 99);
+            const incident = DATA.incidents[randInt(0, DATA.incidents.length - 1)];
+            incident.score = clamp(incident.score + randInt(-3, 6), 8, 99);
+            incident.etaMin = clamp(incident.etaMin + randInt(-2, 4), 2, 64);
+            if (incident.score >= 82) {
+                toast(`Watch ${incident.id} · ${incident.title}`);
+            }
+        }
+
+        function tick() {
+            state.simulationTick += 1;
+            updateMetrics();
+
+            if (state.simulationTick % Math.max(1, Math.round(9 - state.settings.tempo / 1.2)) === 0) {
+                maybeGenerateLog();
+            }
+
+            if (state.simulationTick % Math.max(2, Math.round(14 - state.settings.tempo)) === 0) {
+                maybeGenerateAlert();
+            }
+
+            renderAll(false);
+        }
+
+        function renderAll(full = true) {
+            computeDerived();
+            renderStatusPills();
+            renderKPIs();
+            renderIncidents();
+            renderInspector();
+            renderMatrix();
+            renderTasks();
+            updateOverlaySummary();
+            if (full) renderLogs();
+            drawMap();
+            drawChart();
+            makeNav();
+            makeMapModeButtons();
+            makeChartModeButtons();
+        }
+
+        function bindEvents() {
+            refs.navRail.addEventListener("click", (event) => {
+                const button = event.target.closest("[data-nav]");
+                if (!button) return;
+                state.nav = button.dataset.nav;
+                renderAll();
+            });
+
+            refs.mapModeButtons.addEventListener("click", (event) => {
+                const button = event.target.closest("[data-map-mode]");
+                if (!button) return;
+                state.mapMode = button.dataset.mapMode;
+                renderAll();
+            });
+
+            refs.chartModeButtons.addEventListener("click", (event) => {
+                const button = event.target.closest("[data-chart-mode]");
+                if (!button) return;
+                state.chartMode = button.dataset.chartMode;
+                drawChart();
+                makeChartModeButtons();
+            });
+
+            refs.incidentList.addEventListener("click", (event) => {
+                const card = event.target.closest("[data-incident-id]");
+                if (!card) return;
+                const incidentId = card.dataset.incidentId;
+                const incident = getIncidentById(incidentId);
+                if (!incident) return;
+                state.selectedIncidentId = incidentId;
+                selectNode(incident.nodeId);
+                renderIncidents();
+            });
+
+            document.querySelectorAll("[data-incident-filter]").forEach((button) => {
+                button.addEventListener("click", () => {
+                    document.querySelectorAll("[data-incident-filter]").forEach((item) => item.classList.remove("active"));
+                    button.classList.add("active");
+                    state.incidentFilter = button.dataset.incidentFilter;
+                    renderIncidents();
+                });
+            });
+
+            refs.commandChips.addEventListener("click", (event) => {
+                const chip = event.target.closest("[data-preset]");
+                if (!chip) return;
+                const preset = chip.dataset.preset;
+                refs.consoleInput.value = preset;
+                executeCommand(preset);
+                renderConsoleResponses();
+            });
+
+            refs.consoleInput.addEventListener("keydown", (event) => {
+                if (event.key !== "Enter") return;
+                executeCommand(refs.consoleInput.value);
+                refs.consoleInput.value = "";
+                renderConsoleResponses();
+                renderLogs();
+            });
+
+            refs.globalSearch.addEventListener("keydown", (event) => {
+                if (event.key !== "Enter") return;
+                executeCommand(refs.globalSearch.value);
+                refs.globalSearch.value = "";
+            });
+
+            refs.openPaletteBtn.addEventListener("click", () => {
+                openModal("commandPaletteModal");
+                refs.paletteInput.focus();
+                renderPalette(refs.paletteInput.value);
+            });
+
+            refs.openSettingsBtn.addEventListener("click", () => {
+                syncSettingsForm();
+                openModal("settingsModal");
+            });
+
+            refs.exportSnapshotBtn.addEventListener("click", exportSnapshot);
+            refs.clearConsoleBtn.addEventListener("click", () => {
+                state.consoleResponses = [];
+                renderConsoleResponses();
+            });
+
+            refs.pauseLogBtn.addEventListener("click", () => {
+                state.logPaused = !state.logPaused;
+                refs.pauseLogBtn.textContent = state.logPaused ? "Resume" : "Pause";
+            });
+
+            refs.flushLogBtn.addEventListener("click", () => {
+                state.logs = [];
+                renderLogs();
+            });
+
+            refs.shuffleChecklistBtn.addEventListener("click", () => {
+                state.tasks = [...state.tasks].sort(() => Math.random() - 0.5);
+                renderTasks();
+            });
+
+            refs.taskList.addEventListener("click", (event) => {
+                const row = event.target.closest("[data-task-index]");
+                if (!row) return;
+                mutateTask(Number(row.dataset.taskIndex));
+            });
+
+            document.querySelectorAll(".scenario-btn").forEach((button) => {
+                button.addEventListener("click", () => applyScenario(button.dataset.action));
+            });
+
+            refs.inspectorFocusBtn.addEventListener("click", () => {
+                const node = getNodeById(state.selectedNodeId);
+                if (!node) return;
+                state.mapMode = node.domain;
+                renderAll();
+                toast(`Focused domain ${node.domain}`);
+            });
+
+            refs.inspectorMitigateBtn.addEventListener("click", () => applyScenario("stabilize"));
+            refs.inspectorEscalateBtn.addEventListener("click", () => {
+                const incident = getIncidentById(state.selectedIncidentId);
+                if (!incident) return;
+                incident.score = clamp(incident.score + 6, 8, 99);
+                pushLog(`Incident ${incident.id} escalated by operator.`, "critical");
+                renderAll();
+            });
+
+            refs.openInspectorDrawerBtn.addEventListener("click", openDrawer);
+            refs.closeInspectorDrawerBtn.addEventListener("click", closeDrawer);
+            refs.drawerMitigateBtn.addEventListener("click", () => applyScenario("stabilize"));
+
+            document.querySelectorAll("[data-close-modal]").forEach((button) => {
+                button.addEventListener("click", () => closeModal(button.dataset.closeModal));
+            });
+
+            refs.paletteInput.addEventListener("input", (event) => {
+                state.paletteQuery = event.target.value;
+                renderPalette(state.paletteQuery);
+            });
+
+            refs.paletteInput.addEventListener("keydown", (event) => {
+                if (event.key !== "Enter") return;
+                const results = refs.paletteResults._results || [];
+                results[0]?.action?.();
+            });
+
+            refs.saveSettingsBtn.addEventListener("click", () => {
+                state.settings.operatorName = refs.operatorNameInput.value.trim() || "Operator";
+                state.settings.operatorNote = refs.operatorNoteInput.value.trim() || "Hold signal integrity.";
+                state.settings.tempo = Number(refs.tempoRange.value);
+                state.settings.defaultMode = refs.defaultModeSelect.value;
+                state.settings.labelDensity = refs.labelDensitySelect.value;
+                state.mapMode = state.settings.defaultMode;
+                saveSettings();
+                closeModal("settingsModal");
+                renderAll();
+                toast("Settings saved.");
+            });
+
+            refs.resetSettingsBtn.addEventListener("click", resetSettings);
+            refs.tempoRange.addEventListener("input", () => {
+                refs.tempoValue.textContent = refs.tempoRange.value;
+            });
+
+            refs.paletteSwatches.addEventListener("click", (event) => {
+                const swatch = event.target.closest("[data-swatch]");
+                if (!swatch) return;
+                state.settings.accent = swatch.dataset.swatch;
+                applyAccent(state.settings.accent);
+                syncSettingsForm();
+                renderAll(false);
+            });
+
+            refs.mapCanvas.addEventListener("mousemove", (event) => {
+                const rect = refs.mapCanvas.getBoundingClientRect();
+                const scaleX = refs.mapCanvas.width / rect.width / (window.devicePixelRatio || 1);
+                const scaleY = refs.mapCanvas.height / rect.height / (window.devicePixelRatio || 1);
+                const x = (event.clientX - rect.left) * scaleX;
+                const y = (event.clientY - rect.top) * scaleY;
+                state.pointer = { x: event.clientX - rect.left, y: event.clientY - rect.top, inside: true };
+                const picked = pickNodeAt(x, y, rect.width, rect.height);
+                state.hoveredNodeId = picked?.id || null;
+                drawMap();
+            });
+
+            refs.mapCanvas.addEventListener("mouseleave", () => {
+                state.hoveredNodeId = null;
+                state.pointer.inside = false;
+                drawMap();
+            });
+
+            refs.mapCanvas.addEventListener("click", (event) => {
+                const rect = refs.mapCanvas.getBoundingClientRect();
+                const scaleX = refs.mapCanvas.width / rect.width / (window.devicePixelRatio || 1);
+                const scaleY = refs.mapCanvas.height / rect.height / (window.devicePixelRatio || 1);
+                const x = (event.clientX - rect.left) * scaleX;
+                const y = (event.clientY - rect.top) * scaleY;
+                const picked = pickNodeAt(x, y, rect.width, rect.height);
+                if (picked) selectNode(picked.id);
+            });
+
+            window.addEventListener("resize", () => {
+                drawMap();
+                drawChart();
+            });
+
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "/") {
+                    if (document.activeElement?.tagName !== "INPUT" && document.activeElement?.tagName !== "TEXTAREA") {
+                        event.preventDefault();
+                        refs.globalSearch.focus();
+                    }
+                }
+
+                if (event.key === "Escape") {
+                    closeModal("commandPaletteModal");
+                    closeModal("settingsModal");
+                    closeDrawer();
+                }
+            });
+        }
+
+        function cacheRefs() {
+            refs.navRail = qs("navRail");
+            refs.kpiStrip = qs("kpiStrip");
+            refs.mapModeButtons = qs("mapModeButtons");
+            refs.mapCanvas = qs("mapCanvas");
+            refs.mapWrap = qs("mapWrap");
+            refs.mapTooltip = qs("mapTooltip");
+            refs.overlayNodes = qs("overlayNodes");
+            refs.overlayLinks = qs("overlayLinks");
+            refs.overlayWatch = qs("overlayWatch");
+            refs.overlayCritical = qs("overlayCritical");
+            refs.selectionSummaryTitle = qs("selectionSummaryTitle");
+            refs.selectionSummaryGrid = qs("selectionSummaryGrid");
+            refs.commandChips = qs("commandChips");
+            refs.consoleInput = qs("consoleInput");
+            refs.consoleResponses = qs("consoleResponses");
+            refs.clearConsoleBtn = qs("clearConsoleBtn");
+            refs.incidentList = qs("incidentList");
+            refs.inspectorContent = qs("inspectorContent");
+            refs.logFeed = qs("logFeed");
+            refs.pauseLogBtn = qs("pauseLogBtn");
+            refs.flushLogBtn = qs("flushLogBtn");
+            refs.chartCanvas = qs("chartCanvas");
+            refs.chartModeButtons = qs("chartModeButtons");
+            refs.matrixTable = qs("matrixTable");
+            refs.taskList = qs("taskList");
+            refs.shuffleChecklistBtn = qs("shuffleChecklistBtn");
+            refs.toastLayer = qs("toastLayer");
+            refs.openPaletteBtn = qs("openPaletteBtn");
+            refs.openSettingsBtn = qs("openSettingsBtn");
+            refs.exportSnapshotBtn = qs("exportSnapshotBtn");
+            refs.globalSearch = qs("globalSearch");
+            refs.paletteInput = qs("paletteInput");
+            refs.paletteResults = qs("paletteResults");
+            refs.operatorNameInput = qs("operatorNameInput");
+            refs.operatorNoteInput = qs("operatorNoteInput");
+            refs.tempoRange = qs("tempoRange");
+            refs.tempoValue = qs("tempoValue");
+            refs.defaultModeSelect = qs("defaultModeSelect");
+            refs.labelDensitySelect = qs("labelDensitySelect");
+            refs.paletteSwatches = qs("paletteSwatches");
+            refs.resetSettingsBtn = qs("resetSettingsBtn");
+            refs.saveSettingsBtn = qs("saveSettingsBtn");
+            refs.inspectorDrawer = qs("inspectorDrawer");
+            refs.drawerContent = qs("drawerContent");
+            refs.drawerMitigateBtn = qs("drawerMitigateBtn");
+            refs.closeInspectorDrawerBtn = qs("closeInspectorDrawerBtn");
+            refs.openInspectorDrawerBtn = qs("openInspectorDrawerBtn");
+            refs.inspectorFocusBtn = qs("inspectorFocusBtn");
+            refs.inspectorMitigateBtn = qs("inspectorMitigateBtn");
+            refs.inspectorEscalateBtn = qs("inspectorEscalateBtn");
+            refs.quantumStateText = qs("quantumStateText");
+            refs.computeLoadBar = qs("computeLoadBar");
+            refs.latencyStatusText = qs("latencyStatusText");
+        }
+
+        function init() {
+            loadSettings();
+            applyAccent(state.settings.accent);
+            state.mapMode = state.settings.defaultMode;
+
+            cacheRefs();
+            syncSettingsForm();
+            renderCommandChips();
+            seedLogs();
+            makeNav();
+            makeMapModeButtons();
+            makeChartModeButtons();
+            bindEvents();
+
+            pushResponse(
+                "System Online",
+                "Dashboard initialized. This build is state-driven, canvas-rendered, persistent, and action-capable.",
+                "info"
+            );
+
+            renderAll();
+
+            setInterval(tick, 2200);
+        }
+
+        init();
+    })();
+    </script>
+
+</body>
+</html>

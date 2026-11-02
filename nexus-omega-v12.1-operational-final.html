@@ -1,0 +1,1829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="color-scheme" content="dark" />
+<meta name="description" content="NEXUS OMEGA · ClearGlass Quantum Intelligence Core · v12.1 Operational Final" />
+<title>NEXUS OMEGA · ClearGlass Quantum Intelligence Core · v12.1 Operational Final</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --quantum-primary: #00ffff;
+  --quantum-secondary: #ff00ff;
+  --quantum-tertiary: #ffff00;
+  --quantum-cyan: #0ff;
+  --quantum-magenta: #f0f;
+  --gold: #f0c040;
+  --danger: #ff2d55;
+  --warn: #ffbe0b;
+  --ok: #00ff9d;
+  --glow: #00c8ff;
+  --glow2: #00ff9d;
+  --glow3: #ff6b35;
+  --bg-deep: #050510;
+  --bg-panel: rgba(5, 15, 25, 0.85);
+  --bg-panel-soft: rgba(5, 15, 25, 0.62);
+  --glass-edge: rgba(0, 255, 255, 0.25);
+  --glass-edge-strong: rgba(0, 255, 255, 0.42);
+  --text-bright: #e0f0ff;
+  --text-dim: #8aaec0;
+  --text-soft: #6e8aa0;
+  --border: rgba(0,200,255,0.15);
+  --shadow: 0 18px 52px rgba(0,0,0,0.35);
+  --shadow-glow: 0 0 26px rgba(0,200,255,0.14);
+  --transition: all 0.28s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  --header-h: 64px;
+  --ticker-h: 32px;
+  --tab-h: 44px;
+  --content-pad: 20px;
+}
+html, body {
+  background: radial-gradient(ellipse at 20% 30%, #050510, #000000);
+  font-family: 'Inter', 'Segoe UI', 'Share Tech Mono', monospace;
+  color: var(--text-bright);
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+body.quantum-mode {
+  --glow: #00ffff;
+  --glow2: #ff00ff;
+  --glass-edge: rgba(0, 255, 255, 0.35);
+  --glass-edge-strong: rgba(255, 0, 255, 0.35);
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+.hidden { display: none !important; }
+
+.quantum-field {
+  position: fixed; inset: 0;
+  background:
+    repeating-linear-gradient(0deg, rgba(0,255,255,0.02) 0px, rgba(0,255,255,0.02) 2px, transparent 2px, transparent 8px),
+    repeating-linear-gradient(90deg, rgba(255,0,255,0.02) 0px, rgba(255,0,255,0.02) 2px, transparent 2px, transparent 8px);
+  pointer-events: none; z-index: 0;
+  animation: quantumDrift 20s linear infinite;
+}
+@keyframes quantumDrift { 0% { transform: translate(0,0); } 100% { transform: translate(100px,100px); } }
+.hex-overlay {
+  position: fixed; inset: 0; z-index: 1;
+  background-image:
+    repeating-linear-gradient(60deg, rgba(0,200,255,0.03) 0px, transparent 1px, transparent 60px),
+    repeating-linear-gradient(-60deg, rgba(0,200,255,0.03) 0px, transparent 1px, transparent 60px),
+    repeating-linear-gradient(0deg, rgba(0,200,255,0.02) 0px, transparent 1px, transparent 60px);
+  pointer-events: none;
+}
+#bg-canvas, #quantum-overlay {
+  position: fixed; inset: 0; pointer-events: none;
+}
+#bg-canvas { z-index: 0; opacity: .9; }
+#quantum-overlay { z-index: 3; opacity: .12; transition: opacity .35s ease; }
+.scanline {
+  position: fixed; inset:0; z-index:2;
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,200,255,0.012) 3px, rgba(0,200,255,0.012) 4px);
+  pointer-events: none;
+  animation: scan 8s linear infinite;
+}
+@keyframes scan { 0% { background-position: 0 0; } 100% { background-position: 0 100vh; } }
+.vignette {
+  position: fixed; inset:0; z-index:2;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,10,0.85) 100%);
+  pointer-events: none;
+}
+.app {
+  position: relative; z-index: 10;
+  display: flex; flex-direction: column;
+  height: 100%;
+  opacity: 0;
+  transition: opacity .8s ease;
+}
+
+/* Boot */
+#boot {
+  position: fixed; inset:0; z-index:1000;
+  background: #050510;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 24px;
+}
+#boot.hidden { display: none; }
+.boot-hex { width: 120px; height: 120px; animation: boot-spin 2s linear infinite; }
+@keyframes boot-spin { to { transform: rotate(360deg); } }
+.boot-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 28px; font-weight: 900;
+  letter-spacing: 8px;
+  color: var(--quantum-primary);
+  text-shadow: 0 0 30px var(--quantum-primary);
+  text-align: center;
+}
+.boot-sub { font-size: 11px; letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; text-align: center; }
+.boot-bar-wrap { width: min(400px, 78vw); height: 2px; background: rgba(0,200,255,0.1); overflow: hidden; }
+.boot-bar { height: 100%; background: linear-gradient(90deg, var(--glow2), var(--glow)); width: 0%; transition: width 0.1s linear; }
+.boot-log { font-size: 10px; letter-spacing: 2px; color: var(--text-dim); min-height: 14px; text-transform: uppercase; }
+
+/* Ticker */
+.ticker {
+  display: flex; align-items: center; background: rgba(0,200,255,0.05);
+  border-bottom: 1px solid var(--border); height: var(--ticker-h); overflow: hidden;
+  flex-shrink: 0;
+}
+.ticker-lbl {
+  flex-shrink: 0; padding: 0 16px; font-size: 8px; letter-spacing: 3px; color: var(--glow);
+  border-right: 1px solid var(--border); text-transform: uppercase;
+  background: rgba(0,200,255,0.08); height: 100%; display: flex; align-items: center;
+}
+.ticker-scroll { flex: 1; overflow: hidden; }
+.ticker-track { display: flex; gap: 48px; animation: ticker-scroll 40s linear infinite; white-space: nowrap; }
+@keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.tick-item { font-size: 9px; color: var(--text-dim); display: flex; align-items: center; gap: 8px; }
+.tick-item .tv { color: var(--glow2); }
+.tick-item .td { color: var(--danger); }
+.tick-item .tg { color: var(--gold); }
+
+/* Header */
+header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; height: var(--header-h);
+  background: linear-gradient(180deg, rgba(0,10,25,0.95), rgba(0,10,25,0.7));
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  z-index: 50;
+  flex-shrink: 0;
+}
+.header-left { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.logo-hex { width: 44px; height: 44px; position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.logo-hex svg { position: absolute; width: 100%; height: 100%; animation: logo-rotate 10s linear infinite; }
+@keyframes logo-rotate { to { transform: rotate(360deg); } }
+.logo-inner { font-family: 'Orbitron', monospace; font-size: 13px; font-weight: 700; color: var(--quantum-primary); z-index: 1; }
+.brand-name { font-family: 'Orbitron', monospace; font-size: 16px; font-weight: 700; letter-spacing: 4px; color: #fff; }
+.brand-sub { font-size: 9px; letter-spacing: 3px; color: var(--text-dim); margin-top: 2px; text-transform: uppercase; }
+.header-center { display: flex; flex-direction: column; align-items: center; }
+.header-time { font-family: 'Orbitron', monospace; font-size: 22px; font-weight: 600; color: var(--quantum-primary); }
+.header-date { font-size: 9px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; }
+.header-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.status-pill {
+  display: flex; align-items: center; gap: 8px; padding: 6px 16px;
+  border: 1px solid rgba(0,255,157,0.3); background: rgba(0,255,157,0.06);
+  font-size: 9px; letter-spacing: 2px; color: var(--glow2); text-transform: uppercase;
+}
+.pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--glow2); animation: dot-pulse 1.4s infinite; }
+@keyframes dot-pulse { 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:0.3; transform:scale(0.6); } }
+.exec-chip { display: flex; align-items: center; gap: 10px; padding: 6px 16px; border: 1px solid rgba(240,192,64,0.3); background: rgba(240,192,64,0.06); }
+.exec-avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), #ff8c42); display: flex; align-items: center; justify-content: center; font-family: 'Orbitron', monospace; font-size: 10px; font-weight: 700; color: #000; }
+.exec-name { font-size: 10px; letter-spacing: 1px; color: var(--gold); font-weight: 600; }
+.exec-role { font-size: 8px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; }
+.voice-btn, .head-btn {
+  width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border);
+  background: transparent; color: var(--text-bright); cursor: pointer; font-size: 16px; transition: var(--transition);
+}
+.voice-btn:hover, .head-btn:hover { border-color: var(--glow); background: rgba(0,200,255,0.1); }
+.voice-btn.speaking { border-color: var(--glow2); animation: voice-ring 1s infinite; }
+@keyframes voice-ring { 0%,100%{ box-shadow:0 0 0 0 rgba(0,255,157,0.4); } 50%{ box-shadow:0 0 0 10px rgba(0,255,157,0); } }
+
+/* Navigation Tabs */
+.nav-tabs {
+  display: flex; background: rgba(0,5,15,0.6); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border); padding: 0 20px; gap: 4px; overflow-x: auto;
+  height: var(--tab-h); align-items: center; flex-shrink: 0;
+}
+.nav-tab {
+  padding: 11px 18px; font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--text-dim); cursor: pointer; border-bottom: 2px solid transparent;
+  transition: var(--transition); white-space: nowrap; user-select: none; background: transparent;
+}
+.nav-tab:hover { color: #fff; }
+.nav-tab.active { color: var(--quantum-primary); border-bottom-color: var(--quantum-primary); }
+.nav-badge { display: inline-block; margin-left: 6px; background: var(--danger); color: white; font-size: 8px; padding: 1px 5px; border-radius: 10px; }
+
+/* Content */
+.content {
+  flex: 1; overflow-y: auto; padding: var(--content-pad) 24px 12px;
+  min-height: 0;
+}
+.tab-pane { display: none; }
+.tab-pane.active { display: block; animation: fadeIn 0.25s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+.panel {
+  background: var(--bg-panel-soft); backdrop-filter: blur(12px);
+  border: 1px solid var(--border); border-radius: 24px;
+  margin-bottom: 16px; overflow: hidden; box-shadow: var(--shadow); position: relative;
+}
+.panel::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,255,255,0.35), transparent);
+  opacity: .5;
+}
+.panel-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; border-bottom: 1px solid var(--border); gap: 12px;
+}
+.panel-title { font-family: 'Orbitron', monospace; font-size: 11px; letter-spacing: 3px; color: var(--quantum-primary); text-transform: uppercase; }
+.panel-action { font-size: 9px; letter-spacing: 2px; color: var(--text-dim); cursor: pointer; background: none; border: none; text-transform: uppercase; }
+.panel-action:hover { color: var(--glow); }
+.panel-body { padding: 16px 20px; }
+
+/* KPI Grid */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.kpi-card {
+  background: rgba(5,15,25,0.76); border: 1px solid rgba(0,255,255,0.2);
+  border-radius: 20px; padding: 16px; text-align: center;
+  box-shadow: var(--shadow-glow);
+}
+.kpi-value { font-size: 1.8rem; font-weight: 700; background: linear-gradient(135deg, #fff, var(--quantum-primary)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.kpi-label { font-size: 0.65rem; letter-spacing: 2px; color: var(--text-dim); margin-top: 4px; text-transform: uppercase; }
+.kpi-sub { font-size: .64rem; color: var(--text-soft); margin-top: 6px; }
+
+/* Grids */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
+
+/* Tables */
+.data-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+.data-table th { text-align: left; padding: 8px 6px; color: var(--text-dim); border-bottom: 1px solid rgba(255,255,255,0.1); text-transform: uppercase; font-size: .65rem; letter-spacing: 2px; }
+.data-table td { padding: 10px 6px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
+.stage-badge, .priority-badge {
+  padding: 2px 8px; border-radius: 20px; font-size: 0.65rem; display: inline-block;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.stage-prospect { background: rgba(100,100,100,0.2); color: #aaa; }
+.stage-qualified { background: rgba(0,100,200,0.2); color: #88aaff; }
+.stage-proposal { background: rgba(255,107,53,0.2); color: #ff8844; }
+.stage-negotiation { background: rgba(255,179,0,0.2); color: #ffcc44; }
+.stage-closing { background: rgba(0,255,136,0.2); color: #88ffaa; }
+.priority-high { background: rgba(255, 45, 85, 0.16); color: #ff8da7; }
+.priority-medium { background: rgba(255, 190, 11, 0.15); color: #ffd777; }
+.priority-low { background: rgba(0, 255, 157, 0.14); color: #96ffd7; }
+
+.btn {
+  background: rgba(0,255,255,0.1); border: 1px solid rgba(0,255,255,0.3);
+  padding: 6px 14px; border-radius: 30px; font-size: 0.7rem; cursor: pointer;
+  color: var(--quantum-primary); transition: var(--transition);
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.btn:hover { background: rgba(0,255,255,0.2); border-color: var(--quantum-primary); }
+.btn-pri { background: rgba(0,200,255,0.1); border-color: var(--glow); color: var(--glow); }
+.btn-dan { background: rgba(255,45,85,0.08); border-color: var(--danger); color: var(--danger); }
+.btn-soft { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); color: var(--text-dim); }
+
+.neural-canvas, .env-chart, .surv-canvas-wrap {
+  height: 280px; background: #000; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.03);
+}
+.env-chart { height: 120px; }
+canvas.data-canvas { width: 100%; height: 100%; display: block; }
+
+.insight-card {
+  background: rgba(0,30,45,0.6); border-left: 3px solid var(--quantum-secondary);
+  border-radius: 12px; padding: 12px; margin-bottom: 8px; cursor: pointer;
+  transition: var(--transition);
+}
+.insight-card:hover { transform: translateX(5px); background: rgba(0,255,255,0.1); border-left-color: var(--quantum-primary); }
+.quantum-response {
+  margin-top: 10px; padding: 10px 12px; background: rgba(0,255,255,0.08);
+  border-left: 3px solid var(--quantum-primary); border-radius: 12px; font-size: 0.75rem;
+  line-height: 1.6;
+}
+.quantum-response.kpi { border-left-color: var(--warn); }
+.quantum-response.alert { border-left-color: var(--danger); }
+.quantum-response.list { border-left-color: var(--glow2); }
+.response-title { font-weight: 700; margin-bottom: 4px; }
+.response-list { margin-top: 6px; padding-left: 18px; }
+.response-list li { margin: 4px 0; }
+
+.timeline-rail {
+  background: rgba(0,5,15,0.6); backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border); padding: 10px 20px;
+  display: flex; gap: 16px; overflow-x: auto; flex-shrink: 0;
+}
+.timeline-event {
+  background: rgba(0,40,60,0.7); border-radius: 40px; padding: 6px 18px;
+  font-size: 0.65rem; white-space: nowrap; cursor: pointer;
+  transition: var(--transition);
+}
+.timeline-event:hover { background: rgba(0,255,255,0.2); transform: translateY(-1px); }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.form-row.full { grid-template-columns: 1fr; }
+.fg { display: flex; flex-direction: column; gap: 5px; }
+.flbl { font-size: 8px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; }
+.finp, .fsel, .ftxt {
+  background: rgba(0,200,255,0.04); border: 1px solid var(--border);
+  padding: 8px 12px; color: var(--text-bright); font-family: monospace; font-size: 10px;
+  outline: none; transition: border-color 0.3s, box-shadow .3s;
+  border-radius: 10px;
+}
+.finp:focus, .fsel:focus, .ftxt:focus { border-color: var(--glow); box-shadow: 0 0 0 3px rgba(0,200,255,0.08); }
+
+.task-row, .contract-card, .feed-row, .detail-row {
+  padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.feed-row:last-child, .task-row:last-child, .contract-card:last-child { border-bottom: none; }
+
+.subgrid {
+  display: grid; gap: 12px;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+}
+.metric {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+  padding: 14px; border-radius: 14px;
+}
+.metric-label { font-size: .65rem; color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase; }
+.metric-value { margin-top: 8px; font-family: 'Orbitron', monospace; font-size: 1.2rem; color: var(--quantum-primary); }
+
+.notif {
+  position: fixed; top: 80px; right: 20px; z-index: 500;
+  padding: 14px 18px; min-width: 280px; max-width: 360px;
+  background: rgba(0,10,25,0.95); border: 1px solid var(--glow);
+  border-left: 3px solid var(--glow);
+  backdrop-filter: blur(20px);
+  animation: notif-in 0.4s cubic-bezier(0.34,1.56,0.64,1), notif-out 0.3s ease 4.7s forwards;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+@keyframes notif-in { from { transform: translateX(120%); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes notif-out { to { transform: translateX(120%); opacity: 0; } }
+.notif-title { font-family: 'Orbitron', monospace; font-size: 10px; letter-spacing: 2px; margin-bottom: 4px; }
+.notif-body { font-size: 10px; color: var(--text-dim); line-height: 1.5; }
+
+#quantum-mode-btn {
+  position: fixed; bottom: 20px; right: 20px; z-index: 999;
+  background: rgba(0,255,255,0.15); border: 2px solid var(--quantum-primary); color: var(--quantum-primary);
+  padding: 8px 16px; border-radius: 40px; font-size: 11px; letter-spacing: 2px; cursor: pointer;
+  box-shadow: 0 0 20px rgba(0,255,255,0.4);
+  text-transform: uppercase;
+}
+#quantum-mode-btn:hover { transform: translateY(-1px); }
+
+.palette {
+  position: fixed; inset: 0; z-index: 1200; display: none; place-items: start center;
+  padding-top: 12vh; background: rgba(2, 6, 12, 0.62); backdrop-filter: blur(12px);
+}
+.palette.open { display: grid; }
+.palette-box {
+  width: min(720px, 90vw);
+  background: rgba(6, 12, 18, 0.96);
+  border: 1px solid var(--glass-edge-strong);
+  border-radius: 24px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+  overflow: hidden;
+}
+.palette-head { padding: 16px 18px; border-bottom: 1px solid var(--border); }
+.palette-input {
+  width: 100%; padding: 12px 14px; border-radius: 14px;
+  border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--text-bright);
+  outline: none;
+}
+.palette-input:focus { border-color: var(--quantum-primary); box-shadow: 0 0 0 3px rgba(0,200,255,0.08); }
+.palette-list { max-height: 48vh; overflow-y: auto; }
+.palette-item {
+  padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.palette-item:hover, .palette-item.active { background: rgba(0,255,255,0.08); }
+.palette-label { font-size: .82rem; }
+.palette-meta { font-size: .65rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+.palette-shortcuts { padding: 10px 18px; font-size: .68rem; color: var(--text-dim); background: rgba(255,255,255,0.02); }
+
+.report-card {
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 14px;
+  background: rgba(255,255,255,0.02);
+}
+.report-title { font-weight: 700; margin-bottom: 6px; }
+.report-meta { font-size: .7rem; color: var(--text-dim); margin-bottom: 12px; }
+.report-body { font-size: .78rem; line-height: 1.65; color: var(--text-bright); }
+
+@media (max-width: 1200px) {
+  .kpi-grid, .grid-4, .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .grid-2 { grid-template-columns: 1fr; }
+  .header-right .exec-chip { display: none; }
+}
+@media (max-width: 760px) {
+  header { padding: 0 14px; }
+  .content { padding: 12px; }
+  .kpi-grid, .grid-4, .grid-3, .subgrid, .form-row { grid-template-columns: 1fr; }
+  .header-center { display: none; }
+  .status-pill { display: none; }
+}
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<canvas id="quantum-overlay"></canvas>
+<div class="quantum-field"></div>
+<div class="hex-overlay"></div>
+<div class="scanline"></div>
+<div class="vignette"></div>
+
+<div id="boot">
+  <div class="boot-hex">
+    <svg viewBox="0 0 100 100">
+      <polygon points="50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5" fill="none" stroke="rgba(0,200,255,0.6)" stroke-width="1"/>
+      <polygon points="50,15 85,32.5 85,67.5 50,85 15,67.5 15,32.5" fill="none" stroke="rgba(0,200,255,0.3)" stroke-width="0.5"/>
+    </svg>
+  </div>
+  <div class="boot-title">NEXUS OMEGA</div>
+  <div class="boot-sub">ClearGlass Quantum Intelligence Core · v12.1 Operational Final</div>
+  <div class="boot-bar-wrap"><div class="boot-bar" id="bootBar"></div></div>
+  <div class="boot-log" id="bootLog">Initializing quantum neural core...</div>
+</div>
+
+<div class="app" id="app">
+  <div class="ticker">
+    <div class="ticker-lbl">⚡ LIVE INTEL</div>
+    <div class="ticker-scroll"><div class="ticker-track" id="tickerTrack"></div></div>
+  </div>
+
+  <header>
+    <div class="header-left">
+      <div class="logo-hex">
+        <svg viewBox="0 0 60 60"><polygon points="30,3 57,18 57,42 30,57 3,42 3,18" fill="none" stroke="rgba(0,200,255,0.5)" stroke-width="1"/></svg>
+        <div class="logo-inner">CG</div>
+      </div>
+      <div>
+        <div class="brand-name">CLEARGLASS NEXUS</div>
+        <div class="brand-sub">Quantum Intelligence Core · Desmond Otieno · COO</div>
+      </div>
+    </div>
+    <div class="header-center">
+      <div class="header-time" id="hdrTime">--:--:--</div>
+      <div class="header-date" id="hdrDate">-- --- ----</div>
+    </div>
+    <div class="header-right">
+      <button class="head-btn" id="paletteBtn" title="Command palette (Ctrl/Cmd + K)">⌘</button>
+      <button class="voice-btn" id="voiceBtn" title="Toggle voice">🔊</button>
+      <div class="status-pill"><div class="pulse-dot"></div>Quantum active</div>
+      <div class="exec-chip">
+        <div class="exec-avatar">DO</div>
+        <div><div class="exec-name">Desmond Otieno</div><div class="exec-role">Chief Operating Officer</div></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="nav-tabs" id="navTabs">
+    <div class="nav-tab active" data-tab="dashboard">📊 Dashboard</div>
+    <div class="nav-tab" data-tab="quantum">🧬 Quantum Neural</div>
+    <div class="nav-tab" data-tab="surveillance">📡 Surveillance</div>
+    <div class="nav-tab" data-tab="pipeline">💰 Pipeline <span class="nav-badge" id="nbPipeline">0</span></div>
+    <div class="nav-tab" data-tab="contracts">◻ Contracts <span class="nav-badge" id="nbContracts">0</span></div>
+    <div class="nav-tab" data-tab="tasks">▷ Tasks</div>
+    <div class="nav-tab" data-tab="ai">🧠 AI Agent</div>
+  </div>
+
+  <div class="content">
+    <div class="tab-pane active" id="tab-dashboard">
+      <div class="kpi-grid" id="dashboardKpis"></div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-hdr">
+            <div class="panel-title">⚡ Priority deals</div>
+            <button class="panel-action" data-jump="pipeline">View all →</button>
+          </div>
+          <div class="panel-body">
+            <table class="data-table">
+              <thead><tr><th>Client</th><th>Value</th><th>Stage</th></tr></thead>
+              <tbody id="priorityDeals"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-hdr">
+            <div class="panel-title">🌍 Quantum environmental tensor</div>
+            <button class="panel-action" data-jump="surveillance">Open feed →</button>
+          </div>
+          <div class="panel-body">
+            <div class="env-chart"><canvas class="data-canvas" id="envCanvas"></canvas></div>
+            <div style="display:flex; justify-content:space-between; margin-top:12px; gap: 12px; flex-wrap: wrap;">
+              <span>🌫️ AQI: <span id="envAQI">42</span></span>
+              <span>🌡️ Temp: <span id="envTemp">17.4°C</span></span>
+              <span>📡 CO₂: <span id="envCO2">412</span> ppm</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-hdr">
+            <div class="panel-title">📈 Recent activity</div>
+            <button class="panel-action" id="clearFeedBtn">Clear</button>
+          </div>
+          <div class="panel-body" id="activityFeed"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-hdr">
+            <div class="panel-title">🗂 Executive snapshot</div>
+            <button class="panel-action" id="exportBtn">Export state</button>
+          </div>
+          <div class="panel-body">
+            <div class="subgrid">
+              <div class="metric"><div class="metric-label">Deals closing in 14d</div><div class="metric-value" id="closingSoonMetric">0</div></div>
+              <div class="metric"><div class="metric-label">Overdue tasks</div><div class="metric-value" id="overdueMetric">0</div></div>
+              <div class="metric"><div class="metric-label">Open contracts</div><div class="metric-value" id="contractsMetric">0</div></div>
+              <div class="metric"><div class="metric-label">Voice mode</div><div class="metric-value" id="voiceMetric">ON</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tab-quantum">
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-hdr"><div class="panel-title">🧬 Quantum neural network</div></div>
+          <div class="panel-body"><div class="neural-canvas"><canvas class="data-canvas" id="neuralCanvas"></canvas></div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-hdr"><div class="panel-title">⚛️ Quantum metrics</div></div>
+          <div class="panel-body">
+            <div class="grid-2">
+              <div class="kpi-card"><div class="kpi-value" id="quantumVol">256</div><div class="kpi-label">Quantum volume</div></div>
+              <div class="kpi-card"><div class="kpi-value" id="entanglementRate">98.7%</div><div class="kpi-label">Entanglement</div></div>
+              <div class="kpi-card"><div class="kpi-value" id="coherenceTime">124µs</div><div class="kpi-label">Coherence</div></div>
+              <div class="kpi-card"><div class="kpi-value" id="aiConfidence">96%</div><div class="kpi-label">AI confidence</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-hdr"><div class="panel-title">🧠 Quantum AI insights</div></div>
+        <div class="panel-body" id="quantumInsights"></div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tab-surveillance">
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-hdr"><div class="panel-title">📡 Live surveillance feed · Zone 7</div></div>
+          <div class="panel-body"><div class="surv-canvas-wrap"><canvas class="data-canvas" id="surveillanceCanvas"></canvas></div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-hdr"><div class="panel-title">🎯 AI detection queue</div></div>
+          <div class="panel-body"><div id="detectionList" style="height:280px; overflow-y:auto;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tab-pipeline">
+      <div class="panel">
+        <div class="panel-hdr">
+          <div class="panel-title">💼 Deal pipeline</div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-soft" id="seedDealsBtn">Reset defaults</button>
+            <button class="btn" id="addDealBtn">+ Add deal</button>
+          </div>
+        </div>
+        <div class="panel-body" style="padding-top:0;">
+          <table class="data-table">
+            <thead>
+              <tr><th>Client</th><th>Opportunity</th><th>Value</th><th>Stage</th><th>Prob</th><th>Close</th><th></th></tr>
+            </thead>
+            <tbody id="pipelineBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tab-contracts">
+      <div class="panel">
+        <div class="panel-hdr">
+          <div class="panel-title">📋 Government contracts</div>
+          <button class="btn" id="addContractBtn">+ Track RFP</button>
+        </div>
+        <div class="panel-body" id="contractList"></div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tab-tasks">
+      <div class="panel">
+        <div class="panel-hdr">
+          <div class="panel-title">✅ Task engine</div>
+          <button class="btn btn-soft" id="seedTasksBtn">Reset defaults</button>
+        </div>
+        <div class="panel-body">
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
+            <input class="finp" id="taskInput" placeholder="New task..." style="flex:1;">
+            <select class="fsel" id="taskPriority">
+              <option value="high">🔴 High</option>
+              <option value="medium" selected>🟡 Medium</option>
+              <option value="low">🟢 Low</option>
+            </select>
+            <button class="btn" id="addTaskBtn">Add</button>
+          </div>
+          <div id="taskList"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tab-ai">
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-hdr"><div class="panel-title">🧠 Quantum AI advisor</div></div>
+          <div class="panel-body">
+            <div id="aiInsights" style="max-height: 320px; overflow-y: auto;"></div>
+            <div style="position:relative; margin-top:16px;">
+              <input id="aiQuery" class="finp" type="text" placeholder="Ask NEXUS: threat matrix, pipeline status, overdue tasks, deals closing this week..." style="width:100%; padding-left:40px;">
+              <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%);">🌀</span>
+            </div>
+            <button class="btn" id="sendQuery" style="margin-top:12px;">Send</button>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-hdr"><div class="panel-title">⚡ Quick actions</div></div>
+          <div class="panel-body" id="quickActions"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hdr"><div class="panel-title">📄 Executive report</div></div>
+        <div class="panel-body">
+          <div class="report-card" id="reportCard"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="timeline-rail" id="timelineRail"></div>
+</div>
+
+<button id="quantum-mode-btn">⚛️ Quantum neural mode</button>
+
+<div class="palette" id="palette">
+  <div class="palette-box">
+    <div class="palette-head">
+      <input id="paletteInput" class="palette-input" placeholder="Jump to page or run an action…" autocomplete="off" />
+    </div>
+    <div class="palette-list" id="paletteList"></div>
+    <div class="palette-shortcuts">Enter to run · ↑/↓ to move · Esc to close · 1–7 page shortcuts</div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const STORAGE_KEY = 'nexus.omega.v12_1.operational.final';
+
+  const DEFAULT_STATE = {
+    prefs: {
+      voiceEnabled: true,
+      selectedTab: 'dashboard',
+      quantumMode: false
+    },
+    deals: [
+      { id: 1, client: 'City of Burlington', name: 'NEXUS Platform', value: 380000, stage: 'negotiation', prob: 85, close: '2026-04-15' },
+      { id: 2, client: 'Joseph Brant Hospital', name: 'Aurora Health Intelligence', value: 290000, stage: 'closing', prob: 90, close: '2026-03-28' },
+      { id: 3, client: 'Region of Halton', name: 'Network Security Assessment', value: 145000, stage: 'proposal', prob: 65, close: '2026-05-10' },
+      { id: 4, client: 'Hamilton Health Sciences', name: 'AEGIS Endpoint Monitoring', value: 320000, stage: 'qualified', prob: 45, close: '2026-06-30' },
+      { id: 5, client: 'Halton Regional Police', name: 'Threat Intelligence Retainer', value: 180000, stage: 'closing', prob: 92, close: '2026-03-15' },
+      { id: 6, client: 'City of Mississauga', name: 'Cybersecurity Governance', value: 450000, stage: 'proposal', prob: 60, close: '2026-05-20' }
+    ],
+    contracts: [
+      { id: 1, org: 'City of Burlington', title: 'Cybersecurity Assessment 2026', value: '$280K', deadline: '2026-03-18', flag: '🏛️' },
+      { id: 2, org: 'PHSA British Columbia', title: 'Network Security Monitoring', value: '$450K', deadline: '2026-03-25', flag: '🏥' },
+      { id: 3, org: 'PSPC Canada', title: 'Standing Offer SOR/2026', value: '$500K+', deadline: '2026-04-10', flag: '🇨🇦' },
+      { id: 4, org: 'Halton Region', title: 'IT Security Services', value: '$160K', deadline: '2026-03-12', flag: '🏢' }
+    ],
+    tasks: [
+      { id: 1, text: 'Submit Mississauga RFP', priority: 'high', due: '2026-03-10', done: false },
+      { id: 2, text: 'Follow up Joseph Brant legal team', priority: 'high', due: '2026-03-30', done: false },
+      { id: 3, text: 'Prepare Halton Region proposal', priority: 'high', due: '2026-04-04', done: false },
+      { id: 4, text: 'Close Halton Police contract', priority: 'high', due: '2026-03-15', done: false }
+    ],
+    envHistory: seedEnvHistory(),
+    activityLog: [
+      { time: '14:32', text: 'Pipeline updated: Burlington deal moved to negotiation' },
+      { time: '14:28', text: 'Quantum coherence stabilized at 94.2%' },
+      { time: '14:15', text: 'Surveillance anomaly detected in Zone 7' }
+    ],
+    timelineEvents: [
+      '⚛️ 14:32 · Quantum coherence stabilized at 94.2%',
+      '📡 14:47 · Surveillance anomaly detected in Zone 7',
+      '💰 14:55 · Burlington deal advanced to negotiation',
+      '🌍 15:10 · Environmental tensor: AQI 42, CO₂ 412ppm'
+    ],
+    detections: [],
+    metrics: {
+      quantumVolume: 256,
+      entanglementRate: 98.7,
+      coherenceTime: 124,
+      aiConfidence: 96
+    }
+  };
+
+  function seedEnvHistory() {
+    const out = [];
+    let co2 = 412, aqi = 42, temp = 17.4;
+    for (let i = 0; i < 60; i++) {
+      co2 += (Math.random() - .5) * 2.2;
+      aqi += (Math.random() - .5) * 3.2;
+      temp += (Math.random() - .5) * .22;
+      out.push({
+        co2: clamp(co2, 390, 440),
+        aqi: clamp(aqi, 20, 90),
+        temp: clamp(temp, 15, 21)
+      });
+    }
+    return out;
+  }
+
+  function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+  function deepClone(obj) { return JSON.parse(JSON.stringify(obj)); }
+  function qs(sel, root = document) { return root.querySelector(sel); }
+  function qsa(sel, root = document) { return Array.from(root.querySelectorAll(sel)); }
+  function money(v) { return v >= 1000000 ? '$' + (v / 1000000).toFixed(2) + 'M' : '$' + Math.round(v / 1000) + 'K'; }
+  function todayISO() {
+    return new Date().toISOString().slice(0, 10);
+  }
+  function daysUntil(dateStr) {
+    const now = new Date(todayISO());
+    const target = new Date(dateStr);
+    return Math.round((target - now) / 86400000);
+  }
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return deepClone(DEFAULT_STATE);
+      const parsed = JSON.parse(raw);
+      return normalizeState(parsed);
+    } catch (err) {
+      console.warn('State load failed, using defaults', err);
+      return deepClone(DEFAULT_STATE);
+    }
+  }
+
+  function normalizeState(state) {
+    const base = deepClone(DEFAULT_STATE);
+    return {
+      ...base,
+      ...state,
+      prefs: { ...base.prefs, ...(state.prefs || {}) },
+      deals: Array.isArray(state.deals) && state.deals.length ? state.deals : base.deals,
+      contracts: Array.isArray(state.contracts) && state.contracts.length ? state.contracts : base.contracts,
+      tasks: Array.isArray(state.tasks) && state.tasks.length ? state.tasks : base.tasks,
+      envHistory: Array.isArray(state.envHistory) && state.envHistory.length ? state.envHistory : base.envHistory,
+      activityLog: Array.isArray(state.activityLog) ? state.activityLog : base.activityLog,
+      timelineEvents: Array.isArray(state.timelineEvents) ? state.timelineEvents : base.timelineEvents,
+      detections: Array.isArray(state.detections) ? state.detections : [],
+      metrics: { ...base.metrics, ...(state.metrics || {}) }
+    };
+  }
+
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      prefs: state.prefs,
+      deals: state.deals,
+      contracts: state.contracts,
+      tasks: state.tasks,
+      envHistory: state.envHistory,
+      activityLog: state.activityLog.slice(0, 30),
+      timelineEvents: state.timelineEvents.slice(0, 16),
+      metrics: state.metrics
+    }));
+  }
+
+  const state = loadState();
+
+  function totalPipeline() { return state.deals.reduce((s, d) => s + d.value, 0); }
+  function weightedPipeline() { return state.deals.reduce((s, d) => s + d.value * d.prob / 100, 0); }
+  function closingSoonDeals(days = 14) { return state.deals.filter(d => !Number.isNaN(daysUntil(d.close)) && daysUntil(d.close) >= 0 && daysUntil(d.close) <= days); }
+  function overdueTasks() { return state.tasks.filter(t => !t.done && t.due && daysUntil(t.due) < 0); }
+  function liveEnv() { return state.envHistory[state.envHistory.length - 1]; }
+
+  function addActivity(text) {
+    state.activityLog.unshift({ time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), text });
+    state.activityLog = state.activityLog.slice(0, 24);
+    saveState();
+  }
+
+  function addTimeline(text) {
+    state.timelineEvents.unshift(text);
+    state.timelineEvents = state.timelineEvents.slice(0, 18);
+    renderTimeline();
+    saveState();
+  }
+
+  function notify(title, body) {
+    const node = document.createElement('div');
+    node.className = 'notif';
+    node.innerHTML = `<div class="notif-title">${title}</div><div class="notif-body">${body}</div>`;
+    document.body.appendChild(node);
+    setTimeout(() => node.remove(), 5200);
+  }
+
+  function renderDashboardKpis() {
+    const targetProgress = Math.round((weightedPipeline() / 1000000) * 100);
+    qs('#dashboardKpis').innerHTML = `
+      <div class="kpi-card"><div class="kpi-value">${money(totalPipeline())}</div><div class="kpi-label">Total pipeline</div><div class="kpi-sub">${state.deals.length} active deals</div></div>
+      <div class="kpi-card"><div class="kpi-value">${money(weightedPipeline())}</div><div class="kpi-label">Weighted forecast</div><div class="kpi-sub">Probability-adjusted</div></div>
+      <div class="kpi-card"><div class="kpi-value">${targetProgress}%</div><div class="kpi-label">Target progress</div><div class="kpi-sub">${closingSoonDeals().length} deals closing soon</div></div>
+      <div class="kpi-card"><div class="kpi-value">${Math.round(state.metrics.aiConfidence)}%</div><div class="kpi-label">Quantum coherence</div><div class="kpi-sub">Voice ${state.prefs.voiceEnabled ? 'enabled' : 'muted'}</div></div>
+    `;
+  }
+
+  function renderDashboard() {
+    renderDashboardKpis();
+    const topDeals = [...state.deals].sort((a, b) => b.value - a.value).slice(0, 4);
+    qs('#priorityDeals').innerHTML = topDeals.map(d => `
+      <tr>
+        <td><strong>${escapeHtml(d.client)}</strong></td>
+        <td>${money(d.value)}</td>
+        <td><span class="stage-badge stage-${d.stage}">${d.stage.toUpperCase()}</span></td>
+      </tr>
+    `).join('');
+
+    qs('#activityFeed').innerHTML = state.activityLog.slice(0, 10).map(a => `
+      <div class="feed-row"><span style="color:var(--quantum-tertiary);">[${escapeHtml(a.time)}]</span> ${escapeHtml(a.text)}</div>
+    `).join('') || '<div class="feed-row dim">No recent activity.</div>';
+
+    qs('#nbPipeline').textContent = state.deals.length;
+    qs('#nbContracts').textContent = state.contracts.length;
+    qs('#closingSoonMetric').textContent = String(closingSoonDeals().length);
+    qs('#overdueMetric').textContent = String(overdueTasks().length);
+    qs('#contractsMetric').textContent = String(state.contracts.length);
+    qs('#voiceMetric').textContent = state.prefs.voiceEnabled ? 'ON' : 'OFF';
+
+    const env = liveEnv();
+    qs('#envAQI').textContent = Math.round(env.aqi);
+    qs('#envTemp').textContent = env.temp.toFixed(1) + '°C';
+    qs('#envCO2').textContent = Math.round(env.co2);
+  }
+
+  function renderPipeline() {
+    qs('#pipelineBody').innerHTML = state.deals.map(d => `
+      <tr>
+        <td><strong>${escapeHtml(d.client)}</strong></td>
+        <td>${escapeHtml(d.name)}</td>
+        <td>${money(d.value)}</td>
+        <td><span class="stage-badge stage-${d.stage}">${d.stage.toUpperCase()}</span></td>
+        <td>${d.prob}%</td>
+        <td>${escapeHtml(d.close)}</td>
+        <td><button class="btn btn-dan" data-remove-deal="${d.id}" style="padding:2px 8px;">✕</button></td>
+      </tr>
+    `).join('');
+  }
+
+  function renderContracts() {
+    qs('#contractList').innerHTML = state.contracts.map(c => `
+      <div class="contract-card">
+        <div><strong>${escapeHtml(c.flag)} ${escapeHtml(c.org)}</strong> — ${escapeHtml(c.title)}</div>
+        <div style="font-size:0.7rem; color:var(--text-dim);">Value: ${escapeHtml(c.value)} · Deadline: ${escapeHtml(c.deadline)}</div>
+        <button class="btn btn-dan" data-remove-contract="${c.id}" style="margin-top:6px;">Remove</button>
+      </div>
+    `).join('');
+  }
+
+  function renderTasks() {
+    qs('#taskList').innerHTML = state.tasks.map(t => `
+      <div class="task-row" style="display:flex; align-items:center; gap:10px;">
+        <input type="checkbox" data-toggle-task="${t.id}" ${t.done ? 'checked' : ''}>
+        <span style="flex:1; ${t.done ? 'text-decoration:line-through; opacity:0.5;' : ''}">${escapeHtml(t.text)}${t.due ? ` <span class="dim">· due ${escapeHtml(t.due)}</span>` : ''}</span>
+        <span class="priority-badge priority-${t.priority}">${t.priority.toUpperCase()}</span>
+        <button class="btn btn-dan" data-remove-task="${t.id}" style="padding:2px 8px;">✕</button>
+      </div>
+    `).join('');
+  }
+
+  function renderTimeline() {
+    qs('#timelineRail').innerHTML = state.timelineEvents.map(e => `<div class="timeline-event">${escapeHtml(e)}</div>`).join('');
+  }
+
+  function renderQuantumInsights() {
+    const env = liveEnv();
+    qs('#quantumInsights').innerHTML = `
+      <div class="quantum-response"><strong>⚛️ Quantum AI:</strong> Good cycle, Director. Surveillance feed shows elevated activity in Zone 7. Environmental tensor predicts moderate air pressure drift and an AQI trend of ${Math.round(env.aqi)}.</div>
+      <div class="insight-card" data-action="threats">⚠️ Threat Matrix: Ontario public-sector targeting remains active. Counter-intel posture elevated.</div>
+      <div class="insight-card" data-action="surveillance">📡 Camera anomaly density rising in Zone 7 · detection confidence ${Math.round(state.metrics.aiConfidence)}%</div>
+      <div class="insight-card" data-action="environment">🌍 Live environment: CO₂ ${Math.round(env.co2)} ppm · AQI ${Math.round(env.aqi)} · Temp ${env.temp.toFixed(1)}°C</div>
+    `;
+  }
+
+  function renderQuickActions() {
+    const actions = [
+      ['pipeline', '📊 Pipeline status'],
+      ['threats', '🛡️ Threat matrix'],
+      ['environment', '🌍 Environment report'],
+      ['surveillance', '📡 Camera anomaly'],
+      ['overdue tasks', '✅ Overdue tasks'],
+      ['deals closing this week', '💰 Deals closing this week']
+    ];
+    qs('#quickActions').innerHTML = actions.map(([query, label]) => `<button class="btn" data-quick="${escapeAttr(query)}" style="width:100%; margin-bottom:8px;">${label}</button>`).join('');
+  }
+
+  function renderReport() {
+    const soon = closingSoonDeals(7);
+    const overdue = overdueTasks();
+    const report = qs('#reportCard');
+    report.innerHTML = `
+      <div class="report-title">Weekly executive brief</div>
+      <div class="report-meta">${new Date().toLocaleDateString()} · Auto-generated from live state</div>
+      <div class="report-body">
+        Pipeline stands at <strong>${money(totalPipeline())}</strong> with a weighted forecast of <strong>${money(weightedPipeline())}</strong>.
+        There are <strong>${soon.length}</strong> deals closing in the next 7 days and <strong>${overdue.length}</strong> overdue tasks requiring intervention.
+        Surveillance has logged <strong>${state.detections.length}</strong> currently retained detections while environmental telemetry remains within managed thresholds.
+      </div>
+    `;
+  }
+
+  function renderAIPanelIntro() {
+    const intro = document.createElement('div');
+    intro.className = 'quantum-response';
+    intro.innerHTML = `<strong>🧠 NEXUS AI:</strong> Good afternoon, Director. Pipeline at ${money(totalPipeline())}, weighted ${money(weightedPipeline())}. Target progress ${Math.round((weightedPipeline() / 1000000) * 100)}%.`;
+    const panel = qs('#aiInsights');
+    if (!panel.children.length) panel.appendChild(intro);
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+  }
+  function escapeAttr(str) { return escapeHtml(str); }
+
+  const intents = [
+    {
+      name: 'pipeline',
+      patterns: [/pipeline/i, /forecast/i, /deal(s)?/i],
+      resolve() {
+        const top = [...state.deals].sort((a,b) => b.value - a.value).slice(0, 3)
+          .map(d => `${d.client} — ${money(d.value)} — ${d.stage.toUpperCase()}`);
+        return {
+          title: '💰 Pipeline status',
+          type: 'kpi',
+          text: `Pipeline totals ${money(totalPipeline())} with weighted forecast ${money(weightedPipeline())}.`,
+          items: top
+        };
+      }
+    },
+    {
+      name: 'threats',
+      patterns: [/threat/i, /apt/i, /matrix/i, /risk/i],
+      resolve() {
+        return {
+          title: '🛡️ Threat matrix',
+          type: 'alert',
+          text: `Active posture elevated. Surveillance anomaly density is ${state.detections.length ? 'elevated' : 'contained'} and confidence is ${Math.round(state.metrics.aiConfidence)}%.`,
+          items: [
+            'APT-style targeting against public sector domains remains credible.',
+            'Zone 7 anomaly queue requires analyst verification.',
+            'Recommend retention review for high-probability detections.'
+          ]
+        };
+      }
+    },
+    {
+      name: 'environment',
+      patterns: [/environment/i, /\benv\b/i, /aqi/i, /co2/i, /temperature/i],
+      resolve() {
+        const env = liveEnv();
+        return {
+          title: '🌍 Environmental report',
+          type: 'list',
+          text: `Live telemetry reports AQI ${Math.round(env.aqi)}, CO₂ ${Math.round(env.co2)} ppm, and temperature ${env.temp.toFixed(1)}°C.`,
+          items: [
+            `AQI trend: ${env.aqi > 55 ? 'watch' : 'stable'}`,
+            `CO₂ drift: ${env.co2 > 425 ? 'above target' : 'within expected range'}`,
+            `Temperature spread remains operationally safe`
+          ]
+        };
+      }
+    },
+    {
+      name: 'surveillance',
+      patterns: [/camera/i, /surveillance/i, /anomaly/i, /drone/i],
+      resolve() {
+        const current = state.detections.slice(-3).reverse().map(d => `${d.label} @ ${Math.round(d.x)},${Math.round(d.y)}`);
+        return {
+          title: '📡 Surveillance anomaly',
+          type: 'alert',
+          text: `Latest feed indicates ${state.detections.length || 'no retained'} detections in memory. Live pattern analysis remains active.`,
+          items: current.length ? current : ['No retained detections. Live scan still active.']
+        };
+      }
+    },
+    {
+      name: 'closingThisWeek',
+      patterns: [/closing this week/i, /close this week/i, /deals closing/i],
+      resolve() {
+        const list = closingSoonDeals(7).map(d => `${d.client} — ${money(d.value)} — closes ${d.close}`);
+        return {
+          title: '📆 Deals closing this week',
+          type: 'list',
+          text: `${list.length} opportunities are scheduled to close within 7 days.`,
+          items: list.length ? list : ['No deals scheduled to close this week.']
+        };
+      }
+    },
+    {
+      name: 'overdueTasks',
+      patterns: [/overdue task/i, /late task/i, /overdue/i],
+      resolve() {
+        const items = overdueTasks().map(t => `${t.text}${t.due ? ` — due ${t.due}` : ''}`);
+        return {
+          title: '✅ Overdue tasks',
+          type: 'list',
+          text: `${items.length} tasks are overdue and need action.`,
+          items: items.length ? items : ['No overdue tasks.']
+        };
+      }
+    },
+    {
+      name: 'contracts',
+      patterns: [/contract/i, /rfp/i, /proposal/i],
+      resolve() {
+        const items = state.contracts.slice(0, 4).map(c => `${c.org} — ${c.title} — ${c.deadline}`);
+        return {
+          title: '📋 Contract posture',
+          type: 'list',
+          text: `${state.contracts.length} tracked contracts are in the queue.`,
+          items
+        };
+      }
+    },
+    {
+      name: 'default',
+      patterns: [/.*/],
+      resolve(query) {
+        return {
+          title: '🧠 NEXUS AI',
+          type: 'default',
+          text: `Command accepted: "${query}". Try pipeline status, threat matrix, environmental report, overdue tasks, or deals closing this week.`,
+          items: []
+        };
+      }
+    }
+  ];
+
+  function resolveQuery(query) {
+    const clean = query.trim();
+    for (const intent of intents) {
+      if (intent.patterns.some(rx => rx.test(clean))) {
+        return intent.resolve(clean);
+      }
+    }
+    return intents[intents.length - 1].resolve(clean);
+  }
+
+  function renderAiResponse(response, target) {
+    const node = document.createElement('div');
+    node.className = `quantum-response ${response.type || 'default'}`;
+    const items = Array.isArray(response.items) && response.items.length
+      ? `<ul class="response-list">${response.items.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul>`
+      : '';
+    node.innerHTML = `
+      <div class="response-title">${escapeHtml(response.title)}</div>
+      <div>${escapeHtml(response.text)}</div>
+      ${items}
+    `;
+    target.prepend(node);
+  }
+
+  function handleQuery(query) {
+    const response = resolveQuery(query);
+    renderAiResponse(response, qs('#aiInsights'));
+    addActivity(`AI query: "${query.slice(0, 60)}"`);
+    saveState();
+    return response;
+  }
+
+  function buildTicker() {
+    const env = liveEnv();
+    const items = [
+      `🏛️ Burlington RFP <span class="tv">$280K</span>`,
+      `◈ Pipeline <span class="tg">${money(totalPipeline())}</span>`,
+      `⚛️ Quantum Coherence <span class="tv">${Math.round(state.metrics.aiConfidence)}%</span>`,
+      `📡 Zone 7 Anomaly ${state.detections.length ? '<span class="td">ACTIVE</span>' : 'CLEAR'}`,
+      `💰 Target Progress <span class="tv">${Math.round((weightedPipeline() / 1000000) * 100)}%</span>`,
+      `🌍 AQI <span class="tg">${Math.round(env.aqi)}</span> · CO₂ <span class="tv">${Math.round(env.co2)}</span>`
+    ];
+    const track = qs('#tickerTrack');
+    track.innerHTML = [...items, ...items].map(i => `<span class="tick-item">${i}</span>`).join('');
+  }
+
+  function updateClock() {
+    const now = new Date();
+    qs('#hdrTime').textContent = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    qs('#hdrDate').textContent = now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }).toUpperCase();
+  }
+
+  let speechSynth = window.speechSynthesis;
+  function speak(text) {
+    if (!state.prefs.voiceEnabled || !speechSynth) return;
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = 0.95;
+    u.pitch = 1.0;
+    speechSynth.cancel();
+    speechSynth.speak(u);
+    qs('#voiceBtn').classList.add('speaking');
+    u.onend = () => qs('#voiceBtn').classList.remove('speaking');
+  }
+
+  function toggleVoice(force) {
+    state.prefs.voiceEnabled = typeof force === 'boolean' ? force : !state.prefs.voiceEnabled;
+    qs('#voiceBtn').textContent = state.prefs.voiceEnabled ? '🔊' : '🔇';
+    if (!state.prefs.voiceEnabled && speechSynth) speechSynth.cancel();
+    renderDashboard();
+    saveState();
+    notify('VOICE', state.prefs.voiceEnabled ? 'Voice synthesis enabled.' : 'Voice synthesis muted.');
+  }
+
+  function setTab(tabId) {
+    qsa('.tab-pane').forEach(p => p.classList.toggle('active', p.id === 'tab-' + tabId));
+    qsa('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tabId));
+    state.prefs.selectedTab = tabId;
+    location.hash = tabId;
+    if (tabId === 'quantum') renderQuantumInsights();
+    if (tabId === 'ai') renderAIPanelIntro();
+    saveState();
+  }
+
+  function addTask() {
+    const text = qs('#taskInput').value.trim();
+    if (!text) return;
+    const priority = qs('#taskPriority').value;
+    const due = prompt('Optional due date (YYYY-MM-DD):', todayISO()) || '';
+    state.tasks.push({ id: Date.now(), text, priority, due, done: false });
+    qs('#taskInput').value = '';
+    renderTasks();
+    addActivity(`Task added: ${text}`);
+    addTimeline(`✅ ${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})} · Task created: ${text}`);
+    saveState();
+  }
+
+  function resetDeals() {
+    state.deals = deepClone(DEFAULT_STATE.deals);
+    renderAll();
+    notify('PIPELINE', 'Default pipeline restored.');
+  }
+  function resetTasks() {
+    state.tasks = deepClone(DEFAULT_STATE.tasks);
+    renderAll();
+    notify('TASKS', 'Default tasks restored.');
+  }
+
+  function exportState() {
+    const blob = new Blob([JSON.stringify({
+      exportedAt: new Date().toISOString(),
+      state
+    }, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'nexus-omega-state-export.json';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    notify('EXPORT', 'State export downloaded.');
+  }
+
+  class EnvChart {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d');
+      this.ro = new ResizeObserver(() => this.resize());
+      this.ro.observe(canvas);
+      this.resize();
+      this.loop = this.loop.bind(this);
+      requestAnimationFrame(this.loop);
+    }
+    resize() {
+      const rect = this.canvas.getBoundingClientRect();
+      this.canvas.width = Math.max(10, Math.floor(rect.width * devicePixelRatio));
+      this.canvas.height = Math.max(10, Math.floor(rect.height * devicePixelRatio));
+      this.ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    }
+    loop() {
+      this.draw();
+      requestAnimationFrame(this.loop);
+    }
+    draw() {
+      const ctx = this.ctx;
+      const w = this.canvas.getBoundingClientRect().width;
+      const h = this.canvas.getBoundingClientRect().height;
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = '#00140f';
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+      for (let i = 1; i < 5; i++) {
+        const y = (h / 5) * i;
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+
+      const data = state.envHistory.slice(-60);
+      this.drawSeries(data.map(d => d.aqi), w, h, '#00ffff', 15, 90);
+      this.drawSeries(data.map(d => d.co2), w, h, '#ffff00', 390, 450);
+    }
+    drawSeries(values, w, h, color, min, max) {
+      const ctx = this.ctx;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      values.forEach((val, i) => {
+        const x = (i / (values.length - 1 || 1)) * w;
+        const y = h - ((val - min) / (max - min || 1)) * h;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+    }
+  }
+
+  class NeuralCanvas {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d');
+      this.layers = [4, 6, 8, 6, 4];
+      this.neurons = [];
+      this.connections = [];
+      this.phase = 0;
+      this.ro = new ResizeObserver(() => this.init());
+      this.ro.observe(canvas);
+      this.loop = this.loop.bind(this);
+      this.init();
+      requestAnimationFrame(this.loop);
+    }
+    init() {
+      const rect = this.canvas.getBoundingClientRect();
+      this.canvas.width = Math.max(10, Math.floor(rect.width * devicePixelRatio));
+      this.canvas.height = Math.max(10, Math.floor(rect.height * devicePixelRatio));
+      this.ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+      const w = rect.width, h = rect.height;
+      this.neurons = [];
+      this.connections = [];
+      for (let l = 0; l < this.layers.length; l++) {
+        const x = 60 + (w - 120) * (l / (this.layers.length - 1));
+        for (let i = 0; i < this.layers[l]; i++) {
+          const y = 30 + (h - 60) * (i / (this.layers[l] - 1 || 1));
+          this.neurons.push({ x, y, layer: l, bias: Math.random() * Math.PI * 2 });
+        }
+      }
+      for (let i = 0; i < this.neurons.length; i++) {
+        for (let j = i + 1; j < this.neurons.length; j++) {
+          if (Math.abs(this.neurons[i].layer - this.neurons[j].layer) === 1 && Math.random() > 0.58) {
+            this.connections.push([i, j]);
+          }
+        }
+      }
+    }
+    loop() {
+      this.draw();
+      requestAnimationFrame(this.loop);
+    }
+    draw() {
+      const ctx = this.ctx;
+      const rect = this.canvas.getBoundingClientRect();
+      const w = rect.width, h = rect.height;
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, w, h);
+
+      this.connections.forEach(([i, j]) => {
+        const a = this.neurons[i], b = this.neurons[j];
+        const pulse = (Math.sin(this.phase + i * 0.23 + j * 0.17) + 1) * 0.5;
+        ctx.strokeStyle = `rgba(0,255,255,${0.08 + pulse * 0.18})`;
+        ctx.lineWidth = 1 + pulse;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      });
+
+      this.neurons.forEach((n, idx) => {
+        const r = 4 + (Math.sin(this.phase * 1.5 + n.bias + idx * 0.07) + 1) * 2;
+        const glow = this.ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, r * 4);
+        glow.addColorStop(0, `rgba(0,255,255,0.95)`);
+        glow.addColorStop(1, 'rgba(0,255,255,0)');
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, r * 2.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = `hsl(${180 + Math.sin(this.phase + idx * 0.08) * 45},100%,60%)`;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      this.phase += 0.02;
+      state.metrics.quantumVolume = 240 + Math.floor((Math.sin(this.phase * 0.5) + 1) * 16);
+      state.metrics.entanglementRate = 97.5 + (Math.sin(this.phase * 0.7) + 1) * 0.7;
+      state.metrics.coherenceTime = 116 + Math.floor((Math.sin(this.phase * 0.4) + 1) * 9);
+      state.metrics.aiConfidence = 94 + (Math.sin(this.phase * 0.55) + 1) * 1.8;
+      qs('#quantumVol').textContent = String(state.metrics.quantumVolume);
+      qs('#entanglementRate').textContent = state.metrics.entanglementRate.toFixed(1) + '%';
+      qs('#coherenceTime').textContent = state.metrics.coherenceTime + 'µs';
+      qs('#aiConfidence').textContent = Math.round(state.metrics.aiConfidence) + '%';
+    }
+  }
+
+  class SurveillanceCanvas {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d');
+      this.frame = 0;
+      this.ro = new ResizeObserver(() => this.resize());
+      this.ro.observe(canvas);
+      this.loop = this.loop.bind(this);
+      this.resize();
+      requestAnimationFrame(this.loop);
+      setInterval(() => this.spawnDetection(), 2200);
+    }
+    resize() {
+      const rect = this.canvas.getBoundingClientRect();
+      this.canvas.width = Math.max(10, Math.floor(rect.width * devicePixelRatio));
+      this.canvas.height = Math.max(10, Math.floor(rect.height * devicePixelRatio));
+      this.ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    }
+    spawnDetection() {
+      const rect = this.canvas.getBoundingClientRect();
+      const det = {
+        x: Math.random() * Math.max(50, rect.width - 160) + 30,
+        y: Math.random() * Math.max(50, rect.height - 120) + 30,
+        w: 70 + Math.random() * 80,
+        h: 50 + Math.random() * 70,
+        label: Math.random() > 0.74 ? 'ANOMALY' : 'PERSON',
+        ttl: 3500
+      };
+      state.detections.push(det);
+      state.detections = state.detections.slice(-8);
+      renderDetections();
+      addTimeline(`📡 ${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})} · Detection: ${det.label} @ Zone 7`);
+      saveState();
+      setTimeout(() => {
+        state.detections = state.detections.filter(d => d !== det);
+        renderDetections();
+      }, det.ttl);
+    }
+    loop() {
+      this.draw();
+      requestAnimationFrame(this.loop);
+    }
+    draw() {
+      const ctx = this.ctx;
+      const rect = this.canvas.getBoundingClientRect();
+      const w = rect.width, h = rect.height;
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = '#00140f';
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.strokeStyle = 'rgba(0,255,255,0.12)';
+      for (let i = 0; i < 28; i++) {
+        ctx.beginPath();
+        ctx.moveTo(0, (h / 28) * i + Math.sin(this.frame * 0.02 + i) * 4);
+        ctx.lineTo(w, (h / 28) * i + Math.cos(this.frame * 0.013 + i) * 5);
+        ctx.stroke();
+      }
+
+      for (let i = 0; i < 8; i++) {
+        const x = (this.frame * (1.4 + i * 0.75) % (w + 40)) - 20;
+        const y = 50 + Math.sin(this.frame / (12 + i)) * 55 + i * 8;
+        ctx.fillStyle = i % 2 === 0 ? '#ff00ff' : '#ffaa33';
+        ctx.fillRect(x, y, 12, 24);
+      }
+
+      state.detections.forEach(d => {
+        ctx.strokeStyle = d.label === 'ANOMALY' ? '#ff00ff' : '#ffaa33';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(d.x, d.y, d.w, d.h);
+        ctx.fillStyle = ctx.strokeStyle;
+        ctx.font = '10px monospace';
+        ctx.fillText(d.label, d.x + 4, d.y - 4);
+      });
+
+      ctx.fillStyle = '#0ff';
+      ctx.font = '11px monospace';
+      ctx.fillText(`LIVE • ${new Date().toLocaleTimeString()} • ZONE 7 CAM-04`, 18, h - 12);
+
+      this.frame += 1;
+    }
+  }
+
+  class BackgroundField {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d');
+      this.nodes = [];
+      this.ro = new ResizeObserver(() => this.resize());
+      this.ro.observe(canvas);
+      this.resize();
+      this.loop = this.loop.bind(this);
+      requestAnimationFrame(this.loop);
+    }
+    resize() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      this.canvas.width = Math.floor(w * devicePixelRatio);
+      this.canvas.height = Math.floor(h * devicePixelRatio);
+      this.ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+      this.nodes = Array.from({ length: 36 }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.18,
+        vy: (Math.random() - 0.5) * 0.18,
+        r: Math.random() * 1.7 + 0.6
+      }));
+    }
+    loop() {
+      const ctx = this.ctx;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      ctx.clearRect(0, 0, w, h);
+      this.nodes.forEach((n, i) => {
+        n.x += n.vx; n.y += n.vy;
+        if (n.x < 0 || n.x > w) n.vx *= -1;
+        if (n.y < 0 || n.y > h) n.vy *= -1;
+        ctx.fillStyle = 'rgba(0,200,255,0.25)';
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        ctx.fill();
+        for (let j = i + 1; j < this.nodes.length; j++) {
+          const m = this.nodes[j];
+          const dx = n.x - m.x;
+          const dy = n.y - m.y;
+          const d = Math.hypot(dx, dy);
+          if (d < 140) {
+            ctx.strokeStyle = `rgba(0,200,255,${(1 - d / 140) * 0.08})`;
+            ctx.beginPath();
+            ctx.moveTo(n.x, n.y);
+            ctx.lineTo(m.x, m.y);
+            ctx.stroke();
+          }
+        }
+      });
+      requestAnimationFrame(this.loop);
+    }
+  }
+
+  class QuantumOverlay {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d');
+      this.active = !!state.prefs.quantumMode;
+      this.particles = [];
+      this.resize();
+      window.addEventListener('resize', () => this.resize());
+      this.loop = this.loop.bind(this);
+      requestAnimationFrame(this.loop);
+      this.apply();
+    }
+    resize() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      this.canvas.width = Math.floor(w * devicePixelRatio);
+      this.canvas.height = Math.floor(h * devicePixelRatio);
+      this.ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+      this.particles = Array.from({ length: 120 }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.8,
+        vy: (Math.random() - 0.5) * 0.8,
+        r: Math.random() * 2 + 0.5
+      }));
+    }
+    setActive(flag) {
+      this.active = flag;
+      state.prefs.quantumMode = flag;
+      this.apply();
+      saveState();
+    }
+    apply() {
+      document.body.classList.toggle('quantum-mode', this.active);
+      this.canvas.style.opacity = this.active ? '.35' : '.12';
+      qs('#quantum-mode-btn').textContent = this.active ? '🎯 Classical executive mode' : '⚛️ Quantum neural mode';
+    }
+    loop() {
+      const ctx = this.ctx;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      ctx.clearRect(0, 0, w, h);
+      if (!this.active) {
+        requestAnimationFrame(this.loop);
+        return;
+      }
+      this.particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > w) p.vx *= -1;
+        if (p.y < 0 || p.y > h) p.vy *= -1;
+        ctx.fillStyle = 'rgba(0,255,255,0.6)';
+        ctx.fillRect(p.x, p.y, p.r, p.r);
+      });
+      requestAnimationFrame(this.loop);
+    }
+  }
+
+  function updateEnvTelemetry() {
+    const prev = liveEnv();
+    state.envHistory.push({
+      co2: clamp(prev.co2 + (Math.random() - .5) * 2.8, 390, 440),
+      aqi: clamp(prev.aqi + (Math.random() - .5) * 3.4, 20, 90),
+      temp: clamp(prev.temp + (Math.random() - .5) * .26, 15, 22)
+    });
+    state.envHistory = state.envHistory.slice(-72);
+    if (Math.random() > 0.78) {
+      addActivity(`Environmental tensor updated: AQI ${Math.round(liveEnv().aqi)}, CO₂ ${Math.round(liveEnv().co2)} ppm`);
+      renderDashboard();
+      buildTicker();
+      saveState();
+    }
+  }
+
+  function renderDetections() {
+    const list = qs('#detectionList');
+    list.innerHTML = state.detections.slice().reverse().map(d => `
+      <div class="detail-row">
+        <span style="color:${d.label === 'ANOMALY' ? '#ff00ff' : '#ffaa33'};">${escapeHtml(d.label)}</span>
+        at (${Math.round(d.x)}, ${Math.round(d.y)}) — ${Math.round(d.w)}×${Math.round(d.h)}
+      </div>
+    `).join('') || '<div class="detail-row dim">No retained detections. Live feed active.</div>';
+  }
+
+  function renderAll() {
+    renderDashboard();
+    renderPipeline();
+    renderContracts();
+    renderTasks();
+    renderTimeline();
+    renderQuantumInsights();
+    renderQuickActions();
+    renderReport();
+    renderAIPanelIntro();
+    renderDetections();
+    buildTicker();
+  }
+
+  const paletteItems = [
+    { label: 'Open Dashboard', meta: 'page', run: () => setTab('dashboard') },
+    { label: 'Open Quantum Neural', meta: 'page', run: () => setTab('quantum') },
+    { label: 'Open Surveillance', meta: 'page', run: () => setTab('surveillance') },
+    { label: 'Open Pipeline', meta: 'page', run: () => setTab('pipeline') },
+    { label: 'Open Contracts', meta: 'page', run: () => setTab('contracts') },
+    { label: 'Open Tasks', meta: 'page', run: () => setTab('tasks') },
+    { label: 'Open AI Agent', meta: 'page', run: () => setTab('ai') },
+    { label: 'Toggle Voice', meta: 'action', run: () => toggleVoice() },
+    { label: 'Toggle Quantum Mode', meta: 'action', run: () => overlay.setActive(!state.prefs.quantumMode) },
+    { label: 'Export State', meta: 'action', run: () => exportState() }
+  ];
+  let paletteIndex = 0;
+
+  function openPalette() {
+    qs('#palette').classList.add('open');
+    qs('#paletteInput').value = '';
+    renderPalette();
+    qs('#paletteInput').focus();
+  }
+  function closePalette() {
+    qs('#palette').classList.remove('open');
+  }
+  function renderPalette() {
+    const input = qs('#paletteInput').value.trim().toLowerCase();
+    const filtered = paletteItems.filter(item => item.label.toLowerCase().includes(input) || item.meta.toLowerCase().includes(input));
+    const safeIndex = clamp(paletteIndex, 0, Math.max(0, filtered.length - 1));
+    paletteIndex = safeIndex;
+    qs('#paletteList').innerHTML = filtered.map((item, idx) => `
+      <div class="palette-item ${idx === safeIndex ? 'active' : ''}" data-palette-index="${idx}">
+        <div>
+          <div class="palette-label">${escapeHtml(item.label)}</div>
+          <div class="palette-meta">${escapeHtml(item.meta)}</div>
+        </div>
+        <div class="palette-meta">ENTER</div>
+      </div>
+    `).join('') || '<div class="palette-item"><div class="palette-label dim">No matches.</div></div>';
+    qs('#paletteList').dataset.filtered = JSON.stringify(filtered.map(item => paletteItems.indexOf(item)));
+  }
+  function runPaletteSelection() {
+    const idxMap = JSON.parse(qs('#paletteList').dataset.filtered || '[]');
+    if (!idxMap.length) return;
+    const item = paletteItems[idxMap[paletteIndex]];
+    if (item) item.run();
+    closePalette();
+  }
+
+  function bindEvents() {
+    qsa('.nav-tab').forEach(tab => tab.addEventListener('click', () => setTab(tab.dataset.tab)));
+    qsa('[data-jump]').forEach(btn => btn.addEventListener('click', () => setTab(btn.dataset.jump)));
+    qs('#voiceBtn').addEventListener('click', () => toggleVoice());
+    qs('#clearFeedBtn').addEventListener('click', () => {
+      state.activityLog = [];
+      renderDashboard();
+      saveState();
+    });
+    qs('#addDealBtn').addEventListener('click', () => {
+      const client = prompt('Client name:');
+      if (!client) return;
+      const name = prompt('Opportunity:', 'New Opportunity') || 'New Opportunity';
+      const value = parseFloat(prompt('Deal value ($):', '100000') || '0');
+      const stage = prompt('Stage (prospect/qualified/proposal/negotiation/closing):', 'prospect') || 'prospect';
+      const prob = parseInt(prompt('Probability %:', '30') || '30', 10);
+      const close = prompt('Close date (YYYY-MM-DD):', todayISO()) || todayISO();
+      state.deals.push({ id: Date.now(), client, name, value, stage, prob, close });
+      renderAll();
+      addActivity(`New deal: ${client} — ${money(value)}`);
+      addTimeline(`💰 ${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})} · Deal added: ${client}`);
+      saveState();
+    });
+    qs('#addContractBtn').addEventListener('click', () => {
+      const org = prompt('Organization:');
+      if (!org) return;
+      const title = prompt('Contract title:', 'New RFP') || 'New RFP';
+      const value = prompt('Value:', '$250K') || '$250K';
+      const deadline = prompt('Deadline (YYYY-MM-DD):', todayISO()) || todayISO();
+      state.contracts.push({ id: Date.now(), org, title, value, deadline, flag: '📋' });
+      renderAll();
+      addActivity(`Contract tracked: ${org}`);
+      saveState();
+    });
+    qs('#addTaskBtn').addEventListener('click', addTask);
+    qs('#taskInput').addEventListener('keydown', e => { if (e.key === 'Enter') addTask(); });
+    qs('#sendQuery').addEventListener('click', () => {
+      const input = qs('#aiQuery');
+      const query = input.value.trim();
+      if (!query) return;
+      handleQuery(query);
+      input.value = '';
+    });
+    qs('#aiQuery').addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        qs('#sendQuery').click();
+      }
+    });
+    qs('#quickActions').addEventListener('click', e => {
+      const btn = e.target.closest('[data-quick]');
+      if (!btn) return;
+      const query = btn.dataset.quick;
+      qs('#aiQuery').value = query;
+      qs('#sendQuery').click();
+    });
+    qs('#quantumInsights').addEventListener('click', e => {
+      const card = e.target.closest('[data-action]');
+      if (!card) return;
+      handleQuery(card.dataset.action);
+      setTab('ai');
+    });
+    qs('#exportBtn').addEventListener('click', exportState);
+    qs('#seedDealsBtn').addEventListener('click', resetDeals);
+    qs('#seedTasksBtn').addEventListener('click', resetTasks);
+    qs('#pipelineBody').addEventListener('click', e => {
+      const btn = e.target.closest('[data-remove-deal]');
+      if (!btn) return;
+      const id = Number(btn.dataset.removeDeal);
+      state.deals = state.deals.filter(d => d.id !== id);
+      renderAll();
+      addActivity(`Deal removed: ID ${id}`);
+      saveState();
+    });
+    qs('#contractList').addEventListener('click', e => {
+      const btn = e.target.closest('[data-remove-contract]');
+      if (!btn) return;
+      const id = Number(btn.dataset.removeContract);
+      state.contracts = state.contracts.filter(c => c.id !== id);
+      renderAll();
+      addActivity(`Contract removed: ID ${id}`);
+      saveState();
+    });
+    qs('#taskList').addEventListener('click', e => {
+      const remove = e.target.closest('[data-remove-task]');
+      if (remove) {
+        const id = Number(remove.dataset.removeTask);
+        state.tasks = state.tasks.filter(t => t.id !== id);
+        renderTasks();
+        renderDashboard();
+        saveState();
+        return;
+      }
+      const toggle = e.target.closest('[data-toggle-task]');
+      if (toggle) {
+        const id = Number(toggle.dataset.toggleTask);
+        const task = state.tasks.find(t => t.id === id);
+        if (task) task.done = !task.done;
+        renderTasks();
+        renderDashboard();
+        saveState();
+      }
+    });
+    qs('#quantum-mode-btn').addEventListener('click', () => overlay.setActive(!state.prefs.quantumMode));
+    qs('#paletteBtn').addEventListener('click', openPalette);
+    qs('#palette').addEventListener('click', e => {
+      if (e.target.id === 'palette') closePalette();
+      const item = e.target.closest('.palette-item[data-palette-index]');
+      if (item) {
+        paletteIndex = Number(item.dataset.paletteIndex);
+        runPaletteSelection();
+      }
+    });
+    qs('#paletteInput').addEventListener('input', () => {
+      paletteIndex = 0;
+      renderPalette();
+    });
+    qs('#paletteInput').addEventListener('keydown', e => {
+      const listRaw = qs('#paletteList').dataset.filtered || '[]';
+      const filtered = JSON.parse(listRaw);
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        paletteIndex = clamp(paletteIndex + 1, 0, Math.max(0, filtered.length - 1));
+        renderPalette();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        paletteIndex = clamp(paletteIndex - 1, 0, Math.max(0, filtered.length - 1));
+        renderPalette();
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        runPaletteSelection();
+      } else if (e.key === 'Escape') {
+        closePalette();
+      }
+    });
+
+    window.addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        openPalette();
+      }
+      if (e.key === 'Escape') closePalette();
+      const pages = ['dashboard', 'quantum', 'surveillance', 'pipeline', 'contracts', 'tasks', 'ai'];
+      if (!e.ctrlKey && !e.metaKey && !e.altKey && /^[1-7]$/.test(e.key)) {
+        setTab(pages[Number(e.key) - 1]);
+      }
+    });
+  }
+
+  function routeFromHash() {
+    const tab = location.hash.replace('#', '');
+    const valid = ['dashboard', 'quantum', 'surveillance', 'pipeline', 'contracts', 'tasks', 'ai'];
+    setTab(valid.includes(tab) ? tab : state.prefs.selectedTab || 'dashboard');
+  }
+
+  const envChart = new EnvChart(qs('#envCanvas'));
+  const neural = new NeuralCanvas(qs('#neuralCanvas'));
+  const surveillance = new SurveillanceCanvas(qs('#surveillanceCanvas'));
+  const backgroundField = new BackgroundField(qs('#bg-canvas'));
+  const overlay = new QuantumOverlay(qs('#quantum-overlay'));
+
+  function boot() {
+    const bootLogs = [
+      'Initializing quantum neural core...',
+      'Loading pipeline and contracts...',
+      'Activating surveillance network...',
+      'Calibrating environmental sensors...',
+      'Restoring preferences and routes...',
+      'All systems nominal. Welcome, Desmond.'
+    ];
+    let step = 0;
+    const bar = qs('#bootBar');
+    const log = qs('#bootLog');
+    const interval = setInterval(() => {
+      if (step >= bootLogs.length) {
+        clearInterval(interval);
+        setTimeout(() => {
+          qs('#boot').classList.add('hidden');
+          qs('#app').style.opacity = '1';
+          renderAll();
+          routeFromHash();
+          if (state.prefs.voiceEnabled) {
+            setTimeout(() => speak(`Good day, Desmond. NEXUS OMEGA is online. Pipeline stands at ${money(totalPipeline())}. Target progress ${Math.round((weightedPipeline() / 1000000) * 100)} percent.`), 450);
+          }
+        }, 380);
+        return;
+      }
+      bar.style.width = Math.round(((step + 1) / bootLogs.length) * 100) + '%';
+      log.textContent = bootLogs[step];
+      step++;
+    }, 320);
+  }
+
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  setInterval(() => {
+    updateEnvTelemetry();
+    renderDashboard();
+    renderQuantumInsights();
+  }, 3500);
+
+  setInterval(() => {
+    buildTicker();
+    saveState();
+  }, 9000);
+
+  window.addEventListener('hashchange', routeFromHash);
+
+  bindEvents();
+  qs('#voiceBtn').textContent = state.prefs.voiceEnabled ? '🔊' : '🔇';
+  overlay.apply();
+  boot();
+
+  console.log('%cNEXUS OMEGA v12.1 OPERATIONAL FINAL ONLINE', 'color:#00ffff;font-family:monospace;font-size:14px;font-weight:bold;');
+})();
+</script>
+</body>
+</html>

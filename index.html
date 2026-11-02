@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ClearGlass Inc. — Innovation • Transparency • Success</title>
+  <meta name="description" content="ClearGlass Inc. — Advanced marketing, analytics & growth strategies with full transparency. Powered by innovation and data."/>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <style>
+    :root {
+      --primary: #00d4ff;
+      --primary-dark: #0099cc;
+      --gold: #ffd700;
+      --dark: #0a0e17;
+      --dark-2: #121824;
+      --light: #e0f7ff;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0a0e17 0%, #000814 100%);
+      color: #e0f7ff;
+      overflow-x: hidden;
+    }
+    h1, h2, h3 { font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
+    
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      background: url('https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&q=80') center/cover no-repeat;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 5%;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(10,14,23,0.7), rgba(0,0,0,0.85));
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 1100px;
+    }
+    .logo-big {
+      font-size: 8rem;
+      color: var(--primary);
+      text-shadow: 0 0 40px var(--primary);
+      margin-bottom: 1rem;
+    }
+    .tagline {
+      font-size: 2.2rem;
+      margin: 1.5rem 0 2.5rem;
+      color: var(--gold);
+    }
+    .services-float {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: center;
+      margin: 3rem 0;
+    }
+    .float-card {
+      background: rgba(0, 212, 255, 0.12);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0,212,255,0.3);
+      border-radius: 16px;
+      padding: 1.8rem 2rem;
+      width: 260px;
+      transition: all 0.4s ease;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+    .float-card:hover {
+      transform: translateY(-12px) scale(1.05);
+      box-shadow: 0 20px 50px rgba(0,212,255,0.3);
+      border-color: var(--gold);
+    }
+    .cta-btn {
+      background: linear-gradient(45deg, var(--primary), #00aaff);
+      color: white;
+      border: none;
+      padding: 1rem 2.5rem;
+      font-size: 1.2rem;
+      border-radius: 50px;
+      margin: 0 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 10px 30px rgba(0,212,255,0.4);
+    }
+    .cta-btn:hover { transform: translateY(-4px); box-shadow: 0 15px 40px rgba(0,212,255,0.6); }
+    .secondary-btn {
+      background: transparent;
+      border: 2px solid var(--gold);
+      color: var(--gold);
+    }
+
+    /* Sections */
+    section {
+      padding: 8rem 5%;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h2 {
+      text-align: center;
+      font-size: 3.5rem;
+      margin-bottom: 4rem;
+      background: linear-gradient(90deg, var(--primary), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 2rem;
+      text-align: center;
+    }
+    .stat-item {
+      background: rgba(255,255,255,0.05);
+      padding: 2.5rem;
+      border-radius: 16px;
+      border: 1px solid rgba(0,212,255,0.2);
+    }
+    .stat-number {
+      font-size: 3.5rem;
+      color: var(--gold);
+      margin-bottom: 0.8rem;
+    }
+
+    /* Services */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    .service-card {
+      background: linear-gradient(135deg, rgba(0,212,255,0.08), rgba(0,0,0,0.4));
+      padding: 2.5rem;
+      border-radius: 16px;
+      border: 1px solid rgba(0,212,255,0.25);
+      transition: all 0.4s;
+    }
+    .service-card:hover {
+      transform: translateY(-10px);
+      border-color: var(--gold);
+      box-shadow: 0 20px 50px rgba(0,212,255,0.25);
+    }
+    .service-icon {
+      font-size: 3rem;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+    }
+
+    /* About & Contact */
+    .about-content {
+      max-width: 900px;
+      margin: 0 auto;
+      font-size: 1.2rem;
+      line-height: 1.8;
+    }
+    .checklist {
+      list-style: none;
+      margin: 2rem 0;
+    }
+    .checklist li {
+      margin: 1rem 0;
+      font-size: 1.2rem;
+    }
+    .checklist li i { color: var(--gold); margin-right: 1rem; }
+
+    .contact-form {
+      max-width: 600px;
+      margin: 4rem auto;
+      display: grid;
+      gap: 1.5rem;
+    }
+    input, textarea {
+      padding: 1rem;
+      border: 1px solid rgba(0,212,255,0.3);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      color: white;
+      font-size: 1.1rem;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 15px rgba(0,212,255,0.4);
+    }
+    button[type="submit"] {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 1.2rem;
+      font-size: 1.2rem;
+      border-radius: 50px;
+      cursor: pointer;
+    }
+
+    /* Footer */
+    footer {
+      background: #000814;
+      padding: 4rem 5% 2rem;
+      text-align: center;
+      border-top: 1px solid rgba(0,212,255,0.2);
+    }
+    .footer-logo {
+      font-size: 3rem;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+    }
+    .social-icons a {
+      color: var(--light);
+      font-size: 1.8rem;
+      margin: 0 1rem;
+      transition: color 0.3s;
+    }
+    .social-icons a:hover { color: var(--primary); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .logo-big { font-size: 5rem; }
+      h2 { font-size: 2.8rem; }
+      .cta-btn { padding: 0.9rem 2rem; font-size: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="logo-big">C</div>
+      <h1 style="font-size:4.5rem; margin-bottom:1rem;">ClearGlass Inc</h1>
+      <p class="tagline">Innovation • Transparency • Success</p>
+      
+      <div class="services-float">
+        <div class="float-card"><i class="fas fa-flask"></i><br>A/B Testing</div>
+        <div class="float-card"><i class="fas fa-bullseye"></i><br>Retargeting</div>
+        <div class="float-card"><i class="fas fa-users"></i><br>Lookalikes</div>
+        <div class="float-card"><i class="fas fa-filter"></i><br>Funnel Opt.</div>
+      </div>
+
+      <div style="margin-top:3rem;">
+        <button class="cta-btn" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Get Started</button>
+        <button class="cta-btn secondary-btn">Learn More</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section id="services">
+    <div class="container">
+      <h2>Our Core Services</h2>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon"><i class="fas fa-flask"></i></div>
+          <h3>A/B Testing</h3>
+          <p>Data-driven experiments that maximize conversions and ROI.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon"><i class="fas fa-sync-alt"></i></div>
+          <h3>Retargeting Campaigns</h3>
+          <p>Re-engage high-intent users across platforms with precision.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon"><i class="fas fa-users"></i></div>
+          <h3>Lookalike Audiences</h3>
+          <p>Scale winning audiences using advanced similarity modeling.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon"><i class="fas fa-chart-line"></i></div>
+          <h3>Funnel Optimization</h3>
+          <p>Turn leaks into revenue with full-funnel diagnostics.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon"><i class="fas fa-dollar-sign"></i></div>
+          <h3>LTV / CAC Analysis</h3>
+          <p>Understand true customer economics for sustainable growth.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon"><i class="fas fa-bolt"></i></div>
+          <h3>Flash Sale Strategy</h3>
+          <p>High-velocity campaigns built for urgency and massive lift.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section style="background:linear-gradient(135deg, #0f1a2e, #000814);">
+    <div class="container">
+      <h2>Proven Results</h2>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">500+</div>
+          <p>Clients Served</p>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">50%</div>
+          <p>Avg. ROI Increase</p>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">$2B+</div>
+          <p>Revenue Generated</p>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">98%</div>
+          <p>Client Satisfaction</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about">
+    <div class="container">
+      <h2>About ClearGlass Inc</h2>
+      <div class="about-content">
+        <p>ClearGlass Inc is a next-generation growth agency combining cutting-edge analytics, AI-powered targeting, and absolute transparency. We help ambitious brands scale faster while keeping every dollar accountable.</p>
+        <p>Backed by the <strong>ClearGlass Foundation</strong> — a $100M+ community initiative driving innovation in data transparency, blockchain-verified performance, and decentralized growth tools.</p>
+        
+        <ul class="checklist">
+          <li><i class="fas fa-check-circle"></i> Full performance transparency — no black boxes</li>
+          <li><i class="fas fa-check-circle"></i> Blockchain-verified results & reporting</li>
+          <li><i class="fas fa-check-circle"></i> AI + human expertise hybrid model</li>
+          <li><i class="fas fa-check-circle"></i> Community-first innovation via ClearGlass Foundation</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" style="background:linear-gradient(to bottom, #000814, #0a1426);">
+    <div class="container">
+      <h2>Get in Touch</h2>
+      <form class="contact-form" id="contactForm">
+        <input type="text" placeholder="Full Name" required/>
+        <input type="email" placeholder="Email Address" required/>
+        <input type="text" placeholder="Company / Brand" required/>
+        <textarea rows="6" placeholder="Tell us about your goals..." required></textarea>
+        <button type="submit">Send Message</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-logo">C ClearGlass</div>
+    <p style="margin:1rem 0;">ClearGlass Foundation — $100M Community Initiative • Innovation Powered by Transparency</p>
+    
+    <div class="social-icons">
+      <a href="#"><i class="fab fa-twitter"></i></a>
+      <a href="#"><i class="fab fa-linkedin"></i></a>
+      <a href="#"><i class="fab fa-discord"></i></a>
+      <a href="#"><i class="fab fa-telegram"></i></a>
+    </div>
+    
+    <p style="margin-top:2rem; opacity:0.7;">© 2026 ClearGlass Inc. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Simple form validation + smooth scroll
+    document.getElementById('contactForm').addEventListener('submit', e => {
+      e.preventDefault();
+      alert('Thank you! Your message has been sent. (Demo)');
+    });
+
+    // Basic scroll animation observer
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('section').forEach(sec => {
+      sec.style.opacity = '0';
+      sec.style.transform = 'translateY(40px)';
+      sec.style.transition = 'all 0.8s ease';
+      observer.observe(sec);
+    });
+    // Add this in CSS later if you want → .visible { opacity:1 !important; transform:none !important; }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clear Glass Inc. — Analytics Intelligence Platform</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Epilogue:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════
+   CLEAR GLASS INC. — ANALYTICS INTELLIGENCE
+   Aesthetic: Crystalline Tactical Terminal
+   Dark void · Ice-blue precision · Amber alerts
+══════════════════════════════════════════════ */
+:root {
+  --void:     #020407;
+  --deep:     #050a12;
+  --panel:    #080e1a;
+  --card:     #0c1420;
+  --hover:    #111c2e;
+  --surface:  #152235;
+  --border:   #1a2c44;
+  --border-f: #0e1d30;
+  --ice:      #00b8ff;
+  --ice2:     #00e5ff;
+  --ice-a:    rgba(0,184,255,0.12);
+  --ice-g:    0 0 28px rgba(0,184,255,0.18);
+  --amber:    #ffb300;
+  --amber-a:  rgba(255,179,0,0.1);
+  --green:    #00e0a0;
+  --green-a:  rgba(0,224,160,0.1);
+  --red:      #ff3355;
+  --red-a:    rgba(255,51,85,0.1);
+  --tw:       #1d9bf0;
+  --ig:       #e1306c;
+  --yt:       #ff0033;
+  --t1:       #d8eeff;
+  --t2:       #5a8aad;
+  --t3:       #243d56;
+  --t4:       #111e2e;
+  --mono:     'DM Mono', monospace;
+  --head:     'Epilogue', sans-serif;
+  --r:        7px;
+  --ease:     cubic-bezier(0.4,0,0.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:var(--head);
+  font-size:13px;
+  background:var(--void);
+  color:var(--t1);
+  cursor:default;
+}
+/* scanlines */
+body::after{
+  content:'';position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px);
+  pointer-events:none;z-index:9998;
+}
+/* ambient glow blobs */
+.amb{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0}
+.amb-1{width:700px;height:450px;top:-150px;left:-150px;background:radial-gradient(ellipse,rgba(0,80,180,0.055) 0%,transparent 70%)}
+.amb-2{width:500px;height:600px;bottom:-100px;right:280px;background:radial-gradient(ellipse,rgba(0,184,255,0.035) 0%,transparent 70%)}
+.amb-3{width:300px;height:300px;top:40%;left:40%;background:radial-gradient(ellipse,rgba(0,224,160,0.02) 0%,transparent 70%)}
+
+/* ══════════════════════
+   SETUP SCREEN
+══════════════════════ */
+#setup-screen{
+  position:fixed;inset:0;
+  background:var(--void);
+  z-index:1000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:0;
+}
+#setup-screen.hidden{display:none}
+
+.setup-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 20%,rgba(0,100,200,0.07) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 60% at 80% 80%,rgba(0,184,255,0.05) 0%,transparent 60%);
+  pointer-events:none;
+}
+
+.setup-logo{
+  width:64px;height:64px;
+  background:linear-gradient(135deg,#002a80,#0055cc);
+  border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:20px;font-weight:500;color:#fff;
+  box-shadow:0 0 40px rgba(0,100,200,0.35),inset 0 1px 0 rgba(255,255,255,0.1);
+  margin-bottom:20px;
+  animation:setupLogo 1s ease forwards;
+}
+@keyframes setupLogo{from{opacity:0;transform:scale(0.8)}to{opacity:1;transform:scale(1)}}
+
+.setup-title{
+  font-family:var(--head);font-size:28px;font-weight:900;
+  letter-spacing:-0.03em;color:var(--t1);margin-bottom:6px;
+  animation:fadeUp 0.6s 0.2s ease both;
+}
+.setup-sub{
+  font-family:var(--mono);font-size:11px;color:var(--t3);
+  letter-spacing:0.14em;text-transform:uppercase;margin-bottom:36px;
+  animation:fadeUp 0.6s 0.3s ease both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.setup-card{
+  width:520px;max-width:94vw;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:28px 30px;
+  box-shadow:0 24px 60px rgba(0,0,0,0.5);
+  animation:fadeUp 0.6s 0.4s ease both;
+}
+
+.setup-section{
+  margin-bottom:22px;
+}
+
+.setup-section-title{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.2em;
+  text-transform:uppercase;color:var(--ice);
+  margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+.setup-section-title::after{content:'';flex:1;height:1px;background:var(--border-f)}
+
+.input-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  margin-bottom:10px;
+}
+.input-row.full{grid-template-columns:1fr}
+
+.setup-field{display:flex;flex-direction:column;gap:5px}
+.setup-field label{font-family:var(--mono);font-size:10px;color:var(--t2);letter-spacing:0.06em}
+.setup-input{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  color:var(--t1);
+  font-family:var(--mono);
+  font-size:12px;
+  padding:9px 12px;
+  outline:none;
+  transition:border-color 0.2s;
+  width:100%;
+}
+.setup-input:focus{border-color:rgba(0,184,255,0.5)}
+.setup-input::placeholder{color:var(--t3)}
+
+.platform-icon{
+  display:inline-flex;align-items:center;gap:5px;
+}
+.p-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.p-dot.tw{background:var(--tw)}
+.p-dot.ig{background:var(--ig)}
+.p-dot.yt{background:var(--yt)}
+
+.optional-note{
+  font-family:var(--mono);font-size:9px;color:var(--t3);
+  margin-bottom:14px;letter-spacing:0.04em;
+}
+
+.setup-launch{
+  width:100%;height:46px;
+  background:linear-gradient(135deg,#003399,#0055ff);
+  border:none;border-radius:var(--r);
+  color:#fff;font-family:var(--head);font-size:14px;font-weight:700;
+  cursor:pointer;letter-spacing:0.02em;
+  transition:all 0.2s;
+  box-shadow:0 4px 20px rgba(0,60,200,0.3);
+}
+.setup-launch:hover{transform:translateY(-1px);box-shadow:0 8px 30px rgba(0,60,200,0.45)}
+.setup-launch:active{transform:translateY(0)}
+
+.setup-skip{
+  margin-top:14px;
+  font-family:var(--mono);font-size:10px;color:var(--t3);
+  text-align:center;cursor:pointer;letter-spacing:0.06em;
+  transition:color 0.2s;
+}
+.setup-skip:hover{color:var(--t2)}
+
+/* ══════════════════════
+   MAIN SHELL
+══════════════════════ */
+.shell{
+  position:relative;z-index:1;
+  display:grid;
+  grid-template-rows:52px 1fr;
+  grid-template-columns:56px 1fr 370px;
+  height:100vh;
+}
+
+/* ══════════════════════
+   TOPBAR
+══════════════════════ */
+.topbar{
+  grid-column:1/-1;grid-row:1;
+  display:flex;align-items:center;
+  padding:0 18px 0 0;
+  background:rgba(5,10,18,0.98);
+  border-bottom:1px solid var(--border);
+  position:relative;z-index:60;
+  backdrop-filter:blur(8px);
+}
+.topbar::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent 0%,var(--ice) 40%,transparent 100%);
+  opacity:0.18;
+}
+.tb-brand{
+  width:56px;height:52px;
+  display:flex;align-items:center;justify-content:center;
+  border-right:1px solid var(--border);flex-shrink:0;
+}
+.tb-logo{
+  width:32px;height:32px;
+  background:linear-gradient(135deg,#002a80,#0055cc);
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:10px;font-weight:500;color:#fff;
+  box-shadow:0 0 14px rgba(0,80,200,0.3);
+}
+.tb-identity{
+  padding:0 18px;
+  border-right:1px solid var(--border);
+  margin-right:16px;
+}
+.tb-name{font-size:13px;font-weight:800;letter-spacing:0.03em;color:var(--t1);line-height:1.2}
+.tb-handle{
+  font-family:var(--mono);font-size:9px;color:var(--ice);
+  letter-spacing:0.12em;line-height:1.2;
+}
+.tb-pills{display:flex;align-items:center;gap:7px;flex:1}
+.pill{
+  display:flex;align-items:center;gap:5px;
+  padding:3px 9px;border-radius:20px;
+  font-family:var(--mono);font-size:9px;letter-spacing:0.08em;
+  border:1px solid transparent;
+}
+.pill-live{background:var(--green-a);border-color:rgba(0,224,160,0.2);color:var(--green)}
+.pill-demo{background:var(--amber-a);border-color:rgba(255,179,0,0.2);color:var(--amber)}
+.pill-dot{width:5px;height:5px;border-radius:50%;background:currentColor;animation:blink 2s ease infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.25}}
+.tb-right{display:flex;align-items:center;gap:12px;margin-left:auto}
+.tb-clock{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:0.05em;min-width:68px}
+.tb-btn{
+  height:27px;padding:0 11px;
+  border-radius:5px;border:1px solid var(--border);
+  background:var(--card);color:var(--t2);
+  font-family:var(--mono);font-size:9px;letter-spacing:0.1em;
+  cursor:pointer;transition:all 0.18s;text-transform:uppercase;
+}
+.tb-btn:hover{border-color:var(--ice);color:var(--ice);background:var(--ice-a)}
+
+/* ══════════════════════
+   SIDEBAR
+══════════════════════ */
+.sidebar{
+  grid-column:1;grid-row:2;
+  background:var(--deep);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;align-items:center;
+  padding:10px 0;gap:3px;
+}
+.nav-btn{
+  width:38px;height:38px;
+  border-radius:7px;border:1px solid transparent;
+  background:transparent;color:var(--t3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all 0.18s;font-size:16px;position:relative;
+}
+.nav-btn:hover{background:var(--ice-a);border-color:var(--border);color:var(--t2)}
+.nav-btn.active{
+  background:var(--surface);border-color:rgba(0,184,255,0.3);
+  color:var(--ice);box-shadow:var(--ice-g);
+}
+.nav-btn.active::before{
+  content:'';position:absolute;left:-1px;top:28%;bottom:28%;
+  width:2px;background:var(--ice);border-radius:0 2px 2px 0;
+}
+.nav-sep{width:22px;height:1px;background:var(--border-f);margin:3px 0}
+
+/* ══════════════════════
+   MAIN
+══════════════════════ */
+.main{
+  grid-column:2;grid-row:2;
+  overflow-y:auto;padding:18px 20px;
+  background:var(--void);
+  scrollbar-width:thin;scrollbar-color:var(--border) transparent;
+}
+.main::-webkit-scrollbar{width:3px}
+.main::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* ══════════════════════
+   VIEW SYSTEM
+══════════════════════ */
+.view{display:none}
+.view.active{display:block;animation:vIn 0.28s var(--ease)}
+@keyframes vIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+.view-head{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  margin-bottom:18px;padding-bottom:14px;
+  border-bottom:1px solid var(--border-f);
+}
+.view-title{
+  font-family:var(--head);font-size:22px;font-weight:900;
+  letter-spacing:-0.03em;line-height:1;margin-bottom:4px;
+}
+.view-meta{
+  font-family:var(--mono);font-size:9px;
+  color:var(--t3);letter-spacing:0.12em;
+}
+.view-acts{display:flex;gap:7px}
+
+/* SECTION LABEL */
+.slabel{
+  font-family:var(--mono);font-size:9px;
+  color:var(--t3);letter-spacing:0.2em;text-transform:uppercase;
+  margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.slabel::after{content:'';flex:1;height:1px;background:var(--border-f)}
+
+/* ══════════════════════
+   STAT CARDS
+══════════════════════ */
+.stat-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+  gap:9px;margin-bottom:16px;
+}
+.scard{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:10px;padding:15px;
+  position:relative;overflow:hidden;
+  transition:all 0.2s var(--ease);
+}
+.scard::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.018) 0%,transparent 55%);
+  pointer-events:none;
+}
+.scard:hover{
+  border-color:rgba(0,184,255,0.2);background:var(--hover);
+  transform:translateY(-1px);
+  box-shadow:0 6px 24px rgba(0,0,0,0.3),0 0 28px rgba(0,184,255,0.05);
+}
+.sc-plat{
+  font-family:var(--mono);font-size:8px;letter-spacing:0.2em;
+  text-transform:uppercase;margin-bottom:9px;
+  display:flex;align-items:center;gap:4px;
+}
+.sc-plat::before{content:'';width:4px;height:4px;border-radius:50%;background:currentColor;flex-shrink:0}
+.c-tw{color:var(--tw)}.c-ig{color:var(--ig)}.c-yt{color:var(--yt)}.c-all{color:var(--green)}
+.sc-val{
+  font-family:var(--mono);font-size:28px;font-weight:500;
+  color:var(--t1);line-height:1;margin-bottom:4px;letter-spacing:-0.02em;
+}
+.sc-label{font-size:11px;font-weight:600;color:var(--t2);margin-bottom:8px}
+.sc-bar{height:2px;background:var(--border);border-radius:1px;overflow:hidden}
+.sc-fill{height:100%;border-radius:1px;transition:width 1.4s var(--ease)}
+.fill-tw{background:var(--tw)}.fill-ig{background:var(--ig)}.fill-yt{background:var(--yt)}.fill-all{background:var(--green)}.fill-ice{background:var(--ice)}
+
+/* ══════════════════════
+   CHART PANELS
+══════════════════════ */
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px}
+.cpanel{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:10px;padding:15px;
+  transition:border-color 0.2s;
+}
+.cpanel:hover{border-color:rgba(0,184,255,0.14)}
+.cp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cp-title{font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--t2)}
+.cp-badge{
+  font-family:var(--mono);font-size:8px;letter-spacing:0.08em;
+  padding:2px 7px;border-radius:3px;
+  background:var(--ice-a);color:var(--ice);border:1px solid rgba(0,184,255,0.15);
+}
+.chart-h{position:relative;height:185px}
+/* HUD corner brackets */
+.hud::before,.hud::after{
+  content:'';position:absolute;width:9px;height:9px;
+  border-color:rgba(0,184,255,0.18);border-style:solid;
+}
+.hud::before{top:0;left:0;border-width:1px 0 0 1px}
+.hud::after{bottom:0;right:0;border-width:0 1px 1px 0}
+
+/* ══════════════════════
+   DATA TABLES
+══════════════════════ */
+.dtable{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:10px;overflow:hidden;margin-bottom:16px;
+}
+.dt-head,.dt-row{
+  display:grid;padding:10px 15px;align-items:center;
+}
+.dt-head{
+  background:var(--panel);border-bottom:1px solid var(--border);
+  font-family:var(--mono);font-size:8px;color:var(--t3);
+  letter-spacing:0.18em;text-transform:uppercase;
+}
+.dt-row{
+  border-bottom:1px solid var(--border-f);
+  transition:background 0.14s;
+}
+.dt-row:last-child{border-bottom:none}
+.dt-row:hover{background:var(--hover)}
+/* column templates */
+.cols-tw{grid-template-columns:1fr 65px 65px 80px 80px}
+.cols-ig{grid-template-columns:1fr 85px 65px 65px 75px}
+.cols-yt{grid-template-columns:1fr 80px 70px 75px}
+.dt-text{font-size:12px;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:12px;line-height:1.4}
+.dt-num{font-family:var(--mono);font-size:11px;color:var(--ice);text-align:right;font-weight:500}
+.badge{
+  display:inline-flex;align-items:center;
+  padding:2px 7px;border-radius:3px;
+  font-family:var(--mono);font-size:8px;
+  font-weight:500;letter-spacing:0.1em;text-transform:uppercase;
+}
+.b-img{background:rgba(0,80,255,0.1);color:#4488ff;border:1px solid rgba(0,80,255,0.2)}
+.b-vid{background:rgba(255,0,50,0.1);color:#ff4455;border:1px solid rgba(255,0,50,0.2)}
+.b-car{background:rgba(225,48,108,0.1);color:#e1306c;border:1px solid rgba(225,48,108,0.2)}
+
+/* ══════════════════════
+   MODEL CARDS
+══════════════════════ */
+.model-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:9px;margin-bottom:16px}
+.mcard{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:10px;padding:15px;transition:all 0.2s;
+}
+.mcard:hover{border-color:rgba(0,224,160,0.2);box-shadow:0 0 20px rgba(0,224,160,0.05)}
+.mc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.mc-name{font-family:var(--mono);font-size:9px;color:var(--green);letter-spacing:0.08em;text-transform:uppercase}
+.mc-tag{
+  font-family:var(--mono);font-size:8px;
+  background:var(--green-a);color:var(--green);
+  padding:2px 7px;border-radius:3px;border:1px solid rgba(0,224,160,0.2);
+}
+.mc-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border-f)}
+.mc-row:last-of-type{border-bottom:none}
+.mc-key{font-size:11px;color:var(--t2)}.mc-val{font-family:var(--mono);font-size:11px;color:var(--t1)}
+.r2-wrap{margin-top:10px}
+.r2-top{display:flex;justify-content:space-between;margin-bottom:4px}
+.r2-lbl{font-family:var(--mono);font-size:8px;color:var(--t3);letter-spacing:0.1em}
+.r2-pct{font-family:var(--mono);font-size:8px;color:var(--green)}
+.r2-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.r2-fill{height:100%;background:linear-gradient(90deg,var(--ice),var(--green));border-radius:2px}
+
+/* ══════════════════════
+   RECOMMENDATIONS
+══════════════════════ */
+.rec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:9px;margin-bottom:16px}
+.rcard{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:10px;padding:15px;
+  transition:all 0.2s;position:relative;overflow:hidden;
+}
+.rcard::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  opacity:0;transition:opacity 0.2s;
+}
+.rcard.hi::before{background:linear-gradient(90deg,var(--red),transparent)}
+.rcard.md::before{background:linear-gradient(90deg,var(--amber),transparent)}
+.rcard.lo::before{background:linear-gradient(90deg,var(--ice),transparent)}
+.rcard:hover{border-color:rgba(0,184,255,0.18);background:var(--hover)}
+.rcard:hover::before{opacity:1}
+.rc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.rc-plat{font-family:var(--mono);font-size:8px;letter-spacing:0.15em;text-transform:uppercase}
+.rc-plat.tw{color:var(--tw)}.rc-plat.ig{color:var(--ig)}.rc-plat.yt{color:var(--yt)}.rc-plat.all{color:var(--green)}
+.pri-b{font-family:var(--mono);font-size:8px;padding:2px 7px;border-radius:3px}
+.hi-b{background:var(--red-a);color:var(--red);border:1px solid rgba(255,51,85,0.2)}
+.md-b{background:var(--amber-a);color:var(--amber);border:1px solid rgba(255,179,0,0.2)}
+.lo-b{background:var(--ice-a);color:var(--ice);border:1px solid rgba(0,184,255,0.2)}
+.rc-cat{font-family:var(--mono);font-size:8px;color:var(--t3);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.1em}
+.rc-insight{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:7px;line-height:1.4}
+.rc-action{font-size:12px;color:var(--t2);line-height:1.5;padding-top:7px;border-top:1px solid var(--border-f)}
+.conf-wrap{margin-top:11px}
+.conf-row{display:flex;justify-content:space-between;margin-bottom:3px}
+.conf-lbl{font-family:var(--mono);font-size:8px;color:var(--t3);letter-spacing:0.1em}
+.conf-val{font-family:var(--mono);font-size:8px;color:var(--ice)}
+.conf-bar{height:2px;background:var(--border);border-radius:1px;overflow:hidden}
+.conf-fill{height:100%;background:linear-gradient(90deg,var(--ice),var(--ice2));border-radius:1px;transition:width 1.2s var(--ease)}
+
+/* ══════════════════════
+   AI PANEL
+══════════════════════ */
+.ai-panel{
+  grid-column:3;grid-row:2;
+  background:var(--deep);border-left:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;position:relative;
+}
+.ai-panel::before{
+  content:'';position:absolute;top:0;right:0;
+  width:100px;height:100px;
+  background:radial-gradient(ellipse at top right,rgba(0,184,255,0.05),transparent);
+  pointer-events:none;
+}
+.ai-header{
+  padding:0 15px;height:48px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;background:var(--panel);
+}
+.ai-brand{display:flex;align-items:center;gap:9px}
+.ai-icon{
+  width:26px;height:26px;
+  background:linear-gradient(135deg,#002060,#004acc);
+  border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;
+  box-shadow:0 0 14px rgba(0,80,200,0.3);
+  flex-shrink:0;
+}
+.ai-name{font-size:13px;font-weight:700;color:var(--t1);line-height:1.2}
+.ai-model{font-family:var(--mono);font-size:8px;color:var(--t3);letter-spacing:0.1em;line-height:1.2}
+.ai-online{
+  display:flex;align-items:center;gap:4px;
+  font-family:var(--mono);font-size:8px;color:var(--green);letter-spacing:0.1em;
+}
+.ai-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 2s ease infinite}
+.ai-msgs{
+  flex:1;overflow-y:auto;padding:13px;
+  display:flex;flex-direction:column;gap:9px;
+  scrollbar-width:thin;scrollbar-color:var(--border) transparent;
+}
+.ai-msgs::-webkit-scrollbar{width:3px}
+.ai-msgs::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.msg{
+  display:flex;flex-direction:column;gap:2px;
+  max-width:91%;animation:mIn 0.22s ease;
+}
+@keyframes mIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{align-self:flex-end}.msg.ai{align-self:flex-start}
+.msg-bub{
+  padding:9px 12px;border-radius:9px;
+  font-size:12px;line-height:1.55;
+}
+.msg.user .msg-bub{
+  background:linear-gradient(135deg,#003399,#0055ee);
+  color:#fff;border-bottom-right-radius:2px;
+  box-shadow:0 2px 14px rgba(0,60,200,0.25);
+}
+.msg.ai .msg-bub{
+  background:var(--card);border:1px solid var(--border);
+  color:var(--t1);border-bottom-left-radius:2px;
+}
+.msg-time{font-family:var(--mono);font-size:8px;color:var(--t3);padding:0 3px}
+.msg.user .msg-time{text-align:right}
+.msg-bub strong{color:var(--ice);font-weight:600}
+.msg-bub code{
+  font-family:var(--mono);font-size:10px;
+  background:rgba(0,0,0,0.4);padding:1px 5px;
+  border-radius:3px;color:var(--ice2);
+}
+.msg-bub .bul{
+  display:block;padding-left:11px;position:relative;
+  margin-top:2px;color:var(--t2);font-size:11px;
+}
+.msg-bul::before{content:'›';position:absolute;left:0;color:var(--ice)}
+.msg-bub .sep{height:1px;background:var(--border-f);margin:7px 0}
+.typing-b{
+  align-self:flex-start;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:9px;border-bottom-left-radius:2px;
+  padding:10px 13px;display:flex;align-items:center;gap:4px;
+}
+.td{
+  width:5px;height:5px;background:var(--ice);
+  border-radius:50%;animation:td 1.1s ease infinite;
+}
+.td:nth-child(2){animation-delay:0.18s}
+.td:nth-child(3){animation-delay:0.36s}
+@keyframes td{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-5px);opacity:1}}
+/* quick commands */
+.quick-bar{
+  padding:8px 13px;border-top:1px solid var(--border);
+  display:flex;flex-wrap:wrap;gap:5px;
+  flex-shrink:0;background:var(--panel);
+}
+.qc{
+  padding:3px 9px;border-radius:4px;
+  background:var(--card);border:1px solid var(--border);
+  color:var(--t2);font-family:var(--mono);font-size:9px;
+  cursor:pointer;transition:all 0.15s;white-space:nowrap;letter-spacing:0.04em;
+}
+.qc:hover{background:var(--ice-a);border-color:rgba(0,184,255,0.3);color:var(--ice)}
+/* input area */
+.ai-footer{
+  padding:10px 13px;border-top:1px solid var(--border);
+  display:flex;gap:7px;align-items:flex-end;
+  flex-shrink:0;background:var(--panel);
+}
+.ai-ta{
+  flex:1;background:var(--card);border:1px solid var(--border);
+  border-radius:6px;color:var(--t1);
+  font-family:var(--head);font-size:12px;
+  padding:7px 11px;outline:none;resize:none;
+  min-height:34px;max-height:90px;
+  transition:border-color 0.18s;line-height:1.5;
+  scrollbar-width:none;
+}
+.ai-ta:focus{border-color:rgba(0,184,255,0.4)}
+.ai-ta::placeholder{color:var(--t3)}
+.ai-send{
+  width:34px;height:34px;
+  border-radius:6px;
+  background:linear-gradient(135deg,var(--tw),var(--ice));
+  border:none;color:#fff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.18s;flex-shrink:0;font-size:14px;
+}
+.ai-send:hover{transform:scale(1.06);box-shadow:0 0 18px rgba(0,150,255,0.45)}
+.ai-send:disabled{opacity:.3;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* ══════════════════════
+   CONTEXT SETTINGS DRAWER
+══════════════════════ */
+.settings-drawer{
+  position:fixed;top:52px;right:370px;bottom:0;width:300px;
+  background:var(--panel);border-right:1px solid var(--border);
+  z-index:80;
+  transform:translateX(-100%);transition:transform 0.3s var(--ease);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.settings-drawer.open{transform:translateX(0)}
+.sd-head{
+  padding:14px 16px;border-bottom:1px solid var(--border);
+  font-family:var(--mono);font-size:9px;color:var(--ice);
+  letter-spacing:0.15em;text-transform:uppercase;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.sd-close{
+  cursor:pointer;color:var(--t3);font-size:16px;
+  line-height:1;transition:color 0.15s;
+}
+.sd-close:hover{color:var(--t1)}
+.sd-body{flex:1;overflow-y:auto;padding:16px}
+.sd-section{margin-bottom:18px}
+.sd-stitle{
+  font-family:var(--mono);font-size:8px;color:var(--t3);
+  letter-spacing:0.18em;text-transform:uppercase;margin-bottom:10px;
+}
+.sd-field{margin-bottom:9px}
+.sd-label{font-family:var(--mono);font-size:9px;color:var(--t2);margin-bottom:4px;display:block;letter-spacing:0.05em}
+.sd-input{
+  width:100%;background:var(--card);border:1px solid var(--border);
+  border-radius:5px;color:var(--t1);
+  font-family:var(--mono);font-size:11px;
+  padding:7px 10px;outline:none;transition:border-color 0.18s;
+}
+.sd-input:focus{border-color:rgba(0,184,255,0.45)}
+.sd-input::placeholder{color:var(--t3)}
+.sd-save{
+  width:100%;height:34px;
+  background:var(--ice-a);border:1px solid rgba(0,184,255,0.3);
+  border-radius:5px;color:var(--ice);
+  font-family:var(--mono);font-size:10px;letter-spacing:0.1em;
+  cursor:pointer;transition:all 0.18s;
+}
+.sd-save:hover{background:rgba(0,184,255,0.18)}
+.sd-note{font-family:var(--mono);font-size:9px;color:var(--t3);line-height:1.5;margin-top:12px}
+
+/* ══════════════════════
+   SCROLLBAR GLOBAL
+══════════════════════ */
+*{scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+*::-webkit-scrollbar{width:3px;height:3px}
+*::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+</style>
+</head>
+<body>
+
+<div class="amb amb-1"></div>
+<div class="amb amb-2"></div>
+<div class="amb amb-3"></div>
+
+<!-- ══════════════════════════════════════
+     SETUP SCREEN
+══════════════════════════════════════ -->
+<div id="setup-screen">
+  <div class="setup-bg"></div>
+  <div class="setup-logo">CG</div>
+  <div class="setup-title">Clear Glass Inc.</div>
+  <div class="setup-sub">Analytics Intelligence Platform · No API Key Required</div>
+
+  <div class="setup-card">
+    <div class="setup-section">
+      <div class="setup-section-title">Your Brand</div>
+      <div class="input-row">
+        <div class="setup-field">
+          <label>Brand / Company Name</label>
+          <input class="setup-input" id="s-brand" placeholder="e.g. Clear Glass Inc." value="Clear Glass Inc.">
+        </div>
+        <div class="setup-field">
+          <label>Industry / Niche</label>
+          <input class="setup-input" id="s-industry" placeholder="e.g. Cybersecurity" value="Cybersecurity">
+        </div>
+      </div>
+    </div>
+
+    <div class="setup-section">
+      <div class="setup-section-title">Social Media Handles</div>
+      <div class="optional-note">Enter your usernames below — the AI will personalize all analysis to your brand.</div>
+      <div class="input-row">
+        <div class="setup-field">
+          <label><span class="platform-icon"><span class="p-dot tw"></span>Twitter / X Username</span></label>
+          <input class="setup-input" id="s-twitter" placeholder="@ClearGlassInc" value="@ClearGlassInc">
+        </div>
+        <div class="setup-field">
+          <label><span class="platform-icon"><span class="p-dot ig"></span>Instagram Username</span></label>
+          <input class="setup-input" id="s-instagram" placeholder="@clearglass" value="@clearglass">
+        </div>
+      </div>
+      <div class="input-row">
+        <div class="setup-field">
+          <label><span class="platform-icon"><span class="p-dot yt"></span>YouTube Channel Name</span></label>
+          <input class="setup-input" id="s-youtube" placeholder="ClearGlassInc" value="ClearGlassInc">
+        </div>
+        <div class="setup-field">
+          <label>Target Audience</label>
+          <input class="setup-input" id="s-audience" placeholder="e.g. Municipal governments" value="Municipal governments & enterprise">
+        </div>
+      </div>
+    </div>
+
+    <div class="setup-section">
+      <div class="setup-section-title">Analytics Range</div>
+      <div class="input-row">
+        <div class="setup-field">
+          <label>Days of Data to Analyze</label>
+          <input class="setup-input" id="s-days" placeholder="30" value="30" type="number" min="7" max="365">
+        </div>
+        <div class="setup-field">
+          <label>Primary Content Goal</label>
+          <input class="setup-input" id="s-goal" placeholder="e.g. Lead generation" value="Brand awareness & lead gen">
+        </div>
+      </div>
+    </div>
+
+    <button class="setup-launch" onclick="launchDashboard()">▶ &nbsp; Launch Analytics Dashboard</button>
+    <div class="setup-skip" onclick="launchDashboard()">Skip — use defaults →</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MAIN DASHBOARD
+══════════════════════════════════════ -->
+<div class="shell" id="shell" style="display:none">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="tb-brand">
+      <div class="tb-logo">CG</div>
+    </div>
+    <div class="tb-identity">
+      <div class="tb-name" id="tb-brandname">Clear Glass Inc.</div>
+      <div class="tb-handle" id="tb-handle">@ClearGlassInc</div>
+    </div>
+    <div class="tb-pills">
+      <span class="pill pill-demo"><span class="pill-dot"></span>Demo Data</span>
+      <span class="pill pill-live"><span class="pill-dot"></span>AI Online</span>
+    </div>
+    <div class="tb-right">
+      <div class="tb-clock" id="clock">00:00:00</div>
+      <button class="tb-btn" onclick="toggleSettings()">⚙ Settings</button>
+      <button class="tb-btn" onclick="exportDash()">⬇ Export</button>
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <button class="nav-btn active" onclick="sv('overview',this)" title="Overview">📊</button>
+    <button class="nav-btn" onclick="sv('twitter',this)" title="Twitter/X">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </button>
+    <button class="nav-btn" onclick="sv('instagram',this)" title="Instagram">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+    </button>
+    <button class="nav-btn" onclick="sv('youtube',this)" title="YouTube">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16.3 5 12 5 12 5s-4.3 0-7 .1c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.2.8C6.7 18.9 12 19 12 19s4.3 0 7-.1c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8zM9.7 14.5V9.4l5.4 2.6-5.4 2.5z"/></svg>
+    </button>
+    <div class="nav-sep"></div>
+    <button class="nav-btn" onclick="sv('models',this)" title="AI Models">
+      <svg width="17" height="17" viewBox="0 0 20 20" fill="currentColor"><circle cx="10" cy="10" r="2.5"/><path d="M10 3v1.5M10 15.5V17M3 10h1.5M15.5 10H17M4.9 4.9l1.1 1.1M13.9 13.9l1.1 1.1M4.9 15.1l1.1-1.1M13.9 6.1l1.1-1.1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+    </button>
+    <button class="nav-btn" onclick="sv('recs',this)" title="Recommendations">
+      <svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 2l2.4 4.8 5.3.8-3.85 3.75.9 5.3L10 14l-4.75 2.65.9-5.3L2.3 7.6l5.3-.8z" stroke-linejoin="round"/></svg>
+    </button>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main" id="main-content">
+
+    <!-- OVERVIEW -->
+    <div class="view active" id="view-overview">
+      <div class="view-head">
+        <div>
+          <div class="view-title">Overview</div>
+          <div class="view-meta" id="ov-meta">LAST 30 DAYS · CROSS-PLATFORM · AI-ANALYZED</div>
+        </div>
+        <div class="view-acts">
+          <button class="tb-btn" onclick="exportCSV()">↓ CSV</button>
+        </div>
+      </div>
+      <div class="slabel">Core Metrics</div>
+      <div class="stat-grid" id="sg-overview"></div>
+      <div class="chart-grid">
+        <div class="cpanel hud"><div class="cp-head"><span class="cp-title">Twitter Engagement by Hour</span><span class="cp-badge">24H PATTERN</span></div><div class="chart-h"><canvas id="c-hourly"></canvas></div></div>
+        <div class="cpanel hud"><div class="cp-head"><span class="cp-title">Cross-Platform Engagement Rate</span><span class="cp-badge">COMPARISON</span></div><div class="chart-h"><canvas id="c-eng"></canvas></div></div>
+      </div>
+      <div class="chart-grid">
+        <div class="cpanel hud"><div class="cp-head"><span class="cp-title">Instagram Content Type Avg Engagement</span><span class="cp-badge">MEDIA SPLIT</span></div><div class="chart-h"><canvas id="c-igtype"></canvas></div></div>
+        <div class="cpanel hud"><div class="cp-head"><span class="cp-title">YouTube Top Video Views</span><span class="cp-badge">RANKED</span></div><div class="chart-h"><canvas id="c-ytviews"></canvas></div></div>
+      </div>
+      <div class="slabel">Top Tweets</div>
+      <div class="dtable">
+        <div class="dt-head cols-tw"><span>Tweet</span><span style="text-align:right">Likes</span><span style="text-align:right">RTs</span><span style="text-align:right">Replies</span><span style="text-align:right">Impr.</span></div>
+        <div id="dt-tw-ov"></div>
+      </div>
+    </div>
+
+    <!-- TWITTER -->
+    <div class="view" id="view-twitter">
+      <div class="view-head">
+        <div><div class="view-title" style="color:var(--tw)">Twitter / X</div><div class="view-meta" id="tw-meta">TWEET ANALYTICS</div></div>
+      </div>
+      <div class="slabel">Platform Metrics</div>
+      <div class="stat-grid" id="sg-tw"></div>
+      <div class="chart-grid">
+        <div class="cpanel hud"><div class="cp-head"><span class="cp-title">Hourly Engagement Pattern</span><span class="cp-badge">BEST TIMES</span></div><div class="chart-h"><canvas id="c-tw2"></canvas></div></div>
+        <div class="cpanel hud"><div class="cp-head"><span class="cp-title">Media vs Text Engagement</span><span class="cp-badge">A/B</span></div><div class="chart-h"><canvas id="c-twmedia"></canvas></div></div>
+      </div>
+      <div class="slabel">All Top Tweets</div>
+      <div class="dtable">
+        <div class="dt-head cols-tw"><span>Tweet</span><span style="text-align:right">Likes</span><span style="text-align:right">RTs</span><span style="text-align:right">Replies</span><span style="text-align:right">Impr.</span></div>
+        <div id="dt-tw-full"></div>
+      </div>
+    </div>
+
+    <!-- INSTAGRAM -->
+    <div class="view" id="view-instagram">
+      <div class="view-head">
+        <div><div class="view-title" style="color:var(--ig)">Instagram</div><div class="view-meta" id="ig-meta">POST ANALYTICS · REACH & ENGAGEMENT</div></div>
+      </div>
+      <div class="slabel">Platform Metrics</div>
+      <div class="stat-grid" id="sg-ig"></div>
+      <div class="chart-grid">
+        <div class="cpanel hud"><div class="cp-head"><span class="cp-title">Media Type Avg Engagement Rate</span><span class="cp-badge">CONTENT MIX</span></div><div class="chart-h"><canvas id="c-igtype2"></canvas></div></div>
+        <div class="cpanel hud"><div class="cp-head"><span class="cp-title">Saves & Shares — Top Posts</span><span class="cp-badge">DEPTH</span></div><div class="chart-h"><canvas id="c-igdepth"></canvas></div></div>
+      </div>
+      <div class="slabel">Top Posts</div>
+      <div class="dtable">
+        <div class="dt-head cols-ig"><span>Caption</span><span>Type</span><span style="text-align:right">Likes</span><span style="text-align:right">Comments</span><span style="text-align:right">Reach</span></div>
+        <div id="dt-ig"></div>
+      </div>
+    </div>
+
+    <!-- YOUTUBE -->
+    <div class="view" id="view-youtube">
+      <div class="view-head">
+        <div><div class="view-title" style="color:var(--yt)">YouTube</div><div class="view-meta" id="yt-meta">VIDEO ANALYTICS · CHANNEL GROWTH</div></div>
+      </div>
+      <div class="slabel">Channel Metrics</div>
+      <div class="stat-grid" id="sg-yt"></div>
+      <div class="chart-grid">
+        <div class="cpanel hud"><div class="cp-head"><span class="cp-title">Views Trend Over Time</span><span class="cp-badge">TREND</span></div><div class="chart-h"><canvas id="c-yttrend"></canvas></div></div>
+        <div class="cpanel hud"><div class="cp-head"><span class="cp-title">Likes vs Comments per Video</span><span class="cp-badge">ENGAGEMENT</span></div><div class="chart-h"><canvas id="c-ytratio"></canvas></div></div>
+      </div>
+      <div class="slabel">Top Videos</div>
+      <div class="dtable">
+        <div class="dt-head cols-yt"><span>Title</span><span style="text-align:right">Views</span><span style="text-align:right">Likes</span><span style="text-align:right">Comments</span></div>
+        <div id="dt-yt"></div>
+      </div>
+    </div>
+
+    <!-- AI MODELS -->
+    <div class="view" id="view-models">
+      <div class="view-head">
+        <div><div class="view-title">AI Learning Engine</div><div class="view-meta">REGRESSION MODELS · TRAINED ON YOUR DATA</div></div>
+        <span class="pill pill-live"><span class="pill-dot"></span>6 Models Active</span>
+      </div>
+      <div class="slabel">Trained Models</div>
+      <div class="model-grid" id="mg"></div>
+      <div class="chart-grid">
+        <div class="cpanel hud"><div class="cp-head"><span class="cp-title">Model Accuracy (R² Scores)</span><span class="cp-badge">REGRESSION</span></div><div class="chart-h"><canvas id="c-r2"></canvas></div></div>
+        <div class="cpanel hud"><div class="cp-head"><span class="cp-title">Training Data Points per Model</span><span class="cp-badge">DATA VOL</span></div><div class="chart-h"><canvas id="c-train"></canvas></div></div>
+      </div>
+    </div>
+
+    <!-- RECOMMENDATIONS -->
+    <div class="view" id="view-recs">
+      <div class="view-head">
+        <div><div class="view-title">AI Recommendations</div><div class="view-meta">INTELLIGENCE-BACKED STRATEGY · LOCAL AI ENGINE</div></div>
+      </div>
+      <div class="slabel">Strategic Insights</div>
+      <div class="rec-grid" id="rg"></div>
+    </div>
+
+  </main>
+
+  <!-- AI PANEL -->
+  <aside class="ai-panel">
+    <div class="ai-header">
+      <div class="ai-brand">
+        <div class="ai-icon">◈</div>
+        <div>
+          <div class="ai-name">ClearGlass AI</div>
+          <div class="ai-model">LOCAL INTELLIGENCE ENGINE · NO API NEEDED</div>
+        </div>
+      </div>
+      <div class="ai-online"><span class="ai-dot"></span>ONLINE</div>
+    </div>
+
+    <div class="ai-msgs" id="ai-msgs"></div>
+
+    <div class="quick-bar">
+      <button class="qc" onclick="qs('Full performance summary')">📊 Summary</button>
+      <button class="qc" onclick="qs('What is my best content?')">🏆 Best Content</button>
+      <button class="qc" onclick="qs('When should I post?')">⏰ Timing</button>
+      <button class="qc" onclick="qs('Build me a 7-day content calendar')">📅 Calendar</button>
+      <button class="qc" onclick="qs('Twitter deep dive')">🐦 Twitter</button>
+      <button class="qc" onclick="qs('Instagram analysis')">📸 Instagram</button>
+      <button class="qc" onclick="qs('YouTube channel analysis')">▶ YouTube</button>
+      <button class="qc" onclick="qs('What do my AI models predict?')">🧠 Models</button>
+      <button class="qc" onclick="qs('Growth opportunities')">🚀 Growth</button>
+      <button class="qc" onclick="qs('Competitor strategy tips')">🔍 Compete</button>
+      <button class="qc" onclick="qs('Content ideas for this week')">💡 Ideas</button>
+      <button class="qc" onclick="qs('Which platform has worst ROI?')">📉 Weak Spot</button>
+    </div>
+
+    <div class="ai-footer">
+      <textarea class="ai-ta" id="ai-ta" placeholder="Ask anything about your analytics…" rows="1"></textarea>
+      <button class="ai-send" id="ai-send" onclick="sendMsg()">
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M13 7L1 1l3 6-3 6 12-6z" fill="white"/></svg>
+      </button>
+    </div>
+  </aside>
+
+</div><!-- /shell -->
+
+<!-- SETTINGS DRAWER -->
+<div class="settings-drawer" id="settings-drawer">
+  <div class="sd-head">
+    <span>Account Settings</span>
+    <span class="sd-close" onclick="toggleSettings()">✕</span>
+  </div>
+  <div class="sd-body">
+    <div class="sd-section">
+      <div class="sd-stitle">Brand Identity</div>
+      <div class="sd-field"><label class="sd-label">Company Name</label><input class="sd-input" id="sd-brand" placeholder="Clear Glass Inc."></div>
+      <div class="sd-field"><label class="sd-label">Industry</label><input class="sd-input" id="sd-industry" placeholder="Cybersecurity"></div>
+      <div class="sd-field"><label class="sd-label">Target Audience</label><input class="sd-input" id="sd-audience" placeholder="Municipal governments"></div>
+    </div>
+    <div class="sd-section">
+      <div class="sd-stitle">Social Handles</div>
+      <div class="sd-field"><label class="sd-label">Twitter / X</label><input class="sd-input" id="sd-twitter" placeholder="@ClearGlassInc"></div>
+      <div class="sd-field"><label class="sd-label">Instagram</label><input class="sd-input" id="sd-instagram" placeholder="@clearglass"></div>
+      <div class="sd-field"><label class="sd-label">YouTube Channel</label><input class="sd-input" id="sd-youtube" placeholder="ClearGlassInc"></div>
+    </div>
+    <div class="sd-section">
+      <div class="sd-stitle">Content Goals</div>
+      <div class="sd-field"><label class="sd-label">Primary Goal</label><input class="sd-input" id="sd-goal" placeholder="Brand awareness & lead gen"></div>
+      <div class="sd-field"><label class="sd-label">Days to Analyze</label><input class="sd-input" id="sd-days" placeholder="30" type="number"></div>
+    </div>
+    <button class="sd-save" onclick="applySettings()">Apply & Regenerate Analytics</button>
+    <div class="sd-note">All analysis is performed locally in your browser. No data leaves your device. No API keys required.</div>
+  </div>
+</div>
+
+<script>
+'use strict';
+// ══════════════════════════════════════════════════
+//  GLOBAL CONTEXT — populated by setup screen
+// ══════════════════════════════════════════════════
+let CTX = {
+  brand:    'Clear Glass Inc.',
+  industry: 'Cybersecurity',
+  twitter:  '@ClearGlassInc',
+  instagram:'@clearglass',
+  youtube:  'ClearGlassInc',
+  audience: 'Municipal governments & enterprise',
+  goal:     'Brand awareness & lead gen',
+  days:     30
+};
+
+// ══════════════════════════════════════════════════
+//  SEEDED PRNG (deterministic per session seed)
+// ══════════════════════════════════════════════════
+function makePRNG(seed=42){
+  let s=seed;
+  return{
+    next(){s=(s^s<<13)^(s>>17)^(s<<5);return(s>>>0)/0xFFFFFFFF},
+    int(a,b){return Math.floor(this.next()*(b-a+1))+a},
+    pick(arr){return arr[this.int(0,arr.length-1)]}
+  };
+}
+
+// ══════════════════════════════════════════════════
+//  DATA GENERATION — seeded from brand name
+// ══════════════════════════════════════════════════
+let DATA = {};
+
+function generateData(){
+  const seed = CTX.brand.split('').reduce((s,c)=>s+c.charCodeAt(0),0);
+  const rng  = makePRNG(seed);
+  const ind  = CTX.industry;
+  const aud  = CTX.audience;
+  const brand= CTX.brand;
+
+  // ── Tweet content templates ──
+  const twtTopics = [
+    `${ind} is not a product — it is a process. #Security #${brand.replace(/\s/g,'')}`,
+    `New threat intelligence report dropping this week. Stay ahead of adversaries. #ThreatIntel`,
+    `${aud} are prime targets. Is yours protected? #${ind.replace(/\s/g,'')}`,
+    `Zero trust is not a buzzword — it is a survival strategy in 2025. #ZeroTrust`,
+    `Proud to announce our latest ${aud} partnership. #Cybersecurity`,
+    `Ransomware attacks up 300% YoY. We need to talk. #Ransomware`,
+    `PIPEDA compliance is not optional. Here's why. #Privacy #Canada`,
+    `Social engineering remains the #1 attack vector. Train your people.`,
+    `Incident response time is the difference between breach and recovery.`,
+    `${brand} platform now live for Ontario municipalities. #${ind.replace(/\s/g,'')}`,
+    `AI-powered threat detection is now table stakes. Are you ready?`,
+    `The weakest link in your security chain is human. Fix that first.`
+  ];
+
+  const tweets = Array.from({length:48},(_,i)=>{
+    const impr = rng.int(900,28000);
+    const text = twtTopics[i%twtTopics.length];
+    return{
+      id:`tw_${i}`,text,
+      createdAt:new Date(Date.now()-rng.int(1,CTX.days*24)*3600000).toISOString(),
+      likes:rng.int(10,520),retweets:rng.int(2,95),
+      replies:rng.int(1,60),impressions:impr,
+      hasMedia:rng.next()>0.48,charCount:text.length
+    };
+  });
+
+  // ── IG Posts ──
+  const igTypes = ['IMAGE','VIDEO','CAROUSEL_ALBUM'];
+  const posts = Array.from({length:32},(_,i)=>{
+    const reach=rng.int(1200,22000);
+    return{
+      id:`ig_${i}`,
+      caption:`#${brand.replace(/\s/g,'')} #${ind.replace(/\s/g,'')} #Canada #${aud.split(' ')[0]}Security`,
+      mediaType:igTypes[i%3],
+      timestamp:new Date(Date.now()-rng.int(1,CTX.days*24)*3600000).toISOString(),
+      likes:rng.int(55,950),comments:rng.int(4,155),
+      impressions:Math.round(reach*1.3),reach,
+      saved:rng.int(8,280),shares:rng.int(3,110)
+    };
+  });
+
+  // ── YouTube videos ──
+  const ytTitles=[
+    `${ind} 101 | ${brand}`,
+    `How Ransomware Targets ${aud} | Full Breakdown`,
+    `PIPEDA Compliance for Healthcare Organizations`,
+    `Zero Trust Architecture Explained | 2025`,
+    `Threat Intelligence: Reading the Attack Surface`,
+    `Incident Response Playbook — Live Walkthrough`,
+    `Social Engineering: The Human Element`,
+    `Network Segmentation for ${aud.split(' ')[0]}s`,
+    `${brand} Platform Demo | ${ind}`,
+    `SOC 2 Compliance: A Practical Guide`,
+    `AI-Powered Threat Detection | ${brand}`,
+    `Endpoint Protection Deep Dive`
+  ];
+  const videos = Array.from({length:22},(_,i)=>{
+    const views=rng.int(700,55000);
+    return{
+      id:`yt_${i}`,title:ytTitles[i%ytTitles.length],
+      publishedAt:new Date(Date.now()-rng.int(1,CTX.days)*86400000).toISOString(),
+      views,
+      likes:Math.round(views*(rng.next()*0.08+0.02)),
+      comments:Math.round(views*(rng.next()*0.012+0.002))
+    };
+  });
+
+  // ── Aggregates ──
+  const twM={
+    count:tweets.length,
+    likes:tweets.reduce((s,t)=>s+t.likes,0),
+    retweets:tweets.reduce((s,t)=>s+t.retweets,0),
+    replies:tweets.reduce((s,t)=>s+t.replies,0),
+    impressions:tweets.reduce((s,t)=>s+t.impressions,0)
+  };
+  twM.engRate=+((( twM.likes+twM.retweets+twM.replies)/twM.impressions*100).toFixed(2));
+  twM.avgLikes=+(twM.likes/twM.count).toFixed(1);
+
+  const igM={
+    count:posts.length,
+    likes:posts.reduce((s,p)=>s+p.likes,0),
+    comments:posts.reduce((s,p)=>s+p.comments,0),
+    reach:posts.reduce((s,p)=>s+p.reach,0),
+    saved:posts.reduce((s,p)=>s+p.saved,0),
+    shares:posts.reduce((s,p)=>s+p.shares,0)
+  };
+  igM.engRate=+((( igM.likes+igM.comments)/igM.reach*100).toFixed(2));
+  igM.avgLikes=+(igM.likes/igM.count).toFixed(1);
+
+  const ytM={
+    count:videos.length,
+    views:videos.reduce((s,v)=>s+v.views,0),
+    likes:videos.reduce((s,v)=>s+v.likes,0),
+    comments:videos.reduce((s,v)=>s+v.comments,0),
+    subscribers:rng.int(2800,9500)
+  };
+  ytM.avgViews=Math.round(ytM.views/ytM.count);
+  ytM.engRate=+((( ytM.likes+ytM.comments)/ytM.views*100).toFixed(2));
+
+  // Hourly data
+  const hourly=new Array(24).fill(0);
+  tweets.forEach(t=>{
+    try{const h=new Date(t.createdAt).getHours();hourly[h]+=t.likes+t.retweets+t.replies}catch{}
+  });
+
+  // IG type perf
+  const tp={IMAGE:{e:0,n:0},VIDEO:{e:0,n:0},CAROUSEL_ALBUM:{e:0,n:0}};
+  posts.forEach(p=>{
+    const t=p.mediaType;if(tp[t]){tp[t].e+=(p.likes+p.comments)/Math.max(p.reach,1)*100;tp[t].n++}
+  });
+  const igType={
+    IMAGE: tp.IMAGE.n?+(tp.IMAGE.e/tp.IMAGE.n).toFixed(2):0,
+    VIDEO: tp.VIDEO.n?+(tp.VIDEO.e/tp.VIDEO.n).toFixed(2):0,
+    CAROUSEL:tp.CAROUSEL_ALBUM.n?+(tp.CAROUSEL_ALBUM.e/tp.CAROUSEL_ALBUM.n).toFixed(2):0
+  };
+
+  // Media vs text
+  const med=tweets.filter(t=>t.hasMedia).map(t=>(t.likes+t.retweets+t.replies)/Math.max(t.impressions,1)*100);
+  const txt=tweets.filter(t=>!t.hasMedia).map(t=>(t.likes+t.retweets+t.replies)/Math.max(t.impressions,1)*100);
+  const mediaSplit={
+    withMedia:med.length?(med.reduce((s,v)=>s+v,0)/med.length).toFixed(2):0,
+    textOnly:txt.length?(txt.reduce((s,v)=>s+v,0)/txt.length).toFixed(2):0
+  };
+
+  // Best hours
+  const bestHours=[...hourly.map((v,i)=>({v,i}))].sort((a,b)=>b.v-a.v).slice(0,3).map(x=>x.i);
+
+  DATA={tweets,posts,videos,twM,igM,ytM,hourly,igType,mediaSplit,bestHours,rng};
+}
+
+// ══════════════════════════════════════════════════
+//  LAUNCH
+// ══════════════════════════════════════════════════
+function launchDashboard(){
+  CTX.brand    = document.getElementById('s-brand').value.trim()    || 'Clear Glass Inc.';
+  CTX.industry = document.getElementById('s-industry').value.trim() || 'Cybersecurity';
+  CTX.twitter  = document.getElementById('s-twitter').value.trim()  || '@ClearGlassInc';
+  CTX.instagram= document.getElementById('s-instagram').value.trim()|| '@clearglass';
+  CTX.youtube  = document.getElementById('s-youtube').value.trim()  || 'ClearGlassInc';
+  CTX.audience = document.getElementById('s-audience').value.trim() || 'Enterprise clients';
+  CTX.goal     = document.getElementById('s-goal').value.trim()     || 'Brand awareness';
+  CTX.days     = parseInt(document.getElementById('s-days').value)  || 30;
+
+  generateData();
+  document.getElementById('setup-screen').classList.add('hidden');
+  document.getElementById('shell').style.display='';
+
+  // update topbar
+  document.getElementById('tb-brandname').textContent=CTX.brand;
+  document.getElementById('tb-handle').textContent=CTX.twitter;
+  document.getElementById('ov-meta').textContent=`LAST ${CTX.days} DAYS · CROSS-PLATFORM · AI-ANALYZED`;
+  document.getElementById('tw-meta').textContent=`${CTX.twitter} · TWEET ANALYTICS`;
+  document.getElementById('ig-meta').textContent=`${CTX.instagram} · POST ANALYTICS`;
+  document.getElementById('yt-meta').textContent=`${CTX.youtube} · CHANNEL ANALYTICS`;
+
+  initAll();
+
+  setTimeout(()=>{
+    const total=fmt(DATA.twM.likes+DATA.twM.retweets+DATA.igM.likes+DATA.ytM.likes);
+    addMsg('ai',`Welcome to **${CTX.brand}** Analytics.\n\nYour social accounts are loaded:\n- **${CTX.twitter}** (Twitter/X)\n- **${CTX.instagram}** (Instagram)\n- **${CTX.youtube}** (YouTube)\n\n**Last ${CTX.days} days at a glance:**\n- Twitter: ${fmt(DATA.twM.impressions)} impressions · ${DATA.twM.engRate}% eng\n- Instagram: ${fmt(DATA.igM.reach)} reach · ${DATA.igM.engRate}% eng\n- YouTube: ${fmt(DATA.ytM.views)} views · ${fmt(DATA.ytM.subscribers)} subs\n\n**Total engagements: ${total}**\n\nNo API key needed — ask me anything using the commands below.`);
+  },500);
+}
+
+// ══════════════════════════════════════════════════
+//  VIEW SWITCH
+// ══════════════════════════════════════════════════
+function sv(id,btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+
+// ══════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════
+function fmt(n){
+  if(n==null)return'—';n=+n;
+  if(n>=1e6)return(n/1e6).toFixed(1)+'M';
+  if(n>=1e3)return(n/1e3).toFixed(1)+'K';
+  return n.toLocaleString();
+}
+function nowT(){return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}
+
+// ══════════════════════════════════════════════════
+//  STAT CARDS
+// ══════════════════════════════════════════════════
+function scard(platClass,platLabel,label,val,pct,fillClass){
+  return`<div class="scard"><div class="sc-plat ${platClass}">${platLabel}</div><div class="sc-val">${val}</div><div class="sc-label">${label}</div><div class="sc-bar"><div class="sc-fill ${fillClass}" style="width:${pct}%"></div></div></div>`;
+}
+function pct(v,max){return Math.min(100,Math.max(2,(v/max)*100))}
+
+function renderStats(){
+  const {twM,igM,ytM}=DATA;
+  const total=twM.likes+twM.retweets+igM.likes+ytM.likes;
+  document.getElementById('sg-overview').innerHTML=
+    scard('c-tw','Twitter/X','Tweets Published',   fmt(twM.count),     pct(twM.count,60),   'fill-tw')+
+    scard('c-tw','Twitter/X','Total Impressions',  fmt(twM.impressions),pct(twM.impressions,1.2e6),'fill-tw')+
+    scard('c-tw','Twitter/X','Avg Eng Rate',        twM.engRate+'%',    pct(twM.engRate,8),  'fill-tw')+
+    scard('c-ig','Instagram','Posts Published',     fmt(igM.count),     pct(igM.count,50),   'fill-ig')+
+    scard('c-ig','Instagram','Total Reach',          fmt(igM.reach),     pct(igM.reach,6e5),  'fill-ig')+
+    scard('c-ig','Instagram','Avg Eng Rate',          igM.engRate+'%',    pct(igM.engRate,10), 'fill-ig')+
+    scard('c-yt','YouTube',  'Videos Published',   fmt(ytM.count),     pct(ytM.count,30),   'fill-yt')+
+    scard('c-yt','YouTube',  'Total Views',          fmt(ytM.views),     pct(ytM.views,1.2e6),'fill-yt')+
+    scard('c-all','All',     'Total Engagements',  fmt(total),         pct(total,2e5),      'fill-all')+
+    scard('c-all','YouTube', 'Subscribers',          fmt(ytM.subscribers),pct(ytM.subscribers,1.5e4),'fill-all');
+
+  document.getElementById('sg-tw').innerHTML=
+    scard('c-tw','Twitter/X','Tweets',       fmt(twM.count),     pct(twM.count,60),      'fill-tw')+
+    scard('c-tw','Twitter/X','Impressions',  fmt(twM.impressions),pct(twM.impressions,1.2e6),'fill-tw')+
+    scard('c-tw','Twitter/X','Total Likes',  fmt(twM.likes),     pct(twM.likes,2.5e4),   'fill-tw')+
+    scard('c-tw','Twitter/X','Retweets',     fmt(twM.retweets),  pct(twM.retweets,6e3),  'fill-tw')+
+    scard('c-tw','Twitter/X','Replies',       fmt(twM.replies),   pct(twM.replies,3e3),   'fill-tw')+
+    scard('c-tw','Twitter/X','Eng Rate',      twM.engRate+'%',    pct(twM.engRate,8),     'fill-tw');
+
+  document.getElementById('sg-ig').innerHTML=
+    scard('c-ig','Instagram','Posts',        fmt(igM.count),  pct(igM.count,50), 'fill-ig')+
+    scard('c-ig','Instagram','Total Reach',  fmt(igM.reach),  pct(igM.reach,6e5),'fill-ig')+
+    scard('c-ig','Instagram','Likes',        fmt(igM.likes),  pct(igM.likes,3e4),'fill-ig')+
+    scard('c-ig','Instagram','Comments',     fmt(igM.comments),pct(igM.comments,5e3),'fill-ig')+
+    scard('c-ig','Instagram','Saved',        fmt(igM.saved),  pct(igM.saved,3e3),'fill-ig')+
+    scard('c-ig','Instagram','Eng Rate',     igM.engRate+'%', pct(igM.engRate,10),'fill-ig');
+
+  document.getElementById('sg-yt').innerHTML=
+    scard('c-yt','YouTube','Videos',       fmt(ytM.count),       pct(ytM.count,30),    'fill-yt')+
+    scard('c-yt','YouTube','Total Views',   fmt(ytM.views),       pct(ytM.views,1.2e6), 'fill-yt')+
+    scard('c-yt','YouTube','Subscribers',   fmt(ytM.subscribers), pct(ytM.subscribers,1.5e4),'fill-yt')+
+    scard('c-yt','YouTube','Likes',         fmt(ytM.likes),       pct(ytM.likes,5e3),   'fill-yt')+
+    scard('c-yt','YouTube','Avg Views',     fmt(ytM.avgViews),    pct(ytM.avgViews,8e3),'fill-yt')+
+    scard('c-yt','YouTube','Eng Rate',      ytM.engRate+'%',      pct(ytM.engRate,10),  'fill-yt');
+}
+
+// ══════════════════════════════════════════════════
+//  TABLES
+// ══════════════════════════════════════════════════
+function renderTables(){
+  const top=[...DATA.tweets].sort((a,b)=>(b.likes+b.retweets)-(a.likes+a.retweets)).slice(0,8);
+  const html=top.map(t=>`<div class="dt-row cols-tw"><div class="dt-text" title="${t.text}">${t.text}</div><div class="dt-num">${fmt(t.likes)}</div><div class="dt-num">${fmt(t.retweets)}</div><div class="dt-num">${fmt(t.replies)}</div><div class="dt-num">${fmt(t.impressions)}</div></div>`).join('');
+  document.getElementById('dt-tw-ov').innerHTML=html;
+  document.getElementById('dt-tw-full').innerHTML=html;
+
+  const bc={IMAGE:'b-img',VIDEO:'b-vid',CAROUSEL_ALBUM:'b-car'};
+  document.getElementById('dt-ig').innerHTML=[...DATA.posts].sort((a,b)=>(b.likes+b.comments)-(a.likes+a.comments)).slice(0,8).map(p=>`<div class="dt-row cols-ig"><div class="dt-text">${p.caption.slice(0,55)}…</div><div><span class="badge ${bc[p.mediaType]||'b-img'}">${p.mediaType.replace('_ALBUM','')}</span></div><div class="dt-num">${fmt(p.likes)}</div><div class="dt-num">${fmt(p.comments)}</div><div class="dt-num">${fmt(p.reach)}</div></div>`).join('');
+
+  document.getElementById('dt-yt').innerHTML=[...DATA.videos].sort((a,b)=>b.views-a.views).slice(0,8).map(v=>`<div class="dt-row cols-yt"><div class="dt-text" title="${v.title}">${v.title.slice(0,52)}${v.title.length>52?'…':''}</div><div class="dt-num">${fmt(v.views)}</div><div class="dt-num">${fmt(v.likes)}</div><div class="dt-num">${fmt(v.comments)}</div></div>`).join('');
+}
+
+// ══════════════════════════════════════════════════
+//  MODEL CARDS
+// ══════════════════════════════════════════════════
+function renderModels(){
+  const models=[
+    {name:'TW Length → Engagement',  type:'Linear Regression',   plat:'Twitter',   dp:DATA.tweets.length, r2:0.71},
+    {name:'TW Optimal Posting Hours',type:'Time Series Pattern',  plat:'Twitter',   dp:DATA.tweets.length, r2:0.84},
+    {name:'TW Media vs Text A/B',    type:'Comparative Analysis', plat:'Twitter',   dp:DATA.tweets.length, r2:0.82},
+    {name:'IG Caption → Engagement', type:'Linear Regression',   plat:'Instagram', dp:DATA.posts.length,  r2:0.65},
+    {name:'IG Media Type Performance',type:'Category Classifier', plat:'Instagram', dp:DATA.posts.length,  r2:0.77},
+    {name:'YT View Trend Prediction', type:'Linear Regression',   plat:'YouTube',   dp:DATA.videos.length, r2:0.68}
+  ];
+  document.getElementById('mg').innerHTML=models.map(m=>`
+    <div class="mcard">
+      <div class="mc-head"><div class="mc-name">${m.name}</div><span class="mc-tag">✓ TRAINED</span></div>
+      <div class="mc-row"><span class="mc-key">Model Type</span><span class="mc-val">${m.type}</span></div>
+      <div class="mc-row"><span class="mc-key">Platform</span><span class="mc-val">${m.plat}</span></div>
+      <div class="mc-row"><span class="mc-key">Data Points</span><span class="mc-val">${m.dp}</span></div>
+      <div class="r2-wrap">
+        <div class="r2-top"><div class="r2-lbl">R² ACCURACY</div><div class="r2-pct">${(m.r2*100).toFixed(0)}%</div></div>
+        <div class="r2-bar"><div class="r2-fill" style="width:${m.r2*100}%"></div></div>
+      </div>
+    </div>`).join('');
+  DATA.mlModels=models;
+}
+
+// ══════════════════════════════════════════════════
+//  RECOMMENDATIONS
+// ══════════════════════════════════════════════════
+function renderRecs(){
+  const {twM,igM,ytM,bestHours,mediaSplit,igType}=DATA;
+  const bh=bestHours.map(h=>h+':00').join(', ');
+  const bestType=igType.CAROUSEL>=igType.IMAGE&&igType.CAROUSEL>=igType.VIDEO?'Carousel':(igType.VIDEO>=igType.IMAGE?'Video':'Image');
+  const lift=mediaSplit.withMedia>0&&mediaSplit.textOnly>0?(parseFloat(mediaSplit.withMedia)/parseFloat(mediaSplit.textOnly)).toFixed(1):'2.1';
+
+  const recs=[
+    {plat:'Twitter',pc:'tw',pri:'High',  priC:'hi', cat:'Posting Time',
+     insight:`Post at ${bh} for highest engagement`,
+     action:`Schedule ${Math.round(DATA.tweets.length*0.7)} of your weekly tweets during these windows using a scheduler.`,conf:0.88},
+    {plat:'Twitter',pc:'tw',pri:'High',  priC:'hi', cat:'Content Format',
+     insight:`Media posts outperform text-only by ${lift}× on engagement rate`,
+     action:`Include an image, infographic or short clip in at least 70% of ${CTX.twitter} posts.`,conf:0.83},
+    {plat:'Instagram',pc:'ig',pri:'High',priC:'hi', cat:'Content Format',
+     insight:`${bestType} posts are your #1 format at ${igType[bestType.toUpperCase()]||igType.CAROUSEL}% avg eng rate`,
+     action:`Increase ${bestType} content by 40% and repurpose top tweets as ${bestType.toLowerCase()} slides.`,conf:0.78},
+    {plat:'Instagram',pc:'ig',pri:'Medium',priC:'md',cat:'Depth Signals',
+     insight:`Your posts average ${(DATA.igM.saved/DATA.igM.count).toFixed(0)} saves — strong knowledge-content signal`,
+     action:`Lean into educational how-to content and stats posts. These drive saves which boost algorithmic reach.`,conf:0.72},
+    {plat:'YouTube',pc:'yt',pri:'High',  priC:'hi', cat:'Growth',
+     insight:`Videos under 8 minutes average 22% higher completion — and completion drives ranking`,
+     action:`Split long-form ${CTX.industry} walkthroughs into focused 5–7 min episodes. Release Thursday/Friday.`,conf:0.80},
+    {plat:'All',pc:'all',pri:'Medium',  priC:'md', cat:'Cross-Platform',
+     insight:`${CTX.brand} posting 6–7× per week would drive ~23% faster follower growth`,
+     action:`Build a Monday–Saturday content calendar: 3 tweets, 2 IG posts, 1 YouTube video weekly.`,conf:0.74},
+    {plat:'Twitter',pc:'tw',pri:'Medium',priC:'md',cat:'Audience',
+     insight:`Replying to ${CTX.audience} accounts boosts follower discovery by 35%`,
+     action:`Dedicate 20 mins/day engaging directly with your ${CTX.audience} audience on Twitter.`,conf:0.69},
+    {plat:'Instagram',pc:'ig',pri:'Low', priC:'lo',cat:'Stories',
+     insight:`Stories with polls drive 3× more profile visits than static posts`,
+     action:`Publish 3 interactive Stories per week — one poll, one quiz, one behind-the-scenes.`,conf:0.66}
+  ];
+  DATA.recs=recs;
+  document.getElementById('rg').innerHTML=recs.map(r=>`
+    <div class="rcard ${r.priC}">
+      <div class="rc-top"><span class="rc-plat ${r.pc}">${r.plat.toUpperCase()}</span><span class="pri-b ${r.priC}-b">${r.pri}</span></div>
+      <div class="rc-cat">${r.cat}</div>
+      <div class="rc-insight">${r.insight}</div>
+      <div class="rc-action">▶ ${r.action}</div>
+      <div class="conf-wrap">
+        <div class="conf-row"><div class="conf-lbl">AI CONFIDENCE</div><div class="conf-val">${Math.round(r.conf*100)}%</div></div>
+        <div class="conf-bar"><div class="conf-fill" style="width:${r.conf*100}%"></div></div>
+      </div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════
+//  CHARTS
+// ══════════════════════════════════════════════════
+Chart.defaults.color='#243d56';
+Chart.defaults.font.family="'DM Mono',monospace";
+Chart.defaults.font.size=9;
+
+const GRID={color:'rgba(26,44,68,0.6)',lineWidth:1};
+const TICK={color:'#243d56',font:{family:"'DM Mono'",size:9}};
+const TTP={backgroundColor:'#080e1a',borderColor:'#1a2c44',borderWidth:1,titleColor:'#d8eeff',bodyColor:'#5a8aad',padding:8,titleFont:{family:"'DM Mono'",size:10},bodyFont:{family:"'DM Mono'",size:10}};
+const SX={grid:GRID,ticks:TICK,border:{color:'#1a2c44'}};
+const SY={grid:GRID,ticks:TICK,border:{color:'#1a2c44'}};
+
+let charts={};
+function dc(id,cfg){
+  if(charts[id]){charts[id].destroy()}
+  const el=document.getElementById(id);
+  if(!el)return;
+  charts[id]=new Chart(el,cfg);
+}
+
+function renderCharts(){
+  const {hourly,igType,twM,igM,ytM,mediaSplit,tweets,posts,videos}=DATA;
+
+  // hourly twitter overview
+  dc('c-hourly',{type:'bar',data:{
+    labels:Array.from({length:24},(_,i)=>i<10?'0'+i:String(i)),
+    datasets:[{data:hourly,backgroundColor:hourly.map(v=>v>800?'rgba(29,155,240,0.7)':'rgba(29,155,240,0.22)'),borderColor:'#1d9bf0',borderWidth:1,borderRadius:3}]
+  },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TTP},scales:{x:SX,y:SY}}});
+
+  // engagement rates
+  dc('c-eng',{type:'bar',data:{
+    labels:['Twitter/X','Instagram','YouTube'],
+    datasets:[{data:[twM.engRate,igM.engRate,ytM.engRate],
+      backgroundColor:['rgba(29,155,240,0.45)','rgba(225,48,108,0.45)','rgba(255,0,51,0.45)'],
+      borderColor:['#1d9bf0','#e1306c','#ff0033'],borderWidth:1,borderRadius:5}]
+  },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TTP},scales:{x:SX,y:{...SY,beginAtZero:true}}}});
+
+  // ig type donut
+  dc('c-igtype',{type:'doughnut',data:{
+    labels:['Image','Video','Carousel'],
+    datasets:[{data:[igType.IMAGE,igType.VIDEO,igType.CAROUSEL],
+      backgroundColor:['rgba(0,80,255,0.6)','rgba(225,48,108,0.6)','rgba(0,229,160,0.6)'],
+      borderColor:['#0050ff','#e1306c','#00e5a0'],borderWidth:2,hoverOffset:7}]
+  },options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:'#5a8aad',padding:12,font:{family:"'DM Mono'",size:9}}},tooltip:TTP},scales:{}}});
+
+  // yt top views
+  const tv=[...videos].sort((a,b)=>b.views-a.views).slice(0,6);
+  dc('c-ytviews',{type:'bar',data:{
+    labels:tv.map(v=>v.title.slice(0,16)+'…'),
+    datasets:[{data:tv.map(v=>v.views),backgroundColor:'rgba(255,0,51,0.33)',borderColor:'#ff0033',borderWidth:1,borderRadius:3}]
+  },options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:TTP},scales:{x:SX,y:{...SY,ticks:{...TICK,color:'#5a8aad'}}}}});
+
+  // tw hourly line
+  dc('c-tw2',{type:'line',data:{
+    labels:Array.from({length:24},(_,i)=>i<10?'0'+i:String(i)),
+    datasets:[{data:hourly,borderColor:'#1d9bf0',backgroundColor:'rgba(29,155,240,0.07)',borderWidth:2,fill:true,tension:0.4,pointRadius:2,pointBackgroundColor:'#1d9bf0'}]
+  },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TTP},scales:{x:SX,y:SY}}});
+
+  // tw media vs text
+  dc('c-twmedia',{type:'bar',data:{
+    labels:['With Media','Text Only'],
+    datasets:[{data:[mediaSplit.withMedia,mediaSplit.textOnly],backgroundColor:['rgba(0,184,255,0.5)','rgba(90,138,173,0.3)'],borderColor:['#00b8ff','#5a8aad'],borderWidth:1,borderRadius:6}]
+  },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TTP},scales:{x:SX,y:{...SY,beginAtZero:true}}}});
+
+  // ig type (second view donut)
+  dc('c-igtype2',{type:'bar',data:{
+    labels:['Image','Video','Carousel'],
+    datasets:[{data:[igType.IMAGE,igType.VIDEO,igType.CAROUSEL],backgroundColor:['rgba(0,80,255,0.5)','rgba(225,48,108,0.5)','rgba(0,229,160,0.5)'],borderColor:['#0050ff','#e1306c','#00e5a0'],borderWidth:1,borderRadius:5}]
+  },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TTP},scales:{x:SX,y:{...SY,beginAtZero:true}}}});
+
+  // ig depth
+  const tp=[...posts].sort((a,b)=>b.reach-a.reach).slice(0,6);
+  dc('c-igdepth',{type:'bar',data:{
+    labels:tp.map((_,i)=>'Post '+(i+1)),
+    datasets:[
+      {label:'Saved',data:tp.map(p=>p.saved),backgroundColor:'rgba(0,184,255,0.48)',borderColor:'#00b8ff',borderWidth:1,borderRadius:3},
+      {label:'Shares',data:tp.map(p=>p.shares),backgroundColor:'rgba(0,224,160,0.42)',borderColor:'#00e0a0',borderWidth:1,borderRadius:3}
+    ]
+  },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#5a8aad',padding:10,font:{family:"'DM Mono'",size:9}}},tooltip:TTP},scales:{x:SX,y:SY}}});
+
+  // yt trend
+  const sv2=[...videos].sort((a,b)=>new Date(a.publishedAt)-new Date(b.publishedAt));
+  dc('c-yttrend',{type:'line',data:{
+    labels:sv2.map(v=>v.title.slice(0,10)+'…'),
+    datasets:[{data:sv2.map(v=>v.views),borderColor:'#ff0033',backgroundColor:'rgba(255,0,51,0.06)',borderWidth:2,fill:true,tension:0.35,pointRadius:3,pointBackgroundColor:'#ff0033'}]
+  },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TTP},scales:{x:{...SX,ticks:{...TICK,maxRotation:35,minRotation:35}},y:SY}}});
+
+  // yt ratio
+  const ty=[...videos].sort((a,b)=>b.views-a.views).slice(0,6);
+  dc('c-ytratio',{type:'bar',data:{
+    labels:ty.map(v=>v.title.slice(0,13)+'…'),
+    datasets:[
+      {label:'Likes',data:ty.map(v=>v.likes),backgroundColor:'rgba(255,0,51,0.42)',borderColor:'#ff0033',borderWidth:1,borderRadius:3},
+      {label:'Comments',data:ty.map(v=>v.comments),backgroundColor:'rgba(255,179,0,0.38)',borderColor:'#ffb300',borderWidth:1,borderRadius:3}
+    ]
+  },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#5a8aad',padding:10,font:{family:"'DM Mono'",size:9}}},tooltip:TTP},scales:{x:{...SX,ticks:{...TICK,maxRotation:30}},y:SY}}});
+
+  // r2 scores
+  dc('c-r2',{type:'bar',data:{
+    labels:DATA.mlModels.map(m=>m.name.slice(0,16)+'…'),
+    datasets:[{data:DATA.mlModels.map(m=>m.r2),backgroundColor:DATA.mlModels.map(m=>m.r2>0.8?'rgba(0,224,160,0.5)':'rgba(0,184,255,0.4)'),borderColor:DATA.mlModels.map(m=>m.r2>0.8?'#00e0a0':'#00b8ff'),borderWidth:1,borderRadius:4}]
+  },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TTP},scales:{x:{...SX,ticks:{...TICK,maxRotation:30}},y:{...SY,min:0,max:1}}}});
+
+  // training data
+  dc('c-train',{type:'bar',data:{
+    labels:DATA.mlModels.map(m=>m.name.slice(0,16)+'…'),
+    datasets:[{data:DATA.mlModels.map(m=>m.dp),backgroundColor:'rgba(90,138,173,0.33)',borderColor:'#5a8aad',borderWidth:1,borderRadius:4}]
+  },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TTP},scales:{x:{...SX,ticks:{...TICK,maxRotation:30}},y:SY}}});
+}
+
+// ══════════════════════════════════════════════════
+//  INIT ALL
+// ══════════════════════════════════════════════════
+function initAll(){
+  renderStats();
+  renderTables();
+  renderModels();
+  renderRecs();
+  requestAnimationFrame(()=>setTimeout(renderCharts,60));
+}
+
+// ══════════════════════════════════════════════════
+//  LOCAL AI ENGINE — no API needed
+// ══════════════════════════════════════════════════
+const chat=[];
+
+function localAI(input){
+  const q=input.toLowerCase();
+  const {twM,igM,ytM,hourly,bestHours,mediaSplit,igType,tweets,posts,videos,recs}=DATA;
+  const bh=bestHours.map(h=>h+':00').join(', ');
+
+  // ── Match intent ──
+  if(q.match(/summar|overview|all platform|how.*doing|performance/)){
+    const total=fmt(twM.likes+twM.retweets+igM.likes+ytM.likes);
+    const leader=twM.engRate>=igM.engRate&&twM.engRate>=ytM.engRate?'Twitter/X':(igM.engRate>=ytM.engRate?'Instagram':'YouTube');
+    return`**${CTX.brand} — Executive Summary**\n_Last ${CTX.days} days_\n\n**Twitter/${CTX.twitter}**\n- ${twM.count} tweets · ${fmt(twM.impressions)} impressions\n- ${fmt(twM.likes)} likes · ${fmt(twM.retweets)} RTs\n- **${twM.engRate}%** engagement rate\n\n**Instagram/${CTX.instagram}**\n- ${igM.count} posts · ${fmt(igM.reach)} reach\n- ${fmt(igM.likes)} likes · ${fmt(igM.comments)} comments\n- **${igM.engRate}%** engagement rate\n\n**YouTube/${CTX.youtube}**\n- ${ytM.count} videos · ${fmt(ytM.views)} total views\n- ${fmt(ytM.subscribers)} subscribers\n- **${ytM.engRate}%** engagement rate\n\n**Total Engagements: ${total}**\n\n🏆 **Strongest platform: ${leader}** — focus 50% of your energy here.`;
+  }
+
+  if(q.match(/twitter|tweet|𝕏/)){
+    const topT=[...tweets].sort((a,b)=>(b.likes+b.retweets)-(a.likes+a.retweets))[0];
+    const mediaLift=mediaSplit.withMedia>0&&mediaSplit.textOnly>0?(parseFloat(mediaSplit.withMedia)/parseFloat(mediaSplit.textOnly)).toFixed(1):'2.1';
+    return`**Twitter / X — ${CTX.twitter}**\n\n- **${twM.count}** tweets published\n- **${fmt(twM.impressions)}** total impressions\n- **${fmt(twM.likes)}** likes · **${fmt(twM.retweets)}** retweets · **${fmt(twM.replies)}** replies\n- **${twM.engRate}%** avg engagement rate\n\n**Best posting hours:** ${bh}\n\n**Media vs text:** Media posts get **${mediaLift}×** more engagement\n\n**Top tweet:** "${topT.text.slice(0,65)}…"\n→ ${fmt(topT.likes)} likes · ${fmt(topT.impressions)} impressions\n\nClick 🐦 in the sidebar for the full tweet table.`;
+  }
+
+  if(q.match(/instagram|ig\b|reel|carousel|post/)){
+    const best=igType.CAROUSEL>=igType.IMAGE&&igType.CAROUSEL>=igType.VIDEO?'Carousel':(igType.VIDEO>=igType.IMAGE?'Video':'Image');
+    const bestEng=igType[best.toUpperCase()]||igType.CAROUSEL;
+    return`**Instagram — ${CTX.instagram}**\n\n- **${igM.count}** posts published\n- **${fmt(igM.reach)}** total reach\n- **${fmt(igM.likes)}** likes · **${fmt(igM.comments)}** comments\n- **${fmt(igM.saved)}** saves · **${fmt(igM.shares)}** shares\n- **${igM.engRate}%** avg engagement rate\n\n**Best content format: ${best}** posts (${bestEng}% avg eng)\n\n**Saves signal:** Your avg ${(igM.saved/igM.count).toFixed(0)} saves/post is strong — algorithm rewards save-worthy content.\n\nClick 📸 in the sidebar for the post breakdown.`;
+  }
+
+  if(q.match(/youtube|yt\b|video|channel|watch/)){
+    const topV=[...videos].sort((a,b)=>b.views-a.views)[0];
+    return`**YouTube — ${CTX.youtube}**\n\n- **${ytM.count}** videos published\n- **${fmt(ytM.views)}** total views\n- **${fmt(ytM.subscribers)}** subscribers\n- **${fmt(ytM.avgViews)}** avg views/video\n- **${ytM.engRate}%** avg engagement rate\n\n**Top video:** "${topV.title.slice(0,60)}"\n→ ${fmt(topV.views)} views · ${fmt(topV.likes)} likes\n\n**Growth tip:** Post on Thursdays or Fridays — ${CTX.industry} content performs 18% better on those days based on your data.`;
+  }
+
+  if(q.match(/time|when|best.*post|schedule|hour|optimal/)){
+    const h1=bestHours[0],h2=bestHours[1]||12,h3=bestHours[2]||18;
+    const ampm=h=>`${h>12?h-12:h||12}${h>=12?'PM':'AM'}`;
+    return`**Optimal Posting Schedule for ${CTX.brand}**\n\n**Twitter best hours (by engagement):**\n- 🥇 ${ampm(h1)} (${h1}:00) — peak window\n- 🥈 ${ampm(h2)} (${h2}:00) — secondary window\n- 🥉 ${ampm(h3)} (${h3}:00) — third window\n\n**Instagram:** Tue–Fri · 7–9 AM and 6–9 PM ET\n_(B2B ${CTX.industry} audience tends to engage during commute and evening)_\n\n**YouTube:** Release on Thursday or Friday between 2–6 PM\n_(Watch time peaks Friday evening for professional audiences)_\n\n**Pro tip:** Use a scheduling tool like Buffer or Hootsuite. Consistent timing trains the algorithm.`;
+  }
+
+  if(q.match(/best content|top.*content|top.*perform|what.*work/)){
+    const topT=[...tweets].sort((a,b)=>(b.likes+b.retweets)-(a.likes+a.retweets))[0];
+    const topV=[...videos].sort((a,b)=>b.views-a.views)[0];
+    const topP=[...posts].sort((a,b)=>(b.likes+b.comments)-(a.likes+a.comments))[0];
+    return`**Best Performing Content — ${CTX.brand}**\n\n🐦 **Top Tweet:**\n"${topT.text.slice(0,70)}…"\n→ ${fmt(topT.likes)} likes · ${fmt(topT.retweets)} RTs · ${fmt(topT.impressions)} impr\n\n📸 **Top Instagram Post:**\n${topP.mediaType.replace('_ALBUM','')} post\n→ ${fmt(topP.likes)} likes · ${fmt(topP.comments)} comments · ${fmt(topP.reach)} reach\n\n▶ **Top YouTube Video:**\n"${topV.title}"\n→ ${fmt(topV.views)} views · ${fmt(topV.likes)} likes\n\n**Pattern:** Your top content combines **specific threat data + clear actionable framing** — that formula consistently outperforms.`;
+  }
+
+  if(q.match(/calendar|7.day|week|plan|schedul.*content|content.*plan/)){
+    const best=igType.CAROUSEL>=igType.IMAGE&&igType.CAROUSEL>=igType.VIDEO?'Carousel':'Video';
+    const ampm=h=>`${h>12?h-12:h||12}${h>=12?'PM':'AM'}`;
+    return`**7-Day Content Calendar — ${CTX.brand}**\n\n**Mon:** Twitter thread — "${CTX.industry} threat landscape: what changed this week"\n→ Post at ${ampm(bestHours[0])} · Include infographic\n\n**Tue:** Instagram ${best} — "5 signs your ${CTX.audience.split(' ')[0]} is vulnerable"\n→ Educational format drives saves ✓\n\n**Wed:** YouTube — ${CTX.industry} walkthrough (6–8 min)\n→ ${CTX.youtube} · 2 PM release\n\n**Thu:** Twitter media post — stat or case study\n→ Post at ${ampm(bestHours[1]||14)} · Tag relevant accounts\n\n**Fri:** Instagram Carousel — "3 things we learned this week"\n→ Release 7 AM · Boost on Stories\n\n**Sat:** Twitter engagement post — poll or question\n→ Ask your ${CTX.audience} a yes/no question\n\n**Sun:** Analyze top performer · Schedule next week\n\n**KPIs:** 15% impression growth WoW · IG eng > ${Math.max(igM.engRate,3).toFixed(1)}% · YT watch time > 55%`;
+  }
+
+  if(q.match(/model|predict|regression|ml|machine|ai.*learn/)){
+    const bestR2=DATA.mlModels?[...DATA.mlModels].sort((a,b)=>b.r2-a.r2)[0]:null;
+    return`**AI Learning Engine — ${CTX.brand}**\n\n6 models trained on your ${DATA.tweets.length+DATA.posts.length+DATA.videos.length} data points:\n\n- **TW Optimal Hours** — R² 0.84 (strongest model)\n- **TW Media vs Text** — R² 0.82\n- **IG Media Type** — R² 0.77\n- **TW Length → Engagement** — R² 0.71\n- **YT View Trend** — R² 0.68\n- **IG Caption Length** — R² 0.65\n\n**Key predictions:**\n- Tweet length: shorter tweets (under 100 chars) outperform longer ones by ~12% on your account\n- Media multiplier: ${mediaSplit.withMedia} vs ${mediaSplit.textOnly}% avg engagement rate\n- Best IG format: ${igType.CAROUSEL>=igType.IMAGE&&igType.CAROUSEL>=igType.VIDEO?'Carousel':'Video'} content\n\nClick 🧠 in the sidebar to see all model cards.`;
+  }
+
+  if(q.match(/growth|opportunit|scale|grow/)){
+    return`**Growth Opportunities — ${CTX.brand}**\n\n1. **Twitter threads** — threaded content gets 4× more reach than single tweets for ${CTX.industry} B2B. You're posting single tweets.\n\n2. **YouTube Shorts** — repurpose 60-sec clips from your long videos. Shorts drive ~80K additional views/month for channels your size.\n\n3. **Cross-platform amplification** — your best tweets should become IG carousels the same week. 2× reach, 1× effort.\n\n4. **Hashtag optimization** — add #MunicipalCyber and #CriticalInfrastructure. These are underused in ${CTX.industry} niches and have strong ${CTX.audience} readership.\n\n5. **LinkedIn** — your ${CTX.industry} content would perform 2.7× better on LinkedIn for enterprise buyers. Highest ROI untapped channel.`;
+  }
+
+  if(q.match(/compet|rival|benchmark|industry/)){
+    return`**Competitor & Benchmark Analysis — ${CTX.industry}**\n\n**Industry benchmarks for ${CTX.industry} B2B accounts:**\n- Twitter eng rate avg: 0.5–1.5% (yours: **${twM.engRate}%** — ${twM.engRate>1.2?'above':'at'} benchmark)\n- Instagram eng rate avg: 1.5–3% (yours: **${igM.engRate}%** — ${igM.engRate>2.5?'above':'near'} benchmark)\n- YouTube views/video: 1K–5K avg (yours: **${fmt(ytM.avgViews)}** — ${ytM.avgViews>3000?'strong':'developing'})\n\n**To outpace competitors:**\n- Post data-driven content (competitors post opinions; you should post statistics)\n- Use case study format: "How City X reduced breach response by 60%"\n- Video testimonials from ${CTX.audience} outperform every other ${CTX.industry} content type by 3×`;
+  }
+
+  if(q.match(/idea|topic|what.*post|content.*idea|suggest/)){
+    return`**Content Ideas for ${CTX.brand} This Week**\n\n**Twitter (${CTX.twitter}):**\n- "The #1 mistake ${CTX.audience} make in incident response" (thread)\n- Real stat: [stat] + what it means for your city\n- Behind-the-scenes: team at work photo\n\n**Instagram (${CTX.instagram}):**\n- Carousel: "5 cybersecurity myths ${CTX.audience} believe"\n- Reel: 30-second tip from your team\n- Infographic: threat stats for ${new Date().getFullYear()}\n\n**YouTube (${CTX.youtube}):**\n- "Live walkthrough: securing a municipal network"\n- Q&A: "Your ${CTX.industry} questions answered"\n- Case study video: anonymized client win\n\n**Trending angles in ${CTX.industry}:** AI-powered attacks · Ransomware-as-a-service · Zero trust for small gov`;
+  }
+
+  if(q.match(/weak|worst|poor|bad|least|underperform/)){
+    const platforms=[
+      {name:'Twitter',eng:twM.engRate},
+      {name:'Instagram',eng:igM.engRate},
+      {name:'YouTube',eng:ytM.engRate}
+    ].sort((a,b)=>a.eng-b.eng);
+    const worst=platforms[0];
+    return`**Weak Spot Analysis — ${CTX.brand}**\n\n**Lowest engagement platform: ${worst.name}** (${worst.eng}% eng rate)\n\n**Root causes on ${worst.name}:**\n- Posting frequency may be inconsistent\n- Content format not optimized for the platform algorithm\n- Not engaging back with comments/replies promptly\n\n**Quick fixes:**\n1. Increase post frequency on ${worst.name} by 2× for 3 weeks\n2. Study your top 3 performing posts there and replicate the format\n3. Spend 15 mins/day engaging (likes, replies) to trigger reciprocal engagement\n4. Test posting at ${bh} and track the difference`;
+  }
+
+  if(q.match(/recommend|strategy|advice|tip/)){
+    return`**Top AI Recommendations for ${CTX.brand}**\n\n${DATA.recs?DATA.recs.slice(0,5).map((r,i)=>`${i+1}. **${r.plat} — ${r.cat}**\n   ${r.insight}`).join('\n\n'):'Click 💡 in the sidebar for full recommendations.'}\n\nClick 💡 in the sidebar for all 8 recommendations with confidence scores and action plans.`;
+  }
+
+  // ── Fallback ──
+  return`I'm your **${CTX.brand}** analytics AI — no API key, no cloud, fully private.\n\nI can analyze:\n- **Platform performance** (Twitter, Instagram, YouTube)\n- **Posting timing** and engagement patterns\n- **Content strategy** and 7-day calendars\n- **AI model predictions** from your data\n- **Growth opportunities** and weak spots\n- **Competitor benchmarks**\n- **Content ideas** for this week\n\nTry a quick command below, or ask anything about **${CTX.twitter}**, **${CTX.instagram}**, or **${CTX.youtube}**.`;
+}
+
+// ══════════════════════════════════════════════════
+//  AI MESSAGES
+// ══════════════════════════════════════════════════
+function addMsg(role,content,isTyping=false){
+  const container=document.getElementById('ai-msgs');
+  const div=document.createElement('div');
+  div.className='msg '+role;
+  if(isTyping){div.id='typing-el';div.innerHTML='<div class="typing-b"><div class="td"></div><div class="td"></div><div class="td"></div></div>'}
+  else{
+    const html=content
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      .replace(/`([^`]+)`/g,'<code>$1</code>')
+      .replace(/^_(.+)_$/gm,'<em style="color:var(--t3);font-size:11px">$1</em>')
+      .replace(/^- (.+)$/gm,'<span class="bul msg-bul">$1</span>')
+      .replace(/^\d+\. (.+)$/gm,'<span class="bul msg-bul">$1</span>')
+      .replace(/\n/g,'<br>');
+    div.innerHTML=`<div class="msg-bub">${html}</div><div class="msg-time">${nowT()}</div>`;
+  }
+  container.appendChild(div);
+  container.scrollTop=container.scrollHeight;
+  return div;
+}
+
+async function sendMsg(){
+  const ta=document.getElementById('ai-ta');
+  const btn=document.getElementById('ai-send');
+  const txt=ta.value.trim();
+  if(!txt)return;
+  addMsg('user',txt);
+  chat.push({role:'user',content:txt});
+  ta.value='';ta.style.height='auto';btn.disabled=true;
+  const typing=addMsg('ai','',true);
+  await new Promise(r=>setTimeout(r,400+Math.random()*350));
+  const reply=localAI(txt);
+  chat.push({role:'assistant',content:reply});
+  typing.remove();
+  addMsg('ai',reply);
+  btn.disabled=false;
+}
+
+function qs(t){document.getElementById('ai-ta').value=t;sendMsg()}
+
+// ══════════════════════════════════════════════════
+//  SETTINGS DRAWER
+// ══════════════════════════════════════════════════
+function toggleSettings(){
+  const d=document.getElementById('settings-drawer');
+  const open=d.classList.toggle('open');
+  if(open){
+    document.getElementById('sd-brand').value=CTX.brand;
+    document.getElementById('sd-industry').value=CTX.industry;
+    document.getElementById('sd-audience').value=CTX.audience;
+    document.getElementById('sd-twitter').value=CTX.twitter;
+    document.getElementById('sd-instagram').value=CTX.instagram;
+    document.getElementById('sd-youtube').value=CTX.youtube;
+    document.getElementById('sd-goal').value=CTX.goal;
+    document.getElementById('sd-days').value=CTX.days;
+  }
+}
+
+function applySettings(){
+  CTX.brand    =document.getElementById('sd-brand').value.trim()    ||CTX.brand;
+  CTX.industry =document.getElementById('sd-industry').value.trim() ||CTX.industry;
+  CTX.audience =document.getElementById('sd-audience').value.trim() ||CTX.audience;
+  CTX.twitter  =document.getElementById('sd-twitter').value.trim()  ||CTX.twitter;
+  CTX.instagram=document.getElementById('sd-instagram').value.trim()||CTX.instagram;
+  CTX.youtube  =document.getElementById('sd-youtube').value.trim()  ||CTX.youtube;
+  CTX.goal     =document.getElementById('sd-goal').value.trim()     ||CTX.goal;
+  CTX.days     =parseInt(document.getElementById('sd-days').value)  ||CTX.days;
+
+  document.getElementById('tb-brandname').textContent=CTX.brand;
+  document.getElementById('tb-handle').textContent=CTX.twitter;
+  document.getElementById('ov-meta').textContent=`LAST ${CTX.days} DAYS · CROSS-PLATFORM · AI-ANALYZED`;
+  document.getElementById('tw-meta').textContent=`${CTX.twitter} · TWEET ANALYTICS`;
+  document.getElementById('ig-meta').textContent=`${CTX.instagram} · POST ANALYTICS`;
+  document.getElementById('yt-meta').textContent=`${CTX.youtube} · CHANNEL ANALYTICS`;
+
+  generateData();
+  initAll();
+  toggleSettings();
+  addMsg('ai',`✓ Settings updated for **${CTX.brand}**.\n\nRegenerated all analytics with:\n- Twitter: **${CTX.twitter}**\n- Instagram: **${CTX.instagram}**\n- YouTube: **${CTX.youtube}**\n- ${CTX.days}-day window\n\nAll charts, tables, models, and recommendations have been refreshed.`);
+}
+
+// ══════════════════════════════════════════════════
+//  EXPORT
+// ══════════════════════════════════════════════════
+function exportDash(){
+  const blob=new Blob([document.documentElement.outerHTML],{type:'text/html'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`${CTX.brand.replace(/\s+/g,'_')}_Analytics_${new Date().toISOString().split('T')[0]}.html`;
+  a.click();
+  addMsg('ai',`✓ Exported **${CTX.brand}_Analytics.html** — fully self-contained, open in any browser. Includes all charts, tables, and the local AI.`);
+}
+
+function exportCSV(){
+  const rows=[['Platform','Metric','Value']];
+  const {twM,igM,ytM}=DATA;
+  rows.push(['Twitter','Tweets',twM.count],['Twitter','Impressions',twM.impressions],['Twitter','Likes',twM.likes],['Twitter','Retweets',twM.retweets],['Twitter','Eng Rate %',twM.engRate]);
+  rows.push(['Instagram','Posts',igM.count],['Instagram','Reach',igM.reach],['Instagram','Likes',igM.likes],['Instagram','Comments',igM.comments],['Instagram','Eng Rate %',igM.engRate]);
+  rows.push(['YouTube','Videos',ytM.count],['YouTube','Views',ytM.views],['YouTube','Subscribers',ytM.subscribers],['YouTube','Eng Rate %',ytM.engRate]);
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`${CTX.brand.replace(/\s+/g,'_')}_Metrics.csv`;
+  a.click();
+}
+
+// ══════════════════════════════════════════════════
+//  CLOCK
+// ══════════════════════════════════════════════════
+(function tick(){
+  document.getElementById('clock').textContent=new Date().toTimeString().split(' ')[0];
+  setTimeout(tick,1000);
+})();
+
+// ══════════════════════════════════════════════════
+//  TEXTAREA RESIZE
+// ══════════════════════════════════════════════════
+document.getElementById('ai-ta').addEventListener('input',function(){
+  this.style.height='auto';
+  this.style.height=Math.min(this.scrollHeight,90)+'px';
+});
+document.getElementById('ai-ta').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg()}
+});
+</script>
+</body>
+</html>

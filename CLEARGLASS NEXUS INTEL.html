@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>NEXUS OMEGA · ClearGlass Quantum Intelligence Core · v11.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --quantum-primary: #00ffff;
+  --quantum-secondary: #ff00ff;
+  --quantum-tertiary: #ffff00;
+  --quantum-cyan: #0ff;
+  --quantum-magenta: #f0f;
+  --gold: #f0c040;
+  --danger: #ff2d55;
+  --warn: #ffbe0b;
+  --glow: #00c8ff;
+  --glow2: #00ff9d;
+  --bg-deep: #050510;
+  --bg-panel: rgba(5, 15, 25, 0.85);
+  --glass-edge: rgba(0, 255, 255, 0.25);
+  --text-bright: #e0f0ff;
+  --text-dim: #8aaec0;
+  --border: rgba(0,200,255,0.15);
+  --transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+
+body {
+  background: radial-gradient(ellipse at 20% 30%, #050510, #000000);
+  font-family: 'Inter', 'Segoe UI', 'Share Tech Mono', monospace;
+  color: var(--text-bright);
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Quantum Field */
+.quantum-field {
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, rgba(0,255,255,0.02) 0px, rgba(0,255,255,0.02) 2px, transparent 2px, transparent 8px),
+              repeating-linear-gradient(90deg, rgba(255,0,255,0.02) 0px, rgba(255,0,255,0.02) 2px, transparent 2px, transparent 8px);
+  pointer-events: none; z-index: 0;
+  animation: quantumDrift 20s linear infinite;
+}
+@keyframes quantumDrift { 0% { transform: translate(0,0); } 100% { transform: translate(100px,100px); } }
+
+.quantum-particles { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+.q-particle {
+  position: absolute; background: radial-gradient(circle, rgba(0,255,255,0.8), transparent);
+  border-radius: 50%; filter: blur(2px); animation: quantumFloat linear infinite;
+}
+@keyframes quantumFloat {
+  0% { transform: translateY(100vh) rotate(0deg) scale(0); opacity: 0; }
+  10% { opacity: 0.8; } 80% { opacity: 0.8; }
+  100% { transform: translateY(-20vh) rotate(720deg) scale(1); opacity: 0; }
+}
+
+.scanline {
+  position: fixed; inset:0; z-index:2;
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,200,255,0.012) 3px, rgba(0,200,255,0.012) 4px);
+  pointer-events: none;
+  animation: scan 8s linear infinite;
+}
+@keyframes scan { 0% { background-position: 0 0; } 100% { background-position: 0 100vh; } }
+
+.vignette {
+  position: fixed; inset:0; z-index:2;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,10,0.85) 100%);
+  pointer-events: none;
+}
+
+.app { position: relative; z-index: 10; display: flex; flex-direction: column; height: 100vh; }
+
+/* Boot Screen */
+#boot {
+  position: fixed; inset:0; z-index:1000;
+  background: #050510;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 24px;
+}
+#boot.hidden { display: none; }
+.boot-hex { width: 120px; height: 120px; animation: boot-spin 2s linear infinite; }
+@keyframes boot-spin { to { transform: rotate(360deg); } }
+.boot-hex svg { width: 100%; height: 100%; }
+.boot-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 28px; font-weight: 900;
+  letter-spacing: 8px;
+  color: var(--quantum-primary);
+  text-shadow: 0 0 30px var(--quantum-primary);
+}
+.boot-sub { font-size: 11px; letter-spacing: 4px; color: var(--text-dim); }
+.boot-bar-wrap { width: 400px; height: 2px; background: rgba(0,200,255,0.1); overflow: hidden; }
+.boot-bar { height: 100%; background: linear-gradient(90deg, var(--glow2), var(--glow)); width: 0%; transition: width 0.1s linear; }
+.boot-log { font-size: 10px; letter-spacing: 2px; color: var(--text-dim); min-height: 14px; }
+
+/* Header */
+header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; height: 64px;
+  background: linear-gradient(180deg, rgba(0,10,25,0.95), rgba(0,10,25,0.7));
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  z-index: 50;
+}
+.header-left { display: flex; align-items: center; gap: 16px; }
+.logo-hex { width: 44px; height: 44px; position: relative; display: flex; align-items: center; justify-content: center; }
+.logo-hex svg { position: absolute; width: 100%; height: 100%; animation: logo-rotate 10s linear infinite; }
+@keyframes logo-rotate { to { transform: rotate(360deg); } }
+.logo-inner { font-family: 'Orbitron', monospace; font-size: 13px; font-weight: 700; color: var(--quantum-primary); z-index: 1; }
+.brand-name { font-family: 'Orbitron', monospace; font-size: 16px; font-weight: 700; letter-spacing: 4px; color: #fff; }
+.brand-sub { font-size: 9px; letter-spacing: 3px; color: var(--text-dim); margin-top: 2px; }
+.header-center { display: flex; flex-direction: column; align-items: center; }
+.header-time { font-family: 'Orbitron', monospace; font-size: 22px; font-weight: 600; color: var(--quantum-primary); }
+.header-date { font-size: 9px; letter-spacing: 3px; color: var(--text-dim); }
+.header-right { display: flex; align-items: center; gap: 16px; }
+.status-pill { display: flex; align-items: center; gap: 8px; padding: 6px 16px; border: 1px solid rgba(0,255,157,0.3); background: rgba(0,255,157,0.06); font-size: 9px; letter-spacing: 2px; color: var(--glow2); }
+.pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--glow2); animation: dot-pulse 1.4s infinite; }
+@keyframes dot-pulse { 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:0.3; transform:scale(0.6); } }
+.exec-chip { display: flex; align-items: center; gap: 10px; padding: 6px 16px; border: 1px solid rgba(240,192,64,0.3); background: rgba(240,192,64,0.06); }
+.exec-avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), #ff8c42); display: flex; align-items: center; justify-content: center; font-family: 'Orbitron', monospace; font-size: 10px; font-weight: 700; color: #000; }
+.exec-name { font-size: 10px; letter-spacing: 1px; color: var(--gold); font-weight: 600; }
+.exec-role { font-size: 8px; letter-spacing: 2px; color: var(--text-dim); }
+.voice-btn { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border); background: transparent; cursor: pointer; font-size: 16px; transition: all 0.3s; }
+.voice-btn:hover { border-color: var(--glow); background: rgba(0,200,255,0.1); }
+.voice-btn.speaking { border-color: var(--glow2); animation: voice-ring 1s infinite; }
+@keyframes voice-ring { 0%,100%{ box-shadow:0 0 0 0 rgba(0,255,157,0.4); } 50%{ box-shadow:0 0 0 10px rgba(0,255,157,0); } }
+
+/* Navigation Tabs */
+.nav-tabs {
+  display: flex; background: rgba(0,5,15,0.6); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border); padding: 0 20px; gap: 4px; overflow-x: auto;
+}
+.nav-tab {
+  padding: 12px 24px; font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--text-dim); cursor: pointer; border-bottom: 2px solid transparent;
+  transition: all 0.3s; white-space: nowrap;
+}
+.nav-tab:hover { color: #fff; }
+.nav-tab.active { color: var(--quantum-primary); border-bottom-color: var(--quantum-primary); }
+.nav-badge { display: inline-block; margin-left: 6px; background: var(--danger); color: white; font-size: 8px; padding: 1px 5px; border-radius: 10px; }
+
+/* Content */
+.content { flex: 1; overflow-y: auto; padding: 20px 24px; }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Cards & Panels */
+.panel {
+  background: rgba(5,15,25,0.6); backdrop-filter: blur(12px);
+  border: 1px solid var(--border); border-radius: 24px;
+  margin-bottom: 16px; overflow: hidden;
+}
+.panel-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; border-bottom: 1px solid var(--border);
+}
+.panel-title { font-family: 'Orbitron', monospace; font-size: 11px; letter-spacing: 3px; color: var(--quantum-primary); text-transform: uppercase; }
+.panel-action { font-size: 9px; letter-spacing: 2px; color: var(--text-dim); cursor: pointer; background: none; border: none; }
+.panel-action:hover { color: var(--glow); }
+
+/* KPI Grid */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.kpi-card {
+  background: rgba(5,15,25,0.7); border: 1px solid rgba(0,255,255,0.2);
+  border-radius: 20px; padding: 16px; text-align: center;
+}
+.kpi-value { font-size: 1.8rem; font-weight: 700; background: linear-gradient(135deg, #fff, var(--quantum-primary)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.kpi-label { font-size: 0.65rem; letter-spacing: 2px; color: var(--text-dim); margin-top: 4px; }
+
+/* Grids */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
+@media (max-width: 1000px) { .grid-4, .grid-3 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 700px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+
+/* Tables */
+.data-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+.data-table th { text-align: left; padding: 8px 6px; color: var(--text-dim); border-bottom: 1px solid rgba(255,255,255,0.1); }
+.data-table td { padding: 10px 6px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.stage-badge { padding: 2px 8px; border-radius: 20px; font-size: 0.65rem; display: inline-block; }
+.stage-prospect { background: rgba(100,100,100,0.2); color: #aaa; }
+.stage-qualified { background: rgba(0,100,200,0.2); color: #88aaff; }
+.stage-proposal { background: rgba(255,107,53,0.2); color: #ff8844; }
+.stage-negotiation { background: rgba(255,179,0,0.2); color: #ffcc44; }
+.stage-closing { background: rgba(0,255,136,0.2); color: #88ffaa; }
+
+/* Buttons */
+.btn {
+  background: rgba(0,255,255,0.1); border: 1px solid rgba(0,255,255,0.3);
+  padding: 6px 14px; border-radius: 30px; font-size: 0.7rem; cursor: pointer;
+  color: var(--quantum-primary); transition: all 0.2s;
+}
+.btn:hover { background: rgba(0,255,255,0.2); border-color: var(--quantum-primary); }
+.btn-pri { background: rgba(0,200,255,0.1); border-color: var(--glow); color: var(--glow); }
+.btn-dan { background: rgba(255,45,85,0.08); border-color: var(--danger); color: var(--danger); }
+
+/* Neural Canvas */
+.neural-canvas { height: 280px; background: #000; border-radius: 16px; overflow: hidden; }
+canvas { width: 100%; height: 100%; display: block; }
+
+/* Environmental Chart */
+.env-chart { height: 120px; background: #000; border-radius: 12px; }
+
+/* Insight Cards */
+.insight-card {
+  background: rgba(0,30,45,0.6); border-left: 3px solid var(--quantum-secondary);
+  border-radius: 12px; padding: 12px; margin-bottom: 8px; cursor: pointer;
+  transition: all 0.2s;
+}
+.insight-card:hover { transform: translateX(5px); background: rgba(0,255,255,0.1); border-left-color: var(--quantum-primary); }
+
+/* Quantum Response */
+.quantum-response {
+  margin-top: 10px; padding: 10px; background: rgba(0,255,255,0.08);
+  border-left: 3px solid var(--quantum-primary); border-radius: 12px; font-size: 0.75rem;
+}
+
+/* Timeline */
+.timeline-rail {
+  background: rgba(0,5,15,0.6); backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border); padding: 10px 20px;
+  display: flex; gap: 16px; overflow-x: auto;
+}
+.timeline-event {
+  background: rgba(0,40,60,0.7); border-radius: 40px; padding: 6px 18px;
+  font-size: 0.65rem; white-space: nowrap; cursor: pointer;
+}
+.timeline-event:hover { background: rgba(0,255,255,0.2); transform: translateY(-1px); }
+
+/* Ticker */
+.ticker {
+  display: flex; align-items: center; background: rgba(0,200,255,0.05);
+  border-bottom: 1px solid var(--border); height: 32px; overflow: hidden;
+}
+.ticker-lbl { flex-shrink: 0; padding: 0 16px; font-size: 8px; letter-spacing: 3px; color: var(--glow); border-right: 1px solid var(--border); text-transform: uppercase; background: rgba(0,200,255,0.08); height: 100%; display: flex; align-items: center; }
+.ticker-scroll { flex: 1; overflow: hidden; }
+.ticker-track { display: flex; gap: 48px; animation: ticker-scroll 40s linear infinite; white-space: nowrap; }
+@keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.tick-item { font-size: 9px; color: var(--text-dim); display: flex; align-items: center; gap: 8px; }
+.tick-item .tv { color: var(--glow2); }
+.tick-item .td { color: var(--danger); }
+.tick-item .tg { color: var(--gold); }
+
+/* Forms */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.form-row.full { grid-template-columns: 1fr; }
+.fg { display: flex; flex-direction: column; gap: 5px; }
+.flbl { font-size: 8px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; }
+.finp, .fsel, .ftxt {
+  background: rgba(0,200,255,0.04); border: 1px solid var(--border);
+  padding: 8px 12px; color: var(--text); font-family: monospace; font-size: 10px;
+  outline: none; transition: border-color 0.3s;
+}
+.finp:focus, .fsel:focus, .ftxt:focus { border-color: var(--glow); }
+
+/* Notifications */
+.notif {
+  position: fixed; top: 80px; right: 20px; z-index: 500;
+  padding: 14px 18px; min-width: 280px; max-width: 360px;
+  background: rgba(0,10,25,0.95); border: 1px solid var(--glow);
+  border-left: 3px solid var(--glow);
+  backdrop-filter: blur(20px);
+  animation: notif-in 0.4s cubic-bezier(0.34,1.56,0.64,1), notif-out 0.3s ease 4.7s forwards;
+}
+@keyframes notif-in { from { transform: translateX(120%); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes notif-out { to { transform: translateX(120%); opacity: 0; } }
+.notif-title { font-family: 'Orbitron', monospace; font-size: 10px; letter-spacing: 2px; margin-bottom: 4px; }
+.notif-body { font-size: 10px; color: var(--text-dim); line-height: 1.5; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+<div class="quantum-field"></div>
+<div class="quantum-particles" id="quantumParticles"></div>
+<div class="scanline"></div>
+<div class="vignette"></div>
+
+<div id="boot">
+  <div class="boot-hex"><svg viewBox="0 0 100 100"><polygon points="50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5" fill="none" stroke="rgba(0,200,255,0.6)" stroke-width="1"/></svg></div>
+  <div class="boot-title">NEXUS OMEGA</div>
+  <div class="boot-sub">Quantum Intelligence Core · v11.0</div>
+  <div class="boot-bar-wrap"><div class="boot-bar" id="bootBar"></div></div>
+  <div class="boot-log" id="bootLog">Initializing quantum neural core...</div>
+</div>
+
+<div class="app" style="opacity:0;transition:opacity 0.8s;">
+  <div class="ticker">
+    <div class="ticker-lbl">⚡ LIVE INTEL</div>
+    <div class="ticker-scroll"><div class="ticker-track" id="tickerTrack"></div></div>
+  </div>
+
+  <header>
+    <div class="header-left">
+      <div class="logo-hex"><svg viewBox="0 0 60 60"><polygon points="30,3 57,18 57,42 30,57 3,42 3,18" fill="none" stroke="rgba(0,200,255,0.5)" stroke-width="1"/></svg><div class="logo-inner">CG</div></div>
+      <div><div class="brand-name">CLEARGLASS NEXUS</div><div class="brand-sub">Quantum Intelligence Core · Desmond Otieno · COO</div></div>
+    </div>
+    <div class="header-center"><div class="header-time" id="hdrTime">--:--:--</div><div class="header-date" id="hdrDate">-- --- ----</div></div>
+    <div class="header-right">
+      <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()">🔊</button>
+      <div class="status-pill"><div class="pulse-dot"></div>QUANTUM ACTIVE</div>
+      <div class="exec-chip"><div class="exec-avatar">DO</div><div><div class="exec-name">Desmond Otieno</div><div class="exec-role">Chief Operating Officer</div></div></div>
+    </div>
+  </header>
+
+  <div class="nav-tabs" id="navTabs">
+    <div class="nav-tab active" data-tab="dashboard">📊 DASHBOARD</div>
+    <div class="nav-tab" data-tab="quantum">🧬 QUANTUM NEURAL</div>
+    <div class="nav-tab" data-tab="surveillance">📡 SURVEILLANCE</div>
+    <div class="nav-tab" data-tab="pipeline">💰 PIPELINE <span class="nav-badge" id="nbPipeline">7</span></div>
+    <div class="nav-tab" data-tab="contracts">◻ CONTRACTS <span class="nav-badge" id="nbContracts">4</span></div>
+    <div class="nav-tab" data-tab="tasks">▷ TASKS</div>
+    <div class="nav-tab" data-tab="ai">🧠 AI AGENT</div>
+  </div>
+
+  <div class="content">
+    <!-- DASHBOARD -->
+    <div class="tab-pane active" id="tab-dashboard">
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-value" id="totalPipe">$2.14M</div><div class="kpi-label">TOTAL PIPELINE</div></div>
+        <div class="kpi-card"><div class="kpi-value" id="weightedPipe">$1.48M</div><div class="kpi-label">WEIGHTED FORECAST</div></div>
+        <div class="kpi-card"><div class="kpi-value" id="targetProgress">63%</div><div class="kpi-label">TARGET PROGRESS</div></div>
+        <div class="kpi-card"><div class="kpi-value" id="quantumScore">94%</div><div class="kpi-label">QUANTUM COHERENCE</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="panel"><div class="panel-hdr"><div class="panel-title">⚡ PRIORITY DEALS</div><button class="panel-action" onclick="showTab('pipeline')">VIEW ALL →</button></div><div class="panel-body" style="padding:0 20px 16px;"><table class="data-table" id="priorityDeals"><tbody><tr><td colspan="3">Loading...</td></tr></tbody></table></div></div>
+        <div class="panel"><div class="panel-hdr"><div class="panel-title">🌍 QUANTUM ENVIRONMENTAL TENSOR</div></div><div class="panel-body" style="padding:16px 20px;"><div class="env-chart"><canvas id="envCanvas" width="100%" height="100"></canvas></div><div style="display:flex; justify-content:space-between; margin-top:12px;"><span>🌫️ AQI: <span id="envAQI">42</span></span><span>🌡️ TEMP: <span id="envTemp">17.4°C</span></span><span>📡 CO₂: <span id="envCO2">412</span> ppm</span></div></div></div>
+      </div>
+      <div class="panel"><div class="panel-hdr"><div class="panel-title">📈 RECENT ACTIVITY</div><button class="panel-action" onclick="clearFeed()">CLEAR</button></div><div class="panel-body" style="padding:12px 20px;" id="activityFeed"></div></div>
+    </div>
+
+    <!-- QUANTUM NEURAL -->
+    <div class="tab-pane" id="tab-quantum">
+      <div class="grid-2">
+        <div class="panel"><div class="panel-hdr"><div class="panel-title">🧬 QUANTUM NEURAL NETWORK</div></div><div class="panel-body"><div class="neural-canvas"><canvas id="neuralCanvas" width="600" height="280"></canvas></div></div></div>
+        <div class="panel"><div class="panel-hdr"><div class="panel-title">⚛️ QUANTUM METRICS</div></div><div class="panel-body"><div class="grid-2"><div class="kpi-card"><div class="kpi-value" id="quantumVol">256</div><div class="kpi-label">QUANTUM VOLUME</div></div><div class="kpi-card"><div class="kpi-value" id="entanglementRate">98.7%</div><div class="kpi-label">ENTANGLEMENT</div></div><div class="kpi-card"><div class="kpi-value" id="coherenceTime">124µs</div><div class="kpi-label">COHERENCE</div></div><div class="kpi-card"><div class="kpi-value" id="aiConfidence">96%</div><div class="kpi-label">AI CONFIDENCE</div></div></div></div></div>
+      </div>
+      <div class="panel"><div class="panel-hdr"><div class="panel-title">🧠 QUANTUM AI INSIGHTS</div></div><div class="panel-body" id="quantumInsights"></div></div>
+    </div>
+
+    <!-- SURVEILLANCE -->
+    <div class="tab-pane" id="tab-surveillance">
+      <div class="grid-2">
+        <div class="panel"><div class="panel-hdr"><div class="panel-title">📡 LIVE SURVEILLANCE FEED · ZONE 7</div></div><div class="panel-body"><canvas id="surveillanceCanvas" width="100%" height="280" style="background:#000; border-radius:12px;"></canvas></div></div>
+        <div class="panel"><div class="panel-hdr"><div class="panel-title">🎯 AI DETECTION</div></div><div class="panel-body"><div id="detectionList" style="height:280px; overflow-y:auto;"></div></div></div>
+      </div>
+    </div>
+
+    <!-- PIPELINE -->
+    <div class="tab-pane" id="tab-pipeline">
+      <div class="panel"><div class="panel-hdr"><div class="panel-title">💼 DEAL PIPELINE <button class="btn" style="float:right" id="addDealBtn">+ ADD DEAL</button></div></div><div class="panel-body" style="padding:0 20px 16px;"><table class="data-table" id="pipelineTable"><thead><tr><th>Client</th><th>Opportunity</th><th>Value</th><th>Stage</th><th>Prob</th><th>Close</th><th></th></tr></thead><tbody id="pipelineBody"></tbody></table></div></div>
+    </div>
+
+    <!-- CONTRACTS -->
+    <div class="tab-pane" id="tab-contracts">
+      <div class="panel"><div class="panel-hdr"><div class="panel-title">📋 GOVERNMENT CONTRACTS <button class="btn" style="float:right" id="addContractBtn">+ TRACK RFP</button></div></div><div class="panel-body" id="contractList" style="padding:0 20px 16px;"></div></div>
+    </div>
+
+    <!-- TASKS -->
+    <div class="tab-pane" id="tab-tasks">
+      <div class="panel"><div class="panel-hdr"><div class="panel-title">✅ TASK ENGINE</div></div><div class="panel-body" style="padding:12px 20px;"><div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;"><input class="finp" id="taskInput" placeholder="New task..." style="flex:1;"><select class="fsel" id="taskPriority"><option value="high">🔴 High</option><option value="medium" selected>🟡 Medium</option><option value="low">🟢 Low</option></select><button class="btn" onclick="addTask()">ADD</button></div><div id="taskList"></div></div></div>
+    </div>
+
+    <!-- AI AGENT -->
+    <div class="tab-pane" id="tab-ai">
+      <div class="grid-2">
+        <div class="panel"><div class="panel-hdr"><div class="panel-title">🧠 QUANTUM AI ADVISOR</div></div><div class="panel-body"><div id="aiInsights" style="max-height: 300px; overflow-y: auto;"></div><div style="position:relative; margin-top:16px;"><input id="aiQuery" class="finp" type="text" placeholder="Ask NEXUS: threat matrix, pipeline status, environmental risk..." style="width:100%;"><span style="position:absolute; left:12px; top:50%; transform:translateY(-50%);">🌀</span></div><button class="btn" id="sendQuery" style="margin-top:12px;">SEND</button></div></div>
+        <div class="panel"><div class="panel-hdr"><div class="panel-title">⚡ QUICK ACTIONS</div></div><div class="panel-body"><button class="btn" style="width:100%; margin-bottom:8px;" onclick="quickAction('pipeline')">📊 Pipeline Status</button><button class="btn" style="width:100%; margin-bottom:8px;" onclick="quickAction('threats')">🛡️ Threat Matrix</button><button class="btn" style="width:100%; margin-bottom:8px;" onclick="quickAction('environment')">🌍 Environment Report</button><button class="btn" style="width:100%;" onclick="quickAction('surveillance')">📡 Camera Anomaly</button></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="timeline-rail" id="timelineRail"></div>
+</div>
+
+<script>
+// ====================== NEXUS OMEGA v11.0 - UNIFIED COMMAND CENTER ======================
+(function() {
+  // --- Data Stores ---
+  let deals = [
+    { id: 1, client: "City of Burlington", name: "NEXUS Platform", value: 380000, stage: "negotiation", prob: 85, close: "2026-04-15" },
+    { id: 2, client: "Joseph Brant Hospital", name: "Aurora Health Intelligence", value: 290000, stage: "closing", prob: 90, close: "2026-03-28" },
+    { id: 3, client: "Region of Halton", name: "Network Security Assessment", value: 145000, stage: "proposal", prob: 65, close: "2026-05-10" },
+    { id: 4, client: "Hamilton Health Sciences", name: "AEGIS Endpoint Monitoring", value: 320000, stage: "qualified", prob: 45, close: "2026-06-30" },
+    { id: 5, client: "Halton Regional Police", name: "Threat Intelligence Retainer", value: 180000, stage: "closing", prob: 92, close: "2026-03-15" },
+    { id: 6, client: "City of Mississauga", name: "Cybersecurity Governance", value: 450000, stage: "proposal", prob: 60, close: "2026-05-20" }
+  ];
+
+  let contracts = [
+    { id: 1, org: "City of Burlington", title: "Cybersecurity Assessment 2026", value: "$280K", deadline: "2026-03-18", flag: "🏛️" },
+    { id: 2, org: "PHSA British Columbia", title: "Network Security Monitoring", value: "$450K", deadline: "2026-03-25", flag: "🏥" },
+    { id: 3, org: "PSPC Canada", title: "Standing Offer SOR/2026", value: "$500K+", deadline: "2026-04-10", flag: "🇨🇦" },
+    { id: 4, org: "Halton Region", title: "IT Security Services", value: "$160K", deadline: "2026-03-12", flag: "🏢" }
+  ];
+
+  let tasks = [
+    { id: 1, text: "Submit Mississauga RFP (deadline March 10)", priority: "high", done: false },
+    { id: 2, text: "Follow up Joseph Brant legal team", priority: "high", done: false },
+    { id: 3, text: "Prepare Halton Region proposal", priority: "high", done: false },
+    { id: 4, text: "Close Halton Police contract", priority: "high", done: false }
+  ];
+
+  let activityLog = [
+    { time: "14:32", text: "Pipeline updated: Burlington deal moved to negotiation" },
+    { time: "14:28", text: "Quantum coherence stabilized at 94.2%" },
+    { time: "14:15", text: "Surveillance anomaly detected in Zone 7" }
+  ];
+
+  let timelineEvents = [
+    "⚛️ 14:32 · Quantum coherence stabilized at 94.2%",
+    "📡 14:47 · Surveillance anomaly detected in Zone 7",
+    "💰 14:55 · Burlington deal advanced to negotiation",
+    "🌍 15:10 · Environmental tensor: AQI 42, CO₂ 412ppm"
+  ];
+
+  // --- Helpers ---
+  function formatCurrency(val) { return val >= 1000000 ? '$' + (val/1000000).toFixed(2) + 'M' : '$' + (val/1000).toFixed(0) + 'K'; }
+  function totalPipeline() { return deals.reduce((s,d) => s + d.value, 0); }
+  function weightedPipeline() { return deals.reduce((s,d) => s + d.value * d.prob / 100, 0); }
+  function addActivity(text) { activityLog.unshift({ time: new Date().toLocaleTimeString().slice(0,5), text: text }); if(activityLog.length > 20) activityLog.pop(); renderDashboard(); }
+
+  // --- Environmental Data ---
+  let envData = { co2: 412, aqi: 42, temp: 17.4 };
+  function updateEnvData() {
+    envData.co2 += (Math.random() - 0.5) * 3;
+    envData.aqi += (Math.random() - 0.5) * 4;
+    envData.temp += (Math.random() - 0.5) * 0.3;
+    envData.co2 = Math.min(450, Math.max(380, envData.co2));
+    envData.aqi = Math.min(120, Math.max(20, envData.aqi));
+    document.getElementById('envAQI').textContent = Math.round(envData.aqi);
+    document.getElementById('envTemp').textContent = envData.temp.toFixed(1) + '°C';
+    document.getElementById('envCO2').textContent = Math.round(envData.co2);
+    drawEnvChart();
+  }
+  function drawEnvChart() {
+    const canvas = document.getElementById('envCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.clientWidth;
+    canvas.height = 100;
+    ctx.clearRect(0, 0, canvas.width, 100);
+    ctx.fillStyle = '#00140f';
+    ctx.fillRect(0, 0, canvas.width, 100);
+    ctx.strokeStyle = '#00ffff';
+    ctx.beginPath();
+    for (let i = 0; i < 50; i++) {
+      let x = (i / 49) * canvas.width;
+      let y = 80 - (Math.sin(i * 0.3) * 20 + envData.aqi / 5);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
+  // --- Render Functions ---
+  function renderDashboard() {
+    document.getElementById('totalPipe').textContent = formatCurrency(totalPipeline());
+    document.getElementById('weightedPipe').textContent = formatCurrency(weightedPipeline());
+    document.getElementById('targetProgress').textContent = Math.round((weightedPipeline() / 1000000) * 100) + '%';
+    let topDeals = [...deals].sort((a,b) => b.value - a.value).slice(0,3);
+    document.getElementById('priorityDeals').innerHTML = topDeals.map(d => `<tr><td><strong>${d.client}</strong></td><td>${formatCurrency(d.value)}</td><td><span class="stage-badge stage-${d.stage}">${d.stage.toUpperCase()}</span></td></tr>`).join('');
+    document.getElementById('activityFeed').innerHTML = activityLog.slice(0,8).map(a => `<div style="padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05);"><span style="color:var(--quantum-tertiary);">[${a.time}]</span> ${a.text}</div>`).join('');
+    document.getElementById('nbPipeline').textContent = deals.length;
+    document.getElementById('nbContracts').textContent = contracts.length;
+    updateEnvData();
+  }
+
+  function renderPipeline() {
+    document.getElementById('pipelineBody').innerHTML = deals.map(d => `
+      <tr>
+        <td><strong>${d.client}</strong></td>
+        <td>${d.name}</td>
+        <td>${formatCurrency(d.value)}</td>
+        <td><span class="stage-badge stage-${d.stage}">${d.stage.toUpperCase()}</span></td>
+        <td>${d.prob}%</td>
+        <td>${d.close}</td>
+        <td><button class="btn" style="padding:2px 8px;" onclick="removeDeal(${d.id})">✕</button></td>
+      </tr>
+    `).join('');
+  }
+
+  function renderContracts() {
+    document.getElementById('contractList').innerHTML = contracts.map(c => `
+      <div style="padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+        <div><strong>${c.flag} ${c.org}</strong> — ${c.title}</div>
+        <div style="font-size:0.7rem; color:var(--text-dim);">Value: ${c.value} · Deadline: ${c.deadline}</div>
+        <button class="btn btn-sm" style="margin-top:6px;" onclick="removeContract(${c.id})">✕</button>
+      </div>
+    `).join('');
+  }
+
+  function renderTasks() {
+    document.getElementById('taskList').innerHTML = tasks.map(t => `
+      <div style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; gap:10px;">
+        <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${t.id})">
+        <span style="flex:1; ${t.done ? 'text-decoration:line-through; opacity:0.5;' : ''}">${t.text}</span>
+        <span style="color:${t.priority === 'high' ? '#ff3366' : t.priority === 'medium' ? '#ffaa33' : '#88ffaa'}">${t.priority === 'high' ? '🔴' : t.priority === 'medium' ? '🟡' : '🟢'}</span>
+        <button class="btn" style="padding:2px 8px;" onclick="removeTask(${t.id})">✕</button>
+      </div>
+    `).join('');
+  }
+
+  function renderTimeline() {
+    document.getElementById('timelineRail').innerHTML = timelineEvents.map(e => `<div class="timeline-event">${e}</div>`).join('');
+  }
+
+  function renderQuantumInsights() {
+    document.getElementById('quantumInsights').innerHTML = `
+      <div class="quantum-response"><strong>⚛️ QUANTUM AI:</strong> Good cycle, Director. Surveillance feed shows elevated activity in Zone 7. Environmental tensor predicts 8% air quality drop in 37 minutes.</div>
+      <div class="insight-card" onclick="quickAction('threats')">⚠️ Threat Matrix: APT41 activity detected against Ontario .gov domains</div>
+      <div class="insight-card" onclick="quickAction('surveillance')">📡 Camera anomaly detected in Zone 7 · 87% confidence</div>
+      <div class="insight-card" onclick="quickAction('environment')">🌍 CO₂ levels: ${Math.round(envData.co2)} ppm · +2.3% trend</div>
+    `;
+  }
+
+  function renderAIPanel() {
+    document.getElementById('aiInsights').innerHTML = `
+      <div class="quantum-response"><strong>🧠 NEXUS AI:</strong> Good afternoon, Director. Pipeline at ${formatCurrency(totalPipeline())}, weighted ${formatCurrency(weightedPipeline())}. Target progress: ${Math.round((weightedPipeline() / 1000000) * 100)}%. Quantum coherence: 94.2%.</div>
+      <div class="quantum-response"><strong>🛡️ THREAT BRIEF:</strong> APT41 and FIN7 active. Halton Police closing window open — 92% probability.</div>
+    `;
+  }
+
+  // --- Surveillance Canvas ---
+  const survCanvas = document.getElementById('surveillanceCanvas');
+  let survFrame = 0;
+  let survDetections = [];
+  function drawSurveillance() {
+    if (!survCanvas) return;
+    const ctx = survCanvas.getContext('2d');
+    const w = survCanvas.clientWidth;
+    const h = 280;
+    survCanvas.width = w;
+    survCanvas.height = h;
+    ctx.fillStyle = '#00140f';
+    ctx.fillRect(0, 0, w, h);
+    for (let i = 0; i < 8; i++) {
+      const x = (survFrame * (1.5 + i * 0.8) % w);
+      const y = 60 + Math.sin(survFrame / (12 + i)) * 60;
+      ctx.fillStyle = i % 2 === 0 ? '#ff00ff' : '#ffaa33';
+      ctx.fillRect(x, y, 12, 24);
+    }
+    survDetections.forEach(d => {
+      ctx.strokeStyle = '#ff00ff';
+      ctx.strokeRect(d.x, d.y, d.w, d.h);
+      ctx.fillStyle = '#ff00ff';
+      ctx.font = '8px monospace';
+      ctx.fillText(d.label, d.x + 4, d.y - 4);
+    });
+    ctx.fillStyle = '#0ff';
+    ctx.fillText(`LIVE • ${new Date().toLocaleTimeString()} • ZONE 7 CAM-04`, 20, h - 12);
+    survFrame++;
+    requestAnimationFrame(drawSurveillance);
+  }
+  function spawnDetection() {
+    survDetections.push({ x: Math.random() * (survCanvas.clientWidth - 140) + 40, y: Math.random() * 200 + 40, w: 70 + Math.random() * 80, h: 50 + Math.random() * 70, label: Math.random() > 0.7 ? '⚠️ ANOMALY' : 'PERSON' });
+    document.getElementById('detectionList').innerHTML = survDetections.slice(-5).reverse().map(d => `<div style="padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05);"><span style="color:#ff00ff;">${d.label}</span> at (${Math.round(d.x)},${Math.round(d.y)})</div>`).join('');
+    setTimeout(() => survDetections.shift(), 3500);
+  }
+  setInterval(spawnDetection, 2200);
+
+  // --- Neural Canvas ---
+  const neuralCanvas = document.getElementById('neuralCanvas');
+  if (neuralCanvas) {
+    let neurons = [], connections = [], quantumPhase = 0;
+    function initNeural() {
+      const w = neuralCanvas.clientWidth, h = neuralCanvas.clientHeight;
+      neuralCanvas.width = w; neuralCanvas.height = h;
+      neurons = [];
+      const layers = [4,6,8,6,4];
+      for (let l=0; l<layers.length; l++) {
+        const x = 60 + (w-120) * (l/(layers.length-1));
+        for (let i=0; i<layers[l]; i++) {
+          const y = 30 + (h-60) * (i/(layers[l]-1));
+          neurons.push({ x, y, layer: l });
+        }
+      }
+      for (let i=0; i<neurons.length; i++)
+        for (let j=i+1; j<neurons.length; j++)
+          if (Math.abs(neurons[i].layer - neurons[j].layer) === 1 && Math.random() > 0.6)
+            connections.push([i,j]);
+    }
+    function drawNeural() {
+      if (!neuralCanvas) return;
+      const ctx = neuralCanvas.getContext('2d');
+      const w = neuralCanvas.clientWidth, h = neuralCanvas.clientHeight;
+      neuralCanvas.width = w; neuralCanvas.height = h;
+      ctx.clearRect(0,0,w,h);
+      connections.forEach(([i,j]) => {
+        if (neurons[i] && neurons[j]) {
+          ctx.beginPath();
+          ctx.moveTo(neurons[i].x, neurons[i].y);
+          ctx.lineTo(neurons[j].x, neurons[j].y);
+          ctx.strokeStyle = `rgba(0,255,255,0.15)`;
+          ctx.stroke();
+        }
+      });
+      neurons.forEach(n => {
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, 4 + Math.sin(quantumPhase) * 2, 0, Math.PI*2);
+        ctx.fillStyle = `hsl(${180 + Math.sin(quantumPhase) * 60}, 100%, 60%)`;
+        ctx.fill();
+      });
+      quantumPhase += 0.02;
+      requestAnimationFrame(drawNeural);
+    }
+    initNeural();
+    drawNeural();
+  }
+
+  // --- AI Query System ---
+  const responses = {
+    "pipeline": `💰 Pipeline: ${formatCurrency(totalPipeline())} total, ${formatCurrency(weightedPipeline())} weighted. Target: ${Math.round((weightedPipeline() / 1000000) * 100)}%.`,
+    "threats": "🛡️ THREAT MATRIX: APT41 and FIN7 active. Zone 7 anomaly detected at 87% confidence.",
+    "environment": `🌍 Environmental: CO₂ ${Math.round(envData.co2)}ppm, AQI ${Math.round(envData.aqi)}, Temp ${envData.temp.toFixed(1)}°C.`,
+    "surveillance": "📡 Camera anomaly detected in Zone 7. 87% probability of unauthorized drone signature.",
+    "default": "🧠 NEXUS OMEGA online. Try: 'pipeline status', 'threat matrix', 'environment', or 'camera anomaly'."
+  };
+  function quantumQueryResponse(q) {
+    const lower = q.toLowerCase();
+    if (lower.includes('pipeline')) return responses.pipeline;
+    if (lower.includes('threat')) return responses.threats;
+    if (lower.includes('environment') || lower.includes('env')) return responses.environment;
+    if (lower.includes('camera') || lower.includes('surveillance')) return responses.surveillance;
+    return responses.default;
+  }
+
+  window.quickAction = function(type) {
+    document.getElementById('aiQuery').value = type === 'pipeline' ? 'pipeline status' : type === 'threats' ? 'threat matrix' : type === 'environment' ? 'environment report' : 'camera anomaly';
+    document.getElementById('sendQuery').click();
+  };
+  window.removeDeal = function(id) { deals = deals.filter(d => d.id !== id); renderPipeline(); renderDashboard(); addActivity(`Deal removed: ID ${id}`); };
+  window.removeContract = function(id) { contracts = contracts.filter(c => c.id !== id); renderContracts(); };
+  window.toggleTask = function(id) { let t = tasks.find(t => t.id === id); if(t) { t.done = !t.done; renderTasks(); } };
+  window.removeTask = function(id) { tasks = tasks.filter(t => t.id !== id); renderTasks(); };
+  function addTask() { let text = document.getElementById('taskInput').value.trim(); if(!text) return; tasks.push({ id: tasks.length + 1, text: text, priority: document.getElementById('taskPriority').value, done: false }); document.getElementById('taskInput').value = ''; renderTasks(); addActivity(`Task added: ${text}`); }
+  function clearFeed() { activityLog = []; renderDashboard(); }
+
+  // --- Tab Switching ---
+  function showTab(tabId) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`.nav-tab[data-tab="${tabId}"]`).classList.add('active');
+    if (tabId === 'quantum') { renderQuantumInsights(); }
+    if (tabId === 'ai') { renderAIPanel(); }
+  }
+  window.showTab = showTab;
+
+  // --- Voice ---
+  let voiceEnabled = true;
+  let speechSynth = window.speechSynthesis;
+  function speak(text) {
+    if (!voiceEnabled || !speechSynth) return;
+    let u = new SpeechSynthesisUtterance(text);
+    u.rate = 0.95;
+    u.pitch = 1.0;
+    speechSynth.cancel();
+    speechSynth.speak(u);
+  }
+  window.toggleVoice = function() {
+    voiceEnabled = !voiceEnabled;
+    document.getElementById('voiceBtn').textContent = voiceEnabled ? '🔊' : '🔇';
+    if (!voiceEnabled) speechSynth.cancel();
+  };
+
+  // --- Boot Sequence ---
+  const bootLogs = ['Initializing quantum neural core...', 'Loading pipeline data...', 'Activating surveillance network...', 'Calibrating environmental sensors...', 'All systems nominal. Welcome, Desmond.'];
+  let bootStep = 0;
+  function boot() {
+    const bar = document.getElementById('bootBar');
+    const log = document.getElementById('bootLog');
+    const interval = setInterval(() => {
+      if (bootStep >= bootLogs.length) {
+        clearInterval(interval);
+        setTimeout(() => {
+          document.getElementById('boot').classList.add('hidden');
+          document.getElementById('app').style.opacity = '1';
+          buildTicker();
+          renderDashboard(); renderPipeline(); renderContracts(); renderTasks(); renderTimeline(); renderQuantumInsights(); renderAIPanel(); drawSurveillance();
+          setTimeout(() => speak('Good day, Desmond. NEXUS OMEGA quantum intelligence core is online. Pipeline stands at two point one four million. Target progress sixty three percent.'), 500);
+        }, 400);
+        return;
+      }
+      bar.style.width = Math.round((bootStep + 1) / bootLogs.length * 100) + '%';
+      log.textContent = bootLogs[bootStep];
+      bootStep++;
+    }, 350);
+  }
+
+  function buildTicker() {
+    const items = [`🏛️ Burlington RFP <span class="tv">$280K</span>`, `◈ Pipeline <span class="tg">$2.14M</span>`, `⚛️ Quantum Coherence <span class="tv">94%</span>`, `📡 Zone 7 Anomaly Active`, `💰 Target Progress <span class="tv">63%</span>`];
+    const track = document.getElementById('tickerTrack');
+    if (track) track.innerHTML = [...items, ...items].map(i => `<span class="tick-item">${i}</span>`).join('');
+  }
+
+  // --- Clock ---
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('hdrTime').textContent = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    document.getElementById('hdrDate').textContent = now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }).toUpperCase();
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // --- Particles ---
+  function createParticles() {
+    const container = document.getElementById('quantumParticles');
+    for (let i = 0; i < 80; i++) {
+      const p = document.createElement('div');
+      p.className = 'q-particle';
+      p.style.width = (Math.random() * 4 + 1) + 'px';
+      p.style.height = p.style.width;
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDuration = Math.random() * 12 + 6 + 's';
+      p.style.animationDelay = Math.random() * 15 + 's';
+      container.appendChild(p);
+    }
+  }
+  createParticles();
+
+  // --- Event Listeners ---
+  document.getElementById('addDealBtn').addEventListener('click', () => {
+    let client = prompt('Client name:');
+    if (!client) return;
+    let value = parseFloat(prompt('Deal value ($):', '100000'));
+    deals.push({ id: deals.length + 1, client: client, name: 'New Opportunity', value: value, stage: 'prospect', prob: 30, close: new Date().toISOString().slice(0,10) });
+    renderPipeline(); renderDashboard(); addActivity(`New deal: ${client} — ${formatCurrency(value)}`);
+  });
+  document.getElementById('addContractBtn').addEventListener('click', () => {
+    let org = prompt('Organization:');
+    if (!org) return;
+    let title = prompt('Contract title:');
+    contracts.push({ id: contracts.length + 1, org: org, title: title, value: prompt('Value:', '$250K'), deadline: prompt('Deadline (YYYY-MM-DD):'), flag: '📋' });
+    renderContracts();
+  });
+  document.getElementById('sendQuery').addEventListener('click', () => {
+    let input = document.getElementById('aiQuery');
+    let query = input.value.trim();
+    if (!query) return;
+    let response = quantumQueryResponse(query);
+    let insights = document.getElementById('aiInsights');
+    let newResp = document.createElement('div');
+    newResp.className = 'quantum-response';
+    newResp.innerHTML = `<strong>🧠 NEXUS AI:</strong> ${response}`;
+    insights.prepend(newResp);
+    input.value = '';
+    addActivity(`AI Query: "${query.substring(0,40)}..."`);
+  });
+
+  // Tab listeners
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.addEventListener('click', () => showTab(tab.dataset.tab));
+  });
+
+  boot();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="color-scheme" content="dark">
+    <meta name="description" content="CLEARGLASS NEXUS - NSA-Grade Real-Time Intelligence Dashboard">
+    <title>CLEARGLASS NEXUS · NSA-GRADE · REAL-TIME AI CORE</title>
+    <style>
+        /* ============================================================
+           CLEARGLASS NEXUS - ULTRA-ADVANCED NSA-STYLE DASHBOARD
+           Real-time AI automation, holographic animations, neural visualization
+           ============================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        :root {
+            --bg-deep: #00040a;
+            --bg-panel: rgba(8, 18, 35, 0.75);
+            --glass-edge: rgba(0, 255, 255, 0.35);
+            --neon-primary: #00ffff;
+            --neon-secondary: #2dd4bf;
+            --neon-tertiary: #5ee0fa;
+            --neon-accent: #0891b2;
+            --neon-cyan: #22d3ee;
+            --text-bright: #e2f0ff;
+            --text-dim: #7e9ed0;
+            --glow-primary: 0 0 15px rgba(0, 255, 255, 0.6);
+            --glow-pulse: 0 0 25px rgba(0, 255, 255, 0.8);
+            --card-border: rgba(0, 255, 255, 0.3);
+            --transition-smooth: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            --glass-blur: blur(20px);
+        }
+
+        body {
+            background: radial-gradient(ellipse at 20% 30%, #0a1a3a, #000000);
+            font-family: 'Inter', 'Segoe UI', 'SF Mono', system-ui, sans-serif;
+            color: var(--text-bright);
+            height: 100vh;
+            overflow: hidden;
+            font-size: 14px;
+        }
+
+        /* Advanced scanlines + holographic overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(0deg, rgba(0, 255, 255, 0.03) 0px, rgba(0, 255, 255, 0.03) 2px, transparent 2px, transparent 6px);
+            pointer-events: none;
+            z-index: 999;
+            animation: scanMove 8s linear infinite;
+        }
+
+        @keyframes scanMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100%; }
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(0, 20, 40, 0.8) 100%);
+            pointer-events: none;
+            z-index: 998;
+        }
+
+        /* Animated particle background */
+        .particle-bg {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(0, 255, 255, 0.4);
+            border-radius: 50%;
+            animation: floatParticle linear infinite;
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-20vh) scale(1); opacity: 0; }
+        }
+
+        .app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Top Command Bar - Holographic */
+        .command-bar {
+            background: rgba(0, 10, 20, 0.88);
+            backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--glass-edge);
+            padding: 12px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            z-index: 20;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            animation: headerGlow 3s ease infinite;
+        }
+
+        @keyframes headerGlow {
+            0%,100% { border-bottom-color: rgba(0,255,255,0.3); }
+            50% { border-bottom-color: rgba(0,255,255,0.8); box-shadow: 0 4px 20px rgba(0,255,255,0.2); }
+        }
+
+        .brand h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, #fff, #00ffff, #2dd4bf);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: textPulse 2s ease infinite;
+        }
+
+        @keyframes textPulse {
+            0%,100% { opacity: 0.9; text-shadow: 0 0 0px transparent; }
+            50% { opacity: 1; text-shadow: 0 0 20px rgba(0,255,255,0.5); }
+        }
+
+        .badge {
+            font-size: 0.6rem;
+            padding: 5px 14px;
+            border-radius: 40px;
+            background: rgba(0, 255, 255, 0.15);
+            border: 1px solid var(--glass-edge);
+            color: var(--neon-primary);
+            letter-spacing: 2px;
+            animation: badgePulse 1.5s ease infinite;
+        }
+
+        @keyframes badgePulse {
+            0%,100% { box-shadow: 0 0 0px rgba(0,255,255,0); }
+            50% { box-shadow: 0 0 12px rgba(0,255,255,0.5); }
+        }
+
+        .status-group {
+            display: flex;
+            gap: 28px;
+            align-items: center;
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 16px;
+            border-radius: 40px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(0,255,255,0.2);
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--neon-primary);
+            box-shadow: 0 0 12px var(--neon-primary);
+            animation: pulse-glow 1.2s infinite;
+        }
+
+        .quantum-load {
+            width: 100px;
+            height: 4px;
+            background: #1e3a5f;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .load-fill {
+            width: 78%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-primary), var(--neon-cyan), var(--neon-primary));
+            border-radius: 4px;
+            animation: quantumWave 1.5s ease infinite;
+            position: relative;
+        }
+
+        @keyframes quantumWave {
+            0% { width: 68%; opacity: 0.8; }
+            50% { width: 88%; opacity: 1; }
+            100% { width: 68%; opacity: 0.8; }
+        }
+
+        /* Dashboard Core */
+        .dashboard-core {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            gap: 0;
+        }
+
+        /* Vertical Navigation - Neural Style */
+        .nav-rail {
+            width: 80px;
+            background: rgba(0, 8, 20, 0.8);
+            backdrop-filter: var(--glass-blur);
+            border-right: 1px solid var(--glass-edge);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 32px 0;
+            gap: 35px;
+            z-index: 15;
+        }
+
+        .nav-icon {
+            font-size: 1.6rem;
+            opacity: 0.6;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+            position: relative;
+            filter: drop-shadow(0 0 0px transparent);
+        }
+
+        .nav-icon:hover, .nav-icon.active {
+            opacity: 1;
+            text-shadow: 0 0 15px var(--neon-primary);
+            transform: scale(1.12) translateX(3px);
+            filter: drop-shadow(0 0 8px rgba(0,255,255,0.6));
+        }
+
+        .nav-icon.active::after {
+            content: '';
+            position: absolute;
+            left: -22px;
+            top: 30%;
+            height: 40%;
+            width: 4px;
+            background: var(--neon-primary);
+            border-radius: 4px;
+            box-shadow: 0 0 12px var(--neon-primary);
+            animation: linePulse 1s ease infinite;
+        }
+
+        @keyframes linePulse {
+            0%,100% { height: 40%; opacity: 0.8; }
+            50% { height: 55%; opacity: 1; }
+        }
+
+        /* Workspace */
+        .workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 18px 22px;
+            gap: 18px;
+        }
+
+        /* KPI Strip - Holographic Cards */
+        .kpi-strip {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: thin;
+        }
+
+        .kpi-card {
+            background: var(--bg-panel);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-edge);
+            border-radius: 28px;
+            padding: 14px 22px;
+            min-width: 155px;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .kpi-card:hover::before {
+            left: 100%;
+        }
+
+        .kpi-card:hover {
+            border-color: var(--neon-primary);
+            transform: translateY(-3px);
+            box-shadow: var(--glow-primary);
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, var(--neon-primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Main Insight Grid */
+        .insight-grid {
+            display: flex;
+            gap: 22px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* Map Panel - Neural Digital Twin */
+        .map-panel {
+            flex: 2.2;
+            background: rgba(0, 12, 25, 0.6);
+            backdrop-filter: blur(12px);
+            border-radius: 32px;
+            border: 1px solid var(--glass-edge);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+            animation: panelGlow 3s ease infinite;
+        }
+
+        @keyframes panelGlow {
+            0%,100% { box-shadow: 0 0 10px rgba(0,255,255,0.1); }
+            50% { box-shadow: 0 0 25px rgba(0,255,255,0.2); }
+        }
+
+        .map-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--glass-edge);
+            background: linear-gradient(180deg, rgba(0,255,255,0.05), transparent);
+        }
+
+        .mode-btn {
+            background: none;
+            border: 1px solid var(--card-border);
+            color: var(--text-dim);
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mode-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(0,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+
+        .mode-btn:active::after {
+            width: 100px;
+            height: 100px;
+        }
+
+        .mode-btn.active {
+            background: rgba(0, 255, 255, 0.2);
+            border-color: var(--neon-primary);
+            color: var(--neon-primary);
+            box-shadow: 0 0 15px rgba(0,255,255,0.3);
+            animation: btnPulse 1s ease infinite;
+        }
+
+        @keyframes btnPulse {
+            0%,100% { box-shadow: 0 0 5px rgba(0,255,255,0.3); }
+            50% { box-shadow: 0 0 15px rgba(0,255,255,0.6); }
+        }
+
+        /* SVG Digital Twin with Neural Connections */
+        .map-svg-container {
+            flex: 1;
+            padding: 16px;
+            position: relative;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 15px rgba(0,255,255,0.3));
+        }
+
+        /* AI Insights Stack */
+        .insights-stack {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            min-width: 320px;
+        }
+
+        .ai-advisor {
+            background: var(--bg-panel);
+            backdrop-filter: var(--glass-blur);
+            border-radius: 32px;
+            border: 1px solid var(--glass-edge);
+            padding: 22px;
+            transition: var(--transition-smooth);
+            animation: aiGlow 2s ease infinite;
+        }
+
+        @keyframes aiGlow {
+            0%,100% { border-color: rgba(0,255,255,0.2); }
+            50% { border-color: rgba(0,255,255,0.6); }
+        }
+
+        .insight-card {
+            background: rgba(0, 30, 50, 0.7);
+            border-left: 4px solid var(--neon-secondary);
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            backdrop-filter: blur(4px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .insight-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,255,255,0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .insight-card:hover::before {
+            left: 100%;
+        }
+
+        .insight-card:hover {
+            transform: translateX(8px) scale(1.01);
+            background: rgba(0,255,255,0.12);
+            border-left-color: var(--neon-primary);
+            box-shadow: 0 5px 20px rgba(0,255,255,0.2);
+        }
+
+        /* Scenario Panel */
+        .scenario-panel {
+            background: var(--bg-panel);
+            backdrop-filter: var(--glass-blur);
+            border-radius: 32px;
+            border: 1px solid var(--glass-edge);
+            padding: 22px;
+        }
+
+        .scenario-btn {
+            background: rgba(0, 20, 40, 0.7);
+            border: 1px solid var(--glass-edge);
+            padding: 12px 20px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+            color: var(--text-bright);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scenario-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(0,255,255,0.4);
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+
+        .scenario-btn:active::after {
+            width: 150px;
+            height: 150px;
+        }
+
+        .scenario-btn:hover {
+            border-color: var(--neon-primary);
+            background: rgba(0,255,255,0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,255,255,0.3);
+        }
+
+        /* Timeline Rail - Neural Stream */
+        .timeline-rail {
+            background: rgba(0, 8, 20, 0.85);
+            backdrop-filter: var(--glass-blur);
+            border-top: 1px solid var(--glass-edge);
+            padding: 12px 24px;
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            position: relative;
+        }
+
+        .timeline-rail::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--neon-primary), transparent);
+            animation: scanline 2s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .timeline-event {
+            background: rgba(0, 50, 70, 0.7);
+            border-radius: 40px;
+            padding: 10px 24px;
+            font-size: 0.75rem;
+            border-left: 3px solid var(--neon-tertiary);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timeline-event:hover {
+            background: rgba(0,255,255,0.2);
+            transform: translateY(-3px) scale(1.02);
+            border-left-color: var(--neon-primary);
+            box-shadow: 0 5px 15px rgba(0,255,255,0.3);
+        }
+
+        /* AI Adaptive Layout */
+        .ai-focus-mode .insights-stack { flex: 2; }
+        .ai-focus-mode .map-panel { flex: 1.4; }
+
+        .ai-focus-toggle {
+            background: none;
+            border: 1px solid var(--neon-primary);
+            border-radius: 40px;
+            padding: 6px 18px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            color: var(--neon-primary);
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-focus-toggle:hover {
+            background: rgba(0,255,255,0.2);
+            box-shadow: 0 0 15px rgba(0,255,255,0.5);
+            transform: scale(1.02);
+        }
+
+        /* Node Highlight Animation */
+        .highlight-node {
+            filter: drop-shadow(0 0 25px #00ffff);
+            transition: filter 0.3s ease;
+            animation: nodePulse 0.8s ease infinite;
+        }
+
+        @keyframes nodePulse {
+            0%,100% { r: 9; opacity: 0.9; }
+            50% { r: 14; opacity: 1; }
+        }
+
+        /* Quantum Response Card */
+        .nexus-response {
+            margin-top: 14px;
+            padding: 14px 16px;
+            background: rgba(0,255,255,0.08);
+            border-left: 4px solid var(--neon-primary);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            animation: slideIn 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            backdrop-filter: blur(8px);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px) scale(0.95); }
+            to { opacity: 1; transform: translateX(0) scale(1); }
+        }
+
+        /* Floating AI Hint */
+        .ai-hint {
+            position: fixed;
+            bottom: 20px;
+            right: 28px;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            background: rgba(0, 0, 0, 0.6);
+            padding: 6px 14px;
+            border-radius: 25px;
+            backdrop-filter: blur(12px);
+            z-index: 100;
+            pointer-events: none;
+            letter-spacing: 2px;
+            border: 1px solid rgba(0,255,255,0.2);
+            animation: hintPulse 2s ease infinite;
+        }
+
+        @keyframes hintPulse {
+            0%,100% { border-color: rgba(0,255,255,0.2); }
+            50% { border-color: rgba(0,255,255,0.6); }
+        }
+
+        /* Input Styling */
+        #nexusQuery {
+            transition: all 0.3s;
+        }
+
+        #nexusQuery:focus {
+            border-color: var(--neon-primary);
+            box-shadow: 0 0 20px rgba(0,255,255,0.3);
+            transform: scale(1.01);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,255,255,0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--neon-primary);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div class="particle-bg" id="particleBg"></div>
+
+<div class="app">
+    <header class="command-bar">
+        <div class="brand">
+            <h1>🔷 CLEARGLASS NEXUS · NSA-GRADE INTELLIGENCE CORE</h1>
+            <div class="badge">v.2036.4 · REAL-TIME AI · QUANTUM ENCRYPTED</div>
+        </div>
+        <div class="status-group">
+            <div class="status-pill"><span class="dot"></span> QUANTUM STATE: COHERENT</div>
+            <div class="status-pill"><span>⚛️ COMPUTE LOAD</span><div class="quantum-load"><div class="load-fill"></div></div></div>
+            <div class="status-pill"><span>🧠 NEURAL LINK: ACTIVE</span></div>
+            <button class="ai-focus-toggle" id="aiFocusBtn">✨ AI ADAPTIVE LAYOUT</button>
+        </div>
+    </header>
+
+    <div class="dashboard-core">
+        <nav class="nav-rail">
+            <div class="nav-icon" data-domain="transport">🚆</div>
+            <div class="nav-icon active" data-domain="security">🛡️</div>
+            <div class="nav-icon" data-domain="logistics">📦</div>
+            <div class="nav-icon" data-domain="environment">🌿</div>
+            <div class="nav-icon" data-domain="energy">⚡</div>
+            <div class="nav-icon" data-domain="digitaltwin">🔄</div>
+            <div class="nav-icon" data-domain="advisor">🧠</div>
+        </nav>
+
+        <main class="workspace">
+            <div class="kpi-strip" id="kpiContainer"></div>
+
+            <div class="insight-grid">
+                <div class="map-panel" id="mapPanel">
+                    <div class="map-header">
+                        <span>🌊 NEURAL DIGITAL TWIN · NSA-LEVEL SITUATIONAL AWARENESS</span>
+                        <div class="mode-buttons" id="mapModeGroup">
+                            <button class="mode-btn active" data-mode="city">🏙️ CITY</button>
+                            <button class="mode-btn" data-mode="transit">🚆 TRANSIT</button>
+                            <button class="mode-btn" data-mode="security">🛡️ SECURITY</button>
+                            <button class="mode-btn" data-mode="energy">⚡ ENERGY</button>
+                        </div>
+                    </div>
+                    <div class="map-svg-container">
+                        <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg" id="cityMap">
+                            <defs>
+                                <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stop-color="#00ffff" stop-opacity="0.95"/>
+                                    <stop offset="100%" stop-color="#00ffff" stop-opacity="0"/>
+                                </radialGradient>
+                                <filter id="neuralGlow" x="-30%" y="-30%" width="160%" height="160%">
+                                    <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+                                    <feMerge><feMergeNode in="offsetblur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                                </filter>
+                            </defs>
+                            <path d="M50 50 L750 50 M50 100 L750 100 M50 150 L750 150 M50 200 L750 200 M50 250 L750 250 M50 300 L750 300 M50 350 L750 350 M50 400 L750 400 M50 450 L750 450" stroke="rgba(0,255,255,0.08)" stroke-width="0.5" fill="none"/>
+                            <path d="M50 50 L50 450 M100 50 L100 450 M150 50 L150 450 M200 50 L200 450 M250 50 L250 450 M300 50 L300 450 M350 50 L350 450 M400 50 L400 450 M450 50 L450 450 M500 50 L500 450 M550 50 L550 450 M600 50 L600 450 M650 50 L650 450 M700 50 L700 450 M750 50 L750 450" stroke="rgba(0,255,255,0.08)" stroke-width="0.5" fill="none"/>
+                            <circle cx="200" cy="120" r="10" fill="url(#nodeGlow)" class="map-node" data-zone="transport" data-insight="traffic" stroke="#00ffff" stroke-width="2.5"/>
+                            <circle cx="420" cy="210" r="12" fill="url(#nodeGlow)" class="map-node" data-zone="security" data-insight="camera" stroke="#2dd4bf" stroke-width="2.5"/>
+                            <circle cx="600" cy="340" r="11" fill="url(#nodeGlow)" class="map-node" data-zone="logistics" data-insight="fleet" stroke="#5ee0fa" stroke-width="2.5"/>
+                            <circle cx="90" cy="380" r="9" fill="url(#nodeGlow)" class="map-node" data-zone="environment" data-insight="air" stroke="#00ffff" stroke-width="2.5"/>
+                            <circle cx="510" cy="70" r="10" fill="url(#nodeGlow)" class="map-node" data-zone="energy" data-insight="grid" stroke="#2dd4bf" stroke-width="2.5"/>
+                            <circle cx="330" cy="410" r="11" fill="url(#nodeGlow)" class="map-node" data-zone="security" data-insight="anomaly" stroke="#00ffff" stroke-width="2.5"/>
+                            <polyline points="200,120 420,210 600,340 90,380 510,70 330,410" stroke="rgba(0,255,255,0.4)" stroke-dasharray="6 4" fill="none" stroke-width="1.5">
+                                <animate attributeName="stroke-dashoffset" from="0" to="100" dur="8s" repeatCount="indefinite"/>
+                            </polyline>
+                            <text x="185" y="105" fill="#5f9fcf" font-size="8">HUB A</text>
+                            <text x="405" y="195" fill="#5f9fcf" font-size="8">ZONE 7</text>
+                            <text x="585" y="325" fill="#5f9fcf" font-size="8">DEPOT 3</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="insights-stack">
+                    <div class="ai-advisor">
+                        <div class="advisor-header" style="font-weight:700; letter-spacing:2px; margin-bottom:18px; color:#00ffff; font-size:1rem;">🧠 NSA-LEVEL AI · REAL-TIME THREAT ANALYSIS</div>
+                        <div id="insightList"></div>
+                        <div style="margin-top:20px; position:relative;">
+                            <input id="nexusQuery" type="text" placeholder="⚡ VOICE COMMAND: 'Show threat matrix' or 'Security posture' ..." style="width:100%; background:rgba(0,10,20,0.8); border:1px solid var(--glass-edge); border-radius:60px; padding:14px 20px 14px 55px; color:#fff; font-size:0.8rem; outline:none; transition:all 0.3s;">
+                            <span style="position:absolute; left:22px; top:50%; transform:translateY(-50%); font-size:1.3rem;">🎙️</span>
+                        </div>
+                    </div>
+                    <div class="scenario-panel">
+                        <div class="advisor-header" style="font-weight:700; color:#00ffff; margin-bottom:12px;">⚡ AUTOMATED COMMAND DECISION</div>
+                        <div style="margin:8px 0 6px; font-size:0.85rem;">🔴 ACTIVE INCIDENT: District 7 cascade + security anomaly</div>
+                        <div class="scenario-options" style="display:flex; gap:12px; margin-top:18px; flex-wrap:wrap;">
+                            <div class="scenario-btn" data-scenario="stabilize">🛡️ Stabilize · Safety First</div>
+                            <div class="scenario-btn" data-scenario="optimize">⚙️ Optimize · -32% delay</div>
+                            <div class="scenario-btn" data-scenario="conserve">🌿 Conserve · Energy focus</div>
+                        </div>
+                        <div style="font-size:0.7rem; margin-top:14px; color:#7dd3fc; text-align:center;">🤖 AI AUTO-RESPONSE READY</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-rail" id="timelineRail"></div>
+        </main>
+    </div>
+    <div class="ai-hint">🔷 NSA-GRADE REAL-TIME MONITORING · AI AUTOMATION ACTIVE · QUANTUM ENCRYPTED</div>
+</div>
+
+<script>
+    // ======================= NSA-GRADE REAL-TIME AI DASHBOARD =======================
+    (function() {
+        // KPI Data with real-time simulation
+        const kpis = [
+            { label: "NETWORK UPTIME", value: 99.987, unit: "%", trend: "+0.002%", precision: 3, delta: 0.0015 },
+            { label: "INCIDENT RESOLUTION", value: 4.2, unit: "min", trend: "-12%", precision: 1, delta: 0.022 },
+            { label: "ACTIVE ALERTS", value: 14, unit: "", trend: "critical: 2", precision: 0, delta: 0.25 },
+            { label: "CO₂ (ppm)", value: 412, unit: "", trend: "+3.1", precision: 0, delta: 0.7 },
+            { label: "TRANSIT EFFICIENCY", value: 88, unit: "%", trend: "+5%", precision: 0, delta: 0.3 },
+            { label: "ENERGY LOAD", value: 1.42, unit: "GW", trend: "-2%", precision: 2, delta: 0.01 }
+        ];
+
+        function renderKPI() {
+            const container = document.getElementById('kpiContainer');
+            if (!container) return;
+            container.innerHTML = kpis.map(k => `
+                <div class="kpi-card" data-kpi="${k.label}">
+                    <div class="kpi-label">${k.label}</div>
+                    <div class="kpi-value">${k.value.toFixed(k.precision)}${k.unit}</div>
+                    <div class="trend" style="color:#7dd3fc;">${k.trend}</div>
+                </div>
+            `).join('');
+        }
+
+        function updateKPIs() {
+            kpis.forEach(k => {
+                let drift = (Math.random() - 0.5) * 2 * k.delta;
+                let newVal = k.value + drift;
+                if (k.label === "NETWORK UPTIME") newVal = Math.min(99.999, Math.max(99.95, newVal));
+                if (k.label === "ACTIVE ALERTS") newVal = Math.max(8, Math.min(26, newVal));
+                if (k.label === "CO₂ (ppm)") newVal = Math.max(390, Math.min(445, newVal));
+                k.value = newVal;
+            });
+            renderKPI();
+        }
+
+        // Insights with real-time AI simulation
+        const insights = [
+            { id: "traffic-surge", title: "🚦 TRAFFIC SURGE PREDICTED · 18 min · District 7", meta: "AI confidence 94% · impact: mobility critical", insightType: "traffic", threat: 78 },
+            { id: "camera-anomaly", title: "📷 ANOMALOUS CAMERA PATTERN · Zone 7 (Security)", meta: "AI confidence 87% · verify patrol immediately", insightType: "anomaly", threat: 82 },
+            { id: "logistics-optimize", title: "📦 OPTIMAL REROUTE · Fleet A12 · +22% efficiency", meta: "AI confidence 91% · fuel savings projected", insightType: "fleet", threat: 45 },
+            { id: "energy-spike", title: "⚡ ENERGY DEMAND SPIKE · 32 min · Grid A", meta: "AI confidence 82% · reserve ready", insightType: "energy", threat: 63 }
+        ];
+
+        function renderInsights() {
+            const container = document.getElementById('insightList');
+            if (!container) return;
+            container.innerHTML = insights.map(i => `
+                <div class="insight-card" data-insight-id="${i.id}" data-insight-type="${i.insightType}" data-threat="${i.threat}">
+                    <div class="insight-title" style="font-weight:600;">${i.title}</div>
+                    <div class="insight-meta" style="margin-top:6px;"><span class="confidence" style="color:#7dd3fc;">${i.meta}</span></div>
+                    <div style="margin-top:8px;"><span style="color:#00ffff;">⚡ THREAT SCORE:</span> ${i.threat}/100</div>
+                </div>
+            `).join('');
+        }
+
+        // Timeline Events
+        const timelineEvents = [
+            { text: "✅ 14:32 · RESOLVED: Substation Fault (Grid)", type: "resolved", severity: "low" },
+            { text: "🔴 LIVE 14:47 · TUNNEL CONGESTION (QEW)", type: "live", severity: "critical" },
+            { text: "🔮 15:10 · FORECAST: Air Quality Drop District 3", type: "forecast", severity: "medium" },
+            { text: "⚠️ 14:55 · ANOMALOUS CAMERA ACTIVITY FLAGGED", type: "anomaly", severity: "high" },
+            { text: "📦 15:00 · FLEET REROUTE ACTIVE", type: "reroute", severity: "medium" }
+        ];
+
+        function renderTimeline() {
+            const rail = document.getElementById('timelineRail');
+            if (!rail) return;
+            rail.innerHTML = timelineEvents.map(ev => `
+                <div class="timeline-event" data-event="${ev.type}" data-severity="${ev.severity}">${ev.text}</div>
+            `).join('');
+        }
+
+        // Node Highlight System
+        function highlightNodeByInsight(insightType) {
+            const nodes = document.querySelectorAll('.map-node');
+            nodes.forEach(node => {
+                node.classList.remove('highlight-node');
+                const nodeInsight = node.getAttribute('data-insight');
+                if ((insightType === 'traffic' && nodeInsight === 'traffic') ||
+                    (insightType === 'anomaly' && nodeInsight === 'anomaly') ||
+                    (insightType === 'fleet' && nodeInsight === 'fleet') ||
+                    (insightType === 'energy' && nodeInsight === 'grid')) {
+                    node.classList.add('highlight-node');
+                }
+            });
+            
+            let matchType = insightType === 'traffic' ? 'live' : insightType === 'anomaly' ? 'anomaly' : insightType === 'fleet' ? 'reroute' : null;
+            if (matchType) {
+                const target = Array.from(document.querySelectorAll('.timeline-event')).find(ev => ev.getAttribute('data-event') === matchType);
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
+
+        // AI Quantum Response System
+        function quantumResponse(query) {
+            const q = query.toLowerCase();
+            const responses = {
+                "threat matrix": "🔷 THREAT MATRIX LIVE: 2 high-confidence vectors in Zone 7. Quantum coherence: 99.2%. Automated countermeasures deployed.",
+                "security": "🛡️ SECURITY POSTURE: ELEVATED. Active quantum-entangled threats: 2. Neural lockdown engaged on perimeter A4–B12.",
+                "incident trends": "📊 AI FORECAST: 3 cascading anomalies in next 47 minutes. Priority: District 7 → Zone 7 camera cluster.",
+                "energy": "⚡ GRID COHERENCE: 98.4%. Minor flux at HUB A. Rerouting 180 MW through redundant lattice. Auto-stabilization in 12s.",
+                "traffic": "🚦 TRAFFIC ENTROPY: 78%. Quantum routing predicts peak congestion in 18 min. Dynamic lane control engaged automatically.",
+                "camera": "📡 ZONE 7 ANOMALY ISOLATED. AI classifier: 87% probability unauthorized activity. Security drones dispatched.",
+                "weather": "🌊 CLEARGLASS ATMOSPHERIC MODEL: 5°C, light drizzle. AI predicts no major disruptions in next 4 hours.",
+                "default": "🔷 2048-qubit core online. Real-time AI synthesis active. Try: 'threat matrix', 'security', 'incident trends', or 'energy'."
+            };
+            for (let key in responses) {
+                if (q.includes(key)) return responses[key];
+            }
+            return responses.default;
+        }
+
+        // Map Mode Switching
+        function setupMapModes() {
+            const modeBtns = document.querySelectorAll('[data-mode]');
+            const mapHeaderSpan = document.querySelector('#mapPanel .map-header span');
+            modeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    modeBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const mode = btn.getAttribute('data-mode');
+                    if (mapHeaderSpan) mapHeaderSpan.innerHTML = `🌊 NEURAL DIGITAL TWIN · ${mode.toUpperCase()} MODE · NSA-LEVEL`;
+                    document.querySelectorAll('.map-node').forEach(node => {
+                        const zone = node.getAttribute('data-zone');
+                        if (mode === 'transit' && zone === 'transport') node.style.stroke = '#00ffff';
+                        else if (mode === 'security' && zone === 'security') node.style.stroke = '#2dd4bf';
+                        else if (mode === 'energy' && zone === 'energy') node.style.stroke = '#5ee0fa';
+                        else node.style.stroke = '#3b7a9e';
+                    });
+                });
+            });
+        }
+
+        // Dynamic Node Pulsing
+        function startNodePulse() {
+            setInterval(() => {
+                document.querySelectorAll('.map-node').forEach((node, i) => {
+                    node.style.opacity = (Math.random() * 0.5 + 0.5).toString();
+                    setTimeout(() => { node.style.opacity = '1'; }, 120 + i * 30);
+                });
+            }, 2100);
+        }
+
+        // Particle Background
+        function createParticles() {
+            const container = document.getElementById('particleBg');
+            for (let i = 0; i < 80; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const size = Math.random() * 3 + 1;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = Math.random() * 8 + 5 + 's';
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Adaptive Layout Toggle
+        function setupAdaptiveLayout() {
+            const btn = document.getElementById('aiFocusBtn');
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    document.body.classList.toggle('ai-focus-mode');
+                    btn.textContent = document.body.classList.contains('ai-focus-mode') ? '🎯 STANDARD LAYOUT' : '✨ AI ADAPTIVE LAYOUT';
+                });
+            }
+        }
+
+        // Scenario Buttons with AI Feedback
+        function setupScenarioButtons() {
+            document.querySelectorAll('.scenario-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const choice = btn.innerText;
+                    const notif = document.createElement('div');
+                    notif.textContent = `⚡ AI EXECUTING: ${choice} · quantum simulation active · response time 0.3ms`;
+                    notif.style.cssText = 'position:fixed; bottom:100px; right:28px; background:rgba(0,255,255,0.25); backdrop-filter:blur(16px); border:1px solid #00ffff; border-radius:40px; padding:10px 24px; font-size:0.75rem; z-index:2000; animation:slideIn 0.2s ease; font-weight:500;';
+                    document.body.appendChild(notif);
+                    setTimeout(() => notif.remove(), 2500);
+                });
+            });
+        }
+
+        // Event Listeners
+        function bindInteractions() {
+            document.getElementById('insightList')?.addEventListener('click', (e) => {
+                const card = e.target.closest('.insight-card');
+                if (card) {
+                    const insightType = card.getAttribute('data-insight-type');
+                    highlightNodeByInsight(insightType);
+                    card.style.transform = 'scale(1.02)';
+                    setTimeout(() => card.style.transform = '', 200);
+                }
+            });
+            
+            document.getElementById('timelineRail')?.addEventListener('click', (e) => {
+                const ev = e.target.closest('.timeline-event');
+                if (ev) {
+                    const type = ev.getAttribute('data-event');
+                    if (type === 'live') highlightNodeByInsight('traffic');
+                    if (type === 'anomaly') highlightNodeByInsight('anomaly');
+                    if (type === 'reroute') highlightNodeByInsight('fleet');
+                }
+            });
+            
+            const queryInput = document.getElementById('nexusQuery');
+            if (queryInput) {
+                queryInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        const q = queryInput.value.trim();
+                        if (!q) return;
+                        const responseDiv = document.createElement('div');
+                        responseDiv.className = 'nexus-response';
+                        responseDiv.innerHTML = `<strong>🔷 AI COMMAND CORE:</strong> ${quantumResponse(q)}`;
+                        const insightList = document.getElementById('insightList');
+                        insightList.prepend(responseDiv);
+                        if (insightList.children.length > 8) insightList.removeChild(insightList.lastChild);
+                        queryInput.value = '';
+                        setTimeout(() => responseDiv.style.opacity = '0.98', 50);
+                    }
+                });
+            }
+        }
+
+        // Auto AI Updates
+        setInterval(updateKPIs, 4500);
+        setInterval(() => {
+            const alertCard = document.querySelector('.kpi-card[data-kpi="ACTIVE ALERTS"] .kpi-value');
+            if (alertCard) {
+                const val = parseInt(alertCard.innerText) || 14;
+                const alertColor = val > 20 ? '#00ffff' : val > 12 ? '#7dd3fc' : '#2dd4bf';
+                alertCard.style.background = `linear-gradient(135deg, #fff, ${alertColor})`;
+                alertCard.style.webkitBackgroundClip = 'text';
+            }
+        }, 5000);
+
+        // Random AI Insight Generation
+        setInterval(() => {
+            const randomInsight = insights[Math.floor(Math.random() * insights.length)];
+            const notif = document.createElement('div');
+            notif.className = 'nexus-response';
+            notif.style.position = 'fixed';
+            notif.style.bottom = '140px';
+            notif.style.right = '28px';
+            notif.style.maxWidth = '320px';
+            notif.style.zIndex = '2000';
+            notif.innerHTML = `<strong>🔷 AI ALERT:</strong> ${randomInsight.title} · Confidence ${randomInsight.threat}%`;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 4000);
+        }, 18000);
+
+        // Initialize
+        function init() {
+            renderKPI();
+            renderInsights();
+            renderTimeline();
+            setupMapModes();
+            setupAdaptiveLayout();
+            setupScenarioButtons();
+            bindInteractions();
+            startNodePulse();
+            createParticles();
+            setTimeout(() => {
+                const firstInsight = document.querySelector('.insight-card');
+                if (firstInsight) firstInsight.style.transform = 'translateX(5px)';
+            }, 1000);
+        }
+        
+        init();
+    })();
+</script>
+</body>
+</html>

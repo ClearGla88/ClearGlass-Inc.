@@ -1,0 +1,1128 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>CLEARGLASS OMEN · Intelligence Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg-primary: #0a0c12;
+      --bg-secondary: #11141c;
+      --bg-tertiary: #1a1f2a;
+      --bg-elevated: #0f131c;
+      --border-color: #2a2f3a;
+      --accent-cyan: #00d4ff;
+      --accent-magenta: #ff3d8c;
+      --accent-amber: #ffb347;
+      --accent-purple: #a855f7;
+      --text-primary: #eef5ff;
+      --text-secondary: #8a9ac0;
+      --text-muted: #4a5a7a;
+      --danger: #ff3d5e;
+      --warning: #ffaa33;
+      --success: #00ff88;
+      --glass: rgba(10, 12, 18, 0.88);
+      --shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+    html, body { height: 100%; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(0, 212, 255, 0.08), transparent 32%),
+        radial-gradient(circle at bottom left, rgba(168, 85, 247, 0.08), transparent 28%),
+        var(--bg-primary);
+      color: var(--text-primary);
+      overflow: hidden;
+    }
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(0deg, rgba(0, 212, 255, 0.03) 0px, rgba(0, 212, 255, 0.03) 2px, transparent 2px, transparent 6px);
+      z-index: 1000;
+      animation: scan 4s linear infinite;
+    }
+    @keyframes scan { 0% { background-position: 0 0; } 100% { background-position: 0 100px; } }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+
+    .app { display: flex; height: 100vh; position: relative; }
+    .sidebar {
+      width: 268px;
+      background: linear-gradient(180deg, rgba(17,20,28,0.98), rgba(17,20,28,0.92));
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+    }
+    .logo { padding: 24px 20px; border-bottom: 1px solid var(--border-color); }
+    .logo h1 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #fff, var(--accent-cyan), var(--accent-magenta));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .logo p {
+      font-size: 10px;
+      letter-spacing: 1.6px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      text-transform: uppercase;
+    }
+
+    .nav-menu { flex: 1; padding: 18px 0; overflow-y: auto; }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 20px; margin: 4px 12px;
+      border-radius: 10px; cursor: pointer; transition: 0.2s ease;
+      color: var(--text-secondary); border: 1px solid transparent;
+      user-select: none;
+    }
+    .nav-item:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+    .nav-item.active {
+      background: rgba(0, 212, 255, 0.10);
+      color: var(--accent-cyan);
+      border-color: rgba(0, 212, 255, 0.25);
+      box-shadow: inset 2px 0 0 var(--accent-cyan);
+    }
+    .nav-icon { width: 22px; text-align: center; }
+
+    .status-indicator {
+      padding: 18px 20px;
+      border-top: 1px solid var(--border-color);
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .live-dot {
+      width: 8px; height: 8px; background: var(--success);
+      border-radius: 50%; display: inline-block;
+      margin-right: 8px; animation: pulse 1.5s infinite;
+      box-shadow: 0 0 10px rgba(0,255,136,0.55);
+    }
+
+    .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .header {
+      padding: 16px 24px;
+      background: rgba(10,12,18,0.78);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-color);
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 16px;
+    }
+    .header-title { font-size: 14px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+    .header-subtitle { font-size: 11px; color: var(--text-muted); margin-top: 4px; font-family: 'JetBrains Mono', monospace; }
+    .header-stats { display: flex; gap: 24px; flex-wrap: wrap; }
+    .stat { text-align: right; min-width: 85px; }
+    .stat-value { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: var(--accent-cyan); }
+    .stat-label { font-size: 10px; color: var(--text-muted); letter-spacing: 1px; }
+
+    .view {
+      display: none;
+      flex: 1;
+      overflow: auto;
+      padding: 20px;
+    }
+    .view.active { display: block; }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      grid-template-rows: auto 1fr auto;
+      gap: 16px;
+      min-height: calc(100vh - 110px);
+    }
+
+    .card {
+      background: var(--glass);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      min-width: 0;
+    }
+    .card-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      font-size: 12px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .card-body { padding: 16px; }
+    .small-meta { font-size: 10px; color: var(--text-muted); font-weight: 500; }
+
+    .kpi-row {
+      grid-column: 1 / 3;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+      margin-bottom: 0;
+    }
+    .kpi-card {
+      background: var(--glass);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+    .kpi-value { font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 700; color: var(--accent-cyan); }
+    .kpi-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; letter-spacing: 1px; text-transform: uppercase; }
+
+    .map-container { grid-column: 1 / 2; grid-row: 2 / 4; min-height: 420px; }
+    .graph-container { grid-column: 2 / 3; grid-row: 2 / 3; min-height: 320px; }
+    .threat-feed { grid-column: 2 / 3; grid-row: 3 / 4; min-height: 320px; }
+    .ai-console { grid-column: 1 / 3; grid-row: 4 / 5; }
+
+    #map, #network { height: 100%; width: 100%; background: var(--bg-tertiary); }
+    #map { min-height: 420px; }
+    #network { min-height: 320px; }
+
+    .threat-feed-list { height: 100%; overflow-y: auto; }
+    .threat-item {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-color);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .threat-item:hover { background: rgba(0, 212, 255, 0.05); }
+    .threat-item.active { background: rgba(0, 212, 255, 0.08); }
+    .threat-severity { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; }
+    .severity-critical { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+    .severity-high { background: var(--warning); box-shadow: 0 0 8px var(--warning); }
+    .severity-medium { background: var(--accent-amber); box-shadow: 0 0 8px rgba(255,179,71,0.35); }
+    .severity-low { background: var(--text-muted); }
+    .threat-title { font-size: 13px; font-weight: 600; margin: 6px 0 4px; color: var(--text-primary); }
+    .threat-description { font-size: 11px; color: var(--text-secondary); line-height: 1.5; }
+    .threat-meta { font-size: 10px; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+
+    .chat-messages {
+      height: 220px;
+      overflow-y: auto;
+      padding: 14px;
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(0,0,0,0.12);
+    }
+    .message {
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      max-width: 88%;
+      white-space: pre-wrap;
+      line-height: 1.55;
+    }
+    .message.user {
+      background: rgba(0, 212, 255, 0.10);
+      border-left: 2px solid var(--accent-cyan);
+      margin-left: auto;
+    }
+    .message.assistant {
+      background: rgba(255, 61, 140, 0.06);
+      border-left: 2px solid var(--accent-magenta);
+    }
+    .chat-input {
+      display: flex;
+      padding: 12px;
+      border-top: 1px solid var(--border-color);
+      gap: 10px;
+    }
+    .chat-input input {
+      flex: 1;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      outline: none;
+    }
+    .chat-input input:focus { border-color: var(--accent-cyan); }
+    .btn {
+      padding: 10px 14px;
+      background: rgba(0, 212, 255, 0.1);
+      border: 1px solid rgba(0, 212, 255, 0.4);
+      border-radius: 10px;
+      color: var(--accent-cyan);
+      cursor: pointer;
+      transition: 0.2s ease;
+      font-weight: 600;
+    }
+    .btn:hover { background: rgba(0, 212, 255, 0.18); }
+    .btn.secondary {
+      color: var(--text-secondary);
+      border-color: var(--border-color);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+    .table-wrap { overflow: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border-color);
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      position: sticky;
+      top: 0;
+      background: var(--bg-secondary);
+      z-index: 1;
+    }
+    td code {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-cyan);
+    }
+
+    .detail-list { display: grid; gap: 10px; }
+    .detail-item {
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.02);
+    }
+    .detail-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+    .detail-value { margin-top: 6px; font-size: 13px; color: var(--text-primary); line-height: 1.5; }
+
+    .report-block {
+      padding: 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.02);
+      line-height: 1.6;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border-color);
+      font-size: 10px;
+      color: var(--text-secondary);
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+
+    .footer-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-tertiary); }
+    ::-webkit-scrollbar-thumb { background: var(--accent-cyan); border-radius: 4px; }
+
+    @media (max-width: 1280px) {
+      .kpi-row { grid-template-columns: repeat(3, 1fr); }
+      .dashboard-grid { grid-template-columns: 1fr; grid-template-rows: auto auto auto auto auto; }
+      .map-container, .graph-container, .threat-feed, .ai-console { grid-column: 1 / 2; grid-row: auto; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .header { flex-direction: column; align-items: flex-start; }
+      .header-stats { width: 100%; }
+    }
+    @media (max-width: 900px) {
+      .sidebar { width: 78px; }
+      .logo p, .nav-item span:last-child, .status-indicator { display: none; }
+      .logo h1 { font-size: 13px; letter-spacing: 1px; }
+      .nav-item { justify-content: center; padding: 12px; }
+      .nav-icon { width: auto; }
+      .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="scanlines"></div>
+
+  <div class="app">
+    <aside class="sidebar">
+      <div class="logo">
+        <h1>CLEARGLASS OMEN</h1>
+        <p>Intelligence Platform • ONYX v4.2 • Local Simulation</p>
+      </div>
+
+      <div class="nav-menu">
+        <div class="nav-item active" data-view="dashboardView"><span class="nav-icon">📊</span><span>Dashboard</span></div>
+        <div class="nav-item" data-view="graphView"><span class="nav-icon">🕸️</span><span>Entity Graph</span></div>
+        <div class="nav-item" data-view="threatsView"><span class="nav-icon">📡</span><span>Threat Intel</span></div>
+        <div class="nav-item" data-view="reportsView"><span class="nav-icon">📋</span><span>Reports</span></div>
+      </div>
+
+      <div class="status-indicator">
+        <span class="live-dot"></span><span id="sensorLabel">12 ACTIVE SENSORS • LIVE</span><br>
+        <span style="font-size: 9px;">Last sync: <span id="lastSync">0.0s ago</span></span><br>
+        <span style="font-size: 9px;">State: <span id="stateStatus">Ephemeral</span></span>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="header">
+        <div>
+          <div class="header-title">Operations Center · Real-Time Intelligence Fusion</div>
+          <div class="header-subtitle">Local single-file build using embedded dataset and simulated updates only</div>
+        </div>
+
+        <div class="header-stats">
+          <div class="stat"><div class="stat-value" id="entityCount">0</div><div class="stat-label">Entities</div></div>
+          <div class="stat"><div class="stat-value" id="relationCount">0</div><div class="stat-label">Relationships</div></div>
+          <div class="stat"><div class="stat-value" id="threatCount">0</div><div class="stat-label">Active Threats</div></div>
+          <div class="stat"><div class="stat-value" id="confidenceScore">0%</div><div class="stat-label">AI Confidence</div></div>
+        </div>
+      </header>
+
+      <section id="dashboardView" class="view active">
+        <div class="dashboard-grid">
+          <div class="kpi-row">
+            <div class="kpi-card"><div class="kpi-value" id="kpiSIGINT">0</div><div class="kpi-label">SIGINT Feeds</div></div>
+            <div class="kpi-card"><div class="kpi-value" id="kpiOSINT">0</div><div class="kpi-label">OSINT Sources</div></div>
+            <div class="kpi-card"><div class="kpi-value" id="kpiHUMINT">0</div><div class="kpi-label">HUMINT Reports</div></div>
+            <div class="kpi-card"><div class="kpi-value" id="kpiCYBER">0</div><div class="kpi-label">Cyber IOCs</div></div>
+            <div class="kpi-card"><div class="kpi-value" id="kpiCritical">0</div><div class="kpi-label">Critical Threats</div></div>
+            <div class="kpi-card"><div class="kpi-value" id="kpiTargets">0</div><div class="kpi-label">Targets</div></div>
+          </div>
+
+          <div class="card map-container">
+            <div class="card-header">
+              <span>🌍 Geospatial Intelligence</span>
+              <span class="small-meta">Entity and hotspot markers from embedded dataset</span>
+            </div>
+            <div class="card-body" style="padding:0;"><div id="map"></div></div>
+          </div>
+
+          <div class="card graph-container">
+            <div class="card-header">
+              <span>🕸️ Relationship Graph</span>
+              <span class="small-meta">Threat actors → infrastructure → targets</span>
+            </div>
+            <div class="card-body" style="padding:0;"><div id="network"></div></div>
+          </div>
+
+          <div class="card threat-feed">
+            <div class="card-header">
+              <span>📡 Threat Feed</span>
+              <span class="small-meta">Simulated local auto-refresh</span>
+            </div>
+            <div id="threatFeed" class="threat-feed-list"></div>
+          </div>
+
+          <div class="card ai-console">
+            <div class="card-header">
+              <span>🤖 ONYX v4.2 AI Analyst</span>
+              <span class="small-meta">Natural-language responses generated from local dataset</span>
+            </div>
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input">
+              <input type="text" id="chatInput" placeholder="Ask about APT41, FIN7, top threats, graph, map, reports..." />
+              <button class="btn" id="sendButton">Send</button>
+              <button class="btn secondary" id="clearChatButton">Clear</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="graphView" class="view">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <span>🕸️ Full Entity Graph</span>
+              <span class="small-meta">Click a node to inspect linked relationships</span>
+            </div>
+            <div class="card-body" style="padding:0;"><div id="networkLarge" style="height:680px;"></div></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span>🔎 Entity Detail</span>
+              <span class="small-meta">Selection-aware side panel</span>
+            </div>
+            <div class="card-body">
+              <div id="entityDetail" class="detail-list"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="threatsView" class="view">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <span>📡 Threat Ledger</span>
+              <span class="small-meta">All active items in current session</span>
+            </div>
+            <div class="card-body table-wrap" style="max-height:760px;">
+              <table id="threatTable">
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Severity</th>
+                    <th>Confidence</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span>🧾 Threat Detail</span>
+              <span class="small-meta">Selected record, links, and response guidance</span>
+            </div>
+            <div class="card-body">
+              <div id="threatDetailPanel" class="detail-list"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="reportsView" class="view">
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-header"><span>📋 Executive Summary</span><span class="small-meta">Derived from current session</span></div>
+            <div class="card-body"><div id="reportSummary" class="report-block"></div></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><span>🎯 Priority Actions</span><span class="small-meta">Static recommendations from current data only</span></div>
+            <div class="card-body"><div id="reportActions" class="report-block"></div></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><span>💾 Session State</span><span class="small-meta">Browser localStorage</span></div>
+            <div class="card-body">
+              <div id="statePanel" class="report-block"></div>
+              <div class="footer-actions">
+                <button class="btn" id="saveStateButton">Save State</button>
+                <button class="btn secondary" id="resetStateButton">Reset State</button>
+                <button class="btn secondary" id="exportReportButton">Export JSON</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;" class="card">
+          <div class="card-header"><span>📚 Source Notes</span><span class="small-meta">Embedded dataset inventory</span></div>
+          <div class="card-body">
+            <div id="reportInventory" class="report-block"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'clearglass-omen-onyx-v42-state';
+
+    const baseEntities = [
+      { id: 1, label: "APT41", type: "threat_actor", group: 1, confidence: 0.94, lat: 34.05, lon: -118.24 },
+      { id: 2, label: "FIN7", type: "threat_actor", group: 1, confidence: 0.89, lat: 55.76, lon: 37.62 },
+      { id: 3, label: "Sandworm", type: "threat_actor", group: 1, confidence: 0.92, lat: 55.76, lon: 37.62 },
+      { id: 4, label: "TA505", type: "threat_actor", group: 1, confidence: 0.87, lat: 50.45, lon: 30.52 },
+      { id: 5, label: "Canadian Government", type: "target", group: 2, confidence: 0.96, lat: 45.42, lon: -75.70 },
+      { id: 6, label: "Ontario Healthcare", type: "target", group: 2, confidence: 0.91, lat: 43.65, lon: -79.38 },
+      { id: 7, label: "Halton Police", type: "target", group: 2, confidence: 0.88, lat: 43.33, lon: -79.80 },
+      { id: 8, label: "185.130.5.253", type: "c2", group: 3, confidence: 0.95, lat: 52.52, lon: 13.40 },
+      { id: 9, label: "malware.dom", type: "domain", group: 3, confidence: 0.93, lat: 34.05, lon: -118.24 },
+      { id: 10, label: "c2-server.ru", type: "domain", group: 3, confidence: 0.91, lat: 55.76, lon: 37.62 },
+      { id: 11, label: "CVE-2024-21413", type: "vulnerability", group: 4, confidence: 0.89 },
+      { id: 12, label: "CVE-2023-20269", type: "vulnerability", group: 4, confidence: 0.87 },
+      { id: 13, label: "North Korea", type: "nation", group: 5, confidence: 0.85, lat: 39.03, lon: 125.76 },
+      { id: 14, label: "Russia", type: "nation", group: 5, confidence: 0.92, lat: 55.76, lon: 37.62 },
+      { id: 15, label: "China", type: "nation", group: 5, confidence: 0.88, lat: 39.90, lon: 116.40 }
+    ];
+
+    const baseRelationships = [
+      { from: 1, to: 5, label: "targets", confidence: 0.94 },
+      { from: 1, to: 6, label: "targets", confidence: 0.91 },
+      { from: 1, to: 8, label: "uses", confidence: 0.95 },
+      { from: 1, to: 9, label: "uses", confidence: 0.93 },
+      { from: 2, to: 5, label: "targets", confidence: 0.89 },
+      { from: 2, to: 6, label: "targets", confidence: 0.88 },
+      { from: 3, to: 5, label: "targets", confidence: 0.92 },
+      { from: 3, to: 10, label: "uses", confidence: 0.91 },
+      { from: 4, to: 7, label: "targets", confidence: 0.87 },
+      { from: 1, to: 11, label: "exploits", confidence: 0.89 },
+      { from: 3, to: 12, label: "exploits", confidence: 0.87 },
+      { from: 1, to: 14, label: "attributed_to", confidence: 0.92 },
+      { from: 2, to: 14, label: "attributed_to", confidence: 0.88 },
+      { from: 3, to: 14, label: "attributed_to", confidence: 0.94 },
+      { from: 4, to: 13, label: "attributed_to", confidence: 0.85 }
+    ];
+
+    const seedThreats = [
+      { id: 1, title: "APT41 C2 Beacon Detected", description: "Malicious traffic to 185.130.5.253 from Ontario healthcare network", severity: "critical", type: "CYBER", confidence: 94, time: "14:32:21" },
+      { id: 2, title: "Dark Web Credential Sale", description: "Halton Police employee credentials listed for sale on XSS forum", severity: "high", type: "OSINT", confidence: 87, time: "14:28:05" },
+      { id: 3, title: "CVE-2024-21413 Active Exploitation", description: "Microsoft Outlook vulnerability exploited against Ontario.ca addresses", severity: "critical", type: "SIGINT", confidence: 91, time: "14:15:44" },
+      { id: 4, title: "FIN7 Phishing Campaign", description: "Spear-phishing targeting Canadian healthcare executives", severity: "high", type: "CYBER", confidence: 88, time: "13:58:22" },
+      { id: 5, title: "Sandworm Infrastructure Update", description: "New C2 domain c2-server.ru resolved to 185.130.5.253", severity: "medium", type: "SIGINT", confidence: 82, time: "13:42:10" },
+      { id: 6, title: "HUMINT Report: Insider Threat", description: "Former Burlington IT employee accessing contractor credentials", severity: "high", type: "HUMINT", confidence: 76, time: "13:25:33" },
+      { id: 7, title: "TA505 Ransomware Activity", description: "Clop variant targeting Ontario municipal infrastructure", severity: "critical", type: "CYBER", confidence: 89, time: "12:58:47" },
+      { id: 8, title: "CVE-2023-20269 Patch Advisory", description: "Cisco VPN gateway vulnerability requires immediate patching", severity: "medium", type: "TECHINT", confidence: 94, time: "12:32:15" },
+      { id: 9, title: "Lateral Movement Detected", description: "SMB traffic between Hamilton Health Sciences and unknown IP", severity: "high", type: "SIGINT", confidence: 83, time: "11:55:21" },
+      { id: 10, title: "APT41 Attribution Update", description: "New intelligence links APT41 to recent healthcare attacks", severity: "medium", type: "HUMINT", confidence: 88, time: "11:22:08" }
+    ];
+
+    const state = {
+      entities: structuredClone(baseEntities),
+      relationships: structuredClone(baseRelationships),
+      threats: structuredClone(seedThreats),
+      chat: [],
+      selectedThreatId: null,
+      selectedEntityId: 1,
+      lastSavedAt: null
+    };
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed.threats)) state.threats = parsed.threats;
+        if (Array.isArray(parsed.chat)) state.chat = parsed.chat;
+        if (parsed.selectedThreatId) state.selectedThreatId = parsed.selectedThreatId;
+        if (parsed.selectedEntityId) state.selectedEntityId = parsed.selectedEntityId;
+        if (parsed.lastSavedAt) state.lastSavedAt = parsed.lastSavedAt;
+      } catch (err) {
+        console.warn('State load failed:', err);
+      }
+    }
+
+    function saveState() {
+      state.lastSavedAt = new Date().toISOString();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        threats: state.threats,
+        chat: state.chat,
+        selectedThreatId: state.selectedThreatId,
+        selectedEntityId: state.selectedEntityId,
+        lastSavedAt: state.lastSavedAt
+      }));
+      renderStatePanel();
+    }
+
+    function resetState() {
+      localStorage.removeItem(STORAGE_KEY);
+      state.threats = structuredClone(seedThreats);
+      state.chat = [];
+      state.selectedThreatId = null;
+      state.selectedEntityId = 1;
+      state.lastSavedAt = null;
+      bootstrapMessages();
+      syncAll();
+    }
+
+    function severityRank(level) {
+      return { critical: 4, high: 3, medium: 2, low: 1 }[level] || 0;
+    }
+
+    function averageConfidence() {
+      const values = state.threats.map(t => t.confidence);
+      return values.length ? Math.round(values.reduce((a, b) => a + b, 0) / values.length) : 0;
+    }
+
+    function getEntityById(id) {
+      return state.entities.find(e => e.id === id);
+    }
+
+    function getThreatById(id) {
+      return state.threats.find(t => t.id === id);
+    }
+
+    function getLinkedRelationships(entityId) {
+      return state.relationships.filter(r => r.from === entityId || r.to === entityId);
+    }
+
+    function formatConfidence(c) {
+      return `${Math.round(c * 100)}%`;
+    }
+
+    function nowHMS() {
+      return new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+
+    function zuluTime() {
+      return new Date().toISOString().replace('T', ' ').slice(0, 19) + 'Z';
+    }
+
+    function addMessage(text, role = 'assistant', persist = true) {
+      const container = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = `message ${role}`;
+      div.innerHTML = role === 'user' ? `👤 ${text}` : `🤖 ${text}`;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+
+      if (persist) {
+        state.chat.push({ role, text });
+        if (state.chat.length > 30) state.chat = state.chat.slice(-30);
+      }
+    }
+
+    function bootstrapMessages() {
+      const container = document.getElementById('chatMessages');
+      container.innerHTML = '';
+      if (state.chat.length) {
+        state.chat.forEach(entry => addMessage(entry.text, entry.role, false));
+      } else {
+        addMessage('✅ ONYX v4.2 initialized.\nEmbedded dataset loaded.\nUse the dashboard, graph, threat ledger, or reports view.\nQueries are answered from the local entities, relationships, and threats shown on screen.', 'assistant', false);
+        addMessage('Examples: "Show APT41", "Top threats", "Entity graph", "Geospatial map", "Generate summary".', 'assistant', false);
+      }
+    }
+
+    function processQuery(query) {
+      const lower = query.toLowerCase().trim();
+      const topThreats = [...state.threats].sort((a, b) => severityRank(b.severity) - severityRank(a.severity) || b.confidence - a.confidence).slice(0, 3);
+      const apt41Links = getLinkedRelationships(1).map(r => {
+        const otherId = r.from === 1 ? r.to : r.from;
+        const other = getEntityById(otherId);
+        return `${r.label} → ${other ? other.label : otherId}`;
+      });
+
+      if (lower.includes('apt41')) {
+        state.selectedEntityId = 1;
+        return `[ONYX v4.2]\nZULU: ${zuluTime()}\n\nOBJECT: APT41\nTYPE: threat_actor\nCONFIDENCE: 94%\n\nLINKED RELATIONSHIPS:\n- ${apt41Links.join('\n- ')}\n\nASSOCIATED THREATS:\n- ${state.threats.filter(t => /apt41/i.test(t.title + ' ' + t.description)).map(t => `${t.title} (${t.confidence}%)`).join('\n- ') || 'No direct string match in current session'}\n\nRECOMMENDED ACTIONS:\n1. Review C2 infrastructure indicators in current feed\n2. Patch referenced vulnerabilities\n3. Monitor target entities linked in graph`;
+      }
+
+      if (lower.includes('fin7')) {
+        state.selectedEntityId = 2;
+        return `[ONYX v4.2]\nZULU: ${zuluTime()}\n\nOBJECT: FIN7\nTYPE: threat_actor\nCONFIDENCE: 89%\n\nCURRENT GRAPH LINKS:\n- ${getLinkedRelationships(2).map(r => `${r.label} → ${getEntityById(r.from === 2 ? r.to : r.from)?.label || 'Unknown'}`).join('\n- ')}\n\nMATCHING FEED ITEMS:\n- ${state.threats.filter(t => /fin7/i.test(t.title + ' ' + t.description)).map(t => `${t.title} (${t.confidence}%)`).join('\n- ') || 'No direct string match in current session'}`;
+      }
+
+      if (lower.includes('top threat') || lower.includes('top threats') || lower === 'threats') {
+        return `[ONYX v4.2]\nZULU: ${zuluTime()}\n\nTOP SESSION THREATS:\n${topThreats.map((t, index) => `${index + 1}. ${t.title} | ${t.severity.toUpperCase()} | ${t.confidence}% | ${t.type}`).join('\n')}`;
+      }
+
+      if (lower.includes('entity graph') || lower.includes('graph')) {
+        return `[ONYX v4.2]\nZULU: ${zuluTime()}\n\nGRAPH SUMMARY:\n- Entities: ${state.entities.length}\n- Relationships: ${state.relationships.length}\n- Threat actors: ${state.entities.filter(e => e.type === 'threat_actor').length}\n- Targets: ${state.entities.filter(e => e.type === 'target').length}\n- Infrastructure: ${state.entities.filter(e => e.type === 'c2' || e.type === 'domain').length}\n\nMost linked node in embedded graph: APT41`;
+      }
+
+      if (lower.includes('map') || lower.includes('geospatial')) {
+        return `[ONYX v4.2]\nZULU: ${zuluTime()}\n\nMAP SUMMARY:\n- Displayed markers come from the embedded entity coordinates and hotspot list\n- Current hotspots: Toronto, Halton Region, Ottawa\n- Target geographies in current data include Canada, Germany, Russia, China, and North Korea`;
+      }
+
+      if (lower.includes('report') || lower.includes('summary')) {
+        return buildExecutiveSummaryText();
+      }
+
+      return `[ONYX v4.2]\nZULU: ${zuluTime()}\n\nYour query was processed against the local embedded dataset only.\n\nSupported examples:\n- Show APT41\n- FIN7\n- Top threats\n- Entity graph\n- Geospatial map\n- Generate summary`;
+    }
+
+    function buildExecutiveSummaryText() {
+      const critical = state.threats.filter(t => t.severity === 'critical').length;
+      const high = state.threats.filter(t => t.severity === 'high').length;
+      const avg = averageConfidence();
+      return `[ONYX v4.2]\nZULU: ${zuluTime()}\n\nEXECUTIVE SUMMARY:\n- Active threat items: ${state.threats.length}\n- Critical threats: ${critical}\n- High threats: ${high}\n- Embedded entities: ${state.entities.length}\n- Embedded relationships: ${state.relationships.length}\n- Average session confidence: ${avg}%\n\nPRIORITY FOCUS:\n1. C2-related indicators linked to APT41 and Sandworm\n2. Vulnerability tracking for CVE-2024-21413 and CVE-2023-20269\n3. Protection of Canadian Government, Ontario Healthcare, and Halton Police nodes`;
+    }
+
+    function sendQuery() {
+      const input = document.getElementById('chatInput');
+      const query = input.value.trim();
+      if (!query) return;
+      addMessage(query, 'user');
+      input.value = '';
+      setTimeout(() => {
+        const response = processQuery(query);
+        addMessage(response, 'assistant');
+        renderReports();
+        saveState();
+        renderEntityDetail(state.selectedEntityId);
+      }, 350);
+    }
+
+    function renderHeaderStats() {
+      document.getElementById('entityCount').textContent = String(state.entities.length);
+      document.getElementById('relationCount').textContent = String(state.relationships.length);
+      document.getElementById('threatCount').textContent = String(state.threats.length);
+      document.getElementById('confidenceScore').textContent = `${averageConfidence()}%`;
+      document.getElementById('kpiSIGINT').textContent = String(state.threats.filter(t => t.type === 'SIGINT').length + 10);
+      document.getElementById('kpiOSINT').textContent = String(state.threats.filter(t => t.type === 'OSINT').length + 37);
+      document.getElementById('kpiHUMINT').textContent = String(state.threats.filter(t => t.type === 'HUMINT').length + 4);
+      document.getElementById('kpiCYBER').textContent = String(state.threats.filter(t => t.type === 'CYBER').length * 20 + 69);
+      document.getElementById('kpiCritical').textContent = String(state.threats.filter(t => t.severity === 'critical').length);
+      document.getElementById('kpiTargets').textContent = String(state.entities.filter(e => e.type === 'target').length);
+    }
+
+    function renderThreatFeed() {
+      const container = document.getElementById('threatFeed');
+      container.innerHTML = state.threats.map(t => `
+        <div class="threat-item ${state.selectedThreatId === t.id ? 'active' : ''}" data-threat-id="${t.id}">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="threat-severity severity-${t.severity}"></span>
+            <span style="font-size:10px;color:var(--text-muted);">${t.time}</span>
+            <span style="font-size:9px;background:rgba(0,212,255,0.1);padding:2px 6px;border-radius:4px;">${t.type}</span>
+          </div>
+          <div class="threat-title">${t.title}</div>
+          <div class="threat-description">${t.description}</div>
+          <div class="threat-meta">
+            <span>Confidence ${t.confidence}%</span>
+            <span>${t.severity.toUpperCase()}</span>
+          </div>
+        </div>
+      `).join('');
+      container.querySelectorAll('.threat-item').forEach(el => {
+        el.addEventListener('click', () => {
+          state.selectedThreatId = Number(el.dataset.threatId);
+          renderThreatFeed();
+          renderThreatTable();
+          renderThreatDetail();
+          saveState();
+        });
+      });
+    }
+
+    function renderThreatTable() {
+      const tbody = document.querySelector('#threatTable tbody');
+      tbody.innerHTML = [...state.threats].map(t => `
+        <tr data-threat-id="${t.id}" style="cursor:pointer;${state.selectedThreatId === t.id ? 'background:rgba(0,212,255,0.08);' : ''}">
+          <td><code>${t.time}</code></td>
+          <td>${t.title}</td>
+          <td>${t.type}</td>
+          <td>${t.severity.toUpperCase()}</td>
+          <td>${t.confidence}%</td>
+        </tr>
+      `).join('');
+      tbody.querySelectorAll('tr').forEach(row => {
+        row.addEventListener('click', () => {
+          state.selectedThreatId = Number(row.dataset.threatId);
+          renderThreatFeed();
+          renderThreatTable();
+          renderThreatDetail();
+          saveState();
+        });
+      });
+    }
+
+    function renderThreatDetail() {
+      const panel = document.getElementById('threatDetailPanel');
+      const threat = getThreatById(state.selectedThreatId) || state.threats[0];
+      if (!threat) {
+        panel.innerHTML = '<div class="detail-item"><div class="detail-value">No threat selected.</div></div>';
+        return;
+      }
+      state.selectedThreatId = threat.id;
+      panel.innerHTML = `
+        <div class="detail-item">
+          <div class="detail-label">Title</div>
+          <div class="detail-value">${threat.title}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Description</div>
+          <div class="detail-value">${threat.description}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Classification</div>
+          <div class="detail-value">
+            <span class="tag">${threat.type}</span>
+            <span class="tag">${threat.severity.toUpperCase()}</span>
+            <span class="tag">${threat.confidence}% confidence</span>
+          </div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Suggested Follow-Up</div>
+          <div class="detail-value">Review graph links to relevant infrastructure, inspect associated vulnerability nodes, and refresh the threat feed for additional session indicators.</div>
+        </div>
+      `;
+    }
+
+    function renderEntityDetail(entityId) {
+      const panel = document.getElementById('entityDetail');
+      const entity = getEntityById(entityId) || state.entities[0];
+      if (!entity) return;
+      state.selectedEntityId = entity.id;
+      const links = getLinkedRelationships(entity.id);
+      panel.innerHTML = `
+        <div class="detail-item">
+          <div class="detail-label">Entity</div>
+          <div class="detail-value">${entity.label}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Type</div>
+          <div class="detail-value">${entity.type}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Confidence</div>
+          <div class="detail-value">${formatConfidence(entity.confidence)}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Relationships</div>
+          <div class="detail-value">${links.length ? links.map(r => {
+            const peer = getEntityById(r.from === entity.id ? r.to : r.from);
+            return `${r.label} → ${peer ? peer.label : 'Unknown'} (${Math.round(r.confidence * 100)}%)`;
+          }).join('<br>') : 'No linked relationships in current graph.'}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Coordinates</div>
+          <div class="detail-value">${entity.lat && entity.lon ? `${entity.lat}, ${entity.lon}` : 'No coordinates embedded for this entity.'}</div>
+        </div>
+      `;
+    }
+
+    function renderReports() {
+      const critical = state.threats.filter(t => t.severity === 'critical');
+      const high = state.threats.filter(t => t.severity === 'high');
+      const summary = `
+        <strong>Session Summary</strong><br>
+        Active threat items: ${state.threats.length}<br>
+        Critical: ${critical.length}<br>
+        High: ${high.length}<br>
+        Average confidence: ${averageConfidence()}%<br>
+        Most represented threat types: ${[...new Set(state.threats.map(t => t.type))].join(', ')}
+      `;
+      const actions = `
+        <strong>Current actions based on embedded data</strong><br><br>
+        1. Review items linked to 185.130.5.253 and c2-server.ru<br>
+        2. Track target entities Canadian Government, Ontario Healthcare, and Halton Police<br>
+        3. Prioritize vulnerability items CVE-2024-21413 and CVE-2023-20269<br>
+        4. Inspect graph links for APT41, FIN7, Sandworm, and TA505
+      `;
+      const inventory = `
+        <strong>Embedded inventory</strong><br><br>
+        Entities: ${state.entities.length}<br>
+        Relationships: ${state.relationships.length}<br>
+        Threat items in session: ${state.threats.length}<br>
+        Chat messages stored: ${state.chat.length}<br><br>
+        <span class="tag">Local-only</span>
+        <span class="tag">No backend</span>
+        <span class="tag">Single file</span>
+      `;
+      document.getElementById('reportSummary').innerHTML = summary;
+      document.getElementById('reportActions').innerHTML = actions;
+      document.getElementById('reportInventory').innerHTML = inventory;
+      renderStatePanel();
+    }
+
+    function renderStatePanel() {
+      document.getElementById('statePanel').innerHTML = `
+        <strong>Persistence</strong><br><br>
+        Storage key: <code>${STORAGE_KEY}</code><br>
+        Last saved: ${state.lastSavedAt ? new Date(state.lastSavedAt).toLocaleString() : 'Not saved in this session'}<br>
+        Selected threat: ${state.selectedThreatId || 'None'}<br>
+        Selected entity: ${state.selectedEntityId || 'None'}<br><br>
+        This file stores threat feed and chat state in your browser only.
+      `;
+      document.getElementById('stateStatus').textContent = state.lastSavedAt ? 'Saved locally' : 'Ephemeral';
+    }
+
+    function exportReport() {
+      const payload = {
+        exportedAt: new Date().toISOString(),
+        entities: state.entities,
+        relationships: state.relationships,
+        threats: state.threats,
+        chat: state.chat,
+        summary: {
+          activeThreats: state.threats.length,
+          criticalThreats: state.threats.filter(t => t.severity === 'critical').length,
+          averageConfidence: averageConfidence()
+        }
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'clearglass-omen-session-report.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    const hotspots = [
+      { lat: 43.65, lon: -79.38, severity: 'critical', label: 'APT41 Activity - Toronto' },
+      { lat: 43.33, lon: -79.80, severity: 'high', label: 'Halton Police - Credential Exposure' },
+      { lat: 45.42, lon: -75.70, severity: 'medium', label: 'Government Network Scanning' }
+    ];
+
+    let map;
+    let networkSmall;
+    let networkLarge;
+
+    function initMap() {
+      map = L.map('map', { zoomControl: true }).setView([45, -80], 4.7);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
+        subdomains: 'abcd',
+        maxZoom: 18
+      }).addTo(map);
+
+      state.entities.forEach(e => {
+        if (typeof e.lat === 'number' && typeof e.lon === 'number') {
+          const color = e.group === 1 ? '#ff3d8c' : e.group === 2 ? '#ffb347' : e.group === 3 ? '#00d4ff' : e.group === 4 ? '#a855f7' : '#8a9ac0';
+          L.circleMarker([e.lat, e.lon], {
+            radius: 8, fillColor: color, color: '#fff', weight: 1.5, opacity: 0.9, fillOpacity: 0.55
+          }).addTo(map).bindPopup(`<b>${e.label}</b><br>${e.type}<br>Confidence: ${formatConfidence(e.confidence)}`);
+        }
+      });
+
+      hotspots.forEach(h => {
+        const color = h.severity === 'critical' ? '#ff3d5e' : h.severity === 'high' ? '#ffaa33' : '#ffb347';
+        L.circleMarker([h.lat, h.lon], {
+          radius: 12, fillColor: color, color, weight: 2, opacity: 0.95, fillOpacity: 0.35
+        }).addTo(map).bindPopup(`<b>${h.label}</b><br>${h.severity.toUpperCase()}`);
+      });
+
+      setTimeout(() => map.invalidateSize(), 250);
+    }
+
+    function buildGraphData() {
+      return {
+        nodes: state.entities.map(e => ({
+          id: e.id,
+          label: e.label,
+          title: `${e.type.toUpperCase()} • ${formatConfidence(e.confidence)}`,
+          group: e.group,
+          color: e.group === 1 ? '#ff3d8c' : e.group === 2 ? '#ffb347' : e.group === 3 ? '#00d4ff' : e.group === 4 ? '#a855f7' : '#8a9ac0',
+          font: { color: '#eef5ff', size: 12, face: 'JetBrains Mono' }
+        })),
+        edges: state.relationships.map(r => ({
+          from: r.from,
+          to: r.to,
+          label: r.label,
+          title: `Confidence: ${Math.round(r.confidence * 100)}%`,
+          arrows: 'to',
+          color: { color: 'rgba(0, 212, 255, 0.38)', highlight: '#00d4ff' },
+          font: { color: '#8a9ac0', size: 10, align: 'middle' },
+          smooth: { type: 'curvedCW', roundness: 0.22 }
+        }))
+      };
+    }
+
+    function initGraphs() {
+      const options = {
+        nodes: { shape: 'dot', size: 20, borderWidth: 2, borderWidthSelected: 3 },
+        edges: { width: 1.5 },
+        physics: {
+          enabled: true,
+          solver: 'forceAtlas2Based',
+          stabilization: { iterations: 120 }
+        },
+        interaction: { hover: true, tooltipDelay: 100 },
+        layout: { improvedLayout: true }
+      };
+
+      networkSmall = new vis.Network(document.getElementById('network'), buildGraphData(), options);
+      networkLarge = new vis.Network(document.getElementById('networkLarge'), buildGraphData(), options);
+
+      [networkSmall, networkLarge].forEach(graph => {
+        graph.on('click', params => {
+          if (params.nodes.length) {
+            const nodeId = params.nodes[0];
+            renderEntityDetail(nodeId);
+            state.selectedEntityId = nodeId;
+            saveState();
+          }
+        });
+      });
+    }
+
+    function switchView(viewId) {
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.toggle('active', item.dataset.view === viewId);
+      });
+      document.querySelectorAll('.view').forEach(view => {
+        view.classList.toggle('active', view.id === viewId);
+      });
+      if (viewId === 'dashboardView' && map) {
+        setTimeout(() => map.invalidateSize(), 120);
+      }
+      if (viewId === 'graphView' && networkLarge) {
+        setTimeout(() => networkLarge.fit({ animation: true }), 120);
+      }
+    }
+
+    function randomThreatTemplate() {
+      const templates = [
+        { title: 'NEW BEACON DETECTED', description: 'Additional lateral movement in Ontario healthcare network', severity: 'high', type: 'SIGINT' },
+        { title: 'DOMAIN RESOLUTION CHANGE', description: 'Infrastructure indicator resolved to updated endpoint', severity: 'medium', type: 'TECHINT' },
+        { title: 'PHISHING INFRASTRUCTURE MATCH', description: 'Message campaign overlaps with existing actor pattern', severity: 'high', type: 'CYBER' },
+        { title: 'INSIDER ACCESS SIGNAL', description: 'Credential use pattern inconsistent with prior activity note', severity: 'medium', type: 'HUMINT' }
+      ];
+      const base = templates[Math.floor(Math.random() * templates.length)];
+      return {
+        id: Date.now(),
+        title: base.title,
+        description: base.description,
+        severity: base.severity,
+        type: base.type,
+        confidence: Math.floor(82 + Math.random() * 14),
+        time: nowHMS()
+      };
+    }
+
+    function maybeInjectThreat() {
+      if (Math.random() > 0.68) {
+        state.threats.unshift(randomThreatTemplate());
+        state.threats = state.threats.slice(0, 16);
+        renderThreatFeed();
+        renderThreatTable();
+        renderThreatDetail();
+        renderHeaderStats();
+        renderReports();
+      }
+      document.getElementById('lastSync').textContent = `${(Math.random() * 0.9).toFixed(1)}s ago`;
+    }
+
+    function attachEvents() {
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', () => switchView(item.dataset.view));
+      });
+      document.getElementById('sendButton').addEventListener('click', sendQuery);
+      document.getElementById('chatInput').addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') sendQuery();
+      });
+      document.getElementById('clearChatButton').addEventListener('click', () => {
+        state.chat = [];
+        bootstrapMessages();
+        saveState();
+      });
+      document.getElementById('saveStateButton').addEventListener('click', saveState);
+      document.getElementById('resetStateButton').addEventListener('click', resetState);
+      document.getElementById('exportReportButton').addEventListener('click', exportReport);
+    }
+
+    function syncAll() {
+      renderHeaderStats();
+      renderThreatFeed();
+      renderThreatTable();
+      renderThreatDetail();
+      renderEntityDetail(state.selectedEntityId || 1);
+      renderReports();
+    }
+
+    function init() {
+      loadState();
+      attachEvents();
+      bootstrapMessages();
+      initMap();
+      initGraphs();
+      if (!state.selectedThreatId && state.threats[0]) state.selectedThreatId = state.threats[0].id;
+      syncAll();
+      setInterval(maybeInjectThreat, 15000);
+      console.log('%cCLEARGLASS OMEN loaded from embedded local data.', 'color:#00d4ff;font-family:JetBrains Mono;');
+    }
+
+    window.addEventListener('load', init);
+  </script>
+</body>
+</html>

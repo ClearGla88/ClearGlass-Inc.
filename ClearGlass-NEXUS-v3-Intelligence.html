@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClearGlass NEXUS Intelligence Platform v3.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root{
+--bg0:#04040a;--bg1:#080812;--bg2:#0d0d1a;--bg3:#111120;
+--glass:rgba(255,255,255,0.03);--glass2:rgba(255,255,255,0.06);
+--border:rgba(255,255,255,0.07);--border2:rgba(0,210,255,0.25);
+--cyan:#00d4ff;--cyan2:#00a8cc;--cyan-dim:rgba(0,212,255,0.12);
+--orange:#ff6b35;--pink:#ff6b9d;--green:#00ff88;--red:#ff3366;
+--gold:#ffd700;--purple:#9b59ff;--lime:#b4ff00;
+--t1:#e8eaf0;--t2:#8892a4;--t3:#4a5568;
+--fw:220px;--hh:52px;--rw:300px;
+--glow:0 0 24px rgba(0,212,255,0.25);--glow-o:0 0 24px rgba(255,107,53,0.3);
+--glow-g:0 0 24px rgba(0,255,136,0.25);
+--font-mono:'Space Mono',monospace;--font-ui:'Rajdhani',sans-serif;
+--font-code:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+html,body{height:100%;overflow:hidden;background:var(--bg0);color:var(--t1);font-family:var(--font-ui)}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(0,212,255,0.2);border-radius:2px}
+
+/* ── LAYOUT ────────────────────────────────────────────── */
+#app{display:grid;grid-template-rows:var(--hh) 1fr;grid-template-columns:var(--fw) 1fr var(--rw);height:100vh;overflow:hidden}
+#header{grid-column:1/-1;grid-row:1;display:flex;align-items:center;gap:16px;padding:0 20px;background:var(--bg1);border-bottom:1px solid var(--border);z-index:100;position:relative}
+#header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0.4}
+#sidebar{grid-column:1;grid-row:2;background:var(--bg1);border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column}
+#main{grid-column:2;grid-row:2;overflow:hidden;position:relative;background:var(--bg0)}
+#rpanel{grid-column:3;grid-row:2;background:var(--bg1);border-left:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column}
+
+/* ── HEADER ─────────────────────────────────────────────── */
+.hd-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.hd-logo-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--cyan),var(--purple));border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10px;font-weight:700;color:#000;letter-spacing:-1px;position:relative;overflow:hidden}
+.hd-logo-mark::after{content:'';position:absolute;top:0;right:0;bottom:0;left:0;background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,0.15));pointer-events:none}
+.hd-brand{font-family:var(--font-ui);font-weight:700;font-size:17px;letter-spacing:0.05em;color:var(--t1)}
+.hd-brand span{color:var(--cyan)}
+.hd-ver{font-family:var(--font-mono);font-size:9px;color:var(--t3);background:var(--glass);border:1px solid var(--border);border-radius:3px;padding:1px 5px;margin-left:4px}
+.hd-sep{width:1px;height:24px;background:var(--border);margin:0 4px}
+.hd-nav{display:flex;gap:2px;flex:1}
+.hd-nav-btn{padding:5px 12px;border:none;background:transparent;color:var(--t2);font-family:var(--font-ui);font-size:13px;font-weight:500;letter-spacing:0.03em;cursor:pointer;border-radius:4px;transition:all .15s;white-space:nowrap}
+.hd-nav-btn:hover{background:var(--glass);color:var(--t1)}
+.hd-nav-btn.active{background:var(--cyan-dim);color:var(--cyan);border:1px solid rgba(0,212,255,0.2)}
+.hd-status{display:flex;align-items:center;gap:8px;margin-left:auto}
+.hd-badge{display:flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:10px;color:var(--t2);padding:4px 8px;background:var(--glass);border:1px solid var(--border);border-radius:4px}
+.pulse{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+.hd-session{font-family:var(--font-mono);font-size:9px;color:var(--t3)}
+
+/* ── SIDEBAR ─────────────────────────────────────────────── */
+.sb-section{padding:10px 0}
+.sb-section-label{font-family:var(--font-mono);font-size:9px;font-weight:700;letter-spacing:0.15em;color:var(--t3);padding:0 14px 6px;text-transform:uppercase}
+.sb-item{display:flex;align-items:center;gap:9px;padding:6px 14px;cursor:pointer;transition:all .12s;border-left:2px solid transparent;font-size:13px;font-weight:500;color:var(--t2);letter-spacing:0.02em}
+.sb-item:hover{background:var(--glass);color:var(--t1);border-left-color:var(--border2)}
+.sb-item.active{background:var(--cyan-dim);color:var(--cyan);border-left-color:var(--cyan)}
+.sb-item-icon{width:16px;height:16px;opacity:.7;flex-shrink:0;font-size:13px;display:flex;align-items:center;justify-content:center}
+.sb-item.active .sb-item-icon{opacity:1}
+.sb-divider{height:1px;background:var(--border);margin:6px 14px}
+.sb-search{padding:10px 12px 6px}
+.sb-search input{width:100%;background:var(--glass);border:1px solid var(--border);border-radius:5px;padding:6px 10px;font-family:var(--font-mono);font-size:10px;color:var(--t1);outline:none;transition:.15s}
+.sb-search input:focus{border-color:var(--border2);background:var(--glass2)}
+.sb-search input::placeholder{color:var(--t3)}
+.entity-type{display:flex;align-items:center;gap:8px;padding:5px 14px;cursor:pointer;font-size:12px;font-weight:500;color:var(--t2);transition:.12s;user-select:none}
+.entity-type:hover{color:var(--t1);background:var(--glass)}
+.entity-type:hover .et-dot{filter:brightness(1.3)}
+.et-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.entity-type small{margin-left:auto;font-family:var(--font-mono);font-size:9px;color:var(--t3)}
+
+/* ── VIEWS ───────────────────────────────────────────────── */
+.view{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:20px;display:none;flex-direction:column;gap:16px}
+.view.active{display:flex}
+#view-graph{padding:0;overflow:hidden}
+
+/* ── CARDS ───────────────────────────────────────────────── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.card-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.card-title{font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--t2)}
+.card-body{padding:16px}
+.card-accent{border-top:2px solid var(--cyan)}
+
+/* ── KPI GRID ────────────────────────────────────────────── */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px;position:relative;overflow:hidden;transition:.15s}
+.kpi-card:hover{border-color:var(--border2);background:var(--bg3)}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi-card.kc-cyan::before{background:linear-gradient(90deg,var(--cyan),transparent)}
+.kpi-card.kc-orange::before{background:linear-gradient(90deg,var(--orange),transparent)}
+.kpi-card.kc-green::before{background:linear-gradient(90deg,var(--green),transparent)}
+.kpi-card.kc-purple::before{background:linear-gradient(90deg,var(--purple),transparent)}
+.kpi-card.kc-gold::before{background:linear-gradient(90deg,var(--gold),transparent)}
+.kpi-card.kc-pink::before{background:linear-gradient(90deg,var(--pink),transparent)}
+.kpi-label{font-size:10px;font-weight:600;letter-spacing:0.12em;color:var(--t3);text-transform:uppercase;margin-bottom:6px}
+.kpi-value{font-family:var(--font-mono);font-size:26px;font-weight:700;color:var(--t1);line-height:1}
+.kpi-sub{font-size:11px;color:var(--t3);margin-top:4px}
+.kpi-trend{position:absolute;top:14px;right:14px;font-family:var(--font-mono);font-size:11px;font-weight:700}
+.kpi-trend.up{color:var(--green)}
+.kpi-trend.down{color:var(--red)}
+
+/* ── GRAPH VIEW ──────────────────────────────────────────── */
+#graph-toolbar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg1);border-bottom:1px solid var(--border);z-index:10;position:relative}
+#graph-container{flex:1;position:relative;background:var(--bg0)}
+#graph-svg{width:100%;height:100%}
+.gt-btn{padding:5px 12px;border:1px solid var(--border);background:var(--glass);color:var(--t2);font-family:var(--font-ui);font-size:12px;font-weight:500;border-radius:4px;cursor:pointer;transition:.12s}
+.gt-btn:hover{background:var(--glass2);color:var(--t1);border-color:var(--border2)}
+.gt-btn.active{background:var(--cyan-dim);color:var(--cyan);border-color:rgba(0,212,255,0.3)}
+.gt-input{padding:5px 10px;border:1px solid var(--border);background:var(--glass);color:var(--t1);font-family:var(--font-mono);font-size:11px;border-radius:4px;outline:none;min-width:200px;transition:.12s}
+.gt-input:focus{border-color:var(--border2)}
+.gt-sep{width:1px;height:20px;background:var(--border)}
+.gt-label{font-family:var(--font-mono);font-size:10px;color:var(--t3)}
+.graph-overlay{position:absolute;bottom:14px;left:14px;background:rgba(5,5,10,0.85);border:1px solid var(--border);border-radius:6px;padding:10px 14px;font-family:var(--font-mono);font-size:10px;color:var(--t2);backdrop-filter:blur(8px)}
+.graph-overlay div{margin-bottom:3px}
+.graph-overlay span{color:var(--cyan)}
+
+/* Node tooltip */
+.node-tooltip{position:absolute;background:rgba(8,8,18,0.95);border:1px solid var(--border2);border-radius:6px;padding:10px 14px;pointer-events:none;z-index:200;font-family:var(--font-mono);font-size:11px;min-width:180px;backdrop-filter:blur(12px);display:none}
+.node-tooltip-type{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin-bottom:4px}
+.node-tooltip-label{font-weight:700;color:var(--t1);margin-bottom:6px}
+.node-tooltip-row{display:flex;justify-content:space-between;gap:16px;color:var(--t2);font-size:10px;margin-bottom:2px}
+.node-tooltip-row span:last-child{color:var(--cyan)}
+
+/* ── AI INVESTIGATOR ─────────────────────────────────────── */
+.inv-header{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.inv-status-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.inv-badge{font-family:var(--font-mono);font-size:10px;padding:3px 8px;border-radius:3px;font-weight:700;letter-spacing:.08em}
+.inv-badge.completed{background:rgba(0,255,136,0.15);color:var(--green);border:1px solid rgba(0,255,136,0.3)}
+.inv-badge.running{background:rgba(0,212,255,0.15);color:var(--cyan);border:1px solid rgba(0,212,255,0.3);animation:fadeInOut 1s infinite}
+.inv-badge.idle{background:var(--glass);color:var(--t3);border:1px solid var(--border)}
+@keyframes fadeInOut{0%,100%{opacity:1}50%{opacity:.5}}
+.inv-stats{display:flex;gap:16px}
+.inv-stat{font-family:var(--font-mono);font-size:10px;color:var(--t2)}
+.inv-stat strong{color:var(--t1)}
+.inv-prompt-area{margin-top:10px}
+.inv-prompt-area label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:6px}
+.inv-prompt-area textarea{width:100%;background:var(--bg1);border:1px solid var(--border);border-radius:5px;padding:10px 12px;font-family:var(--font-mono);font-size:11px;color:var(--t1);outline:none;resize:vertical;min-height:80px;transition:.15s}
+.inv-prompt-area textarea:focus{border-color:var(--border2)}
+.inv-controls{display:flex;align-items:center;gap:8px;margin-top:8px}
+.inv-run-btn{padding:8px 18px;background:linear-gradient(135deg,var(--cyan),var(--purple));border:none;color:#000;font-family:var(--font-ui);font-size:13px;font-weight:700;letter-spacing:.05em;border-radius:5px;cursor:pointer;transition:.15s}
+.inv-run-btn:hover{transform:translateY(-1px);box-shadow:var(--glow)}
+.inv-run-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.inv-scope{font-family:var(--font-mono);font-size:10px;color:var(--t3);margin-left:auto}
+
+.steps-log{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.steps-log-header{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--t2);display:flex;gap:8px;align-items:center}
+.steps-log-body{padding:8px 0;max-height:360px;overflow-y:auto;font-family:var(--font-mono);font-size:10px}
+.step-row{padding:7px 14px;display:flex;gap:10px;align-items:flex-start;border-left:2px solid transparent;transition:.1s}
+.step-row:hover{background:var(--glass)}
+.step-num{color:var(--t3);flex-shrink:0;min-width:32px}
+.step-type{font-weight:700;flex-shrink:0;min-width:80px}
+.step-type.tool{color:var(--cyan)}
+.step-type.reasoning{color:var(--orange)}
+.step-type.summary{color:var(--green)}
+.step-type.transform{color:var(--purple)}
+.step-content{color:var(--t2);line-height:1.5;word-break:break-all}
+.step-row.active{border-left-color:var(--cyan);background:var(--cyan-dim)}
+
+.transforms-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px}
+.transform-card{background:var(--bg1);border:1px solid var(--border);border-radius:6px;padding:10px 12px;cursor:pointer;transition:.12s}
+.transform-card:hover{border-color:var(--border2);background:var(--glass)}
+.tc-icon{font-size:16px;margin-bottom:4px}
+.tc-name{font-size:11px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.tc-desc{font-size:10px;color:var(--t3)}
+
+/* ── SOCIAL ANALYTICS ────────────────────────────────────── */
+.platform-tabs{display:flex;gap:4px;margin-bottom:14px;flex-wrap:wrap}
+.pt-tab{padding:6px 14px;border:1px solid var(--border);background:var(--glass);color:var(--t2);font-family:var(--font-ui);font-size:12px;font-weight:500;border-radius:5px;cursor:pointer;transition:.12s;display:flex;align-items:center;gap:6px}
+.pt-tab:hover{color:var(--t1);border-color:var(--border2)}
+.pt-tab.active{color:#000;border-color:transparent;font-weight:700}
+.pt-tab.tw.active{background:#1da1f2}
+.pt-tab.ig.active{background:linear-gradient(135deg,#fd5949,#d6249f,#285aeb)}
+.pt-tab.yt.active{background:#ff0000}
+.pt-tab.fb.active{background:#1877f2}
+.pt-tab.li.active{background:#0077b5}
+.pt-tab.tt.active{background:#010101;color:var(--t1)}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.chart-card-title{padding:10px 14px;border-bottom:1px solid var(--border);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--t3)}
+.chart-body{padding:14px;height:200px;position:relative}
+.chart-full{grid-column:1/-1}
+
+/* ── BURLINGTON INTEL ────────────────────────────────────── */
+.burl-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.hashtag-cloud{display:flex;flex-wrap:wrap;gap:6px;padding:12px}
+.htag{font-family:var(--font-mono);font-size:10px;padding:3px 8px;border-radius:12px;background:var(--glass);border:1px solid var(--border);color:var(--t2);cursor:pointer;transition:.12s;white-space:nowrap}
+.htag:hover{background:var(--cyan-dim);border-color:rgba(0,212,255,0.3);color:var(--cyan)}
+.htag.hot{background:rgba(255,107,53,0.15);border-color:rgba(255,107,53,0.3);color:var(--orange)}
+.neighborhood-list{padding:8px 0}
+.nb-row{display:flex;align-items:center;padding:6px 14px;gap:10px;font-size:12px;transition:.1s;cursor:pointer}
+.nb-row:hover{background:var(--glass)}
+.nb-name{flex:1;color:var(--t1)}
+.nb-bar-wrap{width:80px;height:4px;background:var(--glass);border-radius:2px;overflow:hidden}
+.nb-bar{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--cyan),var(--purple));transition:width .6s ease}
+.nb-count{font-family:var(--font-mono);font-size:10px;color:var(--t3);min-width:30px;text-align:right}
+
+/* ── SENTIMENT ───────────────────────────────────────────── */
+.sentiment-grid{display:grid;grid-template-columns:200px 1fr;gap:14px;align-items:start}
+.gauge-wrap{position:relative;display:flex;flex-direction:column;align-items:center;padding:20px}
+.gauge-label{font-family:var(--font-mono);font-size:11px;color:var(--t2);margin-top:8px}
+.gauge-value{font-family:var(--font-mono);font-size:24px;font-weight:700;color:var(--green)}
+.sent-bars{padding:14px}
+.sent-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.sent-label{font-size:12px;font-weight:500;min-width:70px;color:var(--t2)}
+.sent-bar-wrap{flex:1;height:8px;background:var(--glass);border-radius:4px;overflow:hidden}
+.sent-bar{height:100%;border-radius:4px;transition:width .8s ease}
+.sent-bar.pos{background:linear-gradient(90deg,var(--green),#00cc6a)}
+.sent-bar.neg{background:linear-gradient(90deg,var(--red),#cc0044)}
+.sent-bar.neu{background:linear-gradient(90deg,var(--t3),#666)}
+.sent-pct{font-family:var(--font-mono);font-size:11px;min-width:36px;text-align:right}
+
+/* ── COMPETITOR ──────────────────────────────────────────── */
+.comp-table{width:100%;border-collapse:collapse;font-size:12px}
+.comp-table th{padding:8px 12px;text-align:left;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);border-bottom:1px solid var(--border);background:var(--bg1)}
+.comp-table td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--t2);vertical-align:middle}
+.comp-table tr:hover td{background:var(--glass);color:var(--t1)}
+.comp-rank{font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--t3);min-width:24px}
+.comp-handle{font-family:var(--font-mono);color:var(--t1);font-weight:500}
+.comp-score{font-family:var(--font-mono);font-weight:700}
+.comp-score.high{color:var(--green)}
+.comp-score.mid{color:var(--gold)}
+.comp-score.low{color:var(--red)}
+.mini-bar-wrap{width:60px;height:3px;background:var(--glass);border-radius:2px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:6px}
+.mini-bar{height:100%;border-radius:2px}
+
+/* ── REPORTS ─────────────────────────────────────────────── */
+.report-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.report-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px;cursor:pointer;transition:.15s;position:relative;overflow:hidden}
+.report-card::before{content:'';position:absolute;inset:0;opacity:0;transition:.15s;pointer-events:none}
+.report-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:var(--glow)}
+.rc-icon{font-size:24px;margin-bottom:8px}
+.rc-name{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:4px}
+.rc-desc{font-size:11px;color:var(--t3)}
+.rc-status{font-family:var(--font-mono);font-size:9px;margin-top:8px}
+.rc-status.ready{color:var(--green)}
+.rc-status.pending{color:var(--gold)}
+.export-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.export-btn{padding:10px;border:1px solid var(--border);background:var(--glass);border-radius:6px;cursor:pointer;text-align:center;transition:.12s}
+.export-btn:hover{background:var(--glass2);border-color:var(--border2)}
+.export-btn-icon{font-size:18px;margin-bottom:4px}
+.export-btn-label{font-size:11px;font-weight:600;color:var(--t1)}
+.export-btn-sub{font-family:var(--font-mono);font-size:9px;color:var(--t3)}
+
+/* ── RIGHT PANEL ─────────────────────────────────────────── */
+.rp-section{padding:12px 14px;border-bottom:1px solid var(--border)}
+.rp-title{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.entity-info-card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:8px}
+.eic-type{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:4px}
+.eic-value{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--t1);margin-bottom:6px;word-break:break-all}
+.eic-meta{font-size:10px;color:var(--t3);line-height:1.6}
+.timeline-item{display:flex;gap:8px;padding:6px 0;font-size:11px}
+.ti-dot{width:6px;height:6px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.ti-content{flex:1}
+.ti-label{color:var(--t1);font-weight:500}
+.ti-time{font-family:var(--font-mono);font-size:9px;color:var(--t3)}
+.activity-feed{font-family:var(--font-mono);font-size:10px;max-height:220px;overflow-y:auto}
+.af-row{padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--t2)}
+.af-time{color:var(--t3)}
+.af-event{color:var(--cyan)}
+.af-detail{color:var(--t2)}
+
+/* ── PROGRESS BAR ────────────────────────────────────────── */
+.progress-bar{height:2px;background:var(--border);border-radius:1px;overflow:hidden;margin-top:2px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:1px;transition:width .4s ease}
+
+/* ── ALERTS ──────────────────────────────────────────────── */
+.alert-list{padding:8px 0}
+.alert-row{display:flex;gap:8px;padding:7px 14px;align-items:flex-start;cursor:pointer;transition:.1s}
+.alert-row:hover{background:var(--glass)}
+.alert-dot{width:6px;height:6px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.alert-dot.high{background:var(--red);box-shadow:0 0 6px var(--red)}
+.alert-dot.med{background:var(--gold)}
+.alert-dot.low{background:var(--cyan)}
+.alert-text{font-size:11px;color:var(--t2);flex:1;line-height:1.5}
+.alert-text strong{color:var(--t1);font-weight:600}
+.alert-time{font-family:var(--font-mono);font-size:9px;color:var(--t3);white-space:nowrap}
+
+/* ── SVG Graph Styles ────────────────────────────────────── */
+.node-circle{cursor:pointer;transition:r .15s}
+.node-circle:hover{filter:brightness(1.2)}
+.node-label{font-family:'JetBrains Mono',monospace;font-size:10px;fill:#8892a4;pointer-events:none;text-anchor:middle;dominant-baseline:central}
+.link-line{stroke:rgba(255,255,255,0.08);stroke-width:1;fill:none}
+.link-label{font-family:'JetBrains Mono',monospace;font-size:8px;fill:#4a5568;pointer-events:none}
+.node-selected .node-circle{filter:drop-shadow(0 0 8px currentColor)}
+
+/* ── MISC ────────────────────────────────────────────────── */
+.row{display:flex;gap:12px}
+.col{flex:1;min-width:0}
+.tag{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:3px;font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:.04em}
+.tag.cyan{background:rgba(0,212,255,.12);color:var(--cyan);border:1px solid rgba(0,212,255,.2)}
+.tag.green{background:rgba(0,255,136,.12);color:var(--green);border:1px solid rgba(0,255,136,.2)}
+.tag.red{background:rgba(255,51,102,.12);color:var(--red);border:1px solid rgba(255,51,102,.2)}
+.tag.orange{background:rgba(255,107,53,.12);color:var(--orange);border:1px solid rgba(255,107,53,.2)}
+.tag.gold{background:rgba(255,215,0,.12);color:var(--gold);border:1px solid rgba(255,215,0,.2)}
+.tag.purple{background:rgba(155,89,255,.12);color:var(--purple);border:1px solid rgba(155,89,255,.2)}
+.section-title{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t2);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.empty-state{text-align:center;padding:32px;color:var(--t3);font-size:12px}
+.empty-state-icon{font-size:32px;margin-bottom:8px;opacity:.4}
+.btn{padding:7px 14px;border:1px solid var(--border);background:var(--glass);color:var(--t2);font-family:var(--font-ui);font-size:12px;font-weight:600;border-radius:5px;cursor:pointer;transition:.12s;letter-spacing:.04em}
+.btn:hover{color:var(--t1);background:var(--glass2);border-color:var(--border2)}
+.btn.primary{background:var(--cyan-dim);color:var(--cyan);border-color:rgba(0,212,255,.3)}
+.btn.primary:hover{background:rgba(0,212,255,.2);box-shadow:var(--glow)}
+/* scanning animation */
+@keyframes scanline{0%{transform:translateY(-100%)}100%{transform:translateY(100vh)}}
+.scanline{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(transparent,rgba(0,212,255,.15),transparent);animation:scanline 8s linear infinite;pointer-events:none;z-index:9999}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .3s ease forwards}
+</style>
+</head>
+<body>
+<div class="scanline"></div>
+<div id="app">
+
+<!-- ═══════════════════════════════════════════════════════
+     HEADER
+═══════════════════════════════════════════════════════ -->
+<header id="header">
+  <a class="hd-logo" href="#">
+    <div class="hd-logo-mark">CG</div>
+    <span class="hd-brand">ClearGlass <span>NEXUS</span></span>
+    <span class="hd-ver">v3.0</span>
+  </a>
+  <div class="hd-sep"></div>
+  <nav class="hd-nav">
+    <button class="hd-nav-btn active" onclick="switchView('overview',this)">Overview</button>
+    <button class="hd-nav-btn" onclick="switchView('graph',this)">Entity Graph</button>
+    <button class="hd-nav-btn" onclick="switchView('investigator',this)">AI Investigator</button>
+    <button class="hd-nav-btn" onclick="switchView('social',this)">Social Analytics</button>
+    <button class="hd-nav-btn" onclick="switchView('burlington',this)">Burlington Intel</button>
+    <button class="hd-nav-btn" onclick="switchView('sentiment',this)">Sentiment</button>
+    <button class="hd-nav-btn" onclick="switchView('competitor',this)">Competitors</button>
+    <button class="hd-nav-btn" onclick="switchView('reports',this)">Reports</button>
+  </nav>
+  <div class="hd-status">
+    <div class="hd-badge"><div class="pulse"></div>LIVE</div>
+    <div class="hd-badge">Burlington, ON</div>
+    <div class="hd-badge">6 APIs Active</div>
+    <div class="hd-session">SID: 4F7A-2E9C</div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════
+     LEFT SIDEBAR
+═══════════════════════════════════════════════════════ -->
+<aside id="sidebar">
+  <div class="sb-section">
+    <div class="sb-search"><input id="entity-search" type="text" placeholder="Search entity types…" oninput="filterEntityTypes(this.value)"></div>
+  </div>
+  
+  <div class="sb-section">
+    <div class="sb-section-label">Navigation</div>
+    <div class="sb-item active" id="nav-overview" onclick="switchView('overview',null,'nav-overview')"><span class="sb-item-icon">⬡</span>Overview</div>
+    <div class="sb-item" id="nav-graph" onclick="switchView('graph',null,'nav-graph')"><span class="sb-item-icon">◎</span>Entity Graph</div>
+    <div class="sb-item" id="nav-investigator" onclick="switchView('investigator',null,'nav-investigator')"><span class="sb-item-icon">◈</span>AI Investigator</div>
+    <div class="sb-item" id="nav-social" onclick="switchView('social',null,'nav-social')"><span class="sb-item-icon">◫</span>Social Analytics</div>
+    <div class="sb-item" id="nav-burlington" onclick="switchView('burlington',null,'nav-burlington')"><span class="sb-item-icon">◉</span>Burlington Intel</div>
+    <div class="sb-item" id="nav-sentiment" onclick="switchView('sentiment',null,'nav-sentiment')"><span class="sb-item-icon">◐</span>Sentiment</div>
+    <div class="sb-item" id="nav-competitor" onclick="switchView('competitor',null,'nav-competitor')"><span class="sb-item-icon">◑</span>Competitors</div>
+    <div class="sb-item" id="nav-reports" onclick="switchView('reports',null,'nav-reports')"><span class="sb-item-icon">◧</span>Reports</div>
+  </div>
+  
+  <div class="sb-divider"></div>
+  
+  <div class="sb-section">
+    <div class="sb-section-label">People</div>
+    <div class="entity-type" onclick="addEntityToGraph('Person')" title="Add Person node"><span class="et-dot" style="background:#ff6b9d"></span>Person<small id="cnt-Person">12</small></div>
+    <div class="entity-type" onclick="addEntityToGraph('Username')" title="Add Username node"><span class="et-dot" style="background:#a78bfa"></span>Username<small id="cnt-Username">34</small></div>
+    <div class="entity-type" onclick="addEntityToGraph('EmailAddress')" title="Add Email node"><span class="et-dot" style="background:#60a5fa"></span>EmailAddress<small id="cnt-EmailAddress">8</small></div>
+    <div class="entity-type" onclick="addEntityToGraph('PhoneNumber')" title="Add Phone node"><span class="et-dot" style="background:#34d399"></span>PhoneNumber<small id="cnt-PhoneNumber">5</small></div>
+    <div class="entity-type" onclick="addEntityToGraph('Organization')" title="Add Org node"><span class="et-dot" style="background:#f59e0b"></span>Organization<small id="cnt-Organization">7</small></div>
+    <div class="entity-type" onclick="addEntityToGraph('SocialMedia')" title="Add SocialMedia node"><span class="et-dot" style="background:#ec4899"></span>SocialMedia<small id="cnt-SocialMedia">47</small></div>
+  </div>
+  
+  <div class="sb-section">
+    <div class="sb-section-label">Infrastructure</div>
+    <div class="entity-type" onclick="addEntityToGraph('Domain')"><span class="et-dot" style="background:#00d4ff"></span>Domain<small id="cnt-Domain">23</small></div>
+    <div class="entity-type" onclick="addEntityToGraph('IPAddress')"><span class="et-dot" style="background:#ffd700"></span>IPAddress<small id="cnt-IPAddress">19</small></div>
+    <div class="entity-type" onclick="addEntityToGraph('URL')"><span class="et-dot" style="background:#98ff98"></span>URL<small id="cnt-URL">61</small></div>
+    <div class="entity-type" onclick="addEntityToGraph('ASNumber')"><span class="et-dot" style="background:#ff6b35"></span>ASNumber<small id="cnt-ASNumber">4</small></div>
+    <div class="entity-type" onclick="addEntityToGraph('Network')"><span class="et-dot" style="background:#64748b"></span>Network<small id="cnt-Network">6</small></div>
+    <div class="entity-type" onclick="addEntityToGraph('MXRecord')"><span class="et-dot" style="background:#a855f7"></span>MXRecord<small id="cnt-MXRecord">3</small></div>
+    <div class="entity-type" onclick="addEntityToGraph('NSRecord')"><span class="et-dot" style="background:#8b5cf6"></span>NSRecord<small id="cnt-NSRecord">4</small></div>
+    <div class="entity-type" onclick="addEntityToGraph('Nameserver')"><span class="et-dot" style="background:#6366f1"></span>Nameserver<small id="cnt-Nameserver">6</small></div>
+    <div class="entity-type" onclick="addEntityToGraph('SSLCertificate')"><span class="et-dot" style="background:#14b8a6"></span>SSLCertificate<small id="cnt-SSLCertificate">9</small></div>
+    <div class="entity-type" onclick="addEntityToGraph('Subdomain')"><span class="et-dot" style="background:#06b6d4"></span>Subdomain<small id="cnt-Subdomain">15</small></div>
+  </div>
+  
+  <div class="sb-section">
+    <div class="sb-section-label">Forensics</div>
+    <div class="entity-type" onclick="addEntityToGraph('Hash')"><span class="et-dot" style="background:#ef4444"></span>Hash<small id="cnt-Hash">11</small></div>
+    <div class="entity-type" onclick="addEntityToGraph('Document')"><span class="et-dot" style="background:#84cc16"></span>Document<small id="cnt-Document">7</small></div>
+    <div class="entity-type" onclick="addEntityToGraph('HTTPHeader')"><span class="et-dot" style="background:#f97316"></span>HTTPHeader<small id="cnt-HTTPHeader">14</small></div>
+  </div>
+  
+  <div class="sb-section">
+    <div class="sb-section-label">Location</div>
+    <div class="entity-type" onclick="addEntityToGraph('Location')"><span class="et-dot" style="background:#22c55e"></span>Location<small id="cnt-Location">8</small></div>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════════════════════════
+     MAIN CONTENT
+═══════════════════════════════════════════════════════ -->
+<main id="main">
+
+<!-- VIEW: OVERVIEW ───────────────────────────────────────── -->
+<section id="view-overview" class="view active">
+  <div class="kpi-grid">
+    <div class="kpi-card kc-cyan">
+      <div class="kpi-label">Total Entities</div>
+      <div class="kpi-value" id="kpi-entities">0</div>
+      <div class="kpi-sub">Graph nodes tracked</div>
+      <div class="kpi-trend up" id="kpi-entities-trend">+12%</div>
+    </div>
+    <div class="kpi-card kc-orange">
+      <div class="kpi-label">Active Investigations</div>
+      <div class="kpi-value" id="kpi-inv">3</div>
+      <div class="kpi-sub">AI tasks running</div>
+      <div class="kpi-trend up">+1</div>
+    </div>
+    <div class="kpi-card kc-green">
+      <div class="kpi-label">Social Reach</div>
+      <div class="kpi-value" id="kpi-reach">2.4M</div>
+      <div class="kpi-sub">Cross-platform impressions</div>
+      <div class="kpi-trend up">+18%</div>
+    </div>
+    <div class="kpi-card kc-purple">
+      <div class="kpi-label">Burlington Signals</div>
+      <div class="kpi-value" id="kpi-burl">847</div>
+      <div class="kpi-sub">Local intel hits today</div>
+      <div class="kpi-trend up">+7%</div>
+    </div>
+    <div class="kpi-card kc-gold">
+      <div class="kpi-label">Sentiment Score</div>
+      <div class="kpi-value" id="kpi-sent">72%</div>
+      <div class="kpi-sub">Positive overall</div>
+      <div class="kpi-trend up">+3%</div>
+    </div>
+    <div class="kpi-card kc-pink">
+      <div class="kpi-label">Influencers Found</div>
+      <div class="kpi-value">156</div>
+      <div class="kpi-sub">Active in target area</div>
+      <div class="kpi-trend up">+22</div>
+    </div>
+    <div class="kpi-card kc-cyan">
+      <div class="kpi-label">Competitor Intel</div>
+      <div class="kpi-value">8</div>
+      <div class="kpi-sub">Targets monitored</div>
+      <div class="kpi-trend down">−1</div>
+    </div>
+    <div class="kpi-card kc-orange">
+      <div class="kpi-label">Alerts Today</div>
+      <div class="kpi-value" id="kpi-alerts">14</div>
+      <div class="kpi-sub">3 high priority</div>
+      <div class="kpi-trend up" style="color:var(--red)">⚠ 3</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Platform Status</span></div>
+        <div id="platform-status-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;padding:4px 0">
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Recent Alerts</span></div>
+        <div class="alert-list" id="alert-list"></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="card">
+    <div class="card-header"><span class="card-title">Engagement Trend — 30 Days</span><span class="tag cyan" style="margin-left:auto">Live</span></div>
+    <div style="padding:14px;height:180px;position:relative"><canvas id="chart-overview-trend"></canvas></div>
+  </div>
+</section>
+
+<!-- VIEW: ENTITY GRAPH ───────────────────────────────────── -->
+<section id="view-graph" class="view" style="display:none;flex-direction:column;padding:0">
+  <div id="graph-toolbar">
+    <input class="gt-input" id="graph-search-input" type="text" placeholder="Investigate target (username, email, domain…)" value="acidvegas">
+    <button class="gt-btn active" onclick="runGraphInvestigation()">▶ Investigate</button>
+    <div class="gt-sep"></div>
+    <div class="gt-label">FILTERS:</div>
+    <button class="gt-btn active" onclick="toggleFilter(this,'all')">All</button>
+    <button class="gt-btn" onclick="toggleFilter(this,'people')">People</button>
+    <button class="gt-btn" onclick="toggleFilter(this,'infra')">Infrastructure</button>
+    <button class="gt-btn" onclick="toggleFilter(this,'forensics')">Forensics</button>
+    <div class="gt-sep"></div>
+    <button class="gt-btn" onclick="resetGraph()">⟳ Reset</button>
+    <button class="gt-btn" onclick="exportGraph()">↓ Export</button>
+    <span class="gt-label" id="graph-node-count" style="margin-left:auto;font-size:11px">Nodes: 0 | Links: 0</span>
+  </div>
+  <div id="graph-container" style="flex:1;position:relative">
+    <svg id="graph-svg"></svg>
+    <div class="node-tooltip" id="node-tooltip">
+      <div class="node-tooltip-type" id="tt-type">Type</div>
+      <div class="node-tooltip-label" id="tt-label">Label</div>
+      <div class="node-tooltip-row"><span>Connections</span><span id="tt-conn">0</span></div>
+      <div class="node-tooltip-row"><span>Source</span><span id="tt-source">Unknown</span></div>
+      <div class="node-tooltip-row"><span>Confidence</span><span id="tt-conf">—</span></div>
+    </div>
+    <div class="graph-overlay">
+      <div>Nodes: <span id="go-nodes">0</span></div>
+      <div>Links: <span id="go-links">0</span></div>
+      <div>Clusters: <span id="go-clusters">0</span></div>
+      <div style="margin-top:4px;color:#4a5568;font-size:9px">Drag to pan · Scroll to zoom</div>
+    </div>
+  </div>
+</section>
+
+<!-- VIEW: AI INVESTIGATOR ────────────────────────────────── -->
+<section id="view-investigator" class="view" style="display:none">
+  <div class="inv-header">
+    <div class="inv-status-row">
+      <span style="font-size:14px;font-weight:600;letter-spacing:.05em">AI Investigator</span>
+      <div class="inv-badge completed" id="inv-status-badge">COMPLETED</div>
+      <div class="inv-stats">
+        <div class="inv-stat">steps <strong id="inv-steps">28</strong></div>
+        <div class="inv-stat">transforms <strong id="inv-transforms">3</strong></div>
+        <div class="inv-stat">llm calls <strong id="inv-llm">15</strong></div>
+      </div>
+      <button class="btn" onclick="refreshInvestigator()" style="margin-left:auto">⟳ Refresh</button>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="inv-progress" style="width:100%"></div></div>
+    <div class="inv-prompt-area" style="margin-top:12px">
+      <label>Prompt — Describe investigation goal and desired outcome</label>
+      <textarea id="inv-prompt-text" placeholder="Example: Investigate the selected infrastructure for ownership, external exposure, and high-confidence pivots.">Investigate the username acidvegas across all platforms, map connected accounts, infrastructure, and social footprint. Identify cross-platform activity patterns and build a complete digital identity profile.</textarea>
+      <div class="inv-controls">
+        <div>
+          <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t2);cursor:pointer">
+            <input type="radio" name="scope" checked style="accent-color:var(--orange)"> Whole project
+          </label>
+        </div>
+        <div>
+          <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t2);cursor:pointer">
+            <input type="radio" name="scope" style="accent-color:var(--cyan)"> Selected entities
+          </label>
+        </div>
+        <button class="inv-run-btn" onclick="runInvestigation()" id="inv-run-btn">▶ Start Run</button>
+        <span class="inv-scope">The investigator reasons over the entire project graph.</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div style="flex:1.4">
+      <div class="section-title">Investigation Steps Log</div>
+      <div class="steps-log">
+        <div class="steps-log-header">
+          <span>STEPS</span>
+          <span class="tag cyan" id="steps-count-tag">28 steps</span>
+          <span class="tag orange" style="margin-left:auto">15 LLM calls</span>
+        </div>
+        <div class="steps-log-body" id="steps-log-body"></div>
+      </div>
+    </div>
+    <div style="flex:1">
+      <div class="section-title">Transforms Available</div>
+      <div class="card" style="overflow:hidden">
+        <div class="transforms-grid" id="transforms-grid"></div>
+      </div>
+      <div class="section-title" style="margin-top:14px">Current Prompt</div>
+      <div class="card card-body" style="font-family:var(--font-mono);font-size:11px;color:var(--t2)">
+        <div id="current-prompt-display">Investigate the username acidvegas</div>
+      </div>
+      <div class="section-title" style="margin-top:14px">Final Summary</div>
+      <div class="card card-body" id="final-summary" style="font-family:var(--font-mono);font-size:10px;color:var(--t2);line-height:1.7;max-height:200px;overflow-y:auto"></div>
+    </div>
+  </div>
+</section>
+
+<!-- VIEW: SOCIAL ANALYTICS ──────────────────────────────── -->
+<section id="view-social" class="view" style="display:none">
+  <div class="platform-tabs" id="platform-tabs">
+    <button class="pt-tab tw active" onclick="switchPlatform('twitter',this)">𝕏 Twitter/X</button>
+    <button class="pt-tab ig" onclick="switchPlatform('instagram',this)">📷 Instagram</button>
+    <button class="pt-tab yt" onclick="switchPlatform('youtube',this)">▶ YouTube</button>
+    <button class="pt-tab fb" onclick="switchPlatform('facebook',this)">f Facebook</button>
+    <button class="pt-tab li" onclick="switchPlatform('linkedin',this)">in LinkedIn</button>
+    <button class="pt-tab tt" onclick="switchPlatform('tiktok',this)">♪ TikTok</button>
+  </div>
+  
+  <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)" id="social-kpis"></div>
+  
+  <div class="charts-grid" id="social-charts">
+    <div class="chart-card">
+      <div class="chart-card-title">Engagement Rate — Daily</div>
+      <div class="chart-body"><canvas id="chart-engagement"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">Followers Growth</div>
+      <div class="chart-body"><canvas id="chart-followers"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">Content Type Performance</div>
+      <div class="chart-body"><canvas id="chart-content-type"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">Post Timing Heatmap</div>
+      <div class="chart-body"><canvas id="chart-timing"></canvas></div>
+    </div>
+    <div class="chart-card chart-full">
+      <div class="chart-card-title">Impression vs Reach vs Engagement — 30 Days</div>
+      <div style="padding:14px;height:160px;position:relative"><canvas id="chart-impressions"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- VIEW: BURLINGTON INTEL ──────────────────────────────── -->
+<section id="view-burlington" class="view" style="display:none">
+  <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="kpi-card kc-cyan"><div class="kpi-label">Local Posts Detected</div><div class="kpi-value">847</div><div class="kpi-sub">Last 24 hours</div><div class="kpi-trend up">+7%</div></div>
+    <div class="kpi-card kc-green"><div class="kpi-label">Trending Hashtags</div><div class="kpi-value">23</div><div class="kpi-sub">Burlington-specific</div><div class="kpi-trend up">+4</div></div>
+    <div class="kpi-card kc-orange"><div class="kpi-label">Local Influencers</div><div class="kpi-value">67</div><div class="kpi-sub">10km radius</div><div class="kpi-trend up">+5</div></div>
+    <div class="kpi-card kc-purple"><div class="kpi-label">Business Mentions</div><div class="kpi-value">312</div><div class="kpi-sub">Local companies</div><div class="kpi-trend up">+12%</div></div>
+  </div>
+  
+  <div class="burl-grid">
+    <div class="card">
+      <div class="card-header"><span class="card-title">Trending Hashtags</span><span class="tag orange" style="margin-left:auto">Real-time</span></div>
+      <div class="hashtag-cloud" id="hashtag-cloud"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Neighbourhood Activity</span></div>
+      <div class="neighborhood-list" id="neighborhood-list"></div>
+    </div>
+    <div class="card chart-full">
+      <div class="card-header"><span class="card-title">Burlington Local Activity — Hourly</span></div>
+      <div style="padding:14px;height:160px;position:relative"><canvas id="chart-burlington-hourly"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Top Local Influencers</span></div>
+      <div id="local-influencers" style="padding:8px 0"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Location Intelligence</span></div>
+      <div style="padding:14px;font-family:var(--font-mono);font-size:11px;line-height:2;color:var(--t2)">
+        <div>📍 Burlington, Ontario, Canada</div>
+        <div>🗺️ Lat: 43.3255 · Lon: -79.7990</div>
+        <div>📐 Scan Radius: <span style="color:var(--cyan)">10 km</span></div>
+        <div>👥 Population: <span style="color:var(--cyan)">186,000</span></div>
+        <div>🕐 Timezone: <span style="color:var(--cyan)">America/Toronto</span></div>
+        <div>📮 Postal: <span style="color:var(--cyan)">L7M, L7N, L7P, L7R, L7S, L7T</span></div>
+        <div>📞 Area Codes: <span style="color:var(--cyan)">905 · 289</span></div>
+        <div style="margin-top:8px;color:var(--t3)">Landmarks Tracked: 7</div>
+        <div style="color:var(--t3)">Neighbourhoods: 10</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VIEW: SENTIMENT ─────────────────────────────────────── -->
+<section id="view-sentiment" class="view" style="display:none">
+  <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="kpi-card kc-green"><div class="kpi-label">Positive Sentiment</div><div class="kpi-value" id="sent-pos-val">72%</div><div class="kpi-sub">Posts analyzed: 4,821</div></div>
+    <div class="kpi-card kc-purple"><div class="kpi-label">Neutral Sentiment</div><div class="kpi-value" id="sent-neu-val">19%</div><div class="kpi-sub">Informational content</div></div>
+    <div class="kpi-card kc-orange"><div class="kpi-label">Negative Sentiment</div><div class="kpi-value" id="sent-neg-val">9%</div><div class="kpi-sub">Requires attention</div></div>
+  </div>
+  
+  <div class="row">
+    <div style="flex:1">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Sentiment by Platform</span></div>
+        <div class="sent-bars" id="sentiment-by-platform"></div>
+      </div>
+    </div>
+    <div style="flex:1">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Sentiment Distribution</span></div>
+        <div style="height:200px;padding:14px;position:relative"><canvas id="chart-sentiment-pie"></canvas></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="card">
+    <div class="card-header"><span class="card-title">Sentiment Trend — 30 Days</span></div>
+    <div style="padding:14px;height:160px;position:relative"><canvas id="chart-sentiment-trend"></canvas></div>
+  </div>
+  
+  <div class="card">
+    <div class="card-header"><span class="card-title">Top Positive Keywords</span></div>
+    <div id="positive-keywords" style="display:flex;flex-wrap:wrap;gap:6px;padding:14px"></div>
+  </div>
+</section>
+
+<!-- VIEW: COMPETITORS ───────────────────────────────────── -->
+<section id="view-competitor" class="view" style="display:none">
+  <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="kpi-card kc-cyan"><div class="kpi-label">Targets Monitored</div><div class="kpi-value">8</div></div>
+    <div class="kpi-card kc-green"><div class="kpi-label">Your Engagement Rank</div><div class="kpi-value">#2</div><div class="kpi-sub">vs competitors</div></div>
+    <div class="kpi-card kc-orange"><div class="kpi-label">Content Gap Score</div><div class="kpi-value">34%</div><div class="kpi-sub">Opportunities identified</div></div>
+    <div class="kpi-card kc-purple"><div class="kpi-label">Share of Voice</div><div class="kpi-value">28%</div><div class="kpi-sub">Burlington market</div></div>
+  </div>
+  
+  <div class="card" style="overflow:hidden">
+    <div class="card-header"><span class="card-title">Competitor Benchmarking</span></div>
+    <table class="comp-table" id="competitor-table"></table>
+  </div>
+  
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Engagement Rate Comparison</span></div>
+        <div style="height:180px;padding:14px;position:relative"><canvas id="chart-comp-engagement"></canvas></div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Follower Growth Race</span></div>
+        <div style="height:180px;padding:14px;position:relative"><canvas id="chart-comp-growth"></canvas></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VIEW: REPORTS ───────────────────────────────────────── -->
+<section id="view-reports" class="view" style="display:none">
+  <div class="section-title">Report Templates</div>
+  <div class="report-grid" id="report-grid"></div>
+  
+  <div class="section-title">Export Data</div>
+  <div class="export-grid">
+    <div class="export-btn" onclick="simulateExport('JSON')"><div class="export-btn-icon">{ }</div><div class="export-btn-label">JSON</div><div class="export-btn-sub">Full dataset</div></div>
+    <div class="export-btn" onclick="simulateExport('CSV')"><div class="export-btn-icon">⊞</div><div class="export-btn-label">CSV</div><div class="export-btn-sub">Tabular data</div></div>
+    <div class="export-btn" onclick="simulateExport('Excel')"><div class="export-btn-icon">📊</div><div class="export-btn-label">Excel</div><div class="export-btn-sub">.xlsx format</div></div>
+    <div class="export-btn" onclick="simulateExport('PDF')"><div class="export-btn-icon">📄</div><div class="export-btn-label">PDF</div><div class="export-btn-sub">Executive report</div></div>
+  </div>
+  
+  <div class="section-title">Scheduled Reports</div>
+  <div class="card card-body" style="font-family:var(--font-mono);font-size:11px;color:var(--t2)">
+    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
+      <span>Weekly Social Summary</span><span style="color:var(--green)">Every Monday 08:00</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
+      <span>Monthly Executive Digest</span><span style="color:var(--cyan)">1st of month 09:00</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
+      <span>Burlington Intel Brief</span><span style="color:var(--orange)">Daily 07:00</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;padding:6px 0">
+      <span>Competitor Watch Alert</span><span style="color:var(--purple)">Real-time triggers</span>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════
+     RIGHT PANEL
+═══════════════════════════════════════════════════════ -->
+<aside id="rpanel">
+  <div class="rp-section">
+    <div class="rp-title">Selected Entity</div>
+    <div class="entity-info-card" id="selected-entity-card">
+      <div class="eic-type">USERNAME</div>
+      <div class="eic-value">acidvegas</div>
+      <div class="eic-meta">
+        Connections: 47<br>
+        Platforms: YouTube, DeviantArt, Reddit, Twitch, Twitter, eBay, Weibo, Gist, Codeberg, Baidu Tieba<br>
+        Confidence: <span style="color:var(--green)">94%</span><br>
+        Last seen: <span style="color:var(--cyan)">2 hours ago</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;margin-top:8px">
+      <button class="btn primary" style="flex:1;font-size:11px" onclick="investigateEntity()">Investigate</button>
+      <button class="btn" style="flex:1;font-size:11px" onclick="addToGraph()">Add to Graph</button>
+    </div>
+  </div>
+  
+  <div class="rp-section">
+    <div class="rp-title">Timeline</div>
+    <div id="timeline-events" style="max-height:160px;overflow-y:auto"></div>
+  </div>
+  
+  <div class="rp-section">
+    <div class="rp-title">Investigation Reasoning — Step 39</div>
+    <div style="font-family:var(--font-mono);font-size:10px;color:var(--t2);line-height:1.7;padding:2px 0" id="reasoning-panel">
+      We have enumerated profile_url=https://deviantart.com/acidvegas. Deeper profile inspection across available transforms confirms accounts are profile-level and suitable for extraction. Proceeding to cross-platform pivot…
+    </div>
+  </div>
+  
+  <div class="rp-section">
+    <div class="rp-title">Live Activity Feed</div>
+    <div class="activity-feed" id="activity-feed"></div>
+  </div>
+  
+  <div class="rp-section">
+    <div class="rp-title">Session Stats</div>
+    <div style="font-family:var(--font-mono);font-size:10px;color:var(--t2);line-height:2">
+      <div>Session: <span style="color:var(--cyan)">4F7A-2E9C</span></div>
+      <div>Duration: <span id="session-duration" style="color:var(--t1)">00:00:00</span></div>
+      <div>API Calls: <span id="api-call-count" style="color:var(--t1)">247</span></div>
+      <div>Data Points: <span style="color:var(--t1)">18,432</span></div>
+      <div>Entities: <span id="rp-entities" style="color:var(--cyan)">0</span></div>
+      <div>License: <span style="color:var(--green)">Enterprise ✓</span></div>
+    </div>
+  </div>
+</aside>
+</div><!-- #app -->
+
+<script>
+// ═══════════════════════════════════════════════════════
+// CONSTANTS & STATE
+// ═══════════════════════════════════════════════════════
+const entityColors = {
+  Person:'#ff6b9d',Username:'#a78bfa',EmailAddress:'#60a5fa',PhoneNumber:'#34d399',
+  Organization:'#f59e0b',SocialMedia:'#ec4899',Domain:'#00d4ff',IPAddress:'#ffd700',
+  URL:'#98ff98',ASNumber:'#ff6b35',Network:'#64748b',MXRecord:'#a855f7',
+  NSRecord:'#8b5cf6',Nameserver:'#6366f1',SSLCertificate:'#14b8a6',Subdomain:'#06b6d4',
+  Hash:'#ef4444',Document:'#84cc16',HTTPHeader:'#f97316',Location:'#22c55e'
+};
+
+const entityCounts = {
+  Person:12,Username:34,EmailAddress:8,PhoneNumber:5,Organization:7,SocialMedia:47,
+  Domain:23,IPAddress:19,URL:61,ASNumber:4,Network:6,MXRecord:3,NSRecord:4,
+  Nameserver:6,SSLCertificate:9,Subdomain:15,Hash:11,Document:7,HTTPHeader:14,Location:8
+};
+
+const platformData = {
+  twitter:{name:'Twitter/X',color:'#1da1f2',followers:12400,engagement:3.2,posts:892,impressions:284000,reach:198000},
+  instagram:{name:'Instagram',color:'#e1306c',followers:8700,engagement:4.8,posts:412,impressions:196000,reach:142000},
+  youtube:{name:'YouTube',color:'#ff0000',followers:3200,engagement:6.1,posts:89,impressions:412000,reach:311000},
+  facebook:{name:'Facebook',color:'#1877f2',followers:5600,engagement:1.9,posts:634,impressions:134000,reach:98000},
+  linkedin:{name:'LinkedIn',color:'#0077b5',followers:2100,engagement:5.4,posts:234,impressions:89000,reach:67000},
+  tiktok:{name:'TikTok',color:'#ff0050',followers:19800,engagement:8.7,posts:156,impressions:890000,reach:634000}
+};
+
+let graphNodes = [], graphLinks = [], simulation = null, svg = null, chartInstances = {};
+let invRunning = false, sessionStart = Date.now(), apiCallCount = 247;
+
+// ═══════════════════════════════════════════════════════
+// VIEW SWITCHING
+// ═══════════════════════════════════════════════════════
+function switchView(viewId, btn, navId) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.hd-nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  
+  const view = document.getElementById('view-'+viewId);
+  if(view) view.classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(navId) document.getElementById(navId)?.classList.add('active');
+  
+  // Lazy init charts/graph
+  if(viewId === 'graph') initGraph();
+  if(viewId === 'social') initSocialCharts();
+  if(viewId === 'burlington') initBurlington();
+  if(viewId === 'sentiment') initSentiment();
+  if(viewId === 'competitor') initCompetitor();
+  if(viewId === 'investigator') initInvestigator();
+}
+
+// ═══════════════════════════════════════════════════════
+// OVERVIEW INIT
+// ═══════════════════════════════════════════════════════
+function initOverview() {
+  // Platform status grid
+  const platforms = [
+    {name:'Twitter/X',status:'online',calls:89,color:'#1da1f2'},
+    {name:'Instagram',status:'online',calls:67,color:'#e1306c'},
+    {name:'YouTube',status:'online',calls:34,color:'#ff0000'},
+    {name:'Facebook',status:'limited',calls:12,color:'#1877f2'},
+    {name:'LinkedIn',status:'online',calls:28,color:'#0077b5'},
+    {name:'TikTok',status:'online',calls:17,color:'#ff0050'},
+    {name:'Google Places',status:'online',calls:44,color:'#34a853'},
+    {name:'OpenAI',status:'online',calls:23,color:'#10a37f'},
+    {name:'Burlington Scan',status:'active',calls:0,color:'#a855f7'}
+  ];
+  
+  const grid = document.getElementById('platform-status-grid');
+  grid.innerHTML = platforms.map(p => `
+    <div style="padding:10px 14px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);display:flex;align-items:center;gap:8px">
+      <div style="width:6px;height:6px;border-radius:50%;background:${p.status==='online'?'var(--green)':p.status==='active'?'var(--cyan)':'var(--gold)'}"></div>
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--t1)">${p.name}</div>
+        <div style="font-family:var(--font-mono);font-size:9px;color:var(--t3)">${p.calls ? p.calls+' calls/hr' : 'scanning'}</div>
+      </div>
+      <div style="margin-left:auto;font-family:var(--font-mono);font-size:9px;color:${p.status==='online'?'var(--green)':p.status==='active'?'var(--cyan)':'var(--gold)'}">
+        ${p.status.toUpperCase()}
+      </div>
+    </div>`).join('');
+
+  // Alerts
+  const alerts = [
+    {level:'high',text:'<strong>Threat signature detected</strong> — abuse.ch ThreatFox IOC match on domain clearwater-sec.ca',time:'3m'},
+    {level:'high',text:'<strong>Competitor spike</strong> — @SecureOntario gained +1,200 followers in 2h',time:'8m'},
+    {level:'high',text:'<strong>Burlington trending</strong> — #DataBreach mentions surge 340% in 10km radius',time:'12m'},
+    {level:'med',text:'Sentiment dip on LinkedIn — 18 negative posts tagged @ClearGlassInc',time:'24m'},
+    {level:'med',text:'New influencer identified — @BurlingtonTechGuy · 22k followers · cybersecurity niche',time:'31m'},
+    {level:'low',text:'Weekly report ready for review — 30-day executive summary compiled',time:'1h'}
+  ];
+  document.getElementById('alert-list').innerHTML = alerts.map(a => `
+    <div class="alert-row">
+      <div class="alert-dot ${a.level}"></div>
+      <div class="alert-text">${a.text}</div>
+      <div class="alert-time">${a.time}</div>
+    </div>`).join('');
+
+  // Overview chart
+  destroyChart('chart-overview-trend');
+  const ctx = document.getElementById('chart-overview-trend').getContext('2d');
+  const labels = Array.from({length:30},(_,i)=>{const d=new Date();d.setDate(d.getDate()-29+i);return d.toLocaleDateString('en',{month:'short',day:'numeric'})});
+  chartInstances['chart-overview-trend'] = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'Twitter',data:Array.from({length:30},()=>Math.floor(2000+Math.random()*3000)),borderColor:'#1da1f2',fill:false,tension:.4,borderWidth:2,pointRadius:0},
+        {label:'Instagram',data:Array.from({length:30},()=>Math.floor(1500+Math.random()*2500)),borderColor:'#e1306c',fill:false,tension:.4,borderWidth:2,pointRadius:0},
+        {label:'TikTok',data:Array.from({length:30},()=>Math.floor(3000+Math.random()*6000)),borderColor:'#ff0050',fill:false,tension:.4,borderWidth:2,pointRadius:0}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8892a4',font:{size:10},boxWidth:12}}},scales:{x:{ticks:{color:'#4a5568',font:{size:9},maxTicksLimit:8},grid:{color:'rgba(255,255,255,0.04)'}},y:{ticks:{color:'#4a5568',font:{size:9}},grid:{color:'rgba(255,255,255,0.04)'}}}}
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// D3 ENTITY GRAPH
+// ═══════════════════════════════════════════════════════
+function initGraph() {
+  if(svg) return;
+  const container = document.getElementById('graph-container');
+  const width = container.clientWidth, height = container.clientHeight;
+  
+  svg = d3.select('#graph-svg')
+    .attr('width','100%').attr('height','100%')
+    .call(d3.zoom().scaleExtent([0.1,4]).on('zoom',e => g.attr('transform',e.transform)));
+  
+  svg.append('defs').append('marker')
+    .attr('id','arrowhead').attr('viewBox','0 -5 10 10').attr('refX',20).attr('refY',0)
+    .attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto')
+    .append('path').attr('d','M0,-5L10,0L0,5').attr('fill','rgba(255,255,255,0.15)');
+  
+  const g = svg.append('g').attr('id','graph-g');
+  svg.append('g').attr('id','graph-g-links').call(d => g.node().insertBefore(d.node(), g.node().firstChild));
+  
+  runGraphInvestigation();
+}
+
+function runGraphInvestigation() {
+  const target = document.getElementById('graph-search-input')?.value || 'acidvegas';
+  
+  graphNodes = [
+    {id:0,label:target,type:'Username',x:400,y:300,connections:47,source:'Primary',confidence:100},
+    {id:1,label:`${target}@YouTube`,type:'SocialMedia',source:'YouTube',confidence:98,connections:12},
+    {id:2,label:`${target}@DeviantArt`,type:'SocialMedia',source:'DeviantArt',confidence:97,connections:8},
+    {id:3,label:`${target}@Reddit`,type:'SocialMedia',source:'Reddit',confidence:95,connections:22},
+    {id:4,label:`${target}@Twitch`,type:'SocialMedia',source:'Twitch',confidence:94,connections:5},
+    {id:5,label:`${target}@Twitter`,type:'SocialMedia',source:'Twitter',confidence:91,connections:16},
+    {id:6,label:`${target}@GitHub`,type:'SocialMedia',source:'GitHub',confidence:96,connections:41},
+    {id:7,label:`${target}@Codeberg`,type:'SocialMedia',source:'Codeberg',confidence:93,connections:7},
+    {id:8,label:`${target}@Gist`,type:'SocialMedia',source:'Gist',confidence:89,connections:3},
+    {id:9,label:`${target}@Weibo`,type:'SocialMedia',source:'Weibo',confidence:82,connections:4},
+    {id:10,label:`${target}@eBay`,type:'SocialMedia',source:'eBay',confidence:78,connections:2},
+    {id:11,label:`${target}.com`,type:'Domain',source:'DNS',confidence:72,connections:6},
+    {id:12,label:'185.220.101.x',type:'IPAddress',source:'DNS',confidence:65,connections:3},
+    {id:13,label:'AS62240',type:'ASNumber',source:'ARIN',confidence:70,connections:2},
+    {id:14,label:'https://github.com/'+target,type:'URL',source:'GitHub',confidence:96,connections:19},
+    {id:15,label:'sha256:a3f7b2...',type:'Hash',source:'Forensics',confidence:88,connections:1},
+    {id:16,label:'Burlington, ON',type:'Location',source:'IP Geo',confidence:61,connections:4},
+    {id:17,label:'acidvegas@proton.me',type:'EmailAddress',source:'OSINT',confidence:55,connections:2},
+    {id:18,label:`${target}@BaiduTieba`,type:'SocialMedia',source:'Baidu',confidence:74,connections:1},
+    {id:19,label:'cert:acidvegas.com',type:'SSLCertificate',source:'crt.sh',confidence:71,connections:3}
+  ];
+  
+  graphLinks = [
+    {source:0,target:1,label:'has account'},{source:0,target:2,label:'has account'},
+    {source:0,target:3,label:'has account'},{source:0,target:4,label:'has account'},
+    {source:0,target:5,label:'has account'},{source:0,target:6,label:'has account'},
+    {source:0,target:7,label:'has account'},{source:0,target:8,label:'has account'},
+    {source:0,target:9,label:'has account'},{source:0,target:10,label:'has account'},
+    {source:0,target:11,label:'owns domain'},{source:0,target:17,label:'email match'},
+    {source:11,target:12,label:'resolves to'},{source:12,target:13,label:'ASN'},
+    {source:6,target:14,label:'profile url'},{source:14,target:15,label:'commit hash'},
+    {source:12,target:16,label:'geo located'},{source:11,target:19,label:'SSL cert'},
+    {source:0,target:18,label:'has account'},{source:19,target:12,label:'issued to'}
+  ];
+  
+  renderGraph();
+  updateGraphStats();
+}
+
+function renderGraph() {
+  const g = d3.select('#graph-g');
+  g.selectAll('*').remove();
+  
+  const container = document.getElementById('graph-container');
+  const W = container.clientWidth || 800, H = container.clientHeight || 600;
+  
+  simulation = d3.forceSimulation(graphNodes)
+    .force('link', d3.forceLink(graphLinks).id(d=>d.id).distance(100).strength(0.8))
+    .force('charge', d3.forceManyBody().strength(-300))
+    .force('center', d3.forceCenter(W/2, H/2))
+    .force('collision', d3.forceCollide(28));
+  
+  const link = g.append('g').selectAll('line').data(graphLinks).join('line')
+    .attr('class','link-line').attr('marker-end','url(#arrowhead)');
+  
+  const linkLabel = g.append('g').selectAll('text').data(graphLinks).join('text')
+    .attr('class','link-label').text(d=>d.label);
+  
+  const node = g.append('g').selectAll('g').data(graphNodes).join('g')
+    .attr('class','node-group')
+    .call(d3.drag().on('start',dragStart).on('drag',dragging).on('end',dragEnd))
+    .on('mouseover',(e,d)=>showTooltip(e,d))
+    .on('mouseout',()=>hideTooltip())
+    .on('click',(e,d)=>selectEntity(d));
+  
+  node.append('circle')
+    .attr('r',d => d.id===0 ? 16 : Math.max(7, Math.min(12, 5 + d.connections/5)))
+    .attr('fill',d=>entityColors[d.type]||'#8892a4')
+    .attr('fill-opacity', d => d.id===0 ? 1 : 0.75)
+    .attr('stroke',d=>d.id===0?'rgba(255,255,255,0.3)':'transparent')
+    .attr('stroke-width',d=>d.id===0?2:0);
+  
+  node.append('text')
+    .attr('y', d => (d.id===0?20:16))
+    .text(d => d.label.length>20 ? d.label.slice(0,18)+'…' : d.label)
+    .attr('class','node-label');
+  
+  simulation.on('tick', () => {
+    link.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y)
+        .attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
+    linkLabel.attr('x',d=>(d.source.x+d.target.x)/2)
+             .attr('y',d=>(d.source.y+d.target.y)/2);
+    node.attr('transform',d=>`translate(${d.x},${d.y})`);
+  });
+}
+
+function dragStart(e,d){if(!e.active)simulation.alphaTarget(.3).restart();d.fx=d.x;d.fy=d.y}
+function dragging(e,d){d.fx=e.x;d.fy=e.y}
+function dragEnd(e,d){if(!e.active)simulation.alphaTarget(0);d.fx=null;d.fy=null}
+
+function showTooltip(e,d) {
+  const tt = document.getElementById('node-tooltip');
+  tt.style.display='block';
+  tt.style.left=(e.offsetX+20)+'px';
+  tt.style.top=(e.offsetY-10)+'px';
+  document.getElementById('tt-type').textContent=d.type.toUpperCase();
+  document.getElementById('tt-label').textContent=d.label;
+  document.getElementById('tt-conn').textContent=d.connections||'—';
+  document.getElementById('tt-source').textContent=d.source||'Unknown';
+  document.getElementById('tt-conf').textContent=d.confidence?d.confidence+'%':'—';
+}
+function hideTooltip(){document.getElementById('node-tooltip').style.display='none'}
+
+function selectEntity(d) {
+  document.getElementById('selected-entity-card').innerHTML = `
+    <div class="eic-type">${d.type.toUpperCase()}</div>
+    <div class="eic-value">${d.label}</div>
+    <div class="eic-meta">
+      Connections: ${d.connections||0}<br>
+      Source: ${d.source||'Unknown'}<br>
+      Confidence: <span style="color:var(--green)">${d.confidence||0}%</span>
+    </div>`;
+  addActivity('NODE_SELECT', d.type, d.label.slice(0,24));
+}
+
+function updateGraphStats() {
+  const n = graphNodes.length, l = graphLinks.length;
+  document.getElementById('graph-node-count').textContent = `Nodes: ${n} | Links: ${l}`;
+  document.getElementById('go-nodes').textContent = n;
+  document.getElementById('go-links').textContent = l;
+  document.getElementById('go-clusters').textContent = Math.ceil(n/4);
+  document.getElementById('rp-entities').textContent = n;
+  document.getElementById('kpi-entities').textContent = n + Object.values(entityCounts).reduce((a,b)=>a+b,0);
+}
+
+function addEntityToGraph(type) {
+  const labels = {
+    Person:'Unknown Person',Username:'new_username',EmailAddress:'user@example.com',
+    PhoneNumber:'+1-905-555-0100',Organization:'New Org',SocialMedia:'@handle',
+    Domain:'example.com',IPAddress:'192.168.1.1',URL:'https://example.com',
+    ASNumber:'AS12345',Network:'10.0.0.0/24',MXRecord:'mail.example.com',
+    NSRecord:'ns1.example.com',Nameserver:'ns1.cloudflare.com',SSLCertificate:'cert:example.com',
+    Subdomain:'sub.example.com',Hash:'sha256:abc123...',Document:'document.pdf',
+    HTTPHeader:'X-Powered-By: PHP',Location:'Burlington, ON'
+  };
+  const newNode = {
+    id: graphNodes.length, label: labels[type]||type, type,
+    connections:0, source:'Manual', confidence:50
+  };
+  graphNodes.push(newNode);
+  if(graphNodes.length>1) graphLinks.push({source:0,target:graphNodes.length-1,label:'related'});
+  if(simulation) renderGraph();
+  updateGraphStats();
+  addActivity('ENTITY_ADDED', type, labels[type]);
+}
+
+function resetGraph() { graphNodes=[]; graphLinks=[]; if(svg) {d3.select('#graph-g').selectAll('*').remove(); updateGraphStats();} runGraphInvestigation(); }
+function exportGraph() { addActivity('EXPORT', 'Graph', 'JSON download initiated'); alert('Graph exported as JSON — '+graphNodes.length+' nodes, '+graphLinks.length+' links'); }
+function toggleFilter(btn, filter) { document.querySelectorAll('#graph-toolbar .gt-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
+
+// ═══════════════════════════════════════════════════════
+// AI INVESTIGATOR
+// ═══════════════════════════════════════════════════════
+const stepsData = [
+  {num:'01',type:'tool',content:'get_entity { "entity_type": "Username", "value": "acidvegas" }'},
+  {num:'02',type:'reasoning',content:'Initiating cross-platform username enumeration. Checking 47 platforms simultaneously.'},
+  {num:'03',type:'tool',content:'search_username { "username": "acidvegas", "platforms": ["youtube","deviantart","reddit","twitter","twitch","github"] }'},
+  {num:'04',type:'reasoning',content:'YouTube account confirmed. Profile URL returns HTTP 200. Proceeding to profile extraction.'},
+  {num:'05',type:'tool',content:'get_profile_url { "url": "https://www.youtube.com/@acidvegas", "status": "200" }'},
+  {num:'06',type:'transform',content:'Username → SocialMedia transform applied. Claimed: youtube.com/@acidvegas'},
+  {num:'07',type:'tool',content:'get_entity { "entity_type": "SocialMedia", "platform": "DeviantArt" }'},
+  {num:'08',type:'reasoning',content:'DeviantArt account located. Avatar hash matches primary account photo. High-confidence pivot.'},
+  {num:'09',type:'transform',content:'Username → SocialMedia transform applied. Claimed: deviantart.com/acidvegas'},
+  {num:'10',type:'tool',content:'dns_lookup { "domain": "acidvegas.com", "record_types": ["A","MX","NS","TXT"] }'},
+  {num:'11',type:'reasoning',content:'Domain registered. A record resolves to 185.220.101.47. Cloudflare proxy detected. NS: cloudflare.com'},
+  {num:'12',type:'tool',content:'ip_geolocate { "ip": "185.220.101.47" }'},
+  {num:'13',type:'reasoning',content:'IP geolocation: Tor exit node. Masking real origin. ASN: AS62240 (Clouvider Ltd).'},
+  {num:'14',type:'tool',content:'ssl_cert_lookup { "domain": "acidvegas.com", "source": "crt.sh" }'},
+  {num:'15',type:'reasoning',content:'SSL certificate history reveals 3 subdomains. Oldest cert issued 2019-03-14. Subject alt names logged.'},
+  {num:'16',type:'tool',content:'search_username { "username": "acidvegas", "platforms": ["github","codeberg","gist"] }'},
+  {num:'17',type:'reasoning',content:'GitHub profile found. 234 public repositories. Primary language: Python. Active since 2017.'},
+  {num:'18',type:'transform',content:'Username → URL transform. Extracted: github.com/acidvegas'},
+  {num:'19',type:'tool',content:'search_username { "username": "acidvegas", "platforms": ["reddit","hackernews","lobsters"] }'},
+  {num:'20',type:'reasoning',content:'Reddit account age: 8 years. Karma: 14,200. Active in r/netsec, r/Python, r/homelab.'},
+  {num:'21',type:'tool',content:'search_username { "username": "acidvegas", "platforms": ["ebay","weibo","baidutieba"] }'},
+  {num:'22',type:'reasoning',content:'International platforms confirmed. Weibo registration correlates with activity timeline 2020-2022.'},
+  {num:'23',type:'tool',content:'email_harvest { "domain": "acidvegas.com", "method": ["whois","cert_san","github_commits"] }'},
+  {num:'24',type:'reasoning',content:'Git commit metadata reveals email: acidvegas@proton.me. ProtonMail — anonymous. Cross-referencing.'},
+  {num:'25',type:'tool',content:'get_entity { "entity_type": "EmailAddress", "value": "acidvegas@proton.me" }'},
+  {num:'26',type:'reasoning',content:'Email confirmed in 2 public data sources. No breach records. Profile is security-conscious.'},
+  {num:'27',type:'transform',content:'Username → EmailAddress pivot. Confidence: 55%. Flagged for review.'},
+  {num:'28',type:'summary',content:'Investigation complete. 10+ platforms confirmed. Domain + IP + SSL mapped. Email pivoted. Full graph ready.'}
+];
+
+const transformsData = [
+  {icon:'🔍',name:'Username → SocialMedia',desc:'Find claimed accounts'},
+  {icon:'🌐',name:'Domain → DNS',desc:'Resolve A/MX/NS records'},
+  {icon:'📧',name:'Domain → Email',desc:'Harvest contact emails'},
+  {icon:'🔒',name:'Domain → SSL',desc:'Certificate history (crt.sh)'},
+  {icon:'📍',name:'IP → GeoLocation',desc:'Geolocate IP address'},
+  {icon:'🔗',name:'URL → Profile',desc:'Scrape profile metadata'},
+  {icon:'🕵️',name:'Email → Breaches',desc:'Check data breaches'},
+  {icon:'🌳',name:'Domain → Subdomains',desc:'Subdomain enumeration'},
+  {icon:'📊',name:'Username → Activity',desc:'Timeline reconstruction'}
+];
+
+function initInvestigator() {
+  // Render steps
+  const body = document.getElementById('steps-log-body');
+  body.innerHTML = stepsData.map(s => `
+    <div class="step-row ${s.num==='28'?'active':''}">
+      <span class="step-num">step ${s.num}</span>
+      <span class="step-type ${s.type}">${s.type.toUpperCase()}</span>
+      <span class="step-content">${s.content}</span>
+    </div>`).join('');
+  
+  // Render transforms
+  document.getElementById('transforms-grid').innerHTML = transformsData.map(t => `
+    <div class="transform-card" onclick="applyTransform('${t.name}')">
+      <div class="tc-icon">${t.icon}</div>
+      <div class="tc-name">${t.name}</div>
+      <div class="tc-desc">${t.desc}</div>
+    </div>`).join('');
+  
+  // Final summary
+  document.getElementById('final-summary').innerHTML = `Investigation summary: 'acidvegas' has claimed accounts across many platforms including YouTube, DeviantArt, Codeberg, Reddit, Weibo, Gist, Twitch, Twitter, eBay, Baidu Tieba, and GitHub (234 public repos). The YouTube account was inspected and returns a live profile URL (https://www.youtube.com/@acidvegas) with HTTP 200 status: Claimed. DNS enumeration reveals domain acidvegas.com resolving to Tor exit node 185.220.101.47 via Cloudflare proxy. SSL certificate history from crt.sh identifies 3 subdomains. Git commit metadata pivots to email acidvegas@proton.me with 55% confidence. Account security posture is high — Tor routing, anonymous email, privacy-focused platform preferences. Cross-platform activity spans 2017–present. Recommendation: expand investigation to Onion services and archived social content.`;
+}
+
+function runInvestigation() {
+  if(invRunning) return;
+  invRunning = true;
+  const btn = document.getElementById('inv-run-btn');
+  btn.disabled = true;
+  document.getElementById('inv-status-badge').className = 'inv-badge running';
+  document.getElementById('inv-status-badge').textContent = 'RUNNING';
+  document.getElementById('inv-progress').style.width = '0%';
+  document.getElementById('inv-steps').textContent = '0';
+  document.getElementById('inv-llm').textContent = '0';
+  
+  const body = document.getElementById('steps-log-body');
+  body.innerHTML = '';
+  let step = 0, llm = 0;
+  
+  const interval = setInterval(() => {
+    if(step >= stepsData.length) {
+      clearInterval(interval);
+      document.getElementById('inv-status-badge').className = 'inv-badge completed';
+      document.getElementById('inv-status-badge').textContent = 'COMPLETED';
+      btn.disabled = false;
+      invRunning = false;
+      return;
+    }
+    const s = stepsData[step];
+    if(s.type==='reasoning'||s.type==='summary') llm++;
+    document.getElementById('inv-steps').textContent = step+1;
+    document.getElementById('inv-llm').textContent = llm;
+    document.getElementById('inv-progress').style.width = ((step+1)/stepsData.length*100)+'%';
+    body.innerHTML += `<div class="step-row active fade-up">
+      <span class="step-num">step ${s.num}</span>
+      <span class="step-type ${s.type}">${s.type.toUpperCase()}</span>
+      <span class="step-content">${s.content}</span>
+    </div>`;
+    body.scrollTop = body.scrollHeight;
+    step++;
+  }, 220);
+}
+
+function refreshInvestigator() { invRunning = false; initInvestigator(); }
+function applyTransform(name) { addActivity('TRANSFORM', name, 'Applied to current graph'); }
+function investigateEntity() { switchView('investigator', null, 'nav-investigator'); document.querySelectorAll('.hd-nav-btn')[2].classList.add('active'); }
+function addToGraph() { addEntityToGraph('Username'); }
+
+// ═══════════════════════════════════════════════════════
+// SOCIAL ANALYTICS CHARTS
+// ═══════════════════════════════════════════════════════
+let currentPlatform = 'twitter';
+function switchPlatform(p, btn) {
+  currentPlatform = p;
+  document.querySelectorAll('.pt-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  updateSocialKPIs(p);
+  updateSocialCharts(p);
+}
+
+function initSocialCharts() {
+  updateSocialKPIs(currentPlatform);
+  updateSocialCharts(currentPlatform);
+}
+
+function updateSocialKPIs(p) {
+  const d = platformData[p];
+  document.getElementById('social-kpis').innerHTML = `
+    <div class="kpi-card kc-cyan"><div class="kpi-label">Followers</div><div class="kpi-value">${(d.followers/1000).toFixed(1)}K</div><div class="kpi-trend up">+2.1%</div></div>
+    <div class="kpi-card kc-green"><div class="kpi-label">Engagement Rate</div><div class="kpi-value">${d.engagement}%</div><div class="kpi-trend up">+0.3%</div></div>
+    <div class="kpi-card kc-orange"><div class="kpi-label">Total Posts</div><div class="kpi-value">${d.posts}</div><div class="kpi-sub">Last 30 days</div></div>
+    <div class="kpi-card kc-purple"><div class="kpi-label">Impressions</div><div class="kpi-value">${(d.impressions/1000).toFixed(0)}K</div><div class="kpi-trend up">+8%</div></div>`;
+}
+
+function updateSocialCharts(p) {
+  const pd = platformData[p];
+  const labels30 = Array.from({length:30},(_,i)=>{const d=new Date();d.setDate(d.getDate()-29+i);return d.toLocaleDateString('en',{month:'short',day:'numeric'})});
+  const rand = (base,range) => Array.from({length:30},()=>+(base+Math.random()*range-range/2).toFixed(2));
+  
+  destroyChart('chart-engagement');
+  const c1 = document.getElementById('chart-engagement').getContext('2d');
+  chartInstances['chart-engagement'] = new Chart(c1, {
+    type:'line',
+    data:{labels:labels30,datasets:[{label:'Engagement %',data:rand(pd.engagement,2),borderColor:pd.color,backgroundColor:pd.color+'22',fill:true,tension:.4,borderWidth:2,pointRadius:0}]},
+    options:baseChartOpts('Engagement %')
+  });
+  
+  destroyChart('chart-followers');
+  const c2 = document.getElementById('chart-followers').getContext('2d');
+  let ff = pd.followers - 2000;
+  chartInstances['chart-followers'] = new Chart(c2, {
+    type:'line',
+    data:{labels:labels30,datasets:[{label:'Followers',data:labels30.map(()=>{ff+=Math.floor(Math.random()*150);return ff}),borderColor:pd.color,fill:false,tension:.4,borderWidth:2,pointRadius:0}]},
+    options:baseChartOpts('Followers')
+  });
+  
+  destroyChart('chart-content-type');
+  const c3 = document.getElementById('chart-content-type').getContext('2d');
+  chartInstances['chart-content-type'] = new Chart(c3, {
+    type:'doughnut',
+    data:{labels:['Photos','Videos','Text','Reels/Shorts','Links'],
+      datasets:[{data:[35,28,18,12,7],backgroundColor:['#00d4ff','#ff6b35','#9b59ff','#ff6b9d','#ffd700'],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#8892a4',font:{size:10},boxWidth:10}}}}
+  });
+  
+  destroyChart('chart-timing');
+  const c4 = document.getElementById('chart-timing').getContext('2d');
+  chartInstances['chart-timing'] = new Chart(c4, {
+    type:'bar',
+    data:{labels:['6am','8am','10am','12pm','2pm','4pm','6pm','8pm','10pm'],
+      datasets:[{label:'Avg Engagement',data:[1.2,2.8,3.4,3.1,2.9,3.8,4.2,3.9,2.1],backgroundColor:pd.color+'88',borderRadius:3}]},
+    options:baseChartOpts('Avg Engagement %')
+  });
+
+  destroyChart('chart-impressions');
+  const c5 = document.getElementById('chart-impressions').getContext('2d');
+  chartInstances['chart-impressions'] = new Chart(c5, {
+    type:'line',
+    data:{labels:labels30,datasets:[
+      {label:'Impressions',data:rand(pd.impressions/30,8000),borderColor:'#00d4ff',fill:false,tension:.4,borderWidth:2,pointRadius:0},
+      {label:'Reach',data:rand(pd.reach/30,6000),borderColor:'#9b59ff',fill:false,tension:.4,borderWidth:2,pointRadius:0},
+      {label:'Engagements',data:rand(pd.followers*pd.engagement/100/30,200),borderColor:pd.color,fill:false,tension:.4,borderWidth:2,pointRadius:0}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8892a4',font:{size:10},boxWidth:12}}},scales:{x:{ticks:{color:'#4a5568',font:{size:9},maxTicksLimit:8},grid:{color:'rgba(255,255,255,0.04)'}},y:{ticks:{color:'#4a5568',font:{size:9}},grid:{color:'rgba(255,255,255,0.04)'}}}}
+  });
+}
+
+function baseChartOpts(yLabel) {
+  return {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+    scales:{x:{ticks:{color:'#4a5568',font:{size:9},maxTicksLimit:7},grid:{color:'rgba(255,255,255,0.04)'}},
+      y:{title:{display:!!yLabel,text:yLabel,color:'#4a5568',font:{size:9}},ticks:{color:'#4a5568',font:{size:9}},grid:{color:'rgba(255,255,255,0.04)'}}}};
+}
+
+// ═══════════════════════════════════════════════════════
+// BURLINGTON INTEL
+// ═══════════════════════════════════════════════════════
+function initBurlington() {
+  const hashtags = ['#BurlON','#BurlingtonOntario','#DowntownBurlington','#BurlingtonWaterfront','#SpencerSmith','#BurlingtonLife','#ExploreBurlington','#BurlingtonEats','#BurlingtonBusiness','#BurlingtonEvents','#BurlingtonLocal','#RoyalBotanicalGardens','#BurlingtonMall','#LaSallePark','#BronteCreek','#CyberSecBurlington','#TechBurlington'];
+  const hot = ['#BurlON','#DataBreach','#BurlingtonEvents','#CyberSecBurlington'];
+  document.getElementById('hashtag-cloud').innerHTML = hashtags.map(h => `<div class="htag ${hot.includes(h)?'hot':''}" onclick="searchHashtag('${h}')">${h}</div>`).join('');
+  
+  const neighborhoods = [
+    {name:'Downtown Burlington',count:234,pct:100},
+    {name:'Aldershot',count:187,pct:80},
+    {name:'Roseland',count:143,pct:61},
+    {name:'Orchard',count:121,pct:52},
+    {name:'Tyandaga',count:98,pct:42},
+    {name:'Palmer',count:87,pct:37},
+    {name:'Brant Hills',count:76,pct:32},
+    {name:'Mountainside',count:54,pct:23},
+    {name:'Freeman',count:41,pct:18},
+    {name:'Shoreacres',count:28,pct:12}
+  ];
+  document.getElementById('neighborhood-list').innerHTML = neighborhoods.map(n => `
+    <div class="nb-row">
+      <span class="nb-name">${n.name}</span>
+      <div class="nb-bar-wrap"><div class="nb-bar" style="width:${n.pct}%"></div></div>
+      <span class="nb-count">${n.count}</span>
+    </div>`).join('');
+  
+  // Hourly chart
+  destroyChart('chart-burlington-hourly');
+  const ctx = document.getElementById('chart-burlington-hourly').getContext('2d');
+  chartInstances['chart-burlington-hourly'] = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels:Array.from({length:24},(_,i)=>`${i}:00`),
+      datasets:[{label:'Local Posts',data:[3,1,1,0,2,4,12,28,41,38,45,52,67,71,68,74,82,91,87,63,44,29,18,8],backgroundColor:'rgba(0,212,255,0.4)',borderRadius:2}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#4a5568',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#4a5568',font:{size:9}},grid:{color:'rgba(255,255,255,0.04)'}}}}
+  });
+  
+  // Local influencers
+  const influencers = [
+    {handle:'@BurlingtonTechGuy',followers:'22.4K',niche:'Cybersecurity',er:'4.8%'},
+    {handle:'@HaltonCitizen',followers:'18.1K',niche:'Local News',er:'3.2%'},
+    {handle:'@YourHamiltonGal',followers:'14.8K',niche:'Lifestyle',er:'6.1%'},
+    {handle:'@SecureOntario',followers:'11.3K',niche:'InfoSec',er:'5.4%'},
+    {handle:'@BurlEats',followers:'9.7K',niche:'Food',er:'7.2%'}
+  ];
+  document.getElementById('local-influencers').innerHTML = influencers.map(inf => `
+    <div style="display:flex;align-items:center;padding:7px 14px;gap:10px;font-size:11px;border-bottom:1px solid var(--border);cursor:pointer;transition:.1s" onmouseover="this.style.background='var(--glass)'" onmouseout="this.style.background=''">
+      <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#000;flex-shrink:0">${inf.handle[1].toUpperCase()}</div>
+      <div style="flex:1"><div style="color:var(--t1);font-weight:600">${inf.handle}</div><div style="color:var(--t3);font-size:10px">${inf.niche}</div></div>
+      <div style="text-align:right"><div style="font-family:var(--font-mono);font-size:10px;color:var(--t1)">${inf.followers}</div><div style="font-size:9px;color:var(--green)">${inf.er}</div></div>
+    </div>`).join('');
+}
+function searchHashtag(h) { addActivity('HASHTAG_SEARCH', 'Burlington', h); }
+
+// ═══════════════════════════════════════════════════════
+// SENTIMENT
+// ═══════════════════════════════════════════════════════
+function initSentiment() {
+  const platforms = ['Twitter/X','Instagram','YouTube','Facebook','LinkedIn','TikTok'];
+  const pdata = platforms.map(p => ({name:p, pos:Math.floor(60+Math.random()*25), neg:Math.floor(5+Math.random()*15)}));
+  pdata.forEach(p => p.neu = 100-p.pos-p.neg);
+  
+  document.getElementById('sentiment-by-platform').innerHTML = pdata.map(p => `
+    <div class="sent-row">
+      <div class="sent-label">${p.name}</div>
+      <div class="sent-bar-wrap"><div class="sent-bar pos" style="width:${p.pos}%"></div></div>
+      <span class="sent-pct" style="color:var(--green)">${p.pos}%</span>
+    </div>`).join('');
+  
+  destroyChart('chart-sentiment-pie');
+  const ctx = document.getElementById('chart-sentiment-pie').getContext('2d');
+  chartInstances['chart-sentiment-pie'] = new Chart(ctx, {
+    type:'doughnut',
+    data:{labels:['Positive','Neutral','Negative'],datasets:[{data:[72,19,9],backgroundColor:['rgba(0,255,136,0.7)','rgba(155,89,255,0.7)','rgba(255,51,102,0.7)'],borderWidth:0,hoverOffset:4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#8892a4',font:{size:10},boxWidth:10}}}}
+  });
+  
+  destroyChart('chart-sentiment-trend');
+  const labels = Array.from({length:30},(_,i)=>{const d=new Date();d.setDate(d.getDate()-29+i);return d.toLocaleDateString('en',{month:'short',day:'numeric'})});
+  const ctx2 = document.getElementById('chart-sentiment-trend').getContext('2d');
+  chartInstances['chart-sentiment-trend'] = new Chart(ctx2, {
+    type:'line',
+    data:{labels,datasets:[
+      {label:'Positive',data:Array.from({length:30},()=>Math.floor(60+Math.random()*20)),borderColor:'#00ff88',fill:false,tension:.4,borderWidth:2,pointRadius:0},
+      {label:'Negative',data:Array.from({length:30},()=>Math.floor(4+Math.random()*10)),borderColor:'#ff3366',fill:false,tension:.4,borderWidth:2,pointRadius:0}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8892a4',font:{size:10},boxWidth:12}}},scales:{x:{ticks:{color:'#4a5568',font:{size:9},maxTicksLimit:7},grid:{color:'rgba(255,255,255,0.04)'}},y:{ticks:{color:'#4a5568',font:{size:9}},grid:{color:'rgba(255,255,255,0.04)'}}}}
+  });
+  
+  const keywords = ['secure','excellence','innovative','trusted','reliable','professional','cyber-ready','compliance','industry-leading','certified','transparent','cutting-edge'];
+  document.getElementById('positive-keywords').innerHTML = keywords.map((k,i) => `<div class="htag" style="font-size:${10+i%3}px">${k}</div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// COMPETITOR ANALYSIS
+// ═══════════════════════════════════════════════════════
+function initCompetitor() {
+  const competitors = [
+    {rank:1,handle:'@ClearGlassInc',followers:'28.2K',er:'4.2%',score:87,posts:312,sov:'28%',trend:'↑'},
+    {rank:2,handle:'@SecureOntario',followers:'24.7K',er:'5.1%',score:82,posts:287,sov:'22%',trend:'↑'},
+    {rank:3,handle:'@CyberShieldCA',followers:'19.3K',er:'3.8%',score:74,posts:201,sov:'17%',trend:'→'},
+    {rank:4,handle:'@HaltonCyberSec',followers:'14.1K',er:'2.9%',score:61,posts:156,sov:'14%',trend:'↓'},
+    {rank:5,handle:'@OntarioInfoSec',followers:'11.8K',er:'3.4%',score:58,posts:198,sov:'11%',trend:'→'},
+    {rank:6,handle:'@BurlSecOps',followers:'8.4K',er:'4.6%',score:53,posts:134,sov:'8%',trend:'↑'},
+  ];
+  
+  document.getElementById('competitor-table').innerHTML = `
+    <thead><tr>
+      <th>#</th><th>Handle</th><th>Followers</th><th>Eng. Rate</th><th>Score</th><th>Posts/Mo</th><th>SOV</th><th>Trend</th>
+    </tr></thead>
+    <tbody>
+    ${competitors.map(c => `<tr>
+      <td class="comp-rank">${c.rank}</td>
+      <td class="comp-handle">${c.handle} ${c.rank===1?'<span class="tag cyan">YOU</span>':''}</td>
+      <td style="font-family:var(--font-mono);font-size:11px">${c.followers}</td>
+      <td><span class="comp-score ${parseFloat(c.er)>4?'high':parseFloat(c.er)>3?'mid':'low'}">${c.er}</span></td>
+      <td><span class="comp-score ${c.score>80?'high':c.score>60?'mid':'low'}">${c.score}</span><div class="mini-bar-wrap"><div class="mini-bar" style="width:${c.score}%;background:${c.score>80?'var(--green)':c.score>60?'var(--gold)':'var(--red)'}"></div></div></td>
+      <td style="font-family:var(--font-mono);font-size:11px;color:var(--t2)">${c.posts}</td>
+      <td style="font-family:var(--font-mono);font-size:11px;color:var(--cyan)">${c.sov}</td>
+      <td style="font-family:var(--font-mono);font-size:12px;color:${c.trend==='↑'?'var(--green)':c.trend==='↓'?'var(--red)':'var(--t3)'}">${c.trend}</td>
+    </tr>`).join('')}
+    </tbody>`;
+  
+  destroyChart('chart-comp-engagement');
+  const c1 = document.getElementById('chart-comp-engagement').getContext('2d');
+  chartInstances['chart-comp-engagement'] = new Chart(c1, {
+    type:'bar',
+    data:{labels:competitors.map(c=>c.handle.replace('@','')),
+      datasets:[{label:'Engagement Rate %',data:competitors.map(c=>parseFloat(c.er)),
+        backgroundColor:['#00d4ff','#a78bfa','#60a5fa','#34d399','#f59e0b','#ec4899'],borderRadius:4}]},
+    options:{...baseChartOpts('Engagement %'),plugins:{legend:{display:false}}}
+  });
+  
+  destroyChart('chart-comp-growth');
+  const c2 = document.getElementById('chart-comp-growth').getContext('2d');
+  chartInstances['chart-comp-growth'] = new Chart(c2, {
+    type:'line',
+    data:{labels:Array.from({length:12},(_,i)=>{const d=new Date();d.setMonth(d.getMonth()-11+i);return d.toLocaleString('default',{month:'short'})}),
+      datasets:competitors.slice(0,3).map((c,i)=>({label:c.handle,data:Array.from({length:12},(_,j)=>{let f=parseInt(c.followers)*1000-parseInt(c.followers)*800/12*(12-j)/1000;return Math.floor(f+Math.random()*1000)}),borderColor:['#00d4ff','#a78bfa','#60a5fa'][i],fill:false,tension:.4,borderWidth:2,pointRadius:0}))},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8892a4',font:{size:10},boxWidth:12}}},scales:{x:{ticks:{color:'#4a5568',font:{size:9}},grid:{color:'rgba(255,255,255,0.04)'}},y:{ticks:{color:'#4a5568',font:{size:9}},grid:{color:'rgba(255,255,255,0.04)'}}}}
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// REPORTS
+// ═══════════════════════════════════════════════════════
+function initReports() {
+  const reports = [
+    {icon:'📊',name:'Executive Summary',desc:'30-day performance overview for C-suite',status:'ready'},
+    {icon:'🕵️',name:'OSINT Intelligence Report',desc:'Entity graph + investigation findings',status:'ready'},
+    {icon:'📍',name:'Burlington Intel Brief',desc:'Local market intelligence & trends',status:'ready'},
+    {icon:'💹',name:'Social Analytics Report',desc:'Multi-platform engagement deep dive',status:'ready'},
+    {icon:'🔒',name:'Competitor Threat Report',desc:'Competitive landscape analysis',status:'ready'},
+    {icon:'🧠',name:'AI Prediction Report',desc:'30-day forecast & recommendations',status:'pending'}
+  ];
+  document.getElementById('report-grid').innerHTML = reports.map(r => `
+    <div class="report-card" onclick="generateReport('${r.name}')">
+      <div class="rc-icon">${r.icon}</div>
+      <div class="rc-name">${r.name}</div>
+      <div class="rc-desc">${r.desc}</div>
+      <div class="rc-status ${r.status}">● ${r.status.toUpperCase()}</div>
+    </div>`).join('');
+}
+
+function generateReport(name) { addActivity('REPORT_GEN', 'Reports', name+' generating…'); setTimeout(()=>alert(`"${name}" report generated. Ready for download.`),300); }
+function simulateExport(format) { addActivity('EXPORT', format, 'Export initiated'); setTimeout(()=>alert(`Data exported as ${format} (${Math.floor(1000+Math.random()*500)} records)`),200); }
+
+// ═══════════════════════════════════════════════════════
+// ACTIVITY FEED + TIMELINE
+// ═══════════════════════════════════════════════════════
+const activityLog = [];
+function addActivity(type, category, detail) {
+  apiCallCount++;
+  document.getElementById('api-call-count').textContent = apiCallCount;
+  const time = new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  activityLog.unshift({time, type, category, detail});
+  if(activityLog.length > 50) activityLog.pop();
+  
+  const feed = document.getElementById('activity-feed');
+  feed.innerHTML = activityLog.slice(0,20).map(a => `
+    <div class="af-row"><span class="af-time">${a.time}</span> <span class="af-event">[${a.type}]</span> <span class="af-detail">${a.detail?.slice(0,30)||''}</span></div>`).join('');
+}
+
+function initTimeline() {
+  const events = [
+    {label:'Investigation completed',time:'2h ago',color:'#00ff88'},
+    {label:'acidvegas@YouTube confirmed',time:'2h 4m ago',color:'#1da1f2'},
+    {label:'Domain DNS mapped',time:'2h 8m ago',color:'#ffd700'},
+    {label:'GitHub profile scraped',time:'2h 14m ago',color:'#6366f1'},
+    {label:'SSL cert history pulled',time:'2h 20m ago',color:'#14b8a6'},
+    {label:'Email pivot: acidvegas@proton.me',time:'2h 28m ago',color:'#a855f7'},
+    {label:'Investigation started',time:'2h 35m ago',color:'#00d4ff'}
+  ];
+  document.getElementById('timeline-events').innerHTML = events.map(e => `
+    <div class="timeline-item">
+      <div class="ti-dot" style="background:${e.color};box-shadow:0 0 5px ${e.color}"></div>
+      <div class="ti-content"><div class="ti-label">${e.label}</div><div class="ti-time">${e.time}</div></div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// SESSION TIMER
+// ═══════════════════════════════════════════════════════
+function updateSession() {
+  const elapsed = Date.now() - sessionStart;
+  const h = Math.floor(elapsed/3600000), m = Math.floor((elapsed%3600000)/60000), s = Math.floor((elapsed%60000)/1000);
+  document.getElementById('session-duration').textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+// ═══════════════════════════════════════════════════════
+// ENTITY TYPE FILTER
+// ═══════════════════════════════════════════════════════
+function filterEntityTypes(q) {
+  document.querySelectorAll('.entity-type').forEach(el => {
+    el.style.display = el.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// CHART MANAGEMENT
+// ═══════════════════════════════════════════════════════
+function destroyChart(id) {
+  if(chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; }
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+function init() {
+  initOverview();
+  initTimeline();
+  initReports();
+  
+  // Animate KPI counts
+  animateCount('kpi-entities', 0, 337, 1200);
+  animateCount('kpi-alerts', 0, 14, 800);
+  
+  // Live activity simulation
+  const activityTypes = ['API_CALL','ENTITY_MATCH','SENTIMENT_SCAN','PLATFORM_FETCH','GEO_LOOKUP'];
+  const platforms2 = ['Twitter/X','Instagram','Burlington','GitHub','DNS'];
+  setInterval(() => {
+    if(Math.random() > 0.6) addActivity(activityTypes[Math.floor(Math.random()*activityTypes.length)], platforms2[Math.floor(Math.random()*platforms2.length)], `Live signal detected`);
+  }, 3000);
+  
+  setInterval(updateSession, 1000);
+  
+  // Initial activity
+  addActivity('SESSION_START', 'System', 'ClearGlass NEXUS v3.0 initialized');
+  addActivity('API_CONNECT', 'APIs', '6 platforms authenticated');
+  addActivity('SCAN_START', 'Burlington', 'Location scan radius: 10km');
+}
+
+function animateCount(id, from, to, duration) {
+  const el = document.getElementById(id);
+  if(!el) return;
+  const start = performance.now();
+  const update = (t) => {
+    const progress = Math.min((t-start)/duration, 1);
+    const value = Math.floor(from + (to-from)*easeOut(progress));
+    el.textContent = value > 999 ? (value/1000).toFixed(1)+'K' : value;
+    if(progress<1) requestAnimationFrame(update);
+  };
+  requestAnimationFrame(update);
+}
+function easeOut(t) { return 1 - Math.pow(1-t, 3); }
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

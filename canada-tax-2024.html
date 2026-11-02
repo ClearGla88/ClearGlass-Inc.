@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canada Tax Engine 2024 — T1 General Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   RESET & TOKENS
+═══════════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#faf8f4;
+  --paper:#ffffff;
+  --ink:#1c1917;
+  --ink2:#44403c;
+  --muted:#78716c;
+  --faint:#e7e5e0;
+  --faint2:#f5f3ef;
+  --navy:#002147;
+  --navy-lt:#e8edf5;
+  --navy-mid:#0a3472;
+  --gold:#b5830a;
+  --gold-lt:#fef9ec;
+  --gold-mid:#d4a017;
+  --maple:#c41e3a;
+  --maple-lt:#fdf0f2;
+  --green:#0f6b4f;
+  --green-lt:#ecfaf5;
+  --border:#d6d3ce;
+  --shadow:0 2px 16px rgba(28,25,23,0.07);
+  --shadow-lg:0 8px 40px rgba(28,25,23,0.12);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'IBM Plex Sans',sans-serif;
+  background:var(--cream);
+  color:var(--ink);
+  min-height:100vh;
+  font-size:13px;
+  line-height:1.6;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TOPBAR
+═══════════════════════════════════════════════════════════ */
+.topbar{
+  background:var(--navy);
+  color:rgba(255,255,255,0.75);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10.5px;
+  letter-spacing:0.06em;
+  padding:0 32px;
+  height:38px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.topbar-pills{display:flex;gap:6px;}
+.tpill{
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.18);
+  padding:2px 9px;font-size:10px;letter-spacing:0.08em;
+  color:rgba(255,255,255,0.85);
+}
+.tpill.active{background:var(--maple);border-color:var(--maple);color:#fff;}
+.dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#22c55e;display:inline-block;margin-right:6px;
+  animation:blink 2.2s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ═══════════════════════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════════════════════ */
+header{
+  background:var(--paper);
+  border-bottom:3px solid var(--navy);
+  padding:28px 40px 24px;
+}
+.hdr{
+  max-width:1200px;margin:0 auto;
+  display:flex;align-items:flex-end;justify-content:space-between;gap:20px;
+  flex-wrap:wrap;
+}
+.hdr-brand{display:flex;align-items:center;gap:16px;}
+.maple-leaf{
+  width:52px;height:52px;
+  background:var(--maple);
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;flex-shrink:0;
+  position:relative;
+}
+.maple-leaf::after{
+  content:'';
+  position:absolute;inset:3px;
+  border:1px solid rgba(255,255,255,0.2);
+}
+.hdr-title{
+  font-family:'Playfair Display',serif;
+  font-size:30px;font-weight:700;
+  color:var(--navy);line-height:1.1;
+}
+.hdr-title em{color:var(--maple);font-style:italic;}
+.hdr-sub{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;color:var(--muted);margin-top:5px;
+  letter-spacing:0.05em;
+}
+.hdr-meta{
+  text-align:right;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;color:var(--muted);line-height:2;
+}
+.hdr-meta b{color:var(--navy);}
+.cra-ref{
+  display:inline-block;
+  background:var(--navy-lt);
+  border:1px solid rgba(0,33,71,0.15);
+  color:var(--navy);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9.5px;letter-spacing:0.06em;
+  padding:2px 7px;margin-left:6px;
+  vertical-align:middle;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ALERT BANNER
+═══════════════════════════════════════════════════════════ */
+.alert-bar{
+  padding:11px 40px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;letter-spacing:0.04em;
+  display:flex;align-items:center;gap:10px;
+  flex-wrap:wrap;
+}
+.alert-bar.gold-bar{
+  background:var(--gold-lt);
+  border-bottom:2px solid var(--gold-mid);
+  color:#6b4c00;
+}
+.alert-bar.maple-bar{
+  background:var(--maple-lt);
+  border-bottom:1px solid rgba(196,30,58,0.2);
+  color:#7a1020;
+}
+.alert-bar a{color:var(--navy);font-weight:600;}
+.alert-icon{font-size:14px;flex-shrink:0;}
+
+/* ═══════════════════════════════════════════════════════════
+   MAIN GRID
+═══════════════════════════════════════════════════════════ */
+.wrapper{max-width:1200px;margin:0 auto;padding:28px 40px 80px;}
+@media(max-width:960px){.wrapper{padding:16px 16px 60px;}}
+.layout{
+  display:grid;
+  grid-template-columns:1fr 420px;
+  gap:24px;align-items:start;
+}
+@media(max-width:960px){.layout{grid-template-columns:1fr;}}
+
+/* ═══════════════════════════════════════════════════════════
+   CARDS
+═══════════════════════════════════════════════════════════ */
+.card{
+  background:var(--paper);
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+}
+.card-hdr{
+  padding:16px 22px 14px;
+  border-bottom:1px solid var(--faint);
+  display:flex;align-items:center;gap:10px;
+}
+.card-icon{
+  width:30px;height:30px;
+  background:var(--navy-lt);
+  border:1px solid rgba(0,33,71,0.12);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:var(--navy);flex-shrink:0;
+}
+.card-title{
+  font-size:12px;font-weight:600;
+  letter-spacing:0.07em;text-transform:uppercase;
+  color:var(--ink2);
+}
+.card-sub{font-size:10.5px;color:var(--muted);margin-top:1px;}
+.card-body{padding:20px 22px;}
+
+/* ═══════════════════════════════════════════════════════════
+   PROVINCE GRID
+═══════════════════════════════════════════════════════════ */
+.prov-group-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9.5px;letter-spacing:0.12em;
+  text-transform:uppercase;color:var(--muted);
+  margin-bottom:8px;margin-top:6px;
+}
+.prov-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:5px;margin-bottom:6px;
+}
+.prov-grid.terr{grid-template-columns:repeat(3,1fr);}
+.prov-btn{
+  background:var(--faint2);
+  border:1.5px solid var(--faint);
+  color:var(--ink2);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9.5px;font-weight:500;
+  padding:7px 2px;cursor:pointer;
+  text-align:center;transition:all .15s;
+  letter-spacing:0.03em;
+}
+.prov-btn:hover{border-color:var(--navy);color:var(--navy);background:var(--navy-lt);}
+.prov-btn.active{background:var(--navy);border-color:var(--navy);color:#fff;font-weight:600;}
+.prov-btn.nb-star{position:relative;}
+.prov-btn.nb-star.active::after{
+  content:'★';position:absolute;top:-7px;right:-3px;
+  font-size:9px;color:var(--gold-mid);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SECTION DIVIDERS
+═══════════════════════════════════════════════════════════ */
+.sec-div{
+  display:flex;align-items:center;gap:10px;
+  margin:20px 0 14px;
+}
+.sec-num{
+  width:22px;height:22px;
+  background:var(--navy);color:#fff;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;font-weight:500;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.sec-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;font-weight:600;
+  letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--navy);white-space:nowrap;
+}
+.sec-line{flex:1;height:1px;background:var(--faint);}
+.sec-cra{
+  font-family:'IBM Plex Mono',monospace;font-size:9px;
+  color:var(--muted);letter-spacing:0.04em;white-space:nowrap;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FORM FIELDS
+═══════════════════════════════════════════════════════════ */
+.field{margin-bottom:12px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.field-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.field label{
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:11px;color:var(--ink2);margin-bottom:5px;font-weight:500;
+}
+.lbl-hint{
+  font-size:9.5px;color:var(--muted);font-weight:400;
+  font-family:'IBM Plex Mono',monospace;letter-spacing:0.03em;
+}
+.lbl-cra{
+  font-size:9px;color:var(--navy);font-weight:500;
+  font-family:'IBM Plex Mono',monospace;
+  background:var(--navy-lt);padding:1px 5px;
+  border:1px solid rgba(0,33,71,0.12);
+}
+.inp-wrap{position:relative;}
+.inp-pfx{
+  position:absolute;left:10px;top:50%;
+  transform:translateY(-50%);
+  color:var(--navy);font-size:12px;
+  font-family:'IBM Plex Mono',monospace;font-weight:500;
+  pointer-events:none;z-index:1;
+}
+input[type="number"]{
+  width:100%;
+  background:var(--paper);
+  border:1.5px solid var(--border);
+  color:var(--ink);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;
+  padding:8px 10px 8px 24px;
+  outline:none;
+  transition:border-color .2s,box-shadow .2s,background .2s;
+  -moz-appearance:textfield;appearance:textfield;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none;}
+input[type="number"]:focus{
+  border-color:var(--navy);
+  box-shadow:0 0 0 3px rgba(0,33,71,0.08);
+  background:var(--navy-lt);
+}
+input[type="number"]::placeholder{color:var(--muted);opacity:.5;font-size:11.5px;}
+input[type="number"].auto-field::placeholder{color:var(--gold);opacity:.8;}
+
+select{
+  width:100%;background:var(--paper);
+  border:1.5px solid var(--border);color:var(--ink);
+  font-family:'IBM Plex Mono',monospace;font-size:12px;
+  padding:8px 30px 8px 10px;outline:none;cursor:pointer;
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2378716c' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;
+  transition:border-color .2s;
+}
+select:focus{border-color:var(--navy);outline:none;}
+
+/* Checkbox toggle */
+.check-row{
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:10px;cursor:pointer;
+}
+.check-row input[type="checkbox"]{
+  width:16px;height:16px;
+  accent-color:var(--navy);cursor:pointer;
+}
+.check-label{font-size:11.5px;color:var(--ink2);}
+.check-hint{font-size:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+
+/* ═══════════════════════════════════════════════════════════
+   INFO BOXES
+═══════════════════════════════════════════════════════════ */
+.info-box{
+  padding:10px 13px;
+  font-size:10.5px;line-height:1.65;
+  font-family:'IBM Plex Mono',monospace;
+  margin:10px 0;
+}
+.info-box.gold{
+  background:var(--gold-lt);
+  border-left:3px solid var(--gold-mid);
+  color:#5c3a00;
+}
+.info-box.navy{
+  background:var(--navy-lt);
+  border-left:3px solid var(--navy);
+  color:#001433;
+}
+.info-box.maple{
+  background:var(--maple-lt);
+  border-left:3px solid var(--maple);
+  color:#6e0e1e;
+}
+.info-box.green{
+  background:var(--green-lt);
+  border-left:3px solid var(--green);
+  color:#063d2c;
+}
+.info-box b{font-weight:700;}
+
+/* ═══════════════════════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════════════════════ */
+.btn-calc{
+  width:100%;background:var(--navy);color:#fff;border:none;
+  font-family:'IBM Plex Sans',sans-serif;font-size:13.5px;font-weight:600;
+  letter-spacing:0.08em;text-transform:uppercase;
+  padding:14px 20px;cursor:pointer;margin-top:8px;
+  transition:background .2s,transform .1s;position:relative;overflow:hidden;
+}
+.btn-calc::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);
+  transform:translateX(-100%);transition:transform .45s;
+}
+.btn-calc:hover::after{transform:translateX(100%);}
+.btn-calc:hover{background:var(--navy-mid);}
+.btn-calc:active{transform:scale(.99);}
+.btn-reset{
+  width:100%;background:transparent;
+  border:1.5px solid var(--faint);color:var(--muted);
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;
+  letter-spacing:0.08em;padding:9px;cursor:pointer;margin-top:8px;
+  transition:border-color .2s,color .2s;
+}
+.btn-reset:hover{border-color:var(--muted);color:var(--ink);}
+
+/* ═══════════════════════════════════════════════════════════
+   RESULTS — STICKY RIGHT PANEL
+═══════════════════════════════════════════════════════════ */
+.sticky-results{position:sticky;top:20px;}
+.results-hero{
+  background:var(--navy);
+  padding:26px 22px 20px;
+  text-align:center;position:relative;overflow:hidden;
+}
+.results-hero::before{
+  content:'';position:absolute;
+  top:-40px;right:-40px;
+  width:150px;height:150px;border-radius:50%;
+  background:rgba(255,255,255,0.03);
+}
+.results-hero::after{
+  content:'';position:absolute;
+  bottom:-20px;left:-20px;
+  width:80px;height:80px;border-radius:50%;
+  background:rgba(255,255,255,0.04);
+}
+.rh-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;
+  color:rgba(255,255,255,.5);margin-bottom:8px;
+}
+.rh-amount{
+  font-family:'Playfair Display',serif;
+  font-size:48px;color:#fff;
+  letter-spacing:-0.02em;line-height:1;
+}
+.rh-amount.pending{color:rgba(255,255,255,.2);font-size:32px;font-style:italic;}
+.rh-sub{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;color:rgba(255,255,255,.5);margin-top:8px;
+}
+.rh-sub b{color:#ffd060;}
+.rh-badges{
+  display:flex;gap:7px;justify-content:center;margin-top:14px;
+  flex-wrap:wrap;
+}
+.rh-badge{
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.18);
+  color:rgba(255,255,255,.8);
+  font-family:'IBM Plex Mono',monospace;font-size:9.5px;
+  padding:3px 9px;letter-spacing:0.06em;
+}
+.rh-badge.warn{background:rgba(196,30,58,.3);border-color:rgba(196,30,58,.5);color:#ffb3be;}
+.rh-badge.ok{background:rgba(15,107,79,.3);border-color:rgba(15,107,79,.5);color:#80f0cc;}
+
+/* Results rows */
+.res-body{padding:16px 20px;}
+.res-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 0;border-bottom:1px solid var(--faint);
+  font-size:11.5px;
+}
+.res-row:last-child{border-bottom:none;}
+.res-row.sub{padding:5px 0;}
+.res-row.total{
+  padding:12px 0 0;border-bottom:none;
+  border-top:2px solid var(--navy);margin-top:4px;
+}
+.rl{color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+.rl.indent{padding-left:12px;font-size:10.5px;}
+.rv{color:var(--ink);font-family:'IBM Plex Mono',monospace;font-weight:500;}
+.rv.green{color:var(--green);}
+.rv.red{color:var(--maple);}
+.rv.gold{color:var(--gold);}
+.rv.navy{color:var(--navy);}
+.rv.sm{font-size:10.5px;}
+
+.takehome-box{
+  display:flex;justify-content:space-between;align-items:center;
+  background:var(--green-lt);
+  border:1px solid rgba(15,107,79,.2);
+  padding:13px 16px;margin-top:12px;
+}
+.th-label{font-size:12px;color:var(--green);font-weight:600;}
+.th-val{
+  font-family:'Playfair Display',serif;
+  font-size:24px;color:var(--green);
+}
+
+.amt-box{
+  display:flex;justify-content:space-between;align-items:center;
+  background:var(--gold-lt);
+  border:1px solid rgba(181,131,10,.25);
+  padding:10px 14px;margin-top:8px;
+}
+.amt-label{font-size:11px;color:var(--gold);font-weight:600;}
+.amt-val{font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--gold);font-weight:600;}
+
+/* Bars */
+.bar-wrap{margin-top:14px;padding-top:14px;border-top:1px solid var(--faint);}
+.bar-title{
+  font-family:'IBM Plex Mono',monospace;font-size:9.5px;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:11px;
+}
+.b-item{margin-bottom:8px;}
+.b-meta{display:flex;justify-content:space-between;font-size:10.5px;margin-bottom:4px;}
+.b-name{color:var(--ink2);font-family:'IBM Plex Mono',monospace;}
+.b-pct{color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+.b-track{height:5px;background:var(--faint);overflow:hidden;}
+.b-fill{height:100%;transition:width .7s cubic-bezier(.4,0,.2,1);}
+
+/* Placeholder */
+.placeholder{
+  text-align:center;padding:40px 20px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;color:var(--muted);line-height:2.2;
+}
+.ph-icon{font-size:36px;margin-bottom:12px;opacity:.3;}
+
+/* ═══════════════════════════════════════════════════════════
+   BRACKET TABLE
+═══════════════════════════════════════════════════════════ */
+.bracket-section{margin-top:24px;}
+.btable{width:100%;border-collapse:collapse;font-family:'IBM Plex Mono',monospace;font-size:10.5px;}
+.btable th{
+  text-align:left;color:var(--muted);font-weight:500;
+  letter-spacing:0.07em;padding:7px 10px;
+  border-bottom:2px solid var(--navy);background:var(--faint2);
+}
+.btable td{
+  padding:7px 10px;border-bottom:1px solid var(--faint);color:var(--ink2);
+}
+.btable tr.current td{color:var(--navy);font-weight:600;background:var(--navy-lt);}
+.btable tr.current td:first-child::before{content:'▶ ';color:var(--maple);font-size:8px;}
+.btable tr.filled td{color:var(--ink);}
+
+/* ═══════════════════════════════════════════════════════════
+   NB NOTES SECTION
+═══════════════════════════════════════════════════════════ */
+.notes-section{margin-top:28px;}
+.notes-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;margin-top:14px;
+}
+@media(max-width:700px){.notes-grid{grid-template-columns:1fr;}}
+.note-card{
+  background:var(--paper);
+  border:1px solid var(--border);
+  padding:16px;
+}
+.note-card-hdr{
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:10px;
+}
+.note-num{
+  background:var(--navy);color:#fff;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;font-weight:600;
+  width:22px;height:22px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.note-title{
+  font-size:11px;font-weight:600;color:var(--navy);
+  letter-spacing:0.04em;text-transform:uppercase;
+}
+.note-body{
+  font-size:11px;color:var(--ink2);line-height:1.7;
+  font-family:'IBM Plex Mono',monospace;
+}
+.note-body b{color:var(--ink);font-weight:600;}
+.note-body .ita-ref{
+  display:inline;
+  color:var(--navy);font-size:10px;
+  border-bottom:1px dotted var(--navy);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DISCLAIMER
+═══════════════════════════════════════════════════════════ */
+.disclaimer{
+  margin-top:32px;
+  background:var(--faint2);
+  border:1px solid var(--border);
+  border-top:3px solid var(--gold-mid);
+  padding:20px 24px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10.5px;color:var(--muted);line-height:1.8;
+}
+.disclaimer-title{
+  font-size:12px;font-weight:600;color:var(--gold);
+  letter-spacing:0.1em;text-transform:uppercase;
+  margin-bottom:10px;
+}
+.disclaimer ol{padding-left:18px;display:flex;flex-direction:column;gap:5px;}
+.disclaimer li{color:var(--ink2);}
+.disclaimer li b{color:var(--ink);font-weight:600;}
+.ita-cite{
+  color:var(--navy);font-size:10px;font-weight:500;
+  border-bottom:1px dotted var(--navy);cursor:help;
+}
+
+/* fade-in */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.card,.bracket-section,.notes-section,.disclaimer{animation:fadeUp .45s ease both;}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:16px;">
+    <span><span class="dot"></span>CRA T1 GENERAL 2024</span>
+    <span style="opacity:.4">|</span>
+    <span>ALL 13 PROVINCES &amp; TERRITORIES</span>
+    <span style="opacity:.4">|</span>
+    <span>INCOME TAX ACT R.S.C. 1985, c.1</span>
+  </div>
+  <div class="topbar-pills">
+    <span class="tpill">AMT 2024</span>
+    <span class="tpill">CPP2</span>
+    <span class="tpill">OAS CLAWBACK</span>
+    <span class="tpill active">UPDATED JUN 2024</span>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="hdr">
+    <div class="hdr-brand">
+      <div class="maple-leaf">🍁</div>
+      <div>
+        <div class="hdr-title">Canada <em>Tax Engine</em> 2024</div>
+        <div class="hdr-sub">T1 GENERAL PERSONAL INCOME TAX ESTIMATOR — ALL PROVINCES &amp; TERRITORIES</div>
+      </div>
+    </div>
+    <div class="hdr-meta">
+      <div><b>Tax Year:</b> January 1 – December 31, 2024</div>
+      <div><b>Authority:</b> Income Tax Act, R.S.C. 1985, c.1 (5th Supp.)</div>
+      <div><b>Rates:</b> CRA 2024 | <b>Prov:</b> All provincial budgets 2024</div>
+      <div><b>Filing Deadline:</b> April 30, 2025 (Self-employed: Jun 15)</div>
+    </div>
+  </div>
+</header>
+
+<!-- ALERT BAR -->
+<div class="alert-bar gold-bar">
+  <span class="alert-icon">⚠</span>
+  <span><b>2024 Capital Gains Change:</b> Federal Budget 2024 increased capital gains inclusion rate from ½ to ⅔ on amounts above $250,000 for individuals (effective June 25, 2024).
+  New AMT rate: 20.5% with $173,205 exemption. <span class="ita-cite" title="ITA s. 127.54">ITA §127.54</span></span>
+</div>
+<div class="alert-bar maple-bar">
+  <span class="alert-icon">🍁</span>
+  <span><b>New Brunswick Note:</b> NB 2024 tax brackets follow the provincial budget (March 2024). HST: 15% (federal 5% + provincial 10%). NBSNB surtax applies above $150,000 provincial tax payable.
+  NBHST rebate for affordable housing — see <a href="#">NB Revenue 2024</a>.</span>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="wrapper">
+  <div class="layout">
+
+    <!-- LEFT: INPUT FORM -->
+    <div>
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-icon">🏛</div>
+          <div>
+            <div class="card-title">Province / Territory Selection</div>
+            <div class="card-sub">Select your province of residence on December 31, 2024 <span class="cra-ref">ITA §2(1)</span></div>
+          </div>
+        </div>
+        <div class="card-body" style="padding-bottom:14px;">
+          <div class="prov-group-label">Provinces</div>
+          <div class="prov-grid" id="provGrid"></div>
+          <div class="prov-group-label" style="margin-top:10px;">Territories</div>
+          <div class="prov-grid terr" id="terrGrid"></div>
+          <div class="info-box navy" style="margin-top:12px;font-size:10px;">
+            <b>Note:</b> Provincial/territorial tax is calculated on federal taxable income (Line 26000) using your province of residence on Dec 31, 2024 — not province of employment. <span class="ita-cite" title="ITA s. 120">ITA §120</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:20px;">
+        <div class="card-hdr">
+          <div class="card-icon">💼</div>
+          <div>
+            <div class="card-title">Income Sources</div>
+            <div class="card-sub">T1 General Lines 10100–15000 | All amounts in CAD</div>
+          </div>
+        </div>
+        <div class="card-body">
+
+          <!-- EMPLOYMENT -->
+          <div class="sec-div">
+            <div class="sec-num">1</div>
+            <div class="sec-label">Employment Income</div>
+            <div class="sec-line"></div>
+            <div class="sec-cra">Lines 10100–10400</div>
+          </div>
+          <div class="field">
+            <label>Employment Income <span class="lbl-cra">T4 Box 14 · Line 10100</span></label>
+            <div class="inp-wrap"><span class="inp-pfx">$</span>
+              <input type="number" id="empIncome" placeholder="0.00" min="0" step="100"></div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Other Employment Income <span class="lbl-hint">Tips, allowances</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="otherEmpIncome" placeholder="0.00" min="0" step="100"></div>
+            </div>
+            <div class="field">
+              <label>Commissions <span class="lbl-cra">T4 Box 42</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="commissions" placeholder="0.00" min="0" step="100"></div>
+            </div>
+          </div>
+
+          <!-- SELF-EMPLOYMENT -->
+          <div class="sec-div">
+            <div class="sec-num">2</div>
+            <div class="sec-label">Self-Employment &amp; Business</div>
+            <div class="sec-line"></div>
+            <div class="sec-cra">Lines 13500–14300 · T2125</div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Net Business Income <span class="lbl-cra">Line 13500</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="bizIncome" placeholder="0.00" min="0" step="100"></div>
+            </div>
+            <div class="field">
+              <label>Net Professional Income <span class="lbl-cra">Line 13700</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="profIncome" placeholder="0.00" min="0" step="100"></div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Net Commission Income <span class="lbl-cra">Line 13900</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="commIncome" placeholder="0.00" min="0" step="100"></div>
+            </div>
+            <div class="field">
+              <label>Net Farming / Fishing <span class="lbl-cra">Lines 14100/14300</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="farmIncome" placeholder="0.00" min="0" step="100"></div>
+            </div>
+          </div>
+
+          <!-- INVESTMENT -->
+          <div class="sec-div">
+            <div class="sec-num">3</div>
+            <div class="sec-label">Investment &amp; Rental Income</div>
+            <div class="sec-line"></div>
+            <div class="sec-cra">Lines 12000–12600 · T5/Sch.3</div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Interest &amp; Other Invest. <span class="lbl-cra">T5 Box 13</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="interest" placeholder="0.00" min="0" step="100"></div>
+            </div>
+            <div class="field">
+              <label>Net Rental Income <span class="lbl-cra">Line 12600 · T776</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="rentalIncome" placeholder="0.00" min="0" step="100"></div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Eligible Dividends <span class="lbl-cra">T5 Box 24 · 38% gross-up</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="eligDiv" placeholder="0.00" min="0" step="100"></div>
+            </div>
+            <div class="field">
+              <label>Non-Eligible Dividends <span class="lbl-cra">T5 Box 10 · 15% gross-up</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="nonEligDiv" placeholder="0.00" min="0" step="100"></div>
+            </div>
+          </div>
+          <div class="info-box gold" style="font-size:10px;">
+            <b>Eligible vs Non-Eligible Dividends:</b> Eligible dividends (public corps, CCPC private income >SBD limit) gross up at 38% with a 15.0198% federal credit. Non-eligible dividends gross up at 15% with a 9.0301% federal credit. <span class="ita-cite" title="ITA s.82, 121">ITA §82, §121</span>
+          </div>
+
+          <!-- CAPITAL GAINS -->
+          <div class="sec-div">
+            <div class="sec-num">4</div>
+            <div class="sec-label">Capital Gains &amp; Losses</div>
+            <div class="sec-line"></div>
+            <div class="sec-cra">Schedule 3 · ITA §38</div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Capital Gains (Pre Jun 25) <span class="lbl-hint">50% inclusion</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="cgPre" placeholder="0.00" min="0" step="100"></div>
+            </div>
+            <div class="field">
+              <label>Capital Gains (Post Jun 25) <span class="lbl-hint">⅔ inclusion</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="cgPost" placeholder="0.00" min="0" step="100"></div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Capital Losses Applied <span class="lbl-hint">From prior years or current year</span></label>
+            <div class="inp-wrap"><span class="inp-pfx">$</span>
+              <input type="number" id="cgLoss" placeholder="0.00" min="0" step="100"></div>
+          </div>
+          <div class="info-box maple" style="font-size:10px;">
+            <b>2024 Inclusion Rate Change:</b> Net capital gains ≤ $250,000: 50% inclusion. Above $250,000: ⅔ (66.67%) inclusion. Pre–June 25 gains use old 50% rate regardless of amount. <span class="ita-cite" title="ITA s.38">ITA §38(a)</span>
+          </div>
+
+          <!-- PENSION / GOVERNMENT -->
+          <div class="sec-div">
+            <div class="sec-num">5</div>
+            <div class="sec-label">Pension &amp; Government Benefits</div>
+            <div class="sec-line"></div>
+            <div class="sec-cra">Lines 11300–11900</div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>CPP / QPP Benefits <span class="lbl-cra">T4A(P)</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="cppBenefits" placeholder="0.00" min="0" step="100"></div>
+            </div>
+            <div class="field">
+              <label>OAS Benefits <span class="lbl-cra">T4A(OAS) Box 18</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="oasBenefits" placeholder="0.00" min="0" step="100"></div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>RPP / DPSP Pension <span class="lbl-cra">T4A Box 016</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="pensionIncome" placeholder="0.00" min="0" step="100"></div>
+            </div>
+            <div class="field">
+              <label>EI Benefits <span class="lbl-cra">T4E Box 14</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="eiBenefits" placeholder="0.00" min="0" step="100"></div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>RRSP Income <span class="lbl-cra">T4RSP</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="rrspIncome" placeholder="0.00" min="0" step="100"></div>
+            </div>
+            <div class="field">
+              <label>Other Income <span class="lbl-cra">Lines 13000–13010</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="otherIncome" placeholder="0.00" min="0" step="100"></div>
+            </div>
+          </div>
+
+          <!-- DEDUCTIONS -->
+          <div class="sec-div">
+            <div class="sec-num">6</div>
+            <div class="sec-label">Deductions from Total Income</div>
+            <div class="sec-line"></div>
+            <div class="sec-cra">Lines 20600–23300</div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>RRSP Contributions <span class="lbl-cra">Line 20800</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="rrsp" placeholder="Max $31,560" min="0" max="31560" step="100"></div>
+            </div>
+            <div class="field">
+              <label>FHSA Deduction <span class="lbl-cra">Line 20805 · Max $8,000/yr</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="fhsa" placeholder="Max $8,000" min="0" max="8000" step="100"></div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Union / Professional Dues <span class="lbl-cra">Line 21200</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="dues" placeholder="0.00" min="0" step="50"></div>
+            </div>
+            <div class="field">
+              <label>Childcare Expenses <span class="lbl-cra">Line 21400 · T778</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="childcare" placeholder="0.00" min="0" step="100"></div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Moving Expenses <span class="lbl-cra">Line 21900 · T1-M</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="moving" placeholder="0.00" min="0" step="100"></div>
+            </div>
+            <div class="field">
+              <label>Support Payments Made <span class="lbl-cra">Line 22000</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="support" placeholder="0.00" min="0" step="100"></div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Carrying Charges / Interest <span class="lbl-cra">Line 22100 · Sch.4</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="carryCharges" placeholder="0.00" min="0" step="50"></div>
+            </div>
+            <div class="field">
+              <label>Business Investment Loss <span class="lbl-cra">Line 21700 (50%)</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="abil" placeholder="0.00" min="0" step="100"></div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Employment Expenses (T777 / T2200) <span class="lbl-cra">Line 22900</span></label>
+            <div class="inp-wrap"><span class="inp-pfx">$</span>
+              <input type="number" id="empExpenses" placeholder="0.00" min="0" step="100"></div>
+          </div>
+
+          <div class="info-box green" style="font-size:10px;margin-top:6px;">
+            <b>FHSA 2024:</b> First Home Savings Account — contributions deductible, growth tax-free, qualifying withdrawal tax-free. Annual limit $8,000, lifetime $40,000. <span class="ita-cite" title="ITA s.146.6">ITA §146.6</span>
+            &nbsp; <b>RRSP 2024:</b> Annual limit $31,560 (18% of 2023 earned income max). <span class="ita-cite" title="ITA s.146">ITA §146(5)</span>
+          </div>
+
+          <!-- CPP / EI -->
+          <div class="sec-div">
+            <div class="sec-num">7</div>
+            <div class="sec-label">CPP / EI Contributions</div>
+            <div class="sec-line"></div>
+            <div class="sec-cra">CPP Act · EI Act 1996</div>
+          </div>
+          <div class="field-row3">
+            <div class="field">
+              <label>CPP1 Contributions <span class="lbl-hint">Auto-calc or override</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="cpp1" placeholder="Auto" min="0" max="3867.50" step="10" class="auto-field"></div>
+            </div>
+            <div class="field">
+              <label>CPP2 Contributions <span class="lbl-cra">2nd ceiling 2024</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="cpp2" placeholder="Auto" min="0" max="188" step="10" class="auto-field"></div>
+            </div>
+            <div class="field">
+              <label>EI Premiums <span class="lbl-cra">T4 Box 18</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="eiPremiums" placeholder="Auto" min="0" max="1049.12" step="10" class="auto-field"></div>
+            </div>
+          </div>
+          <div class="info-box navy" style="font-size:10px;">
+            <b>CPP1 2024:</b> Rate 5.95% on earnings $3,500–$68,500 = max $3,867.50. &nbsp;
+            <b>CPP2 2024:</b> Rate 4% on earnings $68,500–$73,200 = max $188.00. &nbsp;
+            <b>EI 2024:</b> Rate 1.66% on max insurable $63,200 = max $1,049.12.
+            <span class="ita-cite" title="CPP Act s.8">CPP Act §8</span> <span class="ita-cite" title="EI Act s.4">EI Act §4</span>
+          </div>
+
+          <!-- NON-REFUNDABLE CREDITS -->
+          <div class="sec-div">
+            <div class="sec-num">8</div>
+            <div class="sec-label">Non-Refundable Tax Credits</div>
+            <div class="sec-line"></div>
+            <div class="sec-cra">Schedule 1 · ITA §118</div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label>Age Amount (65+, max $8,790) <span class="lbl-cra">Line 30100</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="ageAmount" placeholder="0.00" min="0" max="8790" step="100"></div>
+            </div>
+            <div class="field">
+              <label>Spouse / Partner Amount <span class="lbl-cra">Line 30300</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="spouseAmount" placeholder="0.00" min="0" max="15705" step="100"></div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Eligible Dependant Amount <span class="lbl-cra">Line 30400</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="eligDep" placeholder="0.00" min="0" max="15705" step="100"></div>
+            </div>
+            <div class="field">
+              <label>Canada Caregiver Amount <span class="lbl-cra">Lines 30450/30500</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="caregiver" placeholder="0.00" min="0" max="7999" step="100"></div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Disability Amount <span class="lbl-cra">Line 31600 · $9,428</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="disability" placeholder="0.00" min="0" max="9428" step="100"></div>
+            </div>
+            <div class="field">
+              <label>Pension Income Amount <span class="lbl-cra">Line 31400 · max $2,000</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="pensionCredit" placeholder="0.00" min="0" max="2000" step="100"></div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Tuition Amount <span class="lbl-cra">Line 32300</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="tuition" placeholder="0.00" min="0" step="100"></div>
+            </div>
+            <div class="field">
+              <label>Student Loan Interest <span class="lbl-cra">Line 31900</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="studentInt" placeholder="0.00" min="0" step="50"></div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Medical Expenses (Net) <span class="lbl-cra">Line 33099</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="medical" placeholder="0.00" min="0" step="100"></div>
+            </div>
+            <div class="field">
+              <label>Charitable Donations <span class="lbl-cra">Line 34900 · Sch.9</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="donations" placeholder="0.00" min="0" step="100"></div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Foreign Tax Paid <span class="lbl-cra">Line 40500 · T2209</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="foreignTax" placeholder="0.00" min="0" step="50"></div>
+            </div>
+            <div class="field">
+              <label>Political Contributions Credit <span class="lbl-cra">Line 41000</span></label>
+              <div class="inp-wrap"><span class="inp-pfx">$</span>
+                <input type="number" id="political" placeholder="0.00" min="0" max="650" step="50"></div>
+            </div>
+          </div>
+
+          <!-- CHECKBOXES -->
+          <div class="sec-div">
+            <div class="sec-num">9</div>
+            <div class="sec-label">Taxpayer Status &amp; Options</div>
+            <div class="sec-line"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <label class="check-row"><input type="checkbox" id="isSelf"> <div><div class="check-label">Self-Employed</div><div class="check-hint">T2125 applicable</div></div></label>
+            <label class="check-row"><input type="checkbox" id="isQpip"> <div><div class="check-label">Quebec Resident (QPIP)</div><div class="check-hint">QPIP replaces fed. EI parental</div></div></label>
+            <label class="check-row"><input type="checkbox" id="pensionSplit"> <div><div class="check-label">Pension Income Splitting</div><div class="check-hint">Up to 50% to spouse · ITA §60.03</div></div></label>
+            <label class="check-row"><input type="checkbox" id="isFirst"> <div><div class="check-label">First-Year Filer</div><div class="check-hint">No prior-year carryforwards</div></div></label>
+          </div>
+
+          <button class="btn-calc" onclick="calculate()">⟳ CALCULATE T1 — ALL TAXES</button>
+          <button class="btn-reset" onclick="resetForm()">CLEAR ALL FIELDS</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: RESULTS STICKY PANEL -->
+    <div class="sticky-results">
+      <div class="card" style="overflow:hidden;">
+        <div class="results-hero" id="resultsHero">
+          <div class="rh-label">Total Federal + Provincial Tax</div>
+          <div class="rh-amount pending" id="rhAmount">Awaiting Input</div>
+          <div class="rh-sub" id="rhSub">Enter income details and calculate</div>
+          <div class="rh-badges" id="rhBadges">
+            <span class="rh-badge">2024 T1</span>
+            <span class="rh-badge" id="rhProvBadge">Select Province</span>
+          </div>
+        </div>
+        <div class="res-body" id="resBody">
+          <div class="placeholder">
+            <div class="ph-icon">🍁</div>
+            <div>Fill in income details<br>and click Calculate<br>to see your full<br>T1 breakdown</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BRACKET TABLE -->
+  <div class="card bracket-section">
+    <div class="card-hdr">
+      <div class="card-icon">📊</div>
+      <div>
+        <div class="card-title">Federal Tax Bracket Analysis</div>
+        <div class="card-sub">2024 federal marginal rates — your bracket highlighted <span class="cra-ref">ITA §117</span></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <table class="btable" id="fedTable">
+        <thead><tr><th>Taxable Income Range</th><th>Fed Rate</th><th>Taxable in Bracket</th><th>Tax on Bracket</th><th>Cumulative Tax</th></tr></thead>
+        <tbody id="fedBody"><tr><td colspan="5" style="color:var(--muted);padding:14px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11px;">Run calculation to see bracket breakdown</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PROV TABLE -->
+  <div class="card bracket-section" style="margin-top:14px;">
+    <div class="card-hdr">
+      <div class="card-icon">🏛</div>
+      <div>
+        <div class="card-title" id="provTableTitle">Provincial / Territorial Tax Brackets</div>
+        <div class="card-sub">Current province bracket analysis</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <table class="btable" id="provTable">
+        <thead><tr><th>Taxable Income Range</th><th>Prov Rate</th><th>Taxable in Bracket</th><th>Tax on Bracket</th><th>Cumulative Tax</th></tr></thead>
+        <tbody id="provBody"><tr><td colspan="5" style="color:var(--muted);padding:14px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11px;">Run calculation to see bracket breakdown</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- LEGAL NOTES -->
+  <div class="notes-section">
+    <div class="card-hdr" style="background:var(--paper);border:1px solid var(--border);margin-bottom:14px;">
+      <div class="card-icon">⚖</div>
+      <div>
+        <div class="card-title">Important Tax Notes — Nota Bene</div>
+        <div class="card-sub">Canadian law citations · CRA administrative positions · Filing obligations</div>
+      </div>
+    </div>
+    <div class="notes-grid">
+      <div class="note-card">
+        <div class="note-card-hdr"><div class="note-num">1</div><div class="note-title">OAS Clawback (Repayment)</div></div>
+        <div class="note-body">
+          <b>ITA §180.2:</b> Old Age Security repayment applies when net income (Line 23600) exceeds <b>$90,997</b> in 2024. The clawback is 15¢ per dollar above this threshold, up to full repayment at approximately <b>$148,535</b>. Withheld through monthly OAS payments via T4A(OAS) Box 22. File Schedule 1 to declare. <span class="ita-ref">ITA §180.2(2)</span>
+        </div>
+      </div>
+      <div class="note-card">
+        <div class="note-card-hdr"><div class="note-num">2</div><div class="note-title">Alternative Minimum Tax (AMT)</div></div>
+        <div class="note-body">
+          <b>Budget 2024 — ITA §127.5:</b> New AMT rate is <b>20.5%</b> (up from 15%) effective 2024. Basic exemption raised to <b>$173,205</b>. Capital gains inclusion for AMT: <b>100%</b>. Charitable donation deduction limited to 50% for AMT. If AMT exceeds regular tax, you pay AMT. Carry-forward of AMT credit available 7 years. <span class="ita-ref">ITA §127.52</span>
+        </div>
+      </div>
+      <div class="note-card">
+        <div class="note-card-hdr"><div class="note-num">3</div><div class="note-title">Capital Gains — 2024 Changes</div></div>
+        <div class="note-body">
+          <b>Budget 2024 — ITA §38:</b> Individuals: first <b>$250,000</b> net annual gains at 50% inclusion. Above $250,000: <b>⅔ (66.67%)</b> inclusion. The $250,000 annual threshold resets each year — cannot be carried forward. Capital gains realized before <b>June 25, 2024</b> use old 50% rate. Lifetime Capital Gains Exemption (LCGE) for QSBC shares: <b>$1,016,602</b> in 2024. <span class="ita-ref">ITA §38(a)</span>
+        </div>
+      </div>
+      <div class="note-card">
+        <div class="note-card-hdr"><div class="note-num">4</div><div class="note-title">New Brunswick — Provincial Notes</div></div>
+        <div class="note-body">
+          NB 2024 brackets: 9.4% on first $47,715; 14% on $47,715–$95,431; 16% on $95,431–$176,756; 19.5% above $176,756. BPA: <b>$12,458</b>. <b>HST: 15%</b> (federal 5% + provincial 10%). NB small business rate: 2.5% on active income ≤ $500K. NB political contribution credit up to <b>$500</b>. Volunteer firefighter/search &amp; rescue: <b>$3,000</b> credit available. <span class="ita-ref">NB Income Tax Act</span>
+        </div>
+      </div>
+      <div class="note-card">
+        <div class="note-card-hdr"><div class="note-num">5</div><div class="note-title">RRSP / FHSA / TFSA</div></div>
+        <div class="note-body">
+          <b>RRSP (ITA §146):</b> 2024 limit <b>$31,560</b> (18% of 2023 earned income). Contributions deductible; withdrawals taxable. <b>FHSA (ITA §146.6):</b> Annual limit <b>$8,000</b>, lifetime $40,000 — first-time buyers only, contributions deductible, qualifying withdrawals tax-free. Must close within 15 years. <b>TFSA:</b> 2024 contribution room +<b>$7,000</b>. Growth and withdrawals tax-free. Over-contributions penalized 1%/month.
+        </div>
+      </div>
+      <div class="note-card">
+        <div class="note-card-hdr"><div class="note-num">6</div><div class="note-title">Medical Expenses Threshold</div></div>
+        <div class="note-body">
+          <b>ITA §118.2:</b> You can claim eligible medical expenses exceeding the <b>lesser of $2,635</b> or 3% of your net income (Line 23600). Eligible expenses include prescription drugs, dental, vision, mobility aids, attendant care. Supporting persons can claim unused amounts from a lower-income spouse. Medical Expense Supplement (refundable) up to <b>$1,383</b> for low-income earners — <b>Form T1, Line 45200</b>. <span class="ita-ref">ITA §118.2(2)</span>
+        </div>
+      </div>
+      <div class="note-card">
+        <div class="note-card-hdr"><div class="note-num">7</div><div class="note-title">Self-Employment Obligations</div></div>
+        <div class="note-body">
+          <b>Self-employed individuals</b> file by <b>June 15, 2025</b> but any taxes owing are due <b>April 30, 2025</b>. File T2125 (business/professional), T2042 (farming), T2121 (fishing). Both employee and employer CPP contributions required (<b>11.90%</b> total in 2024) — employee portion deductible. Install tax (quarterly) required when balance owing >$3,000. HST/GST registration mandatory above $30,000 gross revenue. <span class="ita-ref">ITA §150(1)(d)</span>
+        </div>
+      </div>
+      <div class="note-card">
+        <div class="note-card-hdr"><div class="note-num">8</div><div class="note-title">Quebec Residents — Special Rules</div></div>
+        <div class="note-body">
+          Quebec residents file a <b>separate provincial return</b> (MRQ TP-1) with Revenu Québec. Federal abatement of <b>16.5%</b> of basic federal tax applies. QPIP (Quebec Parental Insurance Plan) replaces federal EI parental benefits — employee rate 0.494%, max insurable earnings $94,000, max premium $464.36. Federal EI parental benefit not available. QC basic personal amount: <b>$17,183</b>. QC solidarity tax credit available. <span class="ita-ref">ITA §120(2)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DISCLAIMER -->
+  <div class="disclaimer">
+    <div class="disclaimer-title">⚠ Legal Disclaimer &amp; Nota Bene — Read Before Filing</div>
+    <ol>
+      <li><b>Not Professional Advice:</b> This tool provides estimates only. It does not constitute legal, accounting, or tax advice. Results are for informational purposes only and should not be relied upon for actual tax filing.</li>
+      <li><b>Accuracy Limitations:</b> Calculations are simplified approximations of the Income Tax Act, R.S.C. 1985, c. 1 (5th Supp.) as amended. Provincial rates sourced from 2024 provincial budgets. Rates are subject to legislative change.</li>
+      <li><b>Capital Gains 2024:</b> Federal Budget 2024 capital gains inclusion rate changes are proposed legislation. Final legislative text may differ. Consult a CPA for realized gains post-June 25, 2024.</li>
+      <li><b>AMT Complexity:</b> Alternative Minimum Tax calculations are highly simplified. The new 2024 AMT regime (<span class="ita-cite" title="ITA s.127.5">ITA §127.5</span>) involves complex adjustments not fully captured here. Individuals with significant capital gains, donations, or passive income must consult a professional.</li>
+      <li><b>Quebec:</b> Quebec provincial tax requires a separate TP-1 return filed with Revenu Québec. This calculator approximates Quebec provincial tax only — it does not account for all QC-specific credits and adjustments.</li>
+      <li><b>Always File Accurately:</b> Use CRA's certified tax software or consult a CPA/tax lawyer. Penalties for late filing: 5% of balance owing + 1%/month for 12 months (<span class="ita-cite" title="ITA s.162">ITA §162</span>). Interest on arrears: prescribed rate + 2%.</li>
+      <li><b>CRA Resources:</b> canada.ca/taxes | My Account: canada.ca/my-cra-account | Tax Clinics: canada.ca/free-tax-help</li>
+    </ol>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   2024 TAX DATA — CRA RATES
+═══════════════════════════════════════════════════════════ */
+const FED = [
+  {min:0,      max:55867,   rate:.15  },
+  {min:55867,  max:111733,  rate:.205 },
+  {min:111733, max:154906,  rate:.26  },
+  {min:154906, max:220000,  rate:.29  },
+  {min:220000, max:Infinity,rate:.33  }
+];
+const FED_BPA = 15705;
+const CPP1_RATE=.0595, CPP1_MAX=3867.50, CPP1_EXEMPT=3500, CPP1_CEIL=68500;
+const CPP2_RATE=.04,   CPP2_MAX=188.00,  CPP2_CEIL=73200;
+const EI_RATE=.0166,   EI_MAX=1049.12,   EI_INSURE=63200;
+const ELIG_GROSSUP=1.38, NONELIG_GROSSUP=1.15;
+const FED_ELIG_CREDIT=.150198, FED_NONELIG_CREDIT=.090301;
+const OAS_CLAWBACK_THRESHOLD=90997, OAS_CLAWBACK_RATE=.15;
+const AMT_RATE=.205, AMT_EXEMPT=173205;
+const RRSP_LIMIT=31560, FHSA_LIMIT=8000;
+const MED_THRESHOLD=2635;
+
+/* ALL 13 PROVINCES/TERRITORIES — 2024 */
+const PROVS = {
+  ON:{name:"Ontario",short:"ON",brackets:[
+    {min:0,      max:51446,   rate:.0505},
+    {min:51446,  max:102894,  rate:.0915},
+    {min:102894, max:150000,  rate:.1116},
+    {min:150000, max:220000,  rate:.1216},
+    {min:220000, max:Infinity,rate:.1316}
+  ],bpa:11865,surtax:true,qpip:false},
+  BC:{name:"British Columbia",short:"BC",brackets:[
+    {min:0,      max:45654,   rate:.0506},
+    {min:45654,  max:91310,   rate:.077 },
+    {min:91310,  max:104835,  rate:.105 },
+    {min:104835, max:127299,  rate:.1229},
+    {min:127299, max:172602,  rate:.147 },
+    {min:172602, max:240716,  rate:.168 },
+    {min:240716, max:Infinity,rate:.205 }
+  ],bpa:11981,surtax:false,qpip:false},
+  AB:{name:"Alberta",short:"AB",brackets:[
+    {min:0,      max:148269,  rate:.10},
+    {min:148269, max:177922,  rate:.12},
+    {min:177922, max:237230,  rate:.13},
+    {min:237230, max:355845,  rate:.14},
+    {min:355845, max:Infinity,rate:.15}
+  ],bpa:21003,surtax:false,qpip:false},
+  QC:{name:"Québec",short:"QC",brackets:[
+    {min:0,      max:51780,   rate:.14  },
+    {min:51780,  max:103545,  rate:.19  },
+    {min:103545, max:126000,  rate:.24  },
+    {min:126000, max:Infinity,rate:.2575}
+  ],bpa:17183,surtax:false,qpip:true,abatement:.165},
+  MB:{name:"Manitoba",short:"MB",brackets:[
+    {min:0,     max:45113,   rate:.108 },
+    {min:45113, max:99844,   rate:.1275},
+    {min:99844, max:Infinity,rate:.174 }
+  ],bpa:15780,surtax:false,qpip:false},
+  SK:{name:"Saskatchewan",short:"SK",brackets:[
+    {min:0,      max:49720,   rate:.105},
+    {min:49720,  max:142058,  rate:.125},
+    {min:142058, max:Infinity,rate:.145}
+  ],bpa:17661,surtax:false,qpip:false},
+  NS:{name:"Nova Scotia",short:"NS",brackets:[
+    {min:0,     max:29590,   rate:.0879},
+    {min:29590, max:59180,   rate:.1495},
+    {min:59180, max:93000,   rate:.1667},
+    {min:93000, max:150000,  rate:.175 },
+    {min:150000,max:Infinity,rate:.21  }
+  ],bpa:8481,surtax:false,qpip:false},
+  NB:{name:"New Brunswick",short:"NB",brackets:[
+    {min:0,      max:47715,   rate:.094},
+    {min:47715,  max:95431,   rate:.14 },
+    {min:95431,  max:176756,  rate:.16 },
+    {min:176756, max:Infinity,rate:.195}
+  ],bpa:12458,surtax:false,qpip:false},
+  PE:{name:"Prince Edward Island",short:"PE",brackets:[
+    {min:0,      max:32656,   rate:.0965},
+    {min:32656,  max:64313,   rate:.1363},
+    {min:64313,  max:105000,  rate:.1665},
+    {min:105000, max:140000,  rate:.18  },
+    {min:140000, max:Infinity,rate:.1875}
+  ],bpa:12000,surtax:false,qpip:false},
+  NL:{name:"Newfoundland & Labrador",short:"NL",brackets:[
+    {min:0,      max:43198,   rate:.087},
+    {min:43198,  max:86395,   rate:.145},
+    {min:86395,  max:154244,  rate:.158},
+    {min:154244, max:215943,  rate:.178},
+    {min:215943, max:275870,  rate:.198},
+    {min:275870, max:Infinity,rate:.208}
+  ],bpa:10818,surtax:false,qpip:false},
+  NT:{name:"Northwest Territories",short:"NT",brackets:[
+    {min:0,     max:50597,   rate:.059},
+    {min:50597, max:101198,  rate:.086},
+    {min:101198,max:164525,  rate:.122},
+    {min:164525,max:Infinity,rate:.1405}
+  ],bpa:16593,surtax:false,qpip:false},
+  NU:{name:"Nunavut",short:"NU",brackets:[
+    {min:0,     max:53268,   rate:.04 },
+    {min:53268, max:106537,  rate:.07 },
+    {min:106537,max:173205,  rate:.09 },
+    {min:173205,max:Infinity,rate:.115}
+  ],bpa:17925,surtax:false,qpip:false},
+  YT:{name:"Yukon",short:"YT",brackets:[
+    {min:0,      max:55867,   rate:.064},
+    {min:55867,  max:111733,  rate:.09 },
+    {min:111733, max:154906,  rate:.109},
+    {min:154906, max:500000,  rate:.128},
+    {min:500000, max:Infinity,rate:.15 }
+  ],bpa:15705,surtax:false,qpip:false}
+};
+
+const PROV_CODES=Object.keys(PROVS);
+const PROV_CODES_MAIN=['ON','BC','AB','QC','MB','SK','NS','NB','PE','NL'];
+const PROV_CODES_TERR=['NT','NU','YT'];
+let selProv='NB';
+
+/* ═══ PROVINCE BUTTONS ══════════════════════════════════════ */
+function buildProvGrid(){
+  function makeBtn(code){
+    const btn=document.createElement('button');
+    btn.className='prov-btn'+(code==='NB'?' nb-star':'')+(code===selProv?' active':'');
+    btn.textContent=code;btn.title=PROVS[code].name;
+    btn.onclick=()=>{
+      selProv=code;
+      document.querySelectorAll('.prov-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('rhProvBadge').textContent=PROVS[code].short+' — '+PROVS[code].name;
+    };
+    return btn;
+  }
+  const pg=document.getElementById('provGrid');
+  PROV_CODES_MAIN.forEach(c=>pg.appendChild(makeBtn(c)));
+  const tg=document.getElementById('terrGrid');
+  PROV_CODES_TERR.forEach(c=>tg.appendChild(makeBtn(c)));
+}
+
+/* ═══ HELPERS ═══════════════════════════════════════════════ */
+function calcBrackets(income,brackets){
+  let tax=0;
+  for(const b of brackets){
+    if(income<=b.min)break;
+    tax+=(Math.min(income,b.max)-b.min)*b.rate;
+  }
+  return Math.max(tax,0);
+}
+function g(id){return parseFloat(document.getElementById(id).value)||0;}
+function chk(id){return document.getElementById(id).checked;}
+function fmt(n,dec=2){
+  if(isNaN(n)||n===null)return '$0.00';
+  const v=Math.max(n,0);
+  return '$'+v.toFixed(dec).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+}
+function pct(n){return(n*100).toFixed(2)+'%';}
+function getMargFed(inc){let r=.15;FED.forEach(b=>{if(inc>b.min)r=b.rate;});return r;}
+function getMargProv(inc,prov){let r=prov.brackets[0].rate;prov.brackets.forEach(b=>{if(inc>b.min)r=b.rate;});return r;}
+
+/* ═══ MAIN CALCULATION ═════════════════════════════════════ */
+function calculate(){
+  const prov=PROVS[selProv];
+  const isSelf=chk('isSelf');
+  const isQpip=selProv==='QC'||chk('isqpip');
+  const hasPensionSplit=chk('pensionSplit');
+
+  /* --- INCOME SOURCES --- */
+  const empInc    = g('empIncome')+g('otherEmpIncome')+g('commissions');
+  const selfInc   = g('bizIncome')+g('profIncome')+g('commIncome')+g('farmIncome');
+  const interest  = g('interest');
+  const rental    = g('rentalIncome');
+  const eligDivAmt= g('eligDiv');
+  const nonEligAmt= g('nonEligDiv');
+  const cgPre     = Math.max(g('cgPre')-g('cgLoss'),0);
+  const cgPost    = g('cgPost');
+  const cppBen    = g('cppBenefits');
+  const oasBen    = g('oasBenefits');
+  const pensionInc= g('pensionIncome');
+  const eiBen     = g('eiBenefits');
+  const rrspInc   = g('rrspIncome');
+  const otherInc  = g('otherIncome');
+
+  // Dividend gross-up
+  const eligGrossed    = eligDivAmt * ELIG_GROSSUP;
+  const nonEligGrossed = nonEligAmt * NONELIG_GROSSUP;
+  const eligGrossUpAmt = eligGrossed - eligDivAmt;
+  const nonEligGrossUpAmt = nonEligGrossed - nonEligAmt;
+
+  // Capital gains inclusion (2024 rules)
+  const cgPreIncl  = cgPre * 0.50;
+  const cgPostIncl = cgPost <= 250000 ? cgPost * 0.50 : 250000*0.50 + (cgPost-250000)*(2/3);
+
+  // CPP / EI
+  const cpp1Paid = g('cpp1') || Math.min(Math.max((Math.min(empInc,CPP1_CEIL)-CPP1_EXEMPT)*CPP1_RATE,0),CPP1_MAX);
+  const cpp2Paid = g('cpp2') || (empInc>CPP1_CEIL ? Math.min((Math.min(empInc,CPP2_CEIL)-CPP1_CEIL)*CPP2_RATE,CPP2_MAX):0);
+  const eiPaid   = g('eiPremiums') || Math.min(Math.min(empInc,EI_INSURE)*EI_RATE,EI_MAX);
+  // QPIP
+  const qpipEmp  = selProv==='QC' ? Math.min(empInc*0.00494,464.36) : 0;
+
+  // Self-employment CPP (both portions)
+  const selfCpp = isSelf ? Math.min(Math.max((Math.min(selfInc,CPP1_CEIL)-CPP1_EXEMPT)*CPP1_RATE*2,0),CPP1_MAX*2) : 0;
+  const selfCppDeduct = selfCpp * 0.5; // deductible half
+
+  // Total income
+  const totalInc = empInc + selfInc + interest + rental
+    + eligGrossed + nonEligGrossed
+    + cgPreIncl + cgPostIncl
+    + cppBen + oasBen + pensionInc + eiBen + rrspInc + otherInc;
+
+  // Line 23600 — Net Income deductions
+  const rrspD      = Math.min(g('rrsp'), RRSP_LIMIT);
+  const fhsaD      = Math.min(g('fhsa'), FHSA_LIMIT);
+  const duesD      = g('dues');
+  const childcareD = g('childcare');
+  const movingD    = g('moving');
+  const supportD   = g('support');
+  const carryD     = g('carryCharges');
+  const abilD      = g('abil')*0.50;
+  const empExpD    = g('empExpenses');
+  const totalDeductions = rrspD+fhsaD+duesD+childcareD+movingD+supportD+carryD+abilD+empExpD+selfCppDeduct;
+  const netIncome  = Math.max(totalInc-totalDeductions,0);
+
+  // OAS Clawback
+  const oasClawback = oasBen>0 ? Math.min(Math.max((netIncome-OAS_CLAWBACK_THRESHOLD)*OAS_CLAWBACK_RATE,0),oasBen):0;
+
+  // Taxable income (Line 26000)
+  const taxableInc = Math.max(netIncome,0);
+
+  /* --- FEDERAL TAX (Schedule 1) --- */
+  let fedTax = calcBrackets(taxableInc, FED);
+
+  // Non-refundable credits base
+  const ageAmt    = g('ageAmount');
+  const spouseAmt = g('spouseAmount');
+  const eligDepAmt= g('eligDep');
+  const caregiverAmt=g('caregiver');
+  const disabilityAmt=g('disability');
+  const pensionCrAmt=Math.min(g('pensionCredit'),2000);
+  const tuitionAmt= g('tuition');
+  const stuIntAmt = g('studentInt');
+  const medAmt    = Math.max(g('medical')-Math.min(netIncome*.03,MED_THRESHOLD),0);
+  const donationsAmt=g('donations');
+  const foreignTaxPaid=g('foreignTax');
+  const politicalAmt=g('political');
+
+  // Federal donation credit (tiered)
+  const donCreditFed = donationsAmt<=200
+    ? donationsAmt*.15
+    : 200*.15+(donationsAmt-200)*.29;
+
+  // Political contribution credit (ITA §127(3))
+  const polCredit = politicalAmt<=400 ? politicalAmt*.75
+    : politicalAmt<=750 ? 300+(politicalAmt-400)*.50
+    : Math.min(500,475+(politicalAmt-750)*.3333);
+
+  // Total credit-eligible amounts × 15%
+  const fedCredits15 = (FED_BPA+cpp1Paid+cpp2Paid+(isQpip?0:eiPaid)+ageAmt
+    +spouseAmt+eligDepAmt+caregiverAmt+disabilityAmt
+    +pensionCrAmt+tuitionAmt+stuIntAmt+medAmt)*0.15;
+
+  // Dividend tax credits
+  const divCreditFedElig    = eligGrossed * FED_ELIG_CREDIT;
+  const divCreditFedNonElig = nonEligGrossed * FED_NONELIG_CREDIT;
+
+  const totalFedCredits = fedCredits15 + donCreditFed + divCreditFedElig + divCreditFedNonElig + foreignTaxPaid + polCredit;
+  fedTax = Math.max(fedTax - totalFedCredits, 0);
+
+  // Quebec abatement (16.5% of basic federal tax)
+  const qcAbatement = selProv==='QC' ? fedTax * (PROVS.QC.abatement||0.165) : 0;
+  const fedTaxFinal = Math.max(fedTax - qcAbatement, 0);
+
+  /* --- PROVINCIAL TAX --- */
+  let provTax = calcBrackets(taxableInc, prov.brackets);
+  const r0=prov.brackets[0].rate;
+
+  // Prov donation credit
+  const donCreditProv = donationsAmt<=200
+    ? donationsAmt*r0
+    : 200*r0+(donationsAmt-200)*(prov.brackets[Math.min(1,prov.brackets.length-1)].rate);
+
+  const provCreditsBase=(prov.bpa+cpp1Paid+cpp2Paid+(isQpip?0:eiPaid)+ageAmt
+    +spouseAmt+eligDepAmt+caregiverAmt+disabilityAmt
+    +pensionCrAmt+tuitionAmt+stuIntAmt+medAmt)*r0;
+
+  // Prov div credits (ON example; rough approximation for others)
+  const provEligDivCredit   = selProv==='ON' ? eligGrossed*0.10 :
+                              selProv==='BC' ? eligGrossed*0.12 :
+                              selProv==='AB' ? eligGrossed*0.10 :
+                              selProv==='QC' ? eligGrossed*0.1185 :
+                              eligGrossed * r0 * 0.8;
+  const provNonEligDivCredit= eligGrossed * r0 * 0.3;
+
+  provTax=Math.max(provTax-(provCreditsBase+donCreditProv+provEligDivCredit+provNonEligDivCredit),0);
+
+  // Ontario surtax (ITA provincial equiv.)
+  let onSurtax=0;
+  if(selProv==='ON'&&prov.surtax){
+    if(provTax>5892)onSurtax+=(provTax-5892)*.20;
+    if(provTax>7466)onSurtax+=(provTax-7466)*.36;
+    provTax+=onSurtax;
+  }
+
+  /* --- AMT CHECK (simplified) --- */
+  const amtIncome = totalInc + (cgPre+cgPost)*0.50; // AMT uses 100% CG inclusion
+  const amtBase   = Math.max(amtIncome - AMT_EXEMPT, 0);
+  const amtTax    = amtBase * AMT_RATE;
+  const regularTax= fedTaxFinal + provTax;
+  const amtApplies= amtTax > regularTax;
+  const amtExcess = amtApplies ? amtTax - regularTax : 0;
+
+  /* --- TOTALS --- */
+  const totalTax   = fedTaxFinal + provTax + (amtApplies ? amtExcess : 0);
+  const totalPayroll= cpp1Paid + cpp2Paid + eiPaid + qpipEmp + selfCpp;
+  const totalOwing = totalTax + totalPayroll + oasClawback;
+  const takeHome   = Math.max(totalInc - totalDeductions - totalTax - (cpp1Paid+cpp2Paid+eiPaid+selfCpp), 0);
+  const effRate    = totalInc>0 ? totalTax/totalInc : 0;
+  const margFed    = getMargFed(taxableInc);
+  const margProv   = getMargProv(taxableInc,prov);
+  const margRate   = margFed + margProv;
+
+  /* --- RENDER --- */
+  renderHero(totalTax,effRate,margRate,amtApplies,oasClawback);
+  renderResults({
+    totalInc,netIncome,taxableInc,totalDeductions,
+    fedTax:fedTaxFinal,provTax,onSurtax,amtExcess,amtApplies,
+    totalTax,cpp1Paid,cpp2Paid,eiPaid,qpipEmp,selfCpp,
+    oasClawback,takeHome,effRate,margRate,
+    eligGrossUpAmt,nonEligGrossUpAmt,cgPreIncl,cgPostIncl,
+    prov,selProv
+  });
+  renderFedBrackets(taxableInc);
+  renderProvBrackets(taxableInc, prov);
+}
+
+/* ═══ RENDER HERO ═══════════════════════════════════════════ */
+function renderHero(totalTax,effRate,margRate,amtApplies,oasClawback){
+  document.getElementById('rhAmount').className='rh-amount';
+  document.getElementById('rhAmount').textContent=fmt(totalTax);
+  document.getElementById('rhSub').innerHTML=
+    `Effective: <b>${pct(effRate)}</b> &nbsp;|&nbsp; Marginal: <b>${pct(margRate)}</b>`;
+  const badges=document.getElementById('rhBadges');
+  const pCode=selProv;
+  badges.innerHTML=`
+    <span class="rh-badge">${PROVS[pCode].name}</span>
+    <span class="rh-badge">Eff ${pct(effRate)}</span>
+    <span class="rh-badge">Marg ${pct(margRate)}</span>
+    ${amtApplies?'<span class="rh-badge warn">AMT APPLIES</span>':''}
+    ${oasClawback>0?'<span class="rh-badge warn">OAS CLAWBACK</span>':''}
+    ${effRate<0.10&&totalTax>0?'<span class="rh-badge ok">LOW RATE</span>':''}
+  `;
+  document.getElementById('rhProvBadge').textContent=PROVS[pCode].short+' — '+PROVS[pCode].name;
+}
+
+/* ═══ RENDER RESULTS BODY ═══════════════════════════════════ */
+function renderResults(d){
+  const rows=[
+    {l:'Total Income (Gross)',              v:fmt(d.totalInc),       c:'navy'},
+    {l:'Total Deductions',                  v:'−'+fmt(d.totalDeductions), c:'red'},
+    {l:'Net Income  ·  Line 23600',         v:fmt(d.netIncome),      c:''},
+    {l:'Taxable Income  ·  Line 26000',     v:fmt(d.taxableInc),     c:''},
+    {sep:true},
+    {l:'Federal Income Tax',                v:fmt(d.fedTax),         c:'gold'},
+    ...(d.selProv==='QC'?[{l:'  QC Abatement Applied (16.5%)',v:'',c:'',note:true}]:[]),
+    {l:d.prov.name+' Provincial Tax',       v:fmt(d.provTax),        c:'gold'},
+    ...(d.onSurtax>0?[{l:'  ↳ Ontario Surtax (incl.)',v:fmt(d.onSurtax),c:'gold'}]:[]),
+    ...(d.amtApplies?[{l:'AMT Excess (additional)',v:fmt(d.amtExcess),c:'red'}]:[]),
+    {sep:true},
+    {l:'CPP1 Premiums',                     v:fmt(d.cpp1Paid),       c:''},
+    ...(d.cpp2Paid>0?[{l:'CPP2 Premiums (2nd Ceiling)',v:fmt(d.cpp2Paid),c:''}]:[]),
+    ...(d.selfCpp>0?[{l:'CPP — Self-Employed (both halves)',v:fmt(d.selfCpp),c:''}]:[]),
+    {l:'EI Premiums',                       v:fmt(d.eiPaid),         c:''},
+    ...(d.qpipEmp>0?[{l:'QPIP Premiums (QC)',v:fmt(d.qpipEmp),c:''}]:[]),
+    ...(d.oasClawback>0?[{l:'OAS Clawback (Repayment)',v:fmt(d.oasClawback),c:'red'}]:[]),
+  ];
+
+  const barData=[
+    {name:'Take-Home',   pct:d.takeHome/Math.max(d.totalInc,1),    color:'#0f6b4f'},
+    {name:'Federal Tax', pct:d.fedTax/Math.max(d.totalInc,1),      color:'#002147'},
+    {name:'Prov. Tax',   pct:d.provTax/Math.max(d.totalInc,1),     color:'#0a3472'},
+    {name:'CPP+EI',      pct:(d.cpp1Paid+d.cpp2Paid+d.eiPaid+d.selfCpp)/Math.max(d.totalInc,1), color:'#78716c'},
+    {name:'Deductions',  pct:d.totalDeductions/Math.max(d.totalInc,1), color:'#d6d3ce'},
+  ];
+
+  let html=rows.map(r=>{
+    if(r.sep)return`<div style="height:1px;background:var(--border);margin:4px 0;"></div>`;
+    return`<div class="res-row">
+      <span class="rl${r.indent?' indent':''}">${r.l}</span>
+      <span class="rv${r.c?' '+r.c:''}">${r.v}</span>
+    </div>`;
+  }).join('');
+
+  html+=`<div class="takehome-box">
+    <span class="th-label">Estimated Take-Home</span>
+    <span class="th-val">${fmt(d.takeHome)}</span>
+  </div>`;
+
+  if(d.amtApplies){
+    html+=`<div class="amt-box">
+      <span class="amt-label">⚠ AMT Excess Payable</span>
+      <span class="amt-val">${fmt(d.amtExcess)}</span>
+    </div>`;
+  }
+
+  html+=`<div class="bar-wrap">
+    <div class="bar-title">Income Allocation</div>
+    ${barData.filter(b=>b.pct>0).map(b=>`
+    <div class="b-item">
+      <div class="b-meta"><span class="b-name">${b.name}</span><span class="b-pct">${(b.pct*100).toFixed(1)}%</span></div>
+      <div class="b-track"><div class="b-fill" style="width:${Math.min(b.pct*100,100).toFixed(1)}%;background:${b.color};"></div></div>
+    </div>`).join('')}
+  </div>`;
+
+  if(d.eligGrossUpAmt>0||d.nonEligGrossUpAmt>0||d.cgPreIncl>0||d.cgPostIncl>0){
+    html+=`<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--faint);">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Adjustments Detail</div>`;
+    if(d.eligGrossUpAmt>0) html+=`<div class="res-row sub"><span class="rl" style="font-size:10.5px;">Eligible Div. Gross-Up (38%)</span><span class="rv sm">${fmt(d.eligGrossUpAmt)}</span></div>`;
+    if(d.nonEligGrossUpAmt>0) html+=`<div class="res-row sub"><span class="rl" style="font-size:10.5px;">Non-Elig. Div. Gross-Up (15%)</span><span class="rv sm">${fmt(d.nonEligGrossUpAmt)}</span></div>`;
+    if(d.cgPreIncl>0) html+=`<div class="res-row sub"><span class="rl" style="font-size:10.5px;">CG Inclusion Pre-Jun 25 (50%)</span><span class="rv sm">${fmt(d.cgPreIncl)}</span></div>`;
+    if(d.cgPostIncl>0) html+=`<div class="res-row sub"><span class="rl" style="font-size:10.5px;">CG Inclusion Post-Jun 25 (⅔)</span><span class="rv sm">${fmt(d.cgPostIncl)}</span></div>`;
+    html+='</div>';
+  }
+
+  document.getElementById('resBody').innerHTML=html;
+}
+
+/* ═══ RENDER BRACKET TABLES ════════════════════════════════ */
+function renderBracketTable(income, brackets, tbodyId){
+  const tbody=document.getElementById(tbodyId);
+  let rows='', cum=0;
+  brackets.forEach((b,i)=>{
+    const inBracket=Math.max(Math.min(income,b.max===Infinity?income:b.max)-b.min,0);
+    const taxOnBracket=inBracket*b.rate;
+    cum+=taxOnBracket;
+    const isCurrent=income>b.min&&income<=(b.max===Infinity?Infinity:b.max);
+    const isFilled=income>=(b.max===Infinity?Infinity:b.max);
+    rows+=`<tr class="${isCurrent?'current':isFilled?'filled':''}">
+      <td>${fmt(b.min,0).replace('.00','')} – ${b.max===Infinity?'∞':fmt(b.max,0).replace('.00','')}</td>
+      <td>${pct(b.rate)}</td>
+      <td>${inBracket>0?fmt(inBracket):'—'}</td>
+      <td>${taxOnBracket>0?fmt(taxOnBracket):'—'}</td>
+      <td>${cum>0?fmt(cum):'—'}</td>
+    </tr>`;
+  });
+  tbody.innerHTML=rows;
+}
+function renderFedBrackets(income){renderBracketTable(income,FED,'fedBody');}
+function renderProvBrackets(income,prov){
+  document.getElementById('provTableTitle').textContent=prov.name+' Tax Brackets 2024';
+  renderBracketTable(income,prov.brackets,'provBody');
+}
+
+/* ═══ RESET ════════════════════════════════════════════════ */
+function resetForm(){
+  document.querySelectorAll('input[type="number"]').forEach(el=>el.value='');
+  document.querySelectorAll('input[type="checkbox"]').forEach(el=>el.checked=false);
+  document.getElementById('rhAmount').className='rh-amount pending';
+  document.getElementById('rhAmount').textContent='Awaiting Input';
+  document.getElementById('rhSub').textContent='Enter income details and calculate';
+  document.getElementById('rhBadges').innerHTML='<span class="rh-badge">2024 T1</span><span class="rh-badge" id="rhProvBadge">'+PROVS[selProv].short+' — '+PROVS[selProv].name+'</span>';
+  document.getElementById('resBody').innerHTML='<div class="placeholder"><div class="ph-icon">🍁</div><div>Fill in income details<br>and click Calculate<br>to see your full<br>T1 breakdown</div></div>';
+  const empty='<tr><td colspan="5" style="color:var(--muted);padding:14px;text-align:center;font-family:IBM Plex Mono,monospace;font-size:11px;">Run calculation to see bracket breakdown</td></tr>';
+  document.getElementById('fedBody').innerHTML=empty;
+  document.getElementById('provBody').innerHTML=empty;
+}
+
+/* ═══ INIT ══════════════════════════════════════════════════ */
+buildProvGrid();
+document.addEventListener('keydown',e=>{if(e.key==='Enter')calculate();});
+</script>
+</body>
+</html>

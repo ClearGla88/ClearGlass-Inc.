@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARTEMIS IV · Initializing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --red-deep:    #cc0033;
+  --red:         #ff1744;
+  --red-light:   #ff5577;
+  --red-dim:     rgba(255, 23, 68, 0.45);
+  --red-faint:   rgba(255, 23, 68, 0.15);
+  --void:        #000000;
+  --void2:       #050608;
+  --cyan:        #00e5ff;
+  --ease:        cubic-bezier(0.16, 1, 0.3, 1);
+  --mono:        'JetBrains Mono', 'Courier New', monospace;
+}
+html, body {
+  width: 100%; height: 100%;
+  background: var(--void);
+  color: var(--red);
+  font-family: var(--mono);
+  overflow: hidden;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Background layers ───────────────────────────────────────── */
+.ambient-glow {
+  position: fixed;
+  left: 50%; top: 50%;
+  width: 90vmin; height: 90vmin;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at center,
+    rgba(255,23,68,0.13) 0%,
+    rgba(255,23,68,0.04) 25%,
+    transparent 60%);
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: 1;
+}
+.grid-overlay {
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,23,68,0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,23,68,0.5) 1px, transparent 1px);
+  background-size: 64px 64px;
+  opacity: 0.07;
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  pointer-events: none;
+  z-index: 2;
+}
+.vignette {
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse at center,
+    transparent 40%,
+    rgba(0,0,0,0.85) 100%);
+  pointer-events: none;
+  z-index: 3;
+}
+.grain {
+  position: fixed; inset: 0;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 4;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.sweep {
+  position: fixed; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,23,68,0.4) 50%,
+    transparent 100%);
+  box-shadow: 0 0 18px rgba(255,23,68,0.6);
+  pointer-events: none;
+  z-index: 5;
+  animation: sweepDown 8s linear infinite;
+}
+@keyframes sweepDown {
+  0%   { top: -2%; }
+  100% { top: 102%; }
+}
+
+/* ── Top bar ─────────────────────────────────────────────────── */
+.top-bar {
+  position: fixed; top: 0; left: 0; right: 0;
+  padding: 16px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  color: rgba(255,23,68,0.4);
+  z-index: 20;
+}
+.top-bar .left { display: flex; align-items: center; gap: 12px; }
+.top-bar .left .dot {
+  width: 6px; height: 6px;
+  background: var(--red);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(255,23,68,0.8);
+  animation: pulseDot 2s ease-in-out infinite;
+}
+.top-bar .center { display: none; gap: 24px; }
+.top-bar .right { font-variant-numeric: tabular-nums; }
+@media (min-width: 768px) { .top-bar .center { display: flex; } }
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ── Hash ticker top-left ─────────────────────────────────────── */
+.hash-ticker {
+  position: fixed; top: 48px; left: 32px;
+  font-size: 9px;
+  color: rgba(255,23,68,0.25);
+  letter-spacing: 0.15em;
+  line-height: 1.7;
+  z-index: 20;
+}
+.hash-ticker .id { letter-spacing: 0.3em; margin-bottom: 4px; }
+
+/* ── Main center stage ───────────────────────────────────────── */
+.stage {
+  position: relative;
+  width: 100%; height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+  z-index: 10;
+}
+.center {
+  width: 100%; max-width: 640px;
+  display: flex; flex-direction: column; align-items: center;
+}
+
+/* ── Hexagon logo block ──────────────────────────────────────── */
+.hex {
+  position: relative;
+  width: 168px; height: 168px;
+  margin-bottom: 56px;
+  opacity: 0;
+  transform: scale(0.7) translateY(8px);
+  animation: hexEnter 1.4s var(--ease) forwards;
+}
+@keyframes hexEnter {
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.hex svg { position: absolute; inset: 0; }
+.hex .ring-rotate { animation: rotateSlow 22s linear infinite; }
+@keyframes rotateSlow {
+  to { transform: rotate(360deg); }
+}
+.hex .body { animation: pulseGlow 2.6s ease-in-out infinite; }
+@keyframes pulseGlow {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(255,23,68,0.6)); }
+  50%      { filter: drop-shadow(0 0 16px rgba(255,23,68,0.9)); }
+}
+.hex .pulse-bg {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at center,
+    rgba(255,23,68,0.15) 0%,
+    transparent 50%);
+  animation: pulseBg 2.8s ease-in-out infinite;
+}
+@keyframes pulseBg {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50%      { transform: scale(1.18); opacity: 0.2; }
+}
+
+/* ── Wordmark ─────────────────────────────────────────────────── */
+.wordmark-wrap {
+  position: relative;
+  margin-bottom: 12px;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: enterFade 1.0s var(--ease) 0.5s forwards;
+}
+.wordmark {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 0.3em;
+  color: var(--red);
+  text-shadow:
+    0 0 4px rgba(255,23,68,0.6),
+    0 0 14px rgba(255,23,68,0.4),
+    0 0 28px rgba(255,23,68,0.25);
+  animation: flicker 4s steps(2) infinite;
+}
+.wordmark-ghost {
+  position: absolute;
+  inset: 0;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 0.3em;
+  color: var(--cyan);
+  opacity: 0.18;
+  transform: translateX(-1.5px);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+@media (min-width: 768px) {
+  .wordmark, .wordmark-ghost { font-size: 48px; letter-spacing: 0.4em; }
+}
+@keyframes flicker {
+  0%, 92%, 100% { opacity: 1; }
+  93%           { opacity: 0.7; }
+  94%           { opacity: 0.95; }
+  95%           { opacity: 0.55; }
+  96%           { opacity: 0.9; }
+  97%           { opacity: 1; }
+}
+
+.subtitle {
+  font-size: 10px;
+  letter-spacing: 0.6em;
+  color: rgba(255,23,68,0.45);
+  margin-bottom: 56px;
+  text-align: center;
+  opacity: 0;
+  animation: enterFade 0.9s ease 1.0s forwards;
+}
+@media (min-width: 768px) {
+  .subtitle { font-size: 11px; margin-bottom: 64px; }
+}
+@keyframes enterFade {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Progress bar ─────────────────────────────────────────────── */
+.progress-wrap {
+  width: 100%;
+  position: relative;
+  opacity: 0;
+  transform: scaleX(0.6);
+  animation: progressEnter 1.1s var(--ease) 1.2s forwards;
+}
+@keyframes progressEnter {
+  to { opacity: 1; transform: scaleX(1); }
+}
+.progress-wrap .corner {
+  position: absolute;
+  width: 12px; height: 12px;
+  border-color: rgba(255,23,68,0.6);
+  border-style: solid;
+  border-width: 0;
+}
+.corner.tl { top: -8px; left: -12px; border-top-width: 1px; border-left-width: 1px; }
+.corner.tr { top: -8px; right: -12px; border-top-width: 1px; border-right-width: 1px; }
+.corner.bl { bottom: -8px; left: -12px; border-bottom-width: 1px; border-left-width: 1px; }
+.corner.br { bottom: -8px; right: -12px; border-bottom-width: 1px; border-right-width: 1px; }
+.track {
+  position: relative;
+  height: 3px;
+  width: 100%;
+  background: rgba(50, 0, 8, 0.4);
+  overflow: hidden;
+  box-shadow: inset 0 0 4px rgba(0,0,0,0.6);
+}
+.track-segments {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  pointer-events: none;
+}
+.track-segments div {
+  flex: 1;
+  border-right: 1px solid rgba(255,23,68,0.1);
+}
+.track-segments div:last-child { border-right: none; }
+.fill {
+  position: absolute;
+  top: 0; left: 0;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--red-deep) 0%, var(--red) 50%, var(--red-light) 100%);
+  box-shadow: 0 0 14px rgba(255,23,68,0.85), 0 0 4px rgba(255,23,68,1);
+  transition: width 0.16s ease-out;
+}
+.head {
+  position: absolute;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background: #fff;
+  box-shadow: 0 0 8px #fff, 0 0 16px var(--red);
+  transition: left 0.16s ease-out;
+}
+
+.meta {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 12px;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+}
+.phase {
+  display: flex; align-items: center; gap: 8px;
+  color: rgba(255,23,68,0.7);
+}
+.phase .dot {
+  display: inline-block;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--red);
+  animation: pulseDot 2s ease-in-out infinite;
+}
+.phase-label {
+  display: inline-block;
+  transition: opacity 0.25s, transform 0.25s;
+}
+.percent {
+  color: var(--red);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.percent .symbol { color: rgba(255,23,68,0.5); }
+
+/* ── Boot log ─────────────────────────────────────────────────── */
+.boot-log {
+  margin-top: 40px;
+  width: 100%;
+  height: 112px;
+  overflow: hidden;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  line-height: 1.9;
+  opacity: 0;
+  animation: enterFade 1.0s ease 1.7s forwards;
+}
+.boot-log .line {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  animation: lineEnter 0.35s ease-out;
+}
+.boot-log .line .ts { color: rgba(255,23,68,0.4); }
+.boot-log .line .body { color: rgba(255,23,68,0.7); }
+.boot-log .line.faded-1 { opacity: 0.7; }
+.boot-log .line.faded-2 { opacity: 0.55; }
+.boot-log .line.faded-3 { opacity: 0.4; }
+.boot-log .line.faded-4 { opacity: 0.28; }
+.boot-log .line.faded-5 { opacity: 0.18; }
+.boot-log .line.faded-6 { opacity: 0.1; }
+@keyframes lineEnter {
+  from { opacity: 0; transform: translateX(-10px); }
+}
+
+/* ── Bottom status bar ────────────────────────────────────────── */
+.bottom-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  padding: 16px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  color: rgba(255,23,68,0.3);
+  z-index: 20;
+}
+.bottom-bar .stats { display: flex; gap: 16px; }
+.bottom-bar .stats span span { color: rgba(255,23,68,0.6); }
+.bottom-bar .stats span:nth-child(3) { display: none; }
+@media (min-width: 768px) { .bottom-bar .stats span:nth-child(3) { display: inline; } }
+
+/* ── Final flash ──────────────────────────────────────────────── */
+.flash {
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 30;
+  opacity: 0;
+  background: radial-gradient(circle at center, rgba(255,23,68,0.4) 0%, transparent 60%);
+}
+.flash.active {
+  animation: flashIn 0.6s ease-out;
+}
+@keyframes flashIn {
+  0%, 100% { opacity: 0; }
+  50%      { opacity: 0.5; }
+}
+
+/* ── Responsive tweaks ────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .top-bar, .bottom-bar { padding: 12px 16px; font-size: 9px; }
+  .hash-ticker { display: none; }
+  .hex { width: 132px; height: 132px; margin-bottom: 40px; }
+  .wordmark, .wordmark-ghost { font-size: 24px; letter-spacing: 0.2em; }
+  .subtitle { font-size: 9px; letter-spacing: 0.4em; margin-bottom: 40px; }
+  .boot-log { height: 80px; font-size: 9px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Background layers ─────────────────────────────────────── -->
+<div class="ambient-glow"></div>
+<div class="grid-overlay"></div>
+<div class="vignette"></div>
+<div class="grain"></div>
+<div class="sweep"></div>
+
+<!-- ── Top classification bar ────────────────────────────────── -->
+<div class="top-bar">
+  <div class="left">
+    <span class="dot"></span>
+    <span>RESTRICTED · CLEARGLASS INC.</span>
+  </div>
+  <div class="center">
+    <span>BURLINGTON · ON · CA</span>
+    <span>43.3255°N 79.7990°W</span>
+  </div>
+  <div class="right" id="topClock">v4.IV · LOADING</div>
+</div>
+
+<!-- ── Top-left hash ticker ──────────────────────────────────── -->
+<div class="hash-ticker">
+  <div class="id">NODE · ARTEMIS-PRIME-01</div>
+  <div id="hashLines"></div>
+</div>
+
+<!-- ── Main stage ────────────────────────────────────────────── -->
+<div class="stage">
+  <div class="center">
+
+    <!-- ── HEXAGON LOGO ─────────────────────────────────────── -->
+    <div class="hex">
+      <!-- Outer rotating dashed ring -->
+      <svg class="ring-rotate" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="92"
+          fill="none"
+          stroke="rgba(255,23,68,0.18)"
+          stroke-width="0.5"
+          stroke-dasharray="2 6"/>
+      </svg>
+
+      <!-- Tick marks ring -->
+      <svg viewBox="0 0 200 200">
+        <g id="tickRing"></g>
+      </svg>
+
+      <!-- Hexagon body -->
+      <svg class="body" viewBox="0 0 200 200" style="filter: drop-shadow(0 0 14px rgba(255,23,68,0.55))">
+        <defs>
+          <linearGradient id="hexFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(255,23,68,0.18)"/>
+            <stop offset="100%" stop-color="rgba(120,0,20,0.08)"/>
+          </linearGradient>
+          <linearGradient id="hexStroke" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"   stop-color="#ff5577"/>
+            <stop offset="50%"  stop-color="#ff1744"/>
+            <stop offset="100%" stop-color="#cc0033"/>
+          </linearGradient>
+        </defs>
+        <polygon points="100,30 158,65 158,135 100,170 42,135 42,65"
+          fill="url(#hexFill)"
+          stroke="url(#hexStroke)"
+          stroke-width="1.6"/>
+        <!-- Corner brackets -->
+        <g id="cornerBrackets"></g>
+        <!-- CG monogram -->
+        <text x="100" y="118"
+          text-anchor="middle"
+          font-family="JetBrains Mono, monospace"
+          font-size="44"
+          font-weight="700"
+          letter-spacing="2"
+          fill="#ff1744"
+          style="filter: drop-shadow(0 0 8px rgba(255,23,68,0.8))">CG</text>
+      </svg>
+
+      <div class="pulse-bg"></div>
+    </div>
+
+    <!-- ── WORDMARK ─────────────────────────────────────────── -->
+    <div class="wordmark-wrap">
+      <h1 class="wordmark">ARTEMIS&nbsp;IV</h1>
+      <h1 class="wordmark-ghost" aria-hidden="true">ARTEMIS&nbsp;IV</h1>
+    </div>
+
+    <div class="subtitle">CLEARGLASSINC&nbsp;·&nbsp;UNIFIED&nbsp;INTELLIGENCE&nbsp;COMMAND</div>
+
+    <!-- ── PROGRESS BAR ─────────────────────────────────────── -->
+    <div class="progress-wrap">
+      <div class="corner tl"></div>
+      <div class="corner tr"></div>
+      <div class="corner bl"></div>
+      <div class="corner br"></div>
+
+      <div class="track">
+        <div class="track-segments">
+          <div></div><div></div><div></div><div></div><div></div>
+          <div></div><div></div><div></div><div></div><div></div>
+          <div></div><div></div><div></div><div></div><div></div>
+          <div></div><div></div><div></div><div></div><div></div>
+        </div>
+        <div class="fill" id="fill"></div>
+        <div class="head" id="head"></div>
+      </div>
+
+      <div class="meta">
+        <div class="phase">
+          <span class="dot"></span>
+          <span class="phase-label" id="phase">INITIALIZING…</span>
+        </div>
+        <div class="percent">
+          <span id="pct">000</span><span class="symbol">%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── BOOT LOG ─────────────────────────────────────────── -->
+    <div class="boot-log" id="bootLog"></div>
+  </div>
+</div>
+
+<!-- ── Bottom status bar ─────────────────────────────────────── -->
+<div class="bottom-bar">
+  <div class="stats">
+    <span>FEED: <span id="statFeed">0/7</span></span>
+    <span>SEC: <span id="statSec">···</span></span>
+    <span>LAT: <span id="statLat">··· MS</span></span>
+  </div>
+  <div id="opStatus">AWAITING OPERATOR</div>
+  <div>NODE 01 <span style="color: rgba(255,23,68,0.6)">●</span></div>
+</div>
+
+<!-- ── Final flash overlay ───────────────────────────────────── -->
+<div class="flash" id="flash"></div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+//  ARTEMIS IV BOOT SEQUENCE
+// ════════════════════════════════════════════════════════════════
+(function () {
+  const startTime = Date.now();
+
+  // ── Build SVG tick ring ─────────────────────────────────────
+  const tickRing = document.getElementById('tickRing');
+  for (let i = 0; i < 24; i++) {
+    const angle = (i * 360) / 24;
+    const isMajor = i % 3 === 0;
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', 100);
+    line.setAttribute('y1', isMajor ? 22 : 26);
+    line.setAttribute('x2', 100);
+    line.setAttribute('y2', isMajor ? 30 : 28);
+    line.setAttribute('stroke', 'rgba(255,23,68,0.5)');
+    line.setAttribute('stroke-width', isMajor ? '1.2' : '0.6');
+    line.setAttribute('transform', `rotate(${angle} 100 100)`);
+    tickRing.appendChild(line);
+  }
+
+  // ── Build hexagon corner brackets ───────────────────────────
+  const corners = document.getElementById('cornerBrackets');
+  const cornerData = [
+    { x: 100, y: 30, r: 0 },   { x: 100, y: 170, r: 180 },
+    { x: 158, y: 65, r: 60 },  { x: 158, y: 135, r: 120 },
+    { x: 42, y: 65, r: -60 },  { x: 42, y: 135, r: -120 },
+  ];
+  cornerData.forEach(b => {
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('transform', `translate(${b.x} ${b.y}) rotate(${b.r})`);
+    [['-6','-3','0','-3'], ['0','-3','0','3']].forEach(([x1,y1,x2,y2]) => {
+      const ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      ln.setAttribute('x1', x1); ln.setAttribute('y1', y1);
+      ln.setAttribute('x2', x2); ln.setAttribute('y2', y2);
+      ln.setAttribute('stroke', '#ff1744');
+      ln.setAttribute('stroke-width', '1.6');
+      g.appendChild(ln);
+    });
+    corners.appendChild(g);
+  });
+
+  // ── Hash ticker ─────────────────────────────────────────────
+  const hashLines = document.getElementById('hashLines');
+  function makeHash() {
+    const hex = () => Math.floor(Math.random() * 16).toString(16).padStart(2, '0');
+    return [hex()+hex()+hex()+hex(), hex()+hex()+hex()+hex(), hex()+hex()+hex()+hex()].join(' ');
+  }
+  function refreshHashes() {
+    hashLines.innerHTML = '';
+    for (let i = 0; i < 4; i++) {
+      const d = document.createElement('div');
+      d.textContent = makeHash();
+      hashLines.appendChild(d);
+    }
+  }
+  refreshHashes();
+  setInterval(refreshHashes, 1100);
+
+  // ── Boot phases ─────────────────────────────────────────────
+  const PHASES = [
+    { at:  0, label: 'INITIALIZING',          line: 'BOOT // CLEARGLASS NEXUS · ARTEMIS IV' },
+    { at:  6, label: 'KERNEL LOAD',           line: 'KRNL  · ssh-rsa keypair verified · 4096 bit' },
+    { at: 14, label: 'SECURE HANDSHAKE',      line: 'NSEC  · TLS 1.3 mutual · cert chain valid' },
+    { at: 23, label: 'PQC LAYER',             line: 'PQC   · ML-KEM-1024 active · NIST FIPS 203' },
+    { at: 31, label: 'INTELLIGENCE FEEDS',    line: 'FEED  · NVD · USGS · ADS-B · GDELT · 7/7 OK' },
+    { at: 42, label: 'THREAT GRID SYNC',      line: 'GRID  · APT41 · FIN7 · LockBit3 · tracked' },
+    { at: 53, label: 'GEOSPATIAL OVERLAY',    line: 'GEOI  · Halton 43.32°N 79.79°W · resolved' },
+    { at: 64, label: 'AI CORTEX',             line: 'CRTX  · Claude Sonnet · stream pipe ready' },
+    { at: 74, label: 'COMPLIANCE MATRIX',     line: 'COMP  · NIST CSF · ISO 27001 · C-26 · loaded' },
+    { at: 83, label: 'SOVEREIGN LINK',        line: 'SVRN  · Burlington ON · CA municipality net' },
+    { at: 92, label: 'OPERATIONAL READINESS', line: 'OPS   · 38 modules online · zero degraded' },
+    { at: 99, label: 'COMMAND READY',         line: 'CMND  · OPERATOR AUTHENTICATED · WELCOME' },
+  ];
+
+  let progress = 0;
+  let lastPhase = '';
+  let log = [];
+  const fill = document.getElementById('fill');
+  const head = document.getElementById('head');
+  const pct = document.getElementById('pct');
+  const phase = document.getElementById('phase');
+  const bootLog = document.getElementById('bootLog');
+  const opStatus = document.getElementById('opStatus');
+  const flash = document.getElementById('flash');
+  const statFeed = document.getElementById('statFeed');
+  const statSec = document.getElementById('statSec');
+  const statLat = document.getElementById('statLat');
+  const topClock = document.getElementById('topClock');
+
+  function tick() {
+    if (progress >= 100) {
+      // Final reveal flash
+      flash.classList.add('active');
+      opStatus.textContent = 'OPERATIONAL · STAND BY';
+      head.style.opacity = '0';
+      return;
+    }
+    // Easing — slow start, faster middle, slow finish
+    const step = progress < 8  ? 0.32
+               : progress < 88 ? 0.85 + Math.random() * 0.45
+               : 0.42;
+    progress = Math.min(100, progress + step);
+
+    // Update progress UI
+    fill.style.width = progress + '%';
+    head.style.left = `calc(${progress}% - 2px)`;
+    pct.textContent = String(Math.floor(progress)).padStart(3, '0');
+
+    // Phase + log
+    const reached = [...PHASES].reverse().find(p => progress >= p.at);
+    if (reached && reached.label !== lastPhase) {
+      lastPhase = reached.label;
+      phase.style.opacity = '0';
+      phase.style.transform = 'translateY(4px)';
+      setTimeout(() => {
+        phase.textContent = reached.label + '…';
+        phase.style.opacity = '1';
+        phase.style.transform = 'translateY(0)';
+      }, 80);
+
+      // Add to boot log
+      const entry = document.createElement('div');
+      entry.className = 'line';
+      const ts = ((Date.now() - startTime) / 1000).toFixed(2).padStart(6, '0');
+      entry.innerHTML = '<span class="ts">[' + ts + ']</span> <span class="body">' + reached.line + '</span>';
+      bootLog.appendChild(entry);
+      // Keep last 7 entries with fade gradient
+      while (bootLog.children.length > 7) bootLog.removeChild(bootLog.firstChild);
+      Array.from(bootLog.children).forEach((el, idx, arr) => {
+        const distance = arr.length - 1 - idx;
+        el.className = 'line' + (distance > 0 ? ' faded-' + distance : '');
+      });
+    }
+
+    // Update bottom stats based on progress
+    const feedCount = Math.min(7, Math.floor(progress / 14.3));
+    statFeed.textContent = feedCount + '/7';
+    if (progress > 23) statSec.textContent = 'PQC';
+    if (progress > 30) statLat.textContent = (8 + Math.random() * 6).toFixed(1) + ' MS';
+
+    setTimeout(tick, 38);
+  }
+  tick();
+
+  // ── Live clock in top-right ─────────────────────────────────
+  function updateClock() {
+    const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    topClock.textContent = 'v4.IV · ' + now + 'Z';
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+})();
+</script>
+</body>
+</html>

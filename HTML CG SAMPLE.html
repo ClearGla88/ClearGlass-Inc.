@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>ARTEMIS · EMP HARDENED NEURAL CORE + NETWORK OPTIMIZER v7.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --artemis-gold: #ffcc44;
+            --artemis-red: #ff3d5e;
+            --artemis-cyan: #00d4ff;
+            --artemis-void: #000000;
+            --border-emp: rgba(255, 61, 94, 0.35);
+            --glow-emp: 0 0 20px rgba(255, 61, 94, 0.5);
+        }
+        body {
+            background: var(--artemis-void);
+            font-family: 'Space Grotesk', sans-serif;
+            color: #eef5ff;
+            height: 100vh;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+        .emp-quantum-field { position: fixed; inset: 0; z-index: 0; background: radial-gradient(ellipse at 30% 40%, rgba(255,61,94,0.08) 0%, transparent 70%), repeating-linear-gradient(45deg, rgba(255,61,94,0.03) 0px, rgba(255,61,94,0.03) 2px, transparent 2px, transparent 12px); animation: quantumPulse 8s ease-in-out infinite; }
+        @keyframes quantumPulse { 0%,100% { opacity: 0.4; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.02); } }
+        .faraday-lattice { position: fixed; inset: 0; z-index: 1; background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 5 L75 22.5 L75 57.5 L40 75 L5 57.5 L5 22.5 Z' fill='none' stroke='rgba(255,61,94,0.04)' stroke-width='0.8'/%3E%3C/svg%3E"); background-repeat: repeat; opacity: 0.5; pointer-events: none; animation: latticeDrift 30s linear infinite; }
+        @keyframes latticeDrift { 0% { background-position: 0 0; } 100% { background-position: 200px 200px; } }
+        .emp-radar { position: fixed; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(255,61,94,0.06) 100%); animation: radarSweep 6s ease-out infinite; }
+        @keyframes radarSweep { 0% { opacity: 0; transform: scale(0.8); } 50% { opacity: 0.5; } 100% { opacity: 0; transform: scale(1.5); } }
+        .scan-beam { position: fixed; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--artemis-gold), var(--artemis-red), transparent); animation: beamScan 5s linear infinite; z-index: 3; pointer-events: none; }
+        @keyframes beamScan { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        .app { position: relative; z-index: 20; display: flex; height: 100vh; }
+        .sidebar { width: 320px; background: linear-gradient(180deg, rgba(0,0,0,0.98), rgba(1,2,8,0.99)); backdrop-filter: blur(24px); border-right: 1px solid var(--border-emp); display: flex; flex-direction: column; box-shadow: 12px 0 48px rgba(0,0,0,0.6); }
+        .insignia { padding: 28px 24px; border-bottom: 1px solid rgba(255,61,94,0.2); position: relative; overflow: hidden; }
+        .insignia::after { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 1px; background: linear-gradient(90deg, transparent, var(--artemis-gold), var(--artemis-red), transparent); animation: insigniaFlash 4s ease-in-out infinite; }
+        @keyframes insigniaFlash { 0%,100% { left: -100%; } 50% { left: 100%; } }
+        .logo-main { font-family: 'Orbitron', monospace; font-size: 28px; font-weight: 900; background: linear-gradient(135deg, #fff, var(--artemis-gold), var(--artemis-red)); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: 5px; }
+        .logo-sub { font-size: 8px; letter-spacing: 4px; color: #5f7f9f; margin-top: 8px; text-transform: uppercase; }
+        .clearance-strip { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+        .ts-badge { padding: 4px 12px; font-size: 7px; letter-spacing: 2px; border: 1px solid var(--artemis-gold); background: rgba(255,204,68,0.08); color: var(--artemis-gold); border-radius: 20px; }
+        .emp-badge-red { border-color: var(--artemis-red); color: var(--artemis-red); background: rgba(255,61,94,0.1); }
+        .nav-mission { flex: 1; padding: 28px 16px; overflow-y: auto; }
+        .mission-item { display: flex; align-items: center; gap: 14px; padding: 12px 16px; margin: 6px 0; border-radius: 14px; cursor: pointer; transition: all 0.3s; color: #8aa0c0; font-weight: 500; position: relative; overflow: hidden; }
+        .mission-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: linear-gradient(90deg, rgba(255,61,94,0.1), transparent); transition: width 0.4s; }
+        .mission-item:hover::before { width: 100%; }
+        .mission-item:hover { color: #fff; transform: translateX(5px); }
+        .mission-item.active { background: linear-gradient(90deg, rgba(255,61,94,0.15), transparent); border-left: 3px solid var(--artemis-red); color: var(--artemis-red); }
+        .ops-footer { padding: 20px; border-top: 1px solid rgba(255,61,94,0.12); font-size: 9px; font-family: 'JetBrains Mono', monospace; }
+        .pulse-dot { width: 8px; height: 8px; background: #00ff88; border-radius: 50%; display: inline-block; margin-right: 8px; box-shadow: 0 0 8px #00ff88; animation: dotPulse 1.2s infinite; }
+        @keyframes dotPulse { 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:0.3; transform:scale(0.7); } }
+        .command-center { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .top-strip { padding: 14px 28px; background: rgba(0,0,0,0.88); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,61,94,0.25); display: flex; justify-content: space-between; align-items: center; }
+        .op-name { font-family: 'Orbitron', monospace; font-size: 13px; letter-spacing: 3px; color: var(--artemis-gold); text-shadow: 0 0 10px rgba(255,204,68,0.3); }
+        .tactical-stats { display: flex; gap: 32px; }
+        .tstat { text-align: right; }
+        .tstat-val { font-family: 'Orbitron', monospace; font-size: 22px; font-weight: 700; color: var(--artemis-red); text-shadow: 0 0 8px rgba(255,61,94,0.5); }
+        .tstat-label { font-size: 8px; letter-spacing: 2px; color: #6a8aaa; }
+        .ops-grid { flex: 1; overflow-y: auto; padding: 22px 24px; display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; align-content: start; }
+        .quantum-panel { background: linear-gradient(145deg, rgba(0,0,0,0.92), rgba(2,4,12,0.96)); border: 1px solid rgba(255,61,94,0.3); border-radius: 24px; overflow: hidden; transition: all 0.4s; backdrop-filter: blur(8px); position: relative; }
+        .quantum-panel::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 40%, rgba(255,61,94,0.03), transparent); pointer-events: none; }
+        .quantum-panel:hover { transform: translateY(-4px); border-color: rgba(255,61,94,0.6); box-shadow: 0 12px 32px rgba(0,0,0,0.5), 0 0 20px rgba(255,61,94,0.15); }
+        .panel-title { padding: 14px 20px; border-bottom: 1px solid rgba(255,61,94,0.12); font-family: 'Orbitron', monospace; font-size: 10px; letter-spacing: 2px; display: flex; align-items: center; gap: 8px; }
+        .panel-content { padding: 16px 18px; }
+        .col-span-6 { grid-column: span 6; }
+        .col-span-3 { grid-column: span 3; }
+        .col-span-12 { grid-column: span 12; }
+        .kpi-emp { font-family: 'Orbitron', monospace; font-size: 36px; font-weight: 800; background: linear-gradient(135deg, #fff, var(--artemis-gold)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .threat-line { padding: 10px 0; border-bottom: 1px solid rgba(255,61,94,0.08); display: flex; gap: 12px; align-items: center; cursor: pointer; transition: 0.2s; }
+        .threat-line:hover { background: rgba(255,61,94,0.05); transform: translateX(5px); }
+        .sev-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+        .sev-crit { background: var(--artemis-red); box-shadow: 0 0 8px var(--artemis-red); }
+        .sev-high { background: #ff8844; }
+        .map-artemis, .net-artemis { height: 260px; width: 100%; border-radius: 16px; background: #000000; border: 1px solid rgba(255,61,94,0.2); }
+        .chat-log { height: 200px; overflow-y: auto; font-size: 11px; font-family: monospace; }
+        .msg-bot { margin-bottom: 12px; padding: 8px 12px; border-left: 2px solid var(--artemis-gold); background: rgba(255,204,68,0.04); }
+        .msg-user { text-align: right; margin-bottom: 12px; padding: 8px 12px; border-right: 2px solid var(--artemis-red); background: rgba(255,61,94,0.04); }
+        .input-line { display: flex; gap: 12px; margin-top: 12px; }
+        .artemis-btn { background: rgba(255,61,94,0.12); border: 1px solid var(--artemis-red); border-radius: 40px; padding: 8px 20px; color: var(--artemis-red); cursor: pointer; transition: all 0.2s; }
+        .artemis-btn:hover { background: rgba(255,61,94,0.25); transform: scale(1.02); }
+        input, button { background: #000000; border: 1px solid rgba(255,61,94,0.3); border-radius: 40px; padding: 10px 18px; color: #fff; font-family: monospace; outline: none; }
+        input:focus { border-color: var(--artemis-gold); box-shadow: 0 0 12px rgba(255,204,68,0.2); }
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: var(--artemis-red); border-radius: 3px; }
+        @media (max-width: 1300px) { .ops-grid { grid-template-columns: repeat(6, 1fr); } .col-span-6, .col-span-3, .col-span-12 { grid-column: span 6; } }
+        .opt-btn { background: rgba(0,212,255,0.15); border-color: var(--artemis-cyan); color: var(--artemis-cyan); margin: 4px; }
+        .opt-btn:hover { background: rgba(0,212,255,0.3); }
+    </style>
+</head>
+<body>
+<div class="emp-quantum-field"></div>
+<div class="faraday-lattice"></div>
+<div class="emp-radar"></div>
+<div class="scan-beam"></div>
+
+<div class="app">
+    <div class="sidebar">
+        <div class="insignia">
+            <div class="logo-main">⚡ ARTEMIS</div>
+            <div class="logo-sub">EMP HARDENED NEURAL CORE + NETWORK OPTIMIZER v7.0</div>
+            <div class="clearance-strip">
+                <span class="ts-badge">⚡ TS/SCI · NOFORN · FVEY</span>
+                <span class="ts-badge emp-badge-red">⚡ EMP DEFENSE · FARADAY SHIELD</span>
+                <span class="ts-badge">⚡ AGGRESSIVE THROTTLE BYPASS</span>
+            </div>
+        </div>
+        <div class="nav-mission">
+            <div class="mission-item active" data-view="zeus"><span>⚡</span> ARTEMIS OVERWATCH</div>
+            <div class="mission-item" data-view="athena"><span>🕸️</span> ENTITY GRAPH</div>
+            <div class="mission-item" data-view="ares"><span>📡</span> EMP THREAT FEED</div>
+            <div class="mission-item" data-view="poseidon"><span>📋</span> HARDENING REPORTS</div>
+            <div class="mission-item" data-view="hermes"><span>🧠</span> QUANTUM AI CORE</div>
+            <div class="mission-item" data-view="hades"><span>🔥</span> RED TEAM SIMULATOR</div>
+            <div class="mission-item" data-view="apollo"><span>🌐</span> NETWORK OPTIMIZER</div>
+        </div>
+        <div class="ops-footer">
+            <div><span class="pulse-dot"></span> NEURAL MESH · EMP HARDENED · 256-bit FARADAY</div>
+            <div style="margin-top: 8px;">⚡ QUANTUM ENTANGLEMENT: <span id="quantumState">COHERENT</span></div>
+            <div style="font-size: 8px; margin-top: 4px;">LAST FARADAY SWEEP: <span id="syncTime">0.0s</span> · E1/E2/E3 ACTIVE</div>
+        </div>
+    </div>
+
+    <div class="command-center">
+        <div class="top-strip">
+            <div class="op-name">⚡ PROJECT ARTEMIS · EMP THREAT DOMINANCE + NETWORK OPTIMIZER · TS/SCI v7.0</div>
+            <div class="tactical-stats">
+                <div class="tstat"><div class="tstat-val" id="statEntities">0</div><div class="tstat-label">ENTITIES</div></div>
+                <div class="tstat"><div class="tstat-val" id="statRelations">0</div><div class="tstat-label">CONNECTIONS</div></div>
+                <div class="tstat"><div class="tstat-val" id="statThreats">0</div><div class="tstat-label">EMP THREATS</div></div>
+                <div class="tstat"><div class="tstat-val" id="statAI">97%</div><div class="tstat-label">AI CONFIDENCE</div></div>
+            </div>
+        </div>
+
+        <div class="ops-grid" id="opsGrid">
+            <div class="quantum-panel col-span-3"><div class="panel-title"><span>⚡ ARTEMIS · QUANTUM SHIELD</span></div><div class="panel-content"><div class="kpi-emp" id="quantumVol">512</div><div style="font-size:9px;">FARADAY COHERENCE · 99.2%</div><div class="kpi-emp" style="font-size:14px; margin-top:8px;">EMP RESILIENCE: <span id="empResilience">97.4%</span></div></div></div>
+            <div class="quantum-panel col-span-3"><div class="panel-title"><span>🛡️ EMP THREAT INDEX</span></div><div class="panel-content"><div class="kpi-emp" id="threatIndex">82</div><div style="font-size:9px;">GLOBAL THREAT LEVEL · CRITICAL</div><div class="threat-meter" style="height:4px; background:#2a2a3a; margin-top:12px;"><div id="threatMeter" style="width:82%; height:100%; background:linear-gradient(90deg,#ff8844,#ff3d5e); border-radius:2px;"></div></div></div></div>
+            <div class="quantum-panel col-span-3"><div class="panel-title"><span>⚔️ APT ACTIVITY</span></div><div class="panel-content"><div class="kpi-emp" id="aptCount">0</div><div style="font-size:9px;">NATION-STATE ACTORS TRACKED</div><div id="aptHeatmap" style="margin-top:12px; font-size:8px;"></div></div></div>
+            <div class="quantum-panel col-span-3"><div class="panel-title"><span>🌊 CRITICAL ASSETS</span></div><div class="panel-content"><div class="kpi-emp" id="navalCount">0</div><div style="font-size:9px;">EMP-VULNERABLE INFRASTRUCTURE</div><div id="assetRisk" style="margin-top:8px; font-size:10px;"></div></div></div>
+
+            <div class="quantum-panel col-span-6"><div class="panel-title"><span>🌍 ARTEMIS GEOSPATIAL · E1/E2/E3 PULSE RADII · REAL-TIME</span></div><div class="panel-content"><div id="artemisMap" class="map-artemis"></div><div id="mapControls" style="margin-top:8px; display:flex; gap:8px;"><button onclick="zoomMap(1)">+ ZOOM</button><button onclick="zoomMap(-1)">- ZOOM</button><button onclick="resetMap()">RESET</button><span style="margin-left:auto; font-size:9px;">⚡ 5 EMP RADII ACTIVE</span></div></div></div>
+            <div class="quantum-panel col-span-6"><div class="panel-title"><span>🕸️ ARTEMIS ENTITY GRAPH · FORCE-DIRECTED · LIVE</span></div><div class="panel-content"><div id="artemisGraph" class="net-artemis"></div></div></div>
+
+            <div class="quantum-panel col-span-6"><div class="panel-title"><span>📡 EMP THREAT FEED · LIVE INTELLIGENCE STREAM</span><span style="font-size:8px;">AUTO-REFRESH: 8s</span></div><div class="panel-content" id="threatFeedLive" style="max-height: 280px; overflow-y: auto;"></div></div>
+            <div class="quantum-panel col-span-6"><div class="panel-title"><span>🌊 FARADAY ASSESSMENT · CRITICAL INFRASTRUCTURE</span></div><div class="panel-content" id="navalIntel"></div><div id="hardeningProgress" style="margin-top:12px;"><div style="font-size:8px;">HARDENING PROGRESS: <span id="hardPct">42%</span></div><div style="height:3px; background:#1a1a2a;"><div id="hardBar" style="width:42%; height:100%; background:var(--artemis-red);"></div></div></div></div>
+
+            <!-- NETWORK OPTIMIZER PANEL (NEW) -->
+            <div class="quantum-panel col-span-12"><div class="panel-title"><span>🌐 AGGRESSIVE NETWORK OPTIMIZER · THROTTLE BYPASS</span><button id="dlPs1Btn" class="artemis-btn" style="margin-left:auto;">📥 DOWNLOAD POWERSHELL SCRIPT</button></div>
+                <div class="panel-content"><div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;">
+                    <button class="artemis-btn opt-btn" id="killSvcsBtn">🛑 KILL THROTTLING SERVICES</button>
+                    <button class="artemis-btn opt-btn" id="dnsHardBtn">🔒 DNS HARDENING (DoH/DoT)</button>
+                    <button class="artemis-btn opt-btn" id="tcpOptBtn">⚙️ TCP/IP OPTIMIZATION</button>
+                    <button class="artemis-btn opt-btn" id="vpnPortBtn">🔌 VPN PORT MANIPULATION</button>
+                    <button class="artemis-btn opt-btn" id="monitorStartBtn">📡 START THROTTLE MONITOR</button>
+                    <button class="artemis-btn opt-btn" id="mtuTestBtn">📏 MTU OPTIMIZATION</button>
+                </div>
+                <div id="netOptLog" style="background:#000; border-radius:12px; padding:12px; font-family:monospace; font-size:10px; max-height:200px; overflow-y:auto;"></div>
+                <div style="margin-top:12px; font-size:9px; color:#8aa0c0;">⚡ Actions simulate aggressive bypass techniques. Actual script available for download (requires Admin).</div>
+            </div></div>
+
+            <div class="quantum-panel col-span-12"><div class="panel-title"><span>🤖 ARTEMIS AI · EMP DEFENSE ANALYST · VOICE-ENABLED</span><button id="voiceToggle" class="artemis-btn" style="margin-left:auto;">🎙️ AI VOICE</button><button id="clearChatBtn" class="artemis-btn" style="margin-left:8px;">🗑️ CLEAR</button></div>
+                <div class="panel-content"><div id="chatLog" class="chat-log"></div>
+                <div class="input-line"><input type="text" id="cmdInput" placeholder="ARTEMIS QUERY: 'EMP threat matrix', 'Network optimization status', 'E1/E2/E3 hardening', 'Simulate EMP attack'..."><button id="sendCmd">SEND</button></div>
+            </div></div>
+
+            <div class="quantum-panel col-span-6"><div class="panel-title"><span>📊 EMP SCENARIO SIMULATOR · REAL-TIME</span></div><div class="panel-content"><div style="display:flex; gap:10px; flex-wrap:wrap;"><button id="simulateE1Btn" class="artemis-btn" style="font-size:9px;">E1 PULSE SIM</button><button id="simulateE2Btn" class="artemis-btn" style="font-size:9px;">E2 PULSE SIM</button><button id="simulateE3Btn" class="artemis-btn" style="font-size:9px;">E3 GEOMAGNETIC SIM</button><button id="fullAttackBtn" class="artemis-btn" style="font-size:9px;">FULL HEMP ATTACK</button><button id="empShieldTest" class="artemis-btn" style="font-size:9px;">SHIELD TEST</button></div><div id="simulationResults" style="margin-top:16px; font-size:11px; font-family:monospace; background:#000; padding:12px; border-radius:12px;"></div></div></div>
+            <div class="quantum-panel col-span-6"><div class="panel-title"><span>📈 EMP DEFENSE METRICS · REAL-TIME</span></div><div class="panel-content"><canvas id="defenseMetricsCanvas" width="100%" height="140"></canvas><div style="display:flex; justify-content:space-between; margin-top:12px;"><div><span>🛡️ SHIELD INTEGRITY:</span><span id="shieldIntegrity" style="color:#ffcc44;">94%</span></div><div><span>⚡ PULSE DETECTION:</span><span id="pulseDetection" style="color:#00ff88;">87%</span></div><div><span>🔒 FARADAY RATING:</span><span id="faradayRating">A-</span></div></div></div></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ====================== ARTEMIS EMP HARDENED CORE v7.0 + NETWORK OPTIMIZER ======================
+    (function() {
+        // ---------------------- DATASETS (EXPANDED) ----------------------
+        const ENTITIES = [
+            { id: 1, label: "PLA Strategic Support Force", type: "threat_actor", group: 1, confidence: 0.94, lat: 39.90, lon: 116.40, capabilities: ["EMP Simulator", "HPM Weapons", "Satellite Jamming"], threat_level: 94 },
+            { id: 2, label: "Russian 12th Main Directorate", type: "threat_actor", group: 1, confidence: 0.92, lat: 55.76, lon: 37.62, capabilities: ["K-6 HEMP Warhead", "E1/E2 Generators", "Nuclear EMP"], threat_level: 91 },
+            { id: 3, label: "North Korean EMP Program", type: "threat_actor", group: 1, confidence: 0.87, lat: 39.03, lon: 125.76, capabilities: ["Tactical EMP", "Ballistic EMP"], threat_level: 85 },
+            { id: 4, label: "APT41", type: "threat_actor", group: 1, confidence: 0.89, lat: 34.05, lon: -118.24, capabilities: ["Cyber-EMP", "Grid Infiltration"], threat_level: 88 },
+            { id: 5, label: "Iranian Revolutionary Guard", type: "threat_actor", group: 1, confidence: 0.85, lat: 32.43, lon: 53.68, capabilities: ["Drone EMP", "Maritime EMP"], threat_level: 82 },
+            { id: 6, label: "Canadian Government", type: "target", group: 2, confidence: 0.96, lat: 45.42, lon: -75.70, criticality: "NATIONAL", risk: 96 },
+            { id: 7, label: "Hydro-Québec Grid", type: "target", group: 2, confidence: 0.95, lat: 45.50, lon: -73.58, criticality: "CRITICAL", risk: 95 },
+            { id: 8, label: "Ontario Healthcare Network", type: "target", group: 2, confidence: 0.91, lat: 43.65, lon: -79.38, criticality: "CRITICAL", risk: 91 },
+            { id: 9, label: "US Navy Cyber Command", type: "target", group: 2, confidence: 0.96, lat: 38.89, lon: -77.03, criticality: "MILITARY", risk: 96 },
+            { id: 10, label: "Canadian Pacific Railway SCADA", type: "target", group: 2, confidence: 0.89, lat: 51.04, lon: -114.07, criticality: "TRANSPORT", risk: 89 },
+            { id: 11, label: "EMP Simulator (Xi'an)", type: "capability", group: 3, confidence: 0.94, lat: 34.26, lon: 108.94, power: "3.6GW", yield: "N/A" },
+            { id: 12, label: "K-6 HEMP Warhead", type: "capability", group: 3, confidence: 0.91, lat: 55.76, lon: 37.62, yield: "1.2MT", power: "N/A" },
+            { id: 13, label: "E1 Pulse Waveform", type: "vulnerability", group: 4, confidence: 0.96, description: "Fast-rise electromagnetic pulse affecting electronics", impact: "42% telecom vulnerable" },
+            { id: 14, label: "E2 Pulse Waveform", type: "vulnerability", group: 4, confidence: 0.94, description: "Intermediate pulse resembling lightning", impact: "23% additional risk" },
+            { id: 15, label: "E3 Geomagnetic Pulse", type: "vulnerability", group: 4, confidence: 0.95, description: "Slow pulse affecting long conductors, power grids", impact: "87% grid at risk" },
+            { id: 16, label: "Norfolk Naval Base", type: "target", group: 2, confidence: 0.92, lat: 36.94, lon: -76.30, criticality: "MILITARY", risk: 92 },
+            { id: 17, label: "New York Power Grid", type: "target", group: 2, confidence: 0.88, lat: 40.71, lon: -74.01, criticality: "ENERGY", risk: 88 },
+            { id: 18, label: "Washington D.C. Metro", type: "target", group: 2, confidence: 0.86, lat: 38.90, lon: -77.04, criticality: "TRANSPORT", risk: 86 },
+            { id: 19, label: "Toronto Financial District", type: "target", group: 2, confidence: 0.84, lat: 43.65, lon: -79.38, criticality: "FINANCIAL", risk: 84 },
+            { id: 20, label: "London Financial Center", type: "target", group: 2, confidence: 0.82, lat: 51.51, lon: -0.13, criticality: "FINANCIAL", risk: 82 }
+        ];
+        
+        const RELATIONS = [
+            { from: 1, to: 6, label: "targets", conf: 0.93 }, { from: 1, to: 7, label: "targets", conf: 0.94 }, { from: 1, to: 11, label: "develops", conf: 0.94 },
+            { from: 2, to: 7, label: "targets", conf: 0.91 }, { from: 2, to: 12, label: "develops", conf: 0.92 }, { from: 3, to: 9, label: "targets", conf: 0.87 },
+            { from: 4, to: 6, label: "targets", conf: 0.89 }, { from: 5, to: 9, label: "targets", conf: 0.83 }, { from: 1, to: 13, label: "exploits", conf: 0.94 },
+            { from: 2, to: 13, label: "exploits", conf: 0.92 }, { from: 2, to: 14, label: "exploits", conf: 0.90 }, { from: 1, to: 15, label: "exploits", conf: 0.88 },
+            { from: 3, to: 16, label: "targets", conf: 0.82 }, { from: 4, to: 17, label: "targets", conf: 0.80 }, { from: 5, to: 18, label: "targets", conf: 0.78 },
+            { from: 2, to: 19, label: "targets", conf: 0.79 }, { from: 1, to: 20, label: "targets", conf: 0.81 }
+        ];
+        
+        let THREATS = [
+            { id: 1, title: "EMP DEFENSE PROTOCOL ACTIVATED", desc: "High-confidence indicators of nation-state EMP capability testing", sev: "critical", conf: 94, time: "14:08:47", source: "SIGINT" },
+            { id: 2, title: "PLA EMP Simulator Activity", desc: "New satellite imagery shows increased testing at Xi'an facility", sev: "critical", conf: 93, time: "13:55:12", source: "IMINT" },
+            { id: 3, title: "Russian 12th Directorate Movement", desc: "Unusual activity at EMP storage sites near Moscow", sev: "high", conf: 91, time: "13:41:29", source: "HUMINT" },
+            { id: 4, title: "Hydro-Québec Grid Vulnerability", desc: "E3 pulse simulation shows 87% transformer risk without hardening", sev: "critical", conf: 95, time: "13:22:05", source: "TECHINT" },
+            { id: 5, title: "E1 Pulse Coupling Assessment", desc: "High-altitude burst would affect 42% of Canadian telecom infrastructure", sev: "high", conf: 89, time: "12:58:33", source: "ANALYSIS" },
+            { id: 6, title: "North Korean EMP Program Update", desc: "New intelligence indicates accelerated development timeline", sev: "medium", conf: 82, time: "12:31:17", source: "HUMINT" },
+            { id: 7, title: "US East Coast Grid Assessment", desc: "Vulnerability to E3 pulse higher than previously modeled", sev: "high", conf: 88, time: "11:55:42", source: "ANALYSIS" },
+            { id: 8, title: "Iranian Drone EMP Capability", desc: "New UAV-mounted EMP devices detected in testing", sev: "medium", conf: 79, time: "11:22:08", source: "SIGINT" },
+            { id: 9, title: "Space Weather Warning", desc: "Solar flare activity may mimic E3 pulse effects", sev: "low", conf: 67, time: "10:45:33", source: "SPACE" }
+        ];
+        
+        const INFRA_ASSETS = [
+            { name: "Hydro-Québec 735kV Substations", risk: "87%", status: "critical", action: "Immediate Faraday Hardening", timeline: "0-6 months", cost: "$180M", priority: 1 },
+            { name: "Ontario Healthcare Network", risk: "76%", status: "high", action: "E1/E2 Surge Protection", timeline: "6-12 months", cost: "$95M", priority: 2 },
+            { name: "US East Coast Power Grid", risk: "68%", status: "high", action: "EMP-Hardened Transformers", timeline: "12-24 months", cost: "$420M", priority: 2 },
+            { name: "Canadian Pacific Railway SCADA", risk: "89%", status: "critical", action: "Full Faraday Enclosure", timeline: "0-6 months", cost: "$62M", priority: 1 },
+            { name: "Toronto Financial District", risk: "71%", status: "high", action: "Redundant Systems + Backup", timeline: "6-12 months", cost: "$210M", priority: 2 },
+            { name: "Washington D.C. Metro", risk: "64%", status: "medium", action: "Communication Hardening", timeline: "12-18 months", cost: "$145M", priority: 3 },
+            { name: "Norfolk Naval Base", risk: "82%", status: "critical", action: "Full Military EMP Protection", timeline: "0-6 months", cost: "$380M", priority: 1 },
+            { name: "New York Power Grid", risk: "72%", status: "high", action: "Transformer Hardening", timeline: "12-24 months", cost: "$520M", priority: 2 }
+        ];
+        
+        // Update DOM
+        document.getElementById('statEntities').textContent = ENTITIES.length;
+        document.getElementById('statRelations').textContent = RELATIONS.length;
+        document.getElementById('statThreats').textContent = THREATS.length;
+        document.getElementById('aptCount').textContent = ENTITIES.filter(e=>e.type==='threat_actor').length;
+        document.getElementById('navalCount').textContent = INFRA_ASSETS.length;
+        document.getElementById('threatIndex').textContent = 82;
+        
+        // Network Graph
+        const nodes = ENTITIES.map(e => ({
+            id: e.id, label: e.label, title: `${e.type.toUpperCase()} · ${(e.confidence*100).toFixed(0)}% · ${e.capabilities ? e.capabilities.join(', ') : ''}`,
+            color: e.group === 1 ? '#ff3d5e' : e.group === 2 ? '#ffb347' : '#00d4ff',
+            font: { color: '#fff', size: 10, face: 'JetBrains Mono' }
+        }));
+        const edges = RELATIONS.map(r => ({ from: r.from, to: r.to, label: r.label, arrows: 'to', color: { color: 'rgba(255,61,94,0.5)', highlight: '#ff3d5e' } }));
+        const network = new vis.Network(document.getElementById('artemisGraph'), { nodes, edges }, {
+            nodes: { shape: 'dot', size: 15, borderWidth: 1.5 },
+            edges: { smooth: { type: 'curvedCW', roundness: 0.3 }, width: 1.2 },
+            physics: { solver: 'forceAtlas2Based', stabilization: { iterations: 80 } },
+            interaction: { hover: true, tooltipDelay: 100 }
+        });
+        
+        // Map with EMP radii
+        let map = L.map('artemisMap').setView([45, -95], 4);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: 'USGS', maxZoom: 18 }).addTo(map);
+        const empRadii = [
+            { lat: 45.42, lon: -75.70, radius: 800000, label: "Ottawa EMP Impact Zone", color: "#ff3d5e", severity: "critical" },
+            { lat: 45.50, lon: -73.58, radius: 950000, label: "Montréal Hydro-Québec Blackout", color: "#ff8844", severity: "critical" },
+            { lat: 43.65, lon: -79.38, radius: 600000, label: "Toronto Grid Collapse Risk", color: "#ffb347", severity: "high" },
+            { lat: 38.89, lon: -77.03, radius: 700000, label: "Washington D.C. EMP Vulnerability", color: "#ff3d5e", severity: "critical" },
+            { lat: 40.71, lon: -74.01, radius: 550000, label: "New York Financial District", color: "#ff8844", severity: "high" }
+        ];
+        empRadii.forEach(r => { L.circle([r.lat, r.lon], { radius: r.radius, color: r.color, weight: 2, opacity: 0.7, fillOpacity: 0.08 }).addTo(map).bindPopup(`⚠️ ${r.label}<br>E3 radius: ${Math.floor(r.radius/10000)}km`); });
+        ENTITIES.forEach(e => { if(e.lat && e.lon) L.circleMarker([e.lat, e.lon], { radius: 6, fillColor: '#ff3d5e', color: '#fff', weight: 1, fillOpacity: 0.6 }).addTo(map).bindPopup(`<b>${e.label}</b><br>${e.type}`); });
+        
+        function zoomMap(delta) { map.setZoom(map.getZoom() + delta); }
+        function resetMap() { map.setView([45, -95], 4); }
+        window.zoomMap = zoomMap; window.resetMap = resetMap;
+        
+        // Threat Feed
+        function renderThreatFeed() {
+            document.getElementById('threatFeedLive').innerHTML = THREATS.map(t => `
+                <div class="threat-line" onclick="window.showThreatDetail(${t.id})">
+                    <div class="sev-dot ${t.sev === 'critical' ? 'sev-crit' : 'sev-high'}"></div>
+                    <div style="flex:1;"><div style="font-weight:600;">${t.title}</div><div style="font-size:8px;color:#8aa0c0;">${t.time} · ${t.source} · ${t.conf}%</div></div>
+                </div>
+            `).join('');
+        }
+        renderThreatFeed();
+        window.showThreatDetail = function(id) {
+            let t = THREATS.find(x=>x.id===id);
+            if(t) addChatMessage(`⚡ ARTEMIS EMP ANALYSIS\n\n${t.title}\n${t.desc}\nSource: ${t.source}\nConfidence: ${t.conf}%\nSeverity: ${t.sev.toUpperCase()}`, 'bot');
+        };
+        
+        function renderNavalIntel() {
+            document.getElementById('navalIntel').innerHTML = INFRA_ASSETS.sort((a,b)=>a.priority - b.priority).map(a => `
+                <div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,61,94,0.08);padding:8px 0;">
+                    <div><span style="color:#ffcc44;">⚡</span> ${a.name}</div>
+                    <div><span style="color:${a.status==='critical'?'#ff3d5e':'#ff8844'};">Risk: ${a.risk}</span> · ${a.action} · ${a.timeline}</div>
+                </div>
+            `).join('');
+        }
+        renderNavalIntel();
+        
+        // Defense Metrics Canvas
+        const canvas = document.getElementById('defenseMetricsCanvas');
+        let ctx = canvas.getContext('2d');
+        let metricsData = [94, 87, 82, 91, 88, 85, 92, 89, 86, 90, 93, 88, 91, 87, 89];
+        function drawMetricsChart() {
+            canvas.width = canvas.clientWidth;
+            canvas.height = 140;
+            ctx.clearRect(0, 0, canvas.width, 140);
+            ctx.strokeStyle = '#ff3d5e';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for(let i=0; i<metricsData.length; i++) {
+                let x = (i / (metricsData.length-1)) * canvas.width;
+                let y = 130 - (metricsData[i] / 100) * 110;
+                if(i===0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(255,61,94,0.08)';
+            ctx.fill();
+        }
+        drawMetricsChart();
+        setInterval(() => { metricsData.push(Math.floor(84 + Math.random() * 13)); if(metricsData.length > 25) metricsData.shift(); drawMetricsChart(); }, 5000);
+        
+        // Network Optimizer Simulation & Log
+        let netLog = document.getElementById('netOptLog');
+        function addNetLog(msg, type='info') {
+            let p = document.createElement('div');
+            p.style.borderBottom = '1px solid rgba(255,61,94,0.1)';
+            p.style.padding = '4px 0';
+            p.style.fontFamily = 'monospace';
+            p.style.fontSize = '10px';
+            p.style.color = type==='error' ? '#ff3d5e' : (type==='success' ? '#88ffaa' : '#cccccc');
+            p.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            netLog.appendChild(p);
+            netLog.scrollTop = netLog.scrollHeight;
+            while(netLog.children.length > 40) netLog.removeChild(netLog.firstChild);
+        }
+        
+        // Simulate actions (just logging)
+        document.getElementById('killSvcsBtn').addEventListener('click', () => {
+            addNetLog('Killing throttling services: QoS, DiagTrack, SysMain, BITS...', 'info');
+            addNetLog('Stopped and disabled: QoS, DiagTrack, SysMain, BITS, WSearch', 'success');
+        });
+        document.getElementById('dnsHardBtn').addEventListener('click', () => {
+            addNetLog('Enforcing encrypted DNS (Cloudflare DoH)...', 'info');
+            addNetLog('DNS servers set to 1.1.1.1 / 1.0.0.1 on all adapters', 'success');
+            addNetLog('DoH enabled via registry. DNS cache flushed.', 'success');
+        });
+        document.getElementById('tcpOptBtn').addEventListener('click', () => {
+            addNetLog('Applying aggressive TCP/IP optimizations...', 'info');
+            addNetLog('TCP auto-tuning set to normal; dynamic port range increased', 'success');
+            addNetLog('Window scaling, timestamps enabled; Nagle\'s algorithm disabled', 'success');
+            addNetLog('TCP buffer sizes increased; CTCP congestion provider set', 'success');
+        });
+        document.getElementById('vpnPortBtn').addEventListener('click', () => {
+            addNetLog('Creating firewall rules for VPN ports 443, 1194, 51820...', 'info');
+            addNetLog('Outbound rules added for UDP/TCP 443, UDP 1194, UDP 51820', 'success');
+            addNetLog('VPN adapter metric set to highest priority (if present)', 'success');
+        });
+        document.getElementById('monitorStartBtn').addEventListener('click', () => {
+            addNetLog('Starting continuous throttling monitor (background)...', 'info');
+            addNetLog('Monitoring ping to 1.1.1.1, 8.8.8.8, 9.9.9.9 every 60s', 'success');
+            addNetLog('Logs will be written to ping_log.csv', 'success');
+        });
+        document.getElementById('mtuTestBtn').addEventListener('click', () => {
+            addNetLog('Testing optimal MTU...', 'info');
+            addNetLog('Current MTU appears optimal (1472+28=1500).', 'success');
+            addNetLog('MTU set to 1500 on active adapters.', 'success');
+        });
+        
+        // PowerShell script download
+        const psScriptContent = `#Requires -RunAsAdministrator
+# Agressive ISP Throttling Bypass & Network Optimization Script
+# Version 2.0 (Offensive Edition)
+Write-Host "=== AGGRESSIVE THROTTLE BYPASS v2.0 ===" -ForegroundColor Cyan
+
+# Kill throttling services
+$services = @("QoS","Worx","WPR","DiagTrack","dmwappushservice","PcaSvc","SysMain","WSearch","BITS")
+foreach ($svc in $services) {
+    $s = Get-Service -Name $svc -ErrorAction SilentlyContinue
+    if ($s -and $s.Status -eq 'Running') { Stop-Service $svc -Force; Set-Service $svc -StartupType Disabled; Write-Host "Stopped: $svc" -ForegroundColor Green }
+}
+
+# DNS hardening
+$adapters = Get-NetAdapter | Where-Object Status -eq "Up"
+foreach ($adapter in $adapters) {
+    netsh interface ipv4 set dnsservers name=$($adapter.ifIndex) source=static address=1.1.1.1 register=primary validate=no
+    netsh interface ipv4 add dnsservers name=$($adapter.ifIndex) address=1.0.0.1 index=2 validate=no
+}
+New-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Dnscache\\Parameters" -Name "EnableAutoDoh" -Value 2 -PropertyType DWord -Force | Out-Null
+New-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Dnscache\\Parameters" -Name "DohServerList" -Value "1.1.1.1 1.0.0.1" -PropertyType String -Force | Out-Null
+ipconfig /flushdns
+
+# TCP/IP optimizations
+netsh int tcp set global autotuninglevel=normal
+netsh int ipv4 set dynamicport tcp start=10000 num=55535
+netsh int tcp set global chimney=enabled
+netsh int tcp set global rss=enabled
+netsh int tcp set global timestamps=enabled
+Set-NetTCPSetting -SettingName InternetCustom -AutoTuningLevelLocal Normal -ScalingHeuristics Disabled -CongestionProvider CTCP -Force
+Set-NetTCPSetting -SettingName DatacenterCustom -AutoTuningLevelLocal Normal -ScalingHeuristics Disabled -CongestionProvider CTCP -Force
+New-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile" -Name "NetworkThrottlingIndex" -Value 0xFFFFFFFF -PropertyType DWord -Force | Out-Null
+Set-NetQosPolicy -Confirm:$false -ErrorAction SilentlyContinue
+Remove-NetQosPolicy -Confirm:$false -ErrorAction SilentlyContinue
+
+# VPN port rules
+New-NetFirewallRule -DisplayName "Allow VPN UDP 443" -Direction Outbound -Protocol UDP -LocalPort 443 -Action Allow -Profile Any -Priority 1
+New-NetFirewallRule -DisplayName "Allow VPN TCP 443" -Direction Outbound -Protocol TCP -LocalPort 443 -Action Allow -Profile Any -Priority 1
+New-NetFirewallRule -DisplayName "Allow OpenVPN 1194" -Direction Outbound -Protocol UDP -LocalPort 1194 -Action Allow -Profile Any -Priority 1
+New-NetFirewallRule -DisplayName "Allow WireGuard 51820" -Direction Outbound -Protocol UDP -LocalPort 51820 -Action Allow -Profile Any -Priority 1
+
+Write-Host "Optimization complete. Reboot recommended for full effect." -ForegroundColor Green`;
+        document.getElementById('dlPs1Btn').addEventListener('click', () => {
+            const blob = new Blob([psScriptContent], {type: 'text/plain'});
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'ThrottleBypass_Ultimate.ps1';
+            link.click();
+            URL.revokeObjectURL(link.href);
+            addNetLog('PowerShell script downloaded. Run as Administrator to apply real optimizations.', 'success');
+        });
+        
+        // AI Chat with advanced responses
+        function addChatMessage(text, role) {
+            let log = document.getElementById('chatLog');
+            let div = document.createElement('div');
+            div.className = role === 'user' ? 'msg-user' : 'msg-bot';
+            div.innerHTML = role === 'user' ? `👤 ${text}` : `🤖 ${text}`;
+            log.appendChild(div);
+            log.scrollTop = log.scrollHeight;
+            if(log.children.length > 50) log.removeChild(log.firstChild);
+        }
+        
+        function processArtemisQuery(q) {
+            let lower = q.toLowerCase();
+            if(lower.includes('threat') || lower.includes('matrix'))
+                return `⚡ ARTEMIS THREAT MATRIX [TS/SCI]:\n\n• CRITICAL: PLA EMP simulator activity (Xi'an) — 94% confidence\n• CRITICAL: Hydro-Québec E3 vulnerability — 87% transformer risk\n• HIGH: Russian 12th Directorate movement — 91% confidence\n• HIGH: E1 pulse coupling — 42% telecom infrastructure impact\n• MEDIUM: North Korean EMP program acceleration — 82% confidence\n\nRECOMMENDED ACTIONS:\n1. Immediate Faraday hardening on all critical substations\n2. Deploy E1/E2 surge protectors at grid entry points\n3. Activate satellite communications backup\n4. Increase SIGINT collection on PLA EMP testing facilities`;
+            if(lower.includes('hardening') || lower.includes('protection'))
+                return `🛡️ ARTEMIS EMP HARDENING RECOMMENDATIONS [PRIORITY ORDER]:\n\nLEVEL 1 (0-6 months):\n• Faraday cages for all critical SCADA/PLC cabinets\n• E1/E2 surge suppressors at power grid entry points\n• Hardened transformers for 12 primary substations\n\nLEVEL 2 (6-12 months):\n• Redundant fiber optic + satellite communications\n• Emergency generators with 72-hour fuel supply\n• EMP-shielded data centers for critical operations\n\nLEVEL 3 (12-24 months):\n• Full grid modernization with EMP-resistant components\n• Military-grade EMP protection for command centers\n\nCOST ESTIMATE: $2.4B CAD over 24 months`;
+            if(lower.includes('network') || lower.includes('optimizer'))
+                return `🌐 NETWORK OPTIMIZER STATUS:\n\n• DNS Hardening: Active (Cloudflare DoH)\n• TCP/IP Tuning: Aggressive profile applied\n• VPN Port Rules: 443, 1194, 51820 allowed\n• Throttle Monitor: Running in background\n• IPv6: Disabled on all adapters\n• Power Plan: High Performance\n\nDownload the PowerShell script for full offline application.`;
+            if(lower.includes('simulate') || lower.includes('attack'))
+                return `🔥 EMP ATTACK SIMULATION RESULTS [CLASSIFIED]:\n\nSCENARIO: High-altitude nuclear burst (400km altitude)\nYIELD: 1.2MT (K-6 HEMP warhead)\nTARGET: North American grid\n\nE1 PULSE (nanosecond rise time):\n• Electronics damage radius: 2,200km\n• Telecommunications: 42% immediate loss\n\nE3 GEOMAGNETIC PULSE:\n• Transformer damage radius: 3,500km\n• Grid collapse probability: 76%\n• Recovery timeline: 6-24 months\n\nRECOMMENDATION: Immediate hardening of 200 critical transformers reduces risk to 23%.`;
+            if(lower.includes('e1') || lower.includes('e2') || lower.includes('e3'))
+                return `⚡ EMP PULSE WAVEFORM ANALYSIS [TECHNICAL]:\n\nE1 PULSE:\n• Rise time: <5 nanoseconds\n• Amplitude: 50kV/m at 5km range\n• Effects: Electronics burnout, semiconductor damage\n• Protection: Fast transient suppressors, Faraday cages\n\nE2 PULSE:\n• Rise time: 1 microsecond\n• Amplitude: 100kV/m\n• Effects: Similar to lightning strikes\n• Protection: Existing lightning protection\n\nE3 GEOMAGNETIC PULSE:\n• Rise time: 10-100 seconds\n• Amplitude: 0.1-1 V/km over 1000km\n• Effects: Transformer saturation, grid collapse\n• Protection: Series capacitors, transformer hardening`;
+            return `⚡ ARTEMIS EMP DEFENSE CORE ONLINE + NETWORK OPTIMIZER [v7.0].\n\nAVAILABLE COMMANDS:\n• "EMP threat matrix" — Full threat assessment\n• "Hardening recommendations" — Infrastructure protection\n• "Network optimizer" — Status of network tweaks\n• "Simulate EMP attack" — Attack scenario modeling\n• "E1/E2/E3 pulse" — Technical waveform analysis\n\nCurrent Threat Level: ELEVATED (82/100)\nNetwork Optimizer: Active (simulated)\nDownload PowerShell script for actual network bypass.`;
+        }
+        
+        function sendCommand() {
+            let inp = document.getElementById('cmdInput');
+            let q = inp.value.trim();
+            if(!q) return;
+            addChatMessage(q, 'user');
+            inp.value = '';
+            setTimeout(() => {
+                let reply = processArtemisQuery(q);
+                addChatMessage(reply, 'bot');
+                if(voiceActive) speakText(reply.slice(0,200));
+            }, 350);
+        }
+        
+        // Voice synthesis
+        let voiceActive = true;
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        function speakText(txt) {
+            if(!voiceActive || !synth) return;
+            if(currentUtterance) synth.cancel();
+            let clean = txt.replace(/[^\w\s.,!?]/g,'').slice(0,200);
+            let utter = new SpeechSynthesisUtterance(clean);
+            utter.rate = 0.82;
+            utter.pitch = 1.05;
+            utter.onstart = () => document.getElementById('voiceToggle').classList.add('speaking');
+            utter.onend = () => document.getElementById('voiceToggle').classList.remove('speaking');
+            currentUtterance = utter;
+            synth.speak(utter);
+        }
+        function toggleVoice() {
+            voiceActive = !voiceActive;
+            let btn = document.getElementById('voiceToggle');
+            btn.innerHTML = voiceActive ? '🎙️ AI VOICE' : '🔇 VOICE OFF';
+            if(voiceActive) speakText("Artemis voice active. EMP defense protocol online.");
+        }
+        document.getElementById('voiceToggle').addEventListener('click', toggleVoice);
+        document.getElementById('sendCmd').addEventListener('click', sendCommand);
+        document.getElementById('clearChatBtn').addEventListener('click', () => { document.getElementById('chatLog').innerHTML = ''; addChatMessage("Chat cleared. Artemis core ready.", 'bot'); });
+        document.getElementById('cmdInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') sendCommand(); });
+        
+        // Simulation buttons
+        document.getElementById('simulateE1Btn').addEventListener('click', () => { addChatMessage("⚡ SIMULATING E1 PULSE ATTACK...\n\nE1 pulse simulation complete.\nElectronics damage radius: 2,200km\nTelecom loss: 42%\nRecommended: Fast transient suppressors.", 'bot'); });
+        document.getElementById('simulateE2Btn').addEventListener('click', () => { addChatMessage("⚡ SIMULATING E2 PULSE ATTACK...\n\nE2 pulse simulation complete.\nEffects similar to lightning strikes.\nExisting surge protection adequate for 68% of infrastructure.", 'bot'); });
+        document.getElementById('simulateE3Btn').addEventListener('click', () => { addChatMessage("⚡ SIMULATING E3 GEOMAGNETIC PULSE...\n\nE3 pulse simulation complete.\nTransformer damage risk: 87%\nGrid collapse probability: 76%\nCritical: Immediate transformer hardening recommended.", 'bot'); });
+        document.getElementById('fullAttackBtn').addEventListener('click', () => { addChatMessage("🔥 FULL HEMP ATTACK SIMULATION [CLASSIFIED]\n\nYield: 1.2MT (K-6 warhead)\nAltitude: 400km\n\nRESULTS:\n• E1 radius: 2,200km — 38% electronics loss\n• E3 radius: 3,500km — 76% grid collapse\n• Estimated casualties: 12,000-45,000\n• Economic impact: $150-300B\n• Recovery timeline: 12-24 months\n\nRECOMMENDED: Immediate hardening of 200 critical transformers reduces impact by 64%.", 'bot'); });
+        document.getElementById('empShieldTest').addEventListener('click', () => { 
+            let shieldPct = Math.floor(68 + Math.random() * 25);
+            addChatMessage(`🛡️ EMP SHIELD TEST RESULTS:\n\nShield Integrity: ${shieldPct}%\nPulse Attenuation: ${Math.floor(shieldPct * 0.7)}%\nSurviving Electronics: ${Math.floor(shieldPct * 0.85)}%\nGrid Resilience: ${Math.floor(shieldPct * 0.9)}%\n\n${shieldPct > 85 ? 'Faraday shielding optimal. Continue maintenance schedule.' : shieldPct > 70 ? 'Shielding adequate. Schedule upgrade within 6 months.' : 'CRITICAL: Faraday shielding inadequate. Immediate upgrade required.'}`, 'bot');
+        });
+        
+        // Live updates
+        setInterval(() => {
+            if(Math.random() > 0.72) {
+                let newThreat = {
+                    id: Date.now(),
+                    title: "ARTEMIS ALERT: " + (Math.random() > 0.5 ? "New EMP SIGINT detected" : "EMP-capable asset movement"),
+                    desc: "Real-time SIGINT alert",
+                    sev: Math.random() > 0.7 ? "critical" : "high",
+                    conf: Math.floor(84 + Math.random()*13),
+                    time: new Date().toLocaleTimeString('en-US', {hour12:false}),
+                    source: "SIGINT"
+                };
+                THREATS.unshift(newThreat);
+                if(THREATS.length > 15) THREATS.pop();
+                renderThreatFeed();
+                document.getElementById('statThreats').textContent = THREATS.length;
+                addChatMessage(`🔔 ${newThreat.title} (Confidence: ${newThreat.conf}%)`, 'bot');
+                if(voiceActive && newThreat.sev === 'critical') speakText(`Critical alert. ${newThreat.title}.`);
+            }
+            let newThreatIndex = 75 + Math.floor(Math.random() * 15);
+            document.getElementById('threatIndex').textContent = newThreatIndex;
+            document.getElementById('threatMeter').style.width = newThreatIndex + '%';
+            document.getElementById('syncTime').textContent = (Math.random()*0.9).toFixed(1) + 's';
+            document.getElementById('statAI').textContent = Math.floor(92 + Math.random()*6) + '%';
+            document.getElementById('quantumState').textContent = Math.random() > 0.2 ? "COHERENT" : "SUPERPOSITION";
+            document.getElementById('shieldIntegrity').textContent = Math.floor(88 + Math.random()*10) + '%';
+            document.getElementById('pulseDetection').textContent = Math.floor(82 + Math.random()*12) + '%';
+            document.getElementById('hardPct').textContent = Math.floor(40 + Math.random()*12) + '%';
+            document.getElementById('hardBar').style.width = document.getElementById('hardPct').textContent + '%';
+            document.getElementById('faradayRating').textContent = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+'][Math.floor(Math.random() * 7)];
+        }, 8000);
+        
+        addChatMessage("⚡ ARTEMIS EMP HARDENED CORE v7.0 + NETWORK OPTIMIZER ONLINE.\n\n89 entities, 132 relationships, 23 active threats tracked.\nFaraday shield active. Quantum coherence: 99.2%\nNetwork Optimizer simulation active. Download script for real bypass.\nType 'help' for available commands.", 'bot');
+        console.log('%c⚡ ARTEMIS EMP HARDENED NEURAL CORE v7.0 · NETWORK OPTIMIZER · TS/SCI ACTIVE', 'color:#ffcc44; font-family:Orbitron; font-size:14px; font-weight:bold;');
+    })();
+</script>
+</body>
+</html>

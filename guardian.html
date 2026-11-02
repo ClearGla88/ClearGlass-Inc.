@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CLEARGLASS GUARDIAN v5.0 — AI-Powered Cybersecurity Platform · Ontario</title>
+  <meta name="description" content="CLEARGLASS GUARDIAN v5.0 — Ontario's most advanced AI cybersecurity platform. Neural threat detection, zero trust architecture, post-quantum cryptography, and PIPEDA compliance automation." />
+  <meta name="author" content="ClearGlass Inc" />
+  <meta property="og:title" content="GUARDIAN v5.0 — ClearGlass Inc" />
+  <meta property="og:description" content="AI-powered cybersecurity for Ontario enterprises and municipalities. Real-time threat intelligence, post-quantum security, compliance automation." />
+  <meta property="og:url" content="https://clearglassinc.github.io/guardian.html" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://clearglassinc.github.io/guardian.html" />
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --obsidian:  #040508;
+      --deep:      #070a10;
+      --surface:   #0b0f1a;
+      --lift:      #111827;
+      --border:    rgba(0,214,180,.08);
+      --border-hi: rgba(0,214,180,.22);
+      --teal:      #00d6b4;
+      --teal2:     #00ffdc;
+      --teal-dim:  rgba(0,214,180,.10);
+      --amber:     #f5a623;
+      --amber-dim: rgba(245,166,35,.10);
+      --red:       #ff3b5c;
+      --red-dim:   rgba(255,59,92,.10);
+      --green:     #00ff88;
+      --text:      #e8f0f5;
+      --muted:     rgba(180,210,220,.50);
+      --dim:       rgba(140,175,195,.28);
+      --mono:      'DM Mono', monospace;
+      --display:   'Bebas Neue', sans-serif;
+      --body:      'Outfit', sans-serif;
+      --max:       1260px;
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+
+    body {
+      font-family: var(--body);
+      color: var(--text);
+      background: var(--obsidian);
+      overflow-x: hidden;
+      cursor: crosshair;
+    }
+
+    ::selection { background: rgba(0,214,180,.25); color: #fff; }
+    a { color: inherit; text-decoration: none; }
+
+    body::before {
+      content:'';
+      position:fixed;inset:0;z-index:0;pointer-events:none;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    }
+    body::after {
+      content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+      background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,214,180,.015) 3px,rgba(0,214,180,.015) 4px);
+    }
+
+    .shell { position:relative;z-index:1;width:min(calc(100% - 40px),var(--max));margin:0 auto; }
+
+    /* NAV */
+    .nav-wrap {
+      position:fixed;top:0;left:0;right:0;z-index:100;
+      border-bottom:1px solid var(--border);
+      background:rgba(4,5,8,.94);
+      backdrop-filter:blur(20px);
+    }
+    nav {
+      height:62px;display:flex;align-items:center;justify-content:space-between;gap:24px;
+    }
+    .nav-brand {
+      display:flex;align-items:center;gap:14px;
+      font-family:var(--mono);font-size:11px;letter-spacing:3px;
+      text-transform:uppercase;color:var(--text);
+    }
+    .nav-logo {
+      width:32px;height:32px;border:1.5px solid var(--teal);
+      display:flex;align-items:center;justify-content:center;
+      font-family:var(--display);font-size:13px;color:var(--teal);
+      position:relative;overflow:hidden;
+    }
+    .nav-logo::after {
+      content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+      background:linear-gradient(90deg,transparent,rgba(0,214,180,.3),transparent);
+      animation:sheen 4s ease-in-out infinite;
+    }
+    @keyframes sheen{0%{left:-100%}100%{left:250%}}
+    .nav-name{color:#fff;font-weight:600;}
+    .nav-name span{color:var(--teal);}
+    .nav-pill {
+      font-family:var(--mono);font-size:8px;letter-spacing:3px;
+      text-transform:uppercase;color:var(--amber);
+      border:1px solid rgba(245,166,35,.3);padding:4px 10px;
+      background:rgba(245,166,35,.06);
+    }
+    .nav-back {
+      display:flex;align-items:center;gap:8px;
+      font-family:var(--mono);font-size:9px;letter-spacing:2px;
+      text-transform:uppercase;color:var(--muted);
+      border:1px solid var(--border);padding:7px 16px;
+      transition:all .2s;
+    }
+    .nav-back:hover{border-color:var(--border-hi);color:var(--teal);}
+
+    /* HERO */
+    .hero {
+      min-height:100vh;display:grid;align-items:center;
+      padding:100px 0 60px;position:relative;overflow:hidden;
+    }
+    .hero::before {
+      content:'';position:absolute;inset:0;pointer-events:none;
+      background:
+        linear-gradient(rgba(0,214,180,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,214,180,.025) 1px, transparent 1px);
+      background-size:64px 64px;
+      mask-image:radial-gradient(ellipse 80% 60% at 30% 50%, black, transparent);
+    }
+    .hero::after {
+      content:'';position:absolute;top:-100px;left:-100px;
+      width:800px;height:800px;pointer-events:none;
+      background:radial-gradient(circle,rgba(0,214,180,.06) 0%,transparent 70%);
+    }
+    .hero-amber {
+      position:absolute;top:0;right:-100px;width:600px;height:600px;pointer-events:none;
+      background:radial-gradient(circle,rgba(245,166,35,.05) 0%,transparent 70%);
+    }
+
+    .hero-inner {
+      position:relative;z-index:2;
+      display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;
+    }
+
+    .hero-label {
+      display:inline-flex;align-items:center;gap:10px;
+      font-family:var(--mono);font-size:8px;letter-spacing:5px;
+      text-transform:uppercase;color:var(--amber);
+      margin-bottom:20px;
+    }
+    .hero-label::before{content:'';width:20px;height:1px;background:var(--amber);}
+
+    .hero-product {
+      font-family:var(--display);
+      font-size:clamp(80px,12vw,160px);
+      line-height:0.85;letter-spacing:0.02em;text-transform:uppercase;
+      color:#fff;margin-bottom:8px;
+    }
+
+    .hero-version {
+      font-family:var(--mono);font-size:10px;letter-spacing:6px;
+      text-transform:uppercase;color:var(--amber);
+      margin:16px 0 28px;
+      display:flex;align-items:center;gap:12px;
+    }
+    .hero-version::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(245,166,35,.3),transparent);}
+
+    .hero-desc {
+      font-size:15px;line-height:1.85;color:var(--muted);max-width:500px;margin-bottom:36px;
+    }
+    .hero-desc strong{color:var(--text);font-weight:600;}
+
+    /* Buttons */
+    .btn {
+      display:inline-flex;align-items:center;gap:10px;padding:14px 28px;
+      font-family:var(--mono);font-size:10px;letter-spacing:3px;
+      text-transform:uppercase;font-weight:500;transition:all .2s;cursor:pointer;
+    }
+    .btn-primary{background:var(--teal);color:#040508;border:1px solid var(--teal);box-shadow:0 0 30px rgba(0,214,180,.2);}
+    .btn-primary:hover{background:var(--teal2);box-shadow:0 0 50px rgba(0,214,180,.4);transform:translateY(-1px);}
+    .btn-ghost{border:1px solid var(--border-hi);color:var(--text);background:transparent;}
+    .btn-ghost:hover{border-color:var(--teal);color:var(--teal);}
+    .btn-amber{border:1px solid rgba(245,166,35,.4);color:var(--amber);background:rgba(245,166,35,.06);}
+    .btn-amber:hover{background:rgba(245,166,35,.12);}
+
+    /* Spec panel */
+    .spec-panel {
+      border:1px solid var(--border-hi);
+      background:rgba(11,15,26,.8);
+      backdrop-filter:blur(12px);position:relative;overflow:hidden;
+    }
+    .spec-panel::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,transparent,var(--teal),var(--amber),transparent);
+    }
+    .spec-header{
+      padding:14px 20px;border-bottom:1px solid var(--border);
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .spec-title{font-family:var(--mono);font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);}
+    .spec-status{
+      display:flex;align-items:center;gap:6px;
+      font-family:var(--mono);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--green);
+    }
+    .pulse{width:5px;height:5px;border-radius:50%;background:var(--teal);box-shadow:0 0 8px var(--teal);animation:blink 2.5s ease-in-out infinite;}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+    .spec-row{
+      display:grid;grid-template-columns:1fr 1fr;gap:1px;
+      background:var(--border);
+    }
+    .spec-cell{
+      padding:16px 20px;background:rgba(11,15,26,.95);
+    }
+    .spec-key{font-family:var(--mono);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:5px;}
+    .spec-val{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--text);}
+    .spec-val.teal{color:var(--teal);}
+    .spec-val.amber{color:var(--amber);}
+    .spec-val.green{color:var(--green);}
+    .spec-val.red{color:var(--red);}
+
+    /* Sections */
+    .section{padding:100px 0;position:relative;z-index:1;}
+    .section-label{
+      font-family:var(--mono);font-size:8px;letter-spacing:5px;
+      text-transform:uppercase;color:var(--teal);margin-bottom:16px;
+      display:flex;align-items:center;gap:12px;
+    }
+    .section-label::before{content:'';width:16px;height:1px;background:var(--teal);}
+    .section-h2{
+      font-family:var(--display);font-size:clamp(48px,6vw,88px);
+      line-height:0.9;letter-spacing:0.02em;text-transform:uppercase;color:#fff;margin-bottom:20px;
+    }
+    .section-h2 .teal{color:var(--teal);}
+    .section-h2 .amber{color:var(--amber);}
+    .section-desc{font-size:15px;line-height:1.85;color:var(--muted);max-width:580px;}
+    .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border-hi),transparent);margin:0;}
+
+    /* Modules grid */
+    .modules-grid{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+      background:var(--border);border:1px solid var(--border);
+      margin-top:60px;
+    }
+    .module{
+      padding:32px;background:var(--obsidian);
+      position:relative;overflow:hidden;transition:background .3s;
+    }
+    .module:hover{background:rgba(0,214,180,.02);}
+    .module::after{
+      content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+      background:linear-gradient(90deg,transparent,var(--teal),transparent);
+      transform:scaleX(0);transform-origin:center;transition:transform .4s;
+    }
+    .module:hover::after{transform:scaleX(1);}
+    .module-num{
+      font-family:var(--mono);font-size:8px;letter-spacing:3px;
+      color:var(--dim);text-transform:uppercase;margin-bottom:20px;
+    }
+    .module-icon{font-size:32px;margin-bottom:16px;display:block;filter:drop-shadow(0 0 8px var(--teal));}
+    .module-h3{
+      font-family:var(--display);font-size:28px;letter-spacing:0.04em;
+      text-transform:uppercase;color:#fff;margin-bottom:12px;
+    }
+    .module-p{font-size:13px;line-height:1.8;color:var(--muted);margin-bottom:16px;}
+    .module-spec{
+      font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--teal);
+      border-top:1px solid var(--border);padding-top:14px;margin-top:4px;
+    }
+
+    /* Tag */
+    .tag{
+      font-family:var(--mono);font-size:8px;letter-spacing:2px;text-transform:uppercase;
+      color:var(--teal);border:1px solid rgba(0,214,180,.2);padding:3px 8px;background:rgba(0,214,180,.04);
+    }
+    .tag.amber{color:var(--amber);border-color:rgba(245,166,35,.2);background:rgba(245,166,35,.04);}
+    .tag.red{color:var(--red);border-color:rgba(255,59,92,.2);background:rgba(255,59,92,.04);}
+
+    /* Architecture diagram */
+    .arch-section{padding:100px 0;}
+    .arch-inner{display:grid;grid-template-columns:1.2fr 1fr;gap:60px;align-items:start;}
+    .arch-diagram{
+      border:1px solid var(--border-hi);background:rgba(11,15,26,.7);
+      position:relative;overflow:hidden;
+    }
+    .arch-diagram::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:1px;
+      background:linear-gradient(90deg,transparent,var(--teal),transparent);
+    }
+    .arch-header{
+      padding:12px 18px;border-bottom:1px solid var(--border);
+      font-family:var(--mono);font-size:8px;letter-spacing:3px;
+      text-transform:uppercase;color:var(--teal);
+    }
+    .arch-body{padding:24px;}
+
+    .arch-layer{
+      display:flex;align-items:center;gap:14px;padding:12px 16px;
+      border:1px solid var(--border);background:rgba(0,0,0,.2);
+      margin-bottom:8px;position:relative;overflow:hidden;
+      transition:border-color .2s;
+    }
+    .arch-layer:hover{border-color:var(--border-hi);}
+    .arch-layer::before{
+      content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+    }
+    .arch-layer.l1::before{background:var(--teal);}
+    .arch-layer.l2::before{background:var(--amber);}
+    .arch-layer.l3::before{background:var(--red);}
+    .arch-layer.l4::before{background:#8b5cf6;}
+    .arch-layer.l5::before{background:var(--green);}
+
+    .arch-layer-num{
+      font-family:var(--mono);font-size:9px;letter-spacing:2px;
+      color:var(--dim);min-width:24px;
+    }
+    .arch-layer-name{
+      font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--text);flex:1;
+    }
+    .arch-layer-tech{
+      font-family:var(--mono);font-size:8px;letter-spacing:1px;color:var(--muted);
+    }
+
+    .arch-connector{
+      width:1px;height:16px;background:linear-gradient(180deg,var(--teal),rgba(0,214,180,.2));
+      margin:0 auto 8px;
+    }
+
+    /* Compliance matrix */
+    .compliance-grid{
+      display:grid;grid-template-columns:repeat(2,1fr);gap:1px;
+      background:var(--border);border:1px solid var(--border);
+    }
+    .comp-item{
+      padding:20px;background:var(--obsidian);
+      display:flex;align-items:center;gap:14px;
+      transition:background .2s;
+    }
+    .comp-item:hover{background:rgba(0,214,180,.02);}
+    .comp-icon{font-size:20px;flex-shrink:0;}
+    .comp-name{
+      font-family:var(--display);font-size:20px;letter-spacing:0.04em;
+      text-transform:uppercase;color:#fff;
+    }
+    .comp-desc{font-size:12px;color:var(--muted);margin-top:3px;}
+    .comp-badge{
+      margin-left:auto;font-family:var(--mono);font-size:7px;letter-spacing:2px;
+      text-transform:uppercase;color:var(--green);border:1px solid rgba(0,255,136,.2);
+      padding:2px 8px;background:rgba(0,255,136,.04);flex-shrink:0;
+    }
+
+    /* Pricing / Tiers */
+    .tiers-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-top:60px;}
+    .tier{padding:36px 32px;background:var(--obsidian);position:relative;overflow:hidden;}
+    .tier.featured{background:rgba(0,214,180,.04);}
+    .tier.featured::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,transparent,var(--teal),transparent);
+    }
+    .tier-badge{
+      font-family:var(--mono);font-size:8px;letter-spacing:3px;text-transform:uppercase;
+      margin-bottom:16px;display:inline-block;
+    }
+    .tier-badge.std{color:var(--muted);}
+    .tier-badge.pro{color:var(--teal);border:1px solid rgba(0,214,180,.3);padding:3px 10px;background:rgba(0,214,180,.06);}
+    .tier-badge.ent{color:var(--amber);border:1px solid rgba(245,166,35,.3);padding:3px 10px;background:rgba(245,166,35,.06);}
+
+    .tier-name{font-family:var(--display);font-size:36px;letter-spacing:0.04em;text-transform:uppercase;color:#fff;margin-bottom:8px;}
+    .tier-price{
+      font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--muted);
+      margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border);
+    }
+    .tier-features{display:flex;flex-direction:column;gap:10px;}
+    .tier-feature{
+      display:flex;align-items:flex-start;gap:10px;
+      font-size:13px;color:var(--muted);
+    }
+    .tier-feature .check{color:var(--teal);font-size:11px;flex-shrink:0;margin-top:2px;}
+    .tier-feature .cross{color:var(--dim);font-size:11px;flex-shrink:0;margin-top:2px;}
+    .tier-cta{margin-top:32px;}
+
+    /* CTA */
+    .cta-box{
+      border:1px solid var(--border-hi);background:rgba(11,15,26,.8);
+      padding:60px;display:grid;grid-template-columns:1fr auto;
+      gap:40px;align-items:center;position:relative;overflow:hidden;
+    }
+    .cta-box::before{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(circle at 0% 50%,rgba(0,214,180,.06) 0%,transparent 60%);
+      pointer-events:none;
+    }
+    .cta-box::after{
+      content:'';position:absolute;top:0;left:0;right:0;height:1px;
+      background:linear-gradient(90deg,transparent,var(--teal),var(--amber),transparent);
+    }
+    .cta-h2{
+      font-family:var(--display);font-size:clamp(40px,5vw,72px);
+      line-height:0.9;letter-spacing:0.02em;text-transform:uppercase;color:#fff;margin-bottom:16px;
+    }
+    .cta-h2 .teal{color:var(--teal);}
+    .cta-sub{font-size:15px;line-height:1.8;color:var(--muted);max-width:500px;}
+
+    /* Footer */
+    footer{border-top:1px solid var(--border);padding:30px 0;position:relative;z-index:1;}
+    .footer-inner{
+      display:flex;align-items:center;justify-content:space-between;gap:20px;
+      font-family:var(--mono);font-size:8px;letter-spacing:2px;
+      text-transform:uppercase;color:var(--dim);
+    }
+    .footer-brand{color:var(--teal);}
+    .footer-links{display:flex;gap:24px;}
+    .footer-links a{color:var(--dim);transition:color .2s;}
+    .footer-links a:hover{color:var(--teal);}
+
+    /* Animation */
+    .fade-in{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s ease;}
+    .fade-in.visible{opacity:1;transform:none;}
+
+    /* Responsive */
+    @media(max-width:1100px){
+      .hero-inner,.arch-inner{grid-template-columns:1fr;}
+      .modules-grid{grid-template-columns:repeat(2,1fr);}
+      .tiers-grid{grid-template-columns:1fr;}
+      .cta-box{grid-template-columns:1fr;}
+    }
+    @media(max-width:768px){
+      .nav-back span{display:none;}
+      .section-h2{font-size:48px;}
+      .hero-product{font-size:72px;}
+      .modules-grid{grid-template-columns:1fr;}
+      .compliance-grid{grid-template-columns:1fr;}
+      .cta-box{padding:28px 20px;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<div class="nav-wrap">
+  <nav class="shell">
+    <div class="nav-brand">
+      <div class="nav-logo">CG</div>
+      <span class="nav-name"><span>Clear</span>Glass</span>
+      <div class="nav-pill">GUARDIAN v5.0</div>
+    </div>
+    <div style="display:flex;gap:14px;align-items:center">
+      <a href="index.html" class="nav-back">← <span>Back to Main Site</span></a>
+      <a href="#contact" class="nav-back" style="color:var(--teal);border-color:rgba(0,214,180,.3);">Request Demo</a>
+    </div>
+  </nav>
+</div>
+
+<!-- HERO -->
+<section class="hero shell">
+  <div class="hero-amber"></div>
+  <div class="hero-inner">
+    <div class="fade-in">
+      <div class="hero-label">ClearGlass Inc · Flagship Platform</div>
+      <h1 class="hero-product">CLEAR<br>GLASS<br><span style="color:var(--teal)">GUARDIAN</span></h1>
+      <div class="hero-version">Platform Version 5.0 · 2026</div>
+      <p class="hero-desc">
+        Ontario's most advanced AI-powered cybersecurity platform. <strong>Neural threat detection</strong>, zero trust architecture, post-quantum cryptography, and full compliance automation — unified into one intelligence console.
+      </p>
+      <div style="display:flex;gap:14px;flex-wrap:wrap">
+        <a href="#contact" class="btn btn-primary">◈ Request Demo</a>
+        <a href="#modules" class="btn btn-ghost">Explore Platform →</a>
+      </div>
+    </div>
+
+    <div class="spec-panel fade-in" style="transition-delay:.1s">
+      <div class="spec-header">
+        <span class="spec-title">◈ Platform Specifications</span>
+        <div class="spec-status"><div class="pulse" style="background:var(--green);box-shadow:0 0 8px var(--green)"></div><span style="color:var(--green)">Production Ready</span></div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-cell"><div class="spec-key">Platform Version</div><div class="spec-val teal">GUARDIAN v5.0</div></div>
+        <div class="spec-cell"><div class="spec-key">Neural Engine</div><div class="spec-val teal">AI-v47 · 2033</div></div>
+        <div class="spec-cell"><div class="spec-key">Detection Accuracy</div><div class="spec-val green">98.4%</div></div>
+        <div class="spec-cell"><div class="spec-key">Detect Latency</div><div class="spec-val teal">&lt;4ms</div></div>
+        <div class="spec-cell"><div class="spec-key">Intel Sources</div><div class="spec-val">140+</div></div>
+        <div class="spec-cell"><div class="spec-key">Availability</div><div class="spec-val green">99.99% SLA</div></div>
+        <div class="spec-cell"><div class="spec-key">Post-Quantum</div><div class="spec-val teal">NIST PQC</div></div>
+        <div class="spec-cell"><div class="spec-key">Compliance</div><div class="spec-val">PIPEDA · ISO 27001</div></div>
+        <div class="spec-cell"><div class="spec-key">Deployment</div><div class="spec-val">Cloud / On-Prem / Hybrid</div></div>
+        <div class="spec-cell"><div class="spec-key">IR SLA</div><div class="spec-val amber">&lt;4hr Critical</div></div>
+      </div>
+      <div style="padding:16px 20px;border-top:1px solid var(--border)">
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:8px;display:flex;justify-content:space-between">
+          <span>Threat Coverage</span><span style="color:var(--teal)">94.7%</span>
+        </div>
+        <div style="height:2px;background:rgba(0,214,180,.1)">
+          <div style="height:100%;width:94.7%;background:linear-gradient(90deg,var(--teal),rgba(0,214,180,.3));box-shadow:0 0 8px var(--teal);animation:barGrow 2s ease-out forwards;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider shell"></div>
+
+<!-- MODULES -->
+<section class="section shell" id="modules">
+  <div class="fade-in">
+    <div class="section-label">Core Modules</div>
+    <h2 class="section-h2">What <span class="teal">GUARDIAN</span><br>Contains</h2>
+    <p class="section-desc">Eight battle-tested intelligence modules, unified under a single pane of glass. Each one built specifically for Ontario's threat landscape.</p>
+  </div>
+
+  <div class="modules-grid fade-in">
+    <div class="module">
+      <div class="module-num">01 / 08</div>
+      <span class="module-icon">🧬</span>
+      <div class="module-h3">Neural Threat Engine</div>
+      <p class="module-p">Proprietary machine learning models trained on Canadian threat telemetry. Continuous adversarial retraining. Sub-4ms detection across 47 attack categories with confidence scoring.</p>
+      <div class="module-spec">Model: AI-v47 · Accuracy: 98.4% · Latency: &lt;4ms</div>
+    </div>
+
+    <div class="module">
+      <div class="module-num">02 / 08</div>
+      <span class="module-icon">🔮</span>
+      <div class="module-h3">Predictive Intel</div>
+      <p class="module-p">72-hour threat forecasting engine correlating signals from 140+ intelligence sources. APT actor profiling, campaign prediction, and pre-attack indicator identification for Ontario targets.</p>
+      <div class="module-spec">Sources: 140+ · Horizon: 72hr · Five Eyes adjacent</div>
+    </div>
+
+    <div class="module">
+      <div class="module-num">03 / 08</div>
+      <span class="module-icon">🔐</span>
+      <div class="module-h3">Zero Trust Engine</div>
+      <p class="module-p">Full ZTNA implementation per NIST SP 800-207. Continuous identity verification, micro-segmentation, and least-privilege enforcement across cloud, on-prem, and hybrid environments.</p>
+      <div class="module-spec">NIST 800-207 · Micro-seg · Continuous auth</div>
+    </div>
+
+    <div class="module">
+      <div class="module-num">04 / 08</div>
+      <span class="module-icon">⚛</span>
+      <div class="module-h3">Post-Quantum Crypto</div>
+      <p class="module-p">CRYSTALS-Kyber-1024 key encapsulation, CRYSTALS-Dilithium-5 signatures, and FALCON-1024 for compact signing. Full NIST FIPS 203/204/206 compliance. Eliminates harvest-now-decrypt-later risk.</p>
+      <div class="module-spec">Kyber-1024 · Dilithium-5 · FALCON · FIPS 203/204/206</div>
+    </div>
+
+    <div class="module">
+      <div class="module-num">05 / 08</div>
+      <span class="module-icon">📡</span>
+      <div class="module-h3">SIGINT Platform</div>
+      <p class="module-p">Open source and signal intelligence fusion. Dark web monitoring, threat actor tracking, adversary infrastructure mapping, and real-time IOC correlation targeting Ontario organizations.</p>
+      <div class="module-spec">OSINT · Dark web · APT tracking · IOC feeds</div>
+    </div>
+
+    <div class="module">
+      <div class="module-num">06 / 08</div>
+      <span class="module-icon">⚡</span>
+      <div class="module-h3">Incident Response</div>
+      <p class="module-p">AI-accelerated IR playbooks with automated containment, forensic evidence preservation, and ransomware isolation. 4-hour critical SLA for Ontario enterprise and municipal clients.</p>
+      <div class="module-spec">4hr SLA · Auto-containment · Chain-of-custody</div>
+    </div>
+
+    <div class="module">
+      <div class="module-num">07 / 08</div>
+      <span class="module-icon">📋</span>
+      <div class="module-h3">Compliance Engine</div>
+      <p class="module-p">Continuous automated compliance monitoring with evidence collection for PIPEDA, MFIPPA, ISO 27001, SOC 2, and Criminal Code 342.1. Audit-ready reports on demand.</p>
+      <div class="module-spec">PIPEDA · MFIPPA · ISO 27001 · SOC 2 · CC 342.1</div>
+    </div>
+
+    <div class="module">
+      <div class="module-num">08 / 08</div>
+      <span class="module-icon">👁</span>
+      <div class="module-h3">Unified Console</div>
+      <p class="module-p">Single-pane-of-glass command interface for all eight GUARDIAN modules. Real-time dashboards, executive reporting, API integration, and SIEM/SOAR connectivity.</p>
+      <div class="module-spec">REST API · SIEM integration · Executive reports</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider shell"></div>
+
+<!-- ARCHITECTURE -->
+<section class="arch-section shell">
+  <div class="arch-inner">
+    <div class="fade-in">
+      <div class="section-label">Architecture</div>
+      <h2 class="section-h2">Platform<br><span class="teal">Stack</span></h2>
+      <p class="section-desc" style="margin-bottom:40px">Eight-layer security architecture designed for Ontario's enterprise and municipal threat landscape. Each layer hardened independently with defence-in-depth principles.</p>
+
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px">
+        <span class="tag">Air-gap capable</span>
+        <span class="tag">Multi-tenant</span>
+        <span class="tag">Cloud / On-Prem</span>
+        <span class="tag">FIPS 203/204/206</span>
+        <span class="tag">FedRAMP-aligned</span>
+        <span class="tag">Canadian data residency</span>
+      </div>
+
+      <!-- Compliance Matrix -->
+      <div class="section-label" style="margin-bottom:14px">Compliance Coverage</div>
+      <div class="compliance-grid">
+        <div class="comp-item">
+          <span class="comp-icon">🇨🇦</span>
+          <div><div class="comp-name">PIPEDA</div><div class="comp-desc">Canadian privacy law — automated compliance</div></div>
+          <div class="comp-badge">Automated</div>
+        </div>
+        <div class="comp-item">
+          <span class="comp-icon">🏛</span>
+          <div><div class="comp-name">MFIPPA</div><div class="comp-desc">Municipal Freedom of Information — Ontario</div></div>
+          <div class="comp-badge">Covered</div>
+        </div>
+        <div class="comp-item">
+          <span class="comp-icon">🔐</span>
+          <div><div class="comp-name">ISO 27001</div><div class="comp-desc">Information security management system</div></div>
+          <div class="comp-badge">Automated</div>
+        </div>
+        <div class="comp-item">
+          <span class="comp-icon">🧾</span>
+          <div><div class="comp-name">SOC 2 Type II</div><div class="comp-desc">Service organization control audit ready</div></div>
+          <div class="comp-badge">Ready</div>
+        </div>
+        <div class="comp-item">
+          <span class="comp-icon">⚖</span>
+          <div><div class="comp-name">Criminal Code 342.1</div><div class="comp-desc">Unauthorized computer use — legal coverage</div></div>
+          <div class="comp-badge">Logged</div>
+        </div>
+        <div class="comp-item">
+          <span class="comp-icon">📐</span>
+          <div><div class="comp-name">NIST CSF 2.0</div><div class="comp-desc">Cybersecurity framework full implementation</div></div>
+          <div class="comp-badge">Full</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fade-in" style="transition-delay:.1s">
+      <div class="arch-diagram">
+        <div class="arch-header">◈ GUARDIAN Platform Architecture · 8-Layer</div>
+        <div class="arch-body">
+
+          <div class="arch-layer l1">
+            <div class="arch-layer-num">L8</div>
+            <div class="arch-layer-name">Unified Console &amp; API Gateway</div>
+            <div class="arch-layer-tech">REST · WebSocket · SIEM</div>
+          </div>
+          <div class="arch-connector"></div>
+
+          <div class="arch-layer l2">
+            <div class="arch-layer-num">L7</div>
+            <div class="arch-layer-name">Compliance &amp; Audit Engine</div>
+            <div class="arch-layer-tech">PIPEDA · ISO 27001 · SOC 2</div>
+          </div>
+          <div class="arch-connector"></div>
+
+          <div class="arch-layer l1">
+            <div class="arch-layer-num">L6</div>
+            <div class="arch-layer-name">Incident Response &amp; SOAR</div>
+            <div class="arch-layer-tech">Playbooks · Auto-contain · Forensics</div>
+          </div>
+          <div class="arch-connector"></div>
+
+          <div class="arch-layer l4">
+            <div class="arch-layer-num">L5</div>
+            <div class="arch-layer-name">SIGINT &amp; Threat Intelligence</div>
+            <div class="arch-layer-tech">OSINT · Dark web · IOC feeds</div>
+          </div>
+          <div class="arch-connector"></div>
+
+          <div class="arch-layer l2">
+            <div class="arch-layer-num">L4</div>
+            <div class="arch-layer-name">Zero Trust Policy Engine</div>
+            <div class="arch-layer-tech">NIST 800-207 · Micro-seg · IAM</div>
+          </div>
+          <div class="arch-connector"></div>
+
+          <div class="arch-layer l1">
+            <div class="arch-layer-num">L3</div>
+            <div class="arch-layer-name">Neural Threat Detection</div>
+            <div class="arch-layer-tech">AI-v47 · 98.4% acc · &lt;4ms</div>
+          </div>
+          <div class="arch-connector"></div>
+
+          <div class="arch-layer l5">
+            <div class="arch-layer-num">L2</div>
+            <div class="arch-layer-name">Post-Quantum Cryptography</div>
+            <div class="arch-layer-tech">Kyber-1024 · Dilithium · FALCON</div>
+          </div>
+          <div class="arch-connector"></div>
+
+          <div class="arch-layer l3">
+            <div class="arch-layer-num">L1</div>
+            <div class="arch-layer-name">Secure Hardware Root of Trust</div>
+            <div class="arch-layer-tech">HSM · TPM 2.0 · Secure Enclave</div>
+          </div>
+
+          <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+            <div style="font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:8px">Deployment Models</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <span class="tag" style="font-size:8px">AWS · Azure · GCP</span>
+              <span class="tag" style="font-size:8px">On-Premises</span>
+              <span class="tag" style="font-size:8px">Air-Gapped</span>
+              <span class="tag" style="font-size:8px">Hybrid</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider shell"></div>
+
+<!-- TIERS -->
+<section class="section shell">
+  <div class="fade-in">
+    <div class="section-label">Service Tiers</div>
+    <h2 class="section-h2">GUARDIAN<br><span class="amber">Plans</span></h2>
+    <p class="section-desc">Tailored for Ontario organizations of every scale — from municipal governments to enterprise. All pricing confidential and proposal-based.</p>
+  </div>
+
+  <div class="tiers-grid fade-in">
+    <!-- Standard -->
+    <div class="tier">
+      <div class="tier-badge std">Standard</div>
+      <div class="tier-name">Sentinel</div>
+      <div class="tier-price">Ideal for SMBs &amp; regional organizations</div>
+      <div class="tier-features">
+        <div class="tier-feature"><span class="check">✓</span><span>Neural Threat Engine</span></div>
+        <div class="tier-feature"><span class="check">✓</span><span>Zero Trust policy enforcement</span></div>
+        <div class="tier-feature"><span class="check">✓</span><span>PIPEDA compliance automation</span></div>
+        <div class="tier-feature"><span class="check">✓</span><span>24/7 monitoring · 8hr IR SLA</span></div>
+        <div class="tier-feature"><span class="check">✓</span><span>Monthly executive reports</span></div>
+        <div class="tier-feature"><span class="cross">–</span><span style="color:var(--dim)">Post-quantum crypto</span></div>
+        <div class="tier-feature"><span class="cross">–</span><span style="color:var(--dim)">SIGINT platform</span></div>
+        <div class="tier-feature"><span class="cross">–</span><span style="color:var(--dim)">Dedicated analyst</span></div>
+      </div>
+      <div class="tier-cta"><a href="#contact" class="btn btn-ghost" style="width:100%;justify-content:center">Get Proposal</a></div>
+    </div>
+
+    <!-- Professional -->
+    <div class="tier featured">
+      <div class="tier-badge pro">◈ Recommended</div>
+      <div class="tier-name">Guardian</div>
+      <div class="tier-price">Full platform for enterprise &amp; municipalities</div>
+      <div class="tier-features">
+        <div class="tier-feature"><span class="check">✓</span><span>All Sentinel features</span></div>
+        <div class="tier-feature"><span class="check">✓</span><span>Post-quantum cryptography suite</span></div>
+        <div class="tier-feature"><span class="check">✓</span><span>Full SIGINT intelligence platform</span></div>
+        <div class="tier-feature"><span class="check">✓</span><span>Predictive threat intelligence</span></div>
+        <div class="tier-feature"><span class="check">✓</span><span>4hr critical IR SLA</span></div>
+        <div class="tier-feature"><span class="check">✓</span><span>ISO 27001 + SOC 2 + MFIPPA</span></div>
+        <div class="tier-feature"><span class="check">✓</span><span>Weekly threat briefings</span></div>
+        <div class="tier-feature"><span class="cross">–</span><span style="color:var(--dim)">Dedicated analyst team</span></div>
+      </div>
+      <div class="tier-cta"><a href="#contact" class="btn btn-primary" style="width:100%;justify-content:center">Request Demo</a></div>
+    </div>
+
+    <!-- Enterprise -->
+    <div class="tier">
+      <div class="tier-badge ent">Enterprise</div>
+      <div class="tier-name">Sovereign</div>
+      <div class="tier-price">Full-spectrum for critical infrastructure</div>
+      <div class="tier-features">
+        <div class="tier-feature"><span class="check">✓</span><span>All Guardian features</span></div>
+        <div class="tier-feature"><span class="check">✓</span><span>Dedicated ClearGlass analyst team</span></div>
+        <div class="tier-feature"><span class="check">✓</span><span>On-premises / air-gap deployment</span></div>
+        <div class="tier-feature"><span class="check">✓</span><span>Custom threat actor profiling</span></div>
+        <div class="tier-feature"><span class="check">✓</span><span>1hr critical IR SLA</span></div>
+        <div class="tier-feature"><span class="check">✓</span><span>Full Criminal Code 342.1 coverage</span></div>
+        <div class="tier-feature"><span class="check">✓</span><span>Executive threat briefing · monthly</span></div>
+        <div class="tier-feature"><span class="check">✓</span><span>Source code escrow + audit rights</span></div>
+      </div>
+      <div class="tier-cta"><a href="#contact" class="btn btn-amber" style="width:100%;justify-content:center">Contact Founder</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA / CONTACT -->
+<section class="section shell" id="contact">
+  <div class="cta-box fade-in">
+    <div>
+      <div class="section-label" style="margin-bottom:16px">Deploy GUARDIAN</div>
+      <h2 class="cta-h2">Protect Your<br><span class="teal">Ontario</span><br>Organization</h2>
+      <p class="cta-sub" style="margin-top:16px">
+        Book a confidential GUARDIAN demonstration with Desmond Otieno directly. We'll assess your threat landscape, map your compliance gaps, and propose a deployment that fits your budget and risk appetite.
+      </p>
+      <div style="margin-top:28px;display:flex;flex-wrap:wrap;gap:14px">
+        <a href="mailto:Desmondotieno@icloud.com?subject=GUARDIAN%20Demo%20Request" class="btn btn-primary">✉ Request GUARDIAN Demo</a>
+        <a href="tel:+12897070269" class="btn btn-ghost">📞 289-707-0269</a>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;min-width:240px">
+      <div style="padding:20px;border:1px solid var(--border-hi);background:rgba(0,0,0,.3)">
+        <div class="section-label" style="margin-bottom:10px">Response Time</div>
+        <div style="font-family:var(--display);font-size:52px;color:var(--teal);line-height:1">&lt;24h</div>
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:6px">Guaranteed · Burlington ON</div>
+      </div>
+      <div style="padding:20px;border:1px solid var(--border);background:rgba(0,0,0,.2)">
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:12px">Direct Contact</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--muted);line-height:1.9">
+          Desmond Otieno<br>
+          Founder &amp; Chairman<br>
+          <span style="color:var(--teal)">Desmondotieno@icloud.com</span><br>
+          <span style="color:var(--teal)">289-707-0269</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="shell">
+    <div class="footer-inner">
+      <div>
+        <span class="footer-brand">ClearGlass Inc</span>
+        <span style="margin:0 12px">·</span>
+        <span>GUARDIAN v5.0</span>
+        <span style="margin:0 12px">·</span>
+        <span>Burlington, Ontario</span>
+        <span style="margin:0 12px">·</span>
+        <span>© 2024–2026</span>
+      </div>
+      <div class="footer-links">
+        <a href="index.html">Main Site</a>
+        <a href="mailto:Desmondotieno@icloud.com">Contact</a>
+        <a href="https://clearglassinc.github.io/SECURITY.md">Security</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Intersection Observer fade-in
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+
+// Immediate hero animation
+document.querySelectorAll('.hero .fade-in').forEach(el => setTimeout(() => el.classList.add('visible'), 100));
+
+// Bar grow animation
+const bars = document.querySelectorAll('[style*="barGrow"]');
+const styleEl = document.createElement('style');
+styleEl.textContent = '@keyframes barGrow{from{width:0}}';
+document.head.appendChild(styleEl);
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if(t){ e.preventDefault(); t.scrollIntoView({behavior:'smooth',block:'start'}); }
+  });
+});
+</script>
+</body>
+</html>

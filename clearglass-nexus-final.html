@@ -1,0 +1,2055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClearGlass NEXUS — Desmond Otieno</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void: #00000a;
+  --deep: #020210;
+  --surface: #050518;
+  --panel: #080825;
+  --border: rgba(0,210,255,0.12);
+  --border-hot: rgba(0,210,255,0.5);
+  --cyan: #00d2ff;
+  --cyan-dim: rgba(0,210,255,0.15);
+  --cyan-glow: rgba(0,210,255,0.4);
+  --electric: #00ffcc;
+  --gold: #ffd700;
+  --gold-dim: rgba(255,215,0,0.15);
+  --danger: #ff2d55;
+  --warn: #ff9500;
+  --text: #c8eeff;
+  --muted: rgba(200,238,255,0.35);
+  --white: #e8f8ff;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:100%; height:100%; overflow:hidden; }
+
+body {
+  background: var(--void);
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  cursor: crosshair;
+}
+
+/* ═══════════════════════════════════ CANVAS BACKGROUND */
+#bgCanvas {
+  position:fixed; inset:0; z-index:0;
+  pointer-events:none;
+}
+
+/* Scanlines */
+body::after {
+  content:'';
+  position:fixed; inset:0; z-index:1;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0,0,10,0.25) 3px,
+    rgba(0,0,10,0.25) 4px
+  );
+  pointer-events:none;
+}
+
+/* Vignette */
+body::before {
+  content:'';
+  position:fixed; inset:0; z-index:2;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,8,0.85) 100%);
+  pointer-events:none;
+}
+
+/* ═══════════════════════════════════ BOOT SCREEN */
+#bootScreen {
+  position:fixed; inset:0; z-index:9999;
+  background: var(--void);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:24px;
+}
+
+.boot-hex {
+  width:120px; height:120px;
+  position:relative;
+  animation: hexSpin 3s linear infinite;
+}
+
+@keyframes hexSpin { to { transform: rotate(360deg); } }
+
+.boot-hex svg { width:100%; height:100%; }
+
+.boot-title {
+  font-family:'Orbitron',monospace;
+  font-size:28px; font-weight:900;
+  letter-spacing:8px;
+  color: var(--cyan);
+  text-shadow: 0 0 30px var(--cyan), 0 0 60px var(--cyan-glow);
+  animation: flicker 4s ease-in-out infinite;
+}
+
+@keyframes flicker {
+  0%,95%,100% { opacity:1; }
+  96% { opacity:0.7; }
+  97% { opacity:1; }
+  98% { opacity:0.5; }
+}
+
+.boot-sub {
+  font-family:'Share Tech Mono',monospace;
+  font-size:12px; letter-spacing:4px;
+  color: var(--muted);
+}
+
+.boot-bar-wrap {
+  width:400px; height:2px;
+  background: rgba(0,210,255,0.1);
+  position:relative; overflow:hidden;
+}
+
+.boot-bar {
+  height:100%;
+  background: linear-gradient(90deg, var(--cyan), var(--electric));
+  width:0%;
+  transition: width 0.1s;
+  box-shadow: 0 0 12px var(--cyan);
+}
+
+.boot-log {
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px; color: var(--muted);
+  letter-spacing:1px; text-align:center;
+  min-height:16px;
+}
+
+/* ═══════════════════════════════════ MAIN UI */
+#mainUI {
+  position:fixed; inset:0; z-index:10;
+  display:grid;
+  grid-template-rows: 52px 1fr 36px;
+  opacity:0; transition: opacity 1s;
+}
+
+#mainUI.visible { opacity:1; }
+
+/* ═══ HEADER */
+.hdr {
+  display:flex; align-items:center;
+  padding:0 24px;
+  background: linear-gradient(180deg, rgba(0,5,20,0.98) 0%, rgba(0,3,15,0.9) 100%);
+  border-bottom: 1px solid var(--border);
+  position:relative; z-index:50;
+  gap:24px;
+}
+
+.hdr::after {
+  content:'';
+  position:absolute; bottom:0; left:0; right:0; height:1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity:0.6;
+}
+
+.hdr-logo {
+  display:flex; align-items:center; gap:12px;
+}
+
+.logo-hex {
+  width:32px; height:32px; position:relative;
+  animation: logoPulse 3s ease-in-out infinite;
+}
+
+@keyframes logoPulse {
+  0%,100% { filter: drop-shadow(0 0 4px var(--cyan)); }
+  50% { filter: drop-shadow(0 0 12px var(--cyan)) drop-shadow(0 0 24px var(--cyan-glow)); }
+}
+
+.logo-name {
+  font-family:'Orbitron',monospace;
+  font-size:16px; font-weight:700;
+  letter-spacing:4px;
+  color: var(--cyan);
+  text-shadow: 0 0 20px var(--cyan-glow);
+}
+
+.logo-ver {
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px; color: var(--muted);
+  letter-spacing:2px;
+}
+
+.hdr-center {
+  flex:1; display:flex; justify-content:center; align-items:center; gap:32px;
+}
+
+.hdr-nav-item {
+  font-family:'Orbitron',monospace;
+  font-size:9px; letter-spacing:3px;
+  color: var(--muted);
+  cursor:pointer; padding:4px 0;
+  border-bottom:1px solid transparent;
+  transition: all 0.3s; text-transform:uppercase;
+  position:relative;
+}
+
+.hdr-nav-item:hover, .hdr-nav-item.active {
+  color: var(--cyan);
+  border-bottom-color: var(--cyan);
+  text-shadow: 0 0 10px var(--cyan-glow);
+}
+
+.hdr-right {
+  display:flex; align-items:center; gap:16px;
+}
+
+.hdr-badge {
+  display:flex; align-items:center; gap:8px;
+  padding:4px 14px;
+  border:1px solid var(--border-hot);
+  background: var(--cyan-dim);
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px; letter-spacing:2px;
+  color: var(--cyan);
+}
+
+.hdr-exec {
+  font-family:'Orbitron',monospace;
+  font-size:11px; letter-spacing:2px;
+  color: var(--gold);
+  text-shadow: 0 0 12px rgba(255,215,0,0.5);
+}
+
+.pulse-dot {
+  width:6px; height:6px; border-radius:50%;
+  background: var(--electric);
+  animation: dotPulse 1.5s ease-in-out infinite;
+  box-shadow: 0 0 6px var(--electric);
+}
+
+@keyframes dotPulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.3;transform:scale(0.6);} }
+
+/* ═══ BODY GRID */
+.body-grid {
+  display:grid;
+  grid-template-columns: 220px 1fr 280px;
+  overflow:hidden;
+}
+
+/* ═══ LEFT PANEL */
+.left-panel {
+  background: linear-gradient(180deg, rgba(0,5,22,0.97) 0%, rgba(2,2,16,0.98) 100%);
+  border-right: 1px solid var(--border);
+  display:flex; flex-direction:column;
+  padding:16px 0; gap:0;
+  overflow-y:auto;
+}
+
+.left-panel::-webkit-scrollbar { width:2px; }
+.left-panel::-webkit-scrollbar-thumb { background:var(--border); }
+
+.lp-section { padding:0 14px 16px; border-bottom:1px solid var(--border); margin-bottom:14px; }
+
+.lp-label {
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px; letter-spacing:3px;
+  color: var(--muted); text-transform:uppercase;
+  margin-bottom:10px;
+}
+
+.exec-orb {
+  width:56px; height:56px; border-radius:50%;
+  background: conic-gradient(from 0deg, var(--cyan), var(--electric), var(--gold), var(--cyan));
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto 10px;
+  animation: orbSpin 8s linear infinite;
+  position:relative;
+}
+
+@keyframes orbSpin { to { transform:rotate(360deg); } }
+
+.exec-orb-inner {
+  width:48px; height:48px; border-radius:50%;
+  background: var(--deep);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Orbitron',monospace; font-size:18px; font-weight:900;
+  color: var(--cyan);
+  text-shadow: 0 0 14px var(--cyan-glow);
+}
+
+.exec-name-lp {
+  font-family:'Orbitron',monospace;
+  font-size:12px; font-weight:700;
+  color: var(--white); text-align:center;
+  letter-spacing:2px; margin-bottom:2px;
+}
+
+.exec-title-lp {
+  font-size:9px; color:var(--muted);
+  text-align:center; letter-spacing:2px;
+  margin-bottom:12px;
+}
+
+.stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+
+.stat-cell {
+  background: var(--panel);
+  border:1px solid var(--border);
+  padding:8px; text-align:center;
+  position:relative; overflow:hidden;
+  transition: border-color 0.3s;
+}
+
+.stat-cell:hover { border-color:var(--border-hot); }
+
+.stat-cell::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity:0.4;
+}
+
+.stat-val {
+  font-family:'Orbitron',monospace;
+  font-size:20px; font-weight:700;
+  color: var(--cyan); line-height:1;
+  text-shadow: 0 0 10px var(--cyan-glow);
+}
+
+.stat-lbl {
+  font-size:8px; color:var(--muted);
+  letter-spacing:1px; margin-top:2px;
+}
+
+.nav-btn {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 14px; cursor:pointer;
+  font-size:11px; letter-spacing:1px;
+  color: var(--muted);
+  border-left:2px solid transparent;
+  transition: all 0.25s;
+  font-family:'Rajdhani',sans-serif;
+  font-weight:500;
+}
+
+.nav-btn:hover, .nav-btn.active {
+  color: var(--cyan);
+  border-left-color: var(--cyan);
+  background: linear-gradient(90deg, var(--cyan-dim), transparent);
+  text-shadow: 0 0 8px var(--cyan-glow);
+}
+
+.nav-icon { font-size:14px; width:18px; text-align:center; }
+
+.nav-count {
+  margin-left:auto;
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px; padding:1px 7px;
+  background: var(--danger);
+  color:white; border-radius:2px;
+}
+
+/* Revenue orb */
+.rev-orb-wrap {
+  padding:14px; text-align:center;
+  margin-top:auto;
+}
+
+.rev-ring {
+  width:120px; height:120px;
+  margin:0 auto 10px;
+  position:relative;
+}
+
+.rev-ring svg { position:absolute; inset:0; width:100%; height:100%; }
+
+.rev-ring-label {
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+}
+
+.rev-pct-big {
+  font-family:'Orbitron',monospace;
+  font-size:22px; font-weight:900;
+  color: var(--gold);
+  text-shadow: 0 0 16px rgba(255,215,0,0.6);
+  line-height:1;
+}
+
+.rev-pct-sub { font-size:8px; color:var(--muted); letter-spacing:1px; margin-top:2px; }
+
+.rev-title-lp {
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px; color:var(--muted); letter-spacing:2px;
+  margin-bottom:2px;
+}
+
+.rev-amount {
+  font-family:'Orbitron',monospace;
+  font-size:16px; font-weight:700;
+  color: var(--gold);
+}
+
+/* ═══ CENTER */
+.center-panel {
+  overflow:hidden; display:flex; flex-direction:column;
+  background: transparent;
+}
+
+/* Tab content */
+.tab-body { flex:1; overflow-y:auto; padding:16px; }
+.tab-body::-webkit-scrollbar { width:3px; }
+.tab-body::-webkit-scrollbar-thumb { background:var(--border); }
+
+.tab-content { display:none; }
+.tab-content.active { display:block; animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:none;} }
+
+/* KPI row */
+.kpi-row {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:10px; margin-bottom:14px;
+}
+
+.kpi {
+  background: linear-gradient(135deg, var(--panel), rgba(5,5,24,0.95));
+  border:1px solid var(--border);
+  padding:14px; position:relative; overflow:hidden;
+  transition: all 0.3s;
+  cursor:default;
+}
+
+.kpi::before {
+  content:''; position:absolute;
+  top:0; left:0; right:0; height:2px;
+}
+
+.kpi.c { color:var(--cyan); }
+.kpi.g { color:var(--gold); }
+.kpi.e { color:var(--electric); }
+.kpi.d { color:var(--danger); }
+
+.kpi.c::before { background:var(--cyan); box-shadow:0 0 12px var(--cyan-glow); }
+.kpi.g::before { background:var(--gold); box-shadow:0 0 12px rgba(255,215,0,0.5); }
+.kpi.e::before { background:var(--electric); }
+.kpi.d::before { background:var(--danger); }
+
+.kpi:hover { border-color:var(--border-hot); transform:translateY(-2px); }
+
+.kpi-lbl {
+  font-size:8px; letter-spacing:2px; text-transform:uppercase;
+  color:var(--muted); margin-bottom:6px;
+  font-family:'Share Tech Mono',monospace;
+}
+
+.kpi-val {
+  font-family:'Orbitron',monospace;
+  font-size:28px; font-weight:900;
+  line-height:1; margin-bottom:4px;
+  text-shadow: inherit;
+}
+
+.kpi.c .kpi-val { color:var(--cyan); text-shadow:0 0 14px var(--cyan-glow); }
+.kpi.g .kpi-val { color:var(--gold); text-shadow:0 0 14px rgba(255,215,0,0.5); }
+.kpi.e .kpi-val { color:var(--electric); }
+.kpi.d .kpi-val { color:var(--danger); }
+
+.kpi-delta { font-size:10px; color:var(--muted); }
+.kpi-delta.up { color:var(--electric); }
+.kpi-delta.dn { color:var(--danger); }
+
+/* Corner accents */
+.kpi::after {
+  content:'';
+  position:absolute; bottom:6px; right:6px;
+  width:16px; height:16px;
+  border-right:1px solid var(--border-hot);
+  border-bottom:1px solid var(--border-hot);
+  opacity:0.5;
+}
+
+/* Panel base */
+.fpanel {
+  background: linear-gradient(135deg, rgba(8,8,37,0.98), rgba(5,5,24,0.98));
+  border:1px solid var(--border);
+  margin-bottom:12px;
+  position:relative; overflow:hidden;
+}
+
+.fpanel::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity:0.3;
+}
+
+.fpanel-hdr {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 14px;
+  border-bottom:1px solid var(--border);
+}
+
+.fpanel-title {
+  font-family:'Orbitron',monospace;
+  font-size:10px; letter-spacing:3px;
+  color:var(--cyan); text-transform:uppercase;
+  text-shadow:0 0 8px var(--cyan-glow);
+}
+
+.fpanel-body { padding:14px; }
+
+/* Pipeline table */
+.ptable { width:100%; border-collapse:collapse; }
+
+.ptable th {
+  text-align:left; font-size:8px; letter-spacing:2px;
+  color:var(--muted); padding:0 8px 8px 0;
+  border-bottom:1px solid var(--border);
+  font-family:'Share Tech Mono',monospace;
+  text-transform:uppercase;
+}
+
+.ptable td {
+  padding:10px 8px 10px 0;
+  font-size:11px; color:var(--text);
+  border-bottom:1px solid rgba(0,210,255,0.05);
+  vertical-align:middle;
+}
+
+.ptable tr:hover td { background:rgba(0,210,255,0.03); }
+
+.stage-pip {
+  padding:2px 8px; font-size:8px;
+  letter-spacing:1px; text-transform:uppercase;
+  border-radius:1px; font-family:'Share Tech Mono',monospace;
+}
+
+.sp-0 { background:rgba(90,90,130,0.3); color:#888; }
+.sp-1 { background:rgba(0,110,255,0.2); color:#6ea8ff; border:1px solid rgba(0,110,255,0.3); }
+.sp-2 { background:rgba(255,149,0,0.15); color:var(--warn); border:1px solid rgba(255,149,0,0.3); }
+.sp-3 { background:rgba(255,45,85,0.15); color:var(--danger); border:1px solid rgba(255,45,85,0.3); }
+.sp-4 { background:rgba(0,255,204,0.1); color:var(--electric); border:1px solid rgba(0,255,204,0.3); }
+.sp-won { background:rgba(0,210,255,0.15); color:var(--cyan); border:1px solid var(--border-hot); }
+
+.prob-mini { display:flex; align-items:center; gap:6px; }
+.prob-track { flex:1; height:2px; background:var(--border); min-width:50px; }
+.prob-fill { height:100%; background: linear-gradient(90deg, var(--cyan), var(--electric)); }
+.prob-fill.med { background: linear-gradient(90deg, var(--warn), #ffcc00); }
+.prob-fill.low { background: var(--danger); }
+.prob-num { font-size:10px; color:var(--muted); font-family:'Share Tech Mono',monospace; min-width:26px; text-align:right; }
+
+/* Revenue bars */
+.rev-bars { display:flex; align-items:flex-end; gap:5px; height:100px; padding-top:8px; }
+.rb-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
+.rb-bar {
+  width:100%; border-radius:1px 1px 0 0;
+  position:relative; cursor:pointer;
+  transition: filter 0.2s;
+}
+.rb-bar:hover { filter:brightness(1.4); }
+.rb-bar.actual { background: linear-gradient(to top, rgba(0,210,255,0.8), rgba(0,210,255,0.2)); border-top:1px solid var(--cyan); }
+.rb-bar.proj {
+  background: repeating-linear-gradient(45deg, rgba(0,255,204,0.12), rgba(0,255,204,0.12) 3px, rgba(0,255,204,0.04) 3px, rgba(0,255,204,0.04) 6px);
+  border:1px dashed rgba(0,255,204,0.3); border-bottom:none;
+}
+.rb-lbl { font-size:7px; color:var(--muted); font-family:'Share Tech Mono',monospace; }
+
+/* ═══ RIGHT PANEL — AI AGENT */
+.right-panel {
+  background: linear-gradient(180deg, rgba(0,4,18,0.98), rgba(2,2,14,0.99));
+  border-left:1px solid var(--border);
+  display:flex; flex-direction:column;
+  overflow:hidden;
+}
+
+.rp-hdr {
+  padding:12px 16px;
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  background: linear-gradient(90deg, rgba(0,210,255,0.05), transparent);
+}
+
+.rp-title {
+  font-family:'Orbitron',monospace;
+  font-size:11px; letter-spacing:3px;
+  color:var(--cyan); text-shadow:0 0 10px var(--cyan-glow);
+}
+
+.voice-btn {
+  display:flex; align-items:center; gap:6px;
+  padding:4px 12px;
+  border:1px solid var(--border-hot);
+  background: var(--cyan-dim);
+  color:var(--cyan); cursor:pointer;
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px; letter-spacing:2px;
+  transition: all 0.2s;
+}
+
+.voice-btn:hover { background:rgba(0,210,255,0.25); }
+.voice-btn.muted { border-color:var(--danger); color:var(--danger); background:rgba(255,45,85,0.08); }
+
+.ai-msgs {
+  flex:1; overflow-y:auto; padding:12px;
+  display:flex; flex-direction:column; gap:10px;
+}
+
+.ai-msgs::-webkit-scrollbar { width:2px; }
+.ai-msgs::-webkit-scrollbar-thumb { background:var(--border); }
+
+.ai-msg { display:flex; gap:8px; animation: msgIn 0.3s ease; }
+@keyframes msgIn { from{opacity:0;transform:translateY(6px);} to{opacity:1;transform:none;} }
+
+.ai-msg.user { flex-direction:row-reverse; }
+
+.msg-av {
+  width:26px; height:26px; border-radius:50%;
+  flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  font-family:'Orbitron',monospace; font-size:9px; font-weight:700;
+}
+
+.ai-msg.agent .msg-av {
+  background: linear-gradient(135deg, var(--cyan), #0066ff);
+  color:var(--void); box-shadow:0 0 10px var(--cyan-glow);
+}
+
+.ai-msg.user .msg-av {
+  background: linear-gradient(135deg, var(--gold), #ff6b00);
+  color:var(--void);
+}
+
+.msg-bubble {
+  max-width:85%; padding:8px 12px;
+  font-size:11px; line-height:1.6; border-radius:1px;
+}
+
+.ai-msg.agent .msg-bubble {
+  background: var(--panel);
+  border:1px solid var(--border);
+  color:var(--text);
+  border-top-left-radius:0;
+}
+
+.ai-msg.user .msg-bubble {
+  background: rgba(0,210,255,0.08);
+  border:1px solid rgba(0,210,255,0.25);
+  color:var(--cyan); text-align:right;
+  border-top-right-radius:0;
+}
+
+/* Typing */
+.typing-dots { display:flex; gap:3px; align-items:center; padding:3px 0; }
+.typing-dots span {
+  width:4px; height:4px; border-radius:50%;
+  background:var(--cyan);
+  animation: td 1.2s ease-in-out infinite;
+}
+.typing-dots span:nth-child(2) { animation-delay:0.2s; }
+.typing-dots span:nth-child(3) { animation-delay:0.4s; }
+@keyframes td { 0%,60%,100%{opacity:0.2;transform:scale(0.7);} 30%{opacity:1;transform:scale(1);} }
+
+/* AI voice visualizer */
+.voice-viz {
+  height:32px; padding:0 12px;
+  display:flex; align-items:center; gap:2px;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  background:rgba(0,210,255,0.02);
+}
+
+.viz-bar {
+  width:3px; border-radius:1px;
+  background: var(--cyan);
+  opacity:0.4;
+  transition: height 0.1s, opacity 0.1s;
+}
+
+.viz-bar.active { opacity:0.9; }
+
+/* AI Input */
+.ai-input-area { padding:10px 12px; }
+
+.ai-row { display:flex; gap:6px; }
+
+.ai-inp {
+  flex:1; background:var(--panel);
+  border:1px solid var(--border);
+  padding:8px 12px; color:var(--text);
+  font-family:'Rajdhani',sans-serif; font-size:12px;
+  outline:none; transition:border-color 0.2s;
+}
+
+.ai-inp:focus { border-color:var(--cyan); box-shadow:0 0 0 1px rgba(0,210,255,0.1); }
+.ai-inp::placeholder { color:var(--muted); }
+
+.ai-send {
+  background: linear-gradient(135deg, var(--cyan), #0066ff);
+  border:none; color:var(--void);
+  padding:8px 14px;
+  font-family:'Orbitron',monospace; font-size:10px; font-weight:700;
+  letter-spacing:2px; cursor:pointer;
+  transition: opacity 0.2s;
+}
+
+.ai-send:hover { opacity:0.85; }
+.ai-send:disabled { opacity:0.35; cursor:default; }
+
+/* Quick prompts */
+.qp-grid { display:flex; flex-direction:column; gap:5px; padding:0 12px 10px; }
+
+.qp-btn {
+  background:var(--panel); border:1px solid var(--border);
+  padding:7px 10px; cursor:pointer; text-align:left;
+  font-size:10px; color:var(--muted); letter-spacing:0.5px;
+  font-family:'Rajdhani',sans-serif; font-weight:500;
+  transition: all 0.2s;
+}
+
+.qp-btn:hover {
+  border-color:var(--border-hot); color:var(--cyan);
+  background:var(--cyan-dim);
+  text-shadow:0 0 8px var(--cyan-glow);
+}
+
+/* ═══ RFP CARDS */
+.rfp-card {
+  background: var(--panel);
+  border:1px solid var(--border);
+  padding:12px 14px; margin-bottom:8px;
+  display:flex; gap:12px; align-items:flex-start;
+  transition: all 0.3s; cursor:pointer;
+  position:relative; overflow:hidden;
+}
+
+.rfp-card::before {
+  content:''; position:absolute;
+  left:0; top:0; bottom:0; width:2px;
+  background:var(--cyan);
+  box-shadow:0 0 8px var(--cyan-glow);
+}
+
+.rfp-card.urgent::before { background:var(--danger); box-shadow:0 0 8px rgba(255,45,85,0.5); }
+.rfp-card:hover { border-color:var(--border-hot); }
+
+.rfp-flag { font-size:24px; flex-shrink:0; }
+.rfp-body { flex:1; min-width:0; }
+.rfp-title { font-size:12px; color:var(--white); margin-bottom:3px; font-weight:600; }
+.rfp-meta { font-size:9px; color:var(--muted); letter-spacing:1px; margin-bottom:6px; }
+.rfp-val { font-family:'Orbitron',monospace; font-size:18px; color:var(--gold); font-weight:700; text-shadow:0 0 10px rgba(255,215,0,0.4); }
+.rfp-dl { font-size:9px; margin-top:4px; font-family:'Share Tech Mono',monospace; letter-spacing:1px; }
+.rfp-dl.ok { color:var(--muted); }
+.rfp-dl.urgent { color:var(--danger); animation:flicker 2s ease-in-out infinite; }
+
+/* Task items */
+.task-item {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 12px;
+  background:var(--panel); border:1px solid var(--border);
+  margin-bottom:6px; transition:all 0.2s;
+}
+
+.task-item:hover { border-color:var(--border-hot); }
+
+.task-cb {
+  width:14px; height:14px;
+  border:1px solid var(--border-hot);
+  background:transparent; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; transition:all 0.2s;
+}
+
+.task-cb.done { background:var(--cyan); border-color:var(--cyan); }
+.task-cb.done::after { content:'✓'; font-size:9px; color:var(--void); }
+
+.task-text { flex:1; font-size:11px; color:var(--text); }
+.task-text.done { text-decoration:line-through; color:var(--muted); }
+
+.task-pri { font-size:8px; font-family:'Share Tech Mono',monospace; padding:2px 6px; border-radius:1px; }
+.pri-h { background:rgba(255,45,85,0.2); color:var(--danger); border:1px solid rgba(255,45,85,0.3); }
+.pri-m { background:rgba(255,149,0,0.15); color:var(--warn); border:1px solid rgba(255,149,0,0.2); }
+.pri-l { background:rgba(0,255,204,0.1); color:var(--electric); border:1px solid rgba(0,255,204,0.2); }
+
+/* ═══ FORM ELEMENTS */
+.fld-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px; }
+.fld-row.full { grid-template-columns:1fr; }
+.fld-lbl { font-size:8px; color:var(--muted); letter-spacing:2px; text-transform:uppercase; font-family:'Share Tech Mono',monospace; margin-bottom:4px; }
+.fld-inp, .fld-sel, .fld-ta {
+  width:100%; background:var(--panel); border:1px solid var(--border);
+  padding:7px 10px; color:var(--text);
+  font-family:'Rajdhani',sans-serif; font-size:12px;
+  outline:none; transition:border-color 0.2s; border-radius:0;
+}
+.fld-inp:focus, .fld-sel:focus, .fld-ta:focus { border-color:var(--cyan); }
+.fld-inp::placeholder { color:var(--muted); }
+.fld-ta { min-height:60px; resize:vertical; }
+.fld-sel { cursor:pointer; }
+.fld-sel option { background:var(--surface); }
+
+.btn-pri {
+  padding:8px 18px;
+  background: linear-gradient(135deg, var(--cyan), #0066ff);
+  border:none; color:var(--void);
+  font-family:'Orbitron',monospace; font-size:10px;
+  letter-spacing:2px; cursor:pointer;
+  transition:opacity 0.2s; font-weight:700;
+}
+.btn-pri:hover { opacity:0.85; }
+
+.btn-sm {
+  padding:4px 10px;
+  background:rgba(255,45,85,0.15); border:1px solid rgba(255,45,85,0.3);
+  color:var(--danger); cursor:pointer;
+  font-size:10px; transition:all 0.2s;
+  font-family:'Share Tech Mono',monospace;
+}
+.btn-sm:hover { background:rgba(255,45,85,0.3); }
+
+.btn-sec {
+  padding:8px 16px;
+  background:transparent; border:1px solid var(--border-hot);
+  color:var(--cyan); cursor:pointer;
+  font-family:'Orbitron',monospace; font-size:9px; letter-spacing:2px;
+  transition:all 0.2s;
+}
+.btn-sec:hover { background:var(--cyan-dim); }
+
+/* ═══ FOOTER */
+.footer {
+  background: rgba(0,3,15,0.98);
+  border-top:1px solid var(--border);
+  display:flex; align-items:center;
+  padding:0 20px; gap:20px; z-index:50;
+  position:relative;
+}
+
+.footer::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity:0.4;
+}
+
+.footer-ticker {
+  flex:1; overflow:hidden; font-size:9px;
+  font-family:'Share Tech Mono',monospace; letter-spacing:1px;
+  color:var(--muted);
+}
+
+.ticker-inner {
+  white-space:nowrap;
+  animation: tickerMove 40s linear infinite;
+  display:inline-block;
+}
+
+@keyframes tickerMove { 0%{transform:translateX(0);} 100%{transform:translateX(-50%);} }
+
+.ticker-item { display:inline; margin-right:48px; }
+.ti-val { color:var(--cyan); }
+.ti-up { color:var(--electric); }
+.ti-dn { color:var(--danger); }
+
+.footer-time {
+  font-family:'Orbitron',monospace; font-size:10px;
+  color:var(--cyan); letter-spacing:2px; flex-shrink:0;
+  text-shadow:0 0 8px var(--cyan-glow);
+}
+
+.footer-status { display:flex; align-items:center; gap:6px; flex-shrink:0; }
+.footer-status-dot {
+  width:5px; height:5px; border-radius:50%;
+  background:var(--electric);
+  box-shadow:0 0 5px var(--electric);
+  animation:dotPulse 2s ease-in-out infinite;
+}
+
+.footer-status-txt {
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px; letter-spacing:2px; color:var(--muted);
+}
+
+/* ═══ NOTIFICATION */
+.notif {
+  position:fixed; top:60px; right:16px; z-index:9998;
+  background: var(--surface);
+  border:1px solid var(--cyan);
+  border-left:3px solid var(--cyan);
+  padding:10px 14px; max-width:300px;
+  animation: notifIn 0.4s cubic-bezier(0.22,1,0.36,1), notifOut 0.3s ease 3.7s forwards;
+  box-shadow: 0 0 20px rgba(0,210,255,0.2);
+}
+
+.notif.warn { border-color:var(--warn); box-shadow:0 0 20px rgba(255,149,0,0.2); }
+.notif.danger { border-color:var(--danger); box-shadow:0 0 20px rgba(255,45,85,0.2); }
+.notif.gold { border-color:var(--gold); box-shadow:0 0 20px rgba(255,215,0,0.2); }
+
+@keyframes notifIn { from{transform:translateX(120%);opacity:0;} to{transform:none;opacity:1;} }
+@keyframes notifOut { to{transform:translateX(120%);opacity:0;} }
+
+.notif-title { font-family:'Orbitron',monospace; font-size:10px; color:var(--cyan); letter-spacing:2px; margin-bottom:3px; }
+.notif.warn .notif-title { color:var(--warn); }
+.notif.danger .notif-title { color:var(--danger); }
+.notif.gold .notif-title { color:var(--gold); }
+.notif-body { font-size:10px; color:var(--muted); line-height:1.5; }
+
+/* ═══ CORNER DECORATIONS */
+.corner-deco {
+  position:fixed; width:60px; height:60px; z-index:11;
+  pointer-events:none;
+}
+.corner-deco.tl { top:56px; left:0; border-top:1px solid rgba(0,210,255,0.3); border-left:1px solid rgba(0,210,255,0.3); }
+.corner-deco.tr { top:56px; right:0; border-top:1px solid rgba(0,210,255,0.3); border-right:1px solid rgba(0,210,255,0.3); }
+.corner-deco.bl { bottom:36px; left:0; border-bottom:1px solid rgba(0,210,255,0.3); border-left:1px solid rgba(0,210,255,0.3); }
+.corner-deco.br { bottom:36px; right:0; border-bottom:1px solid rgba(0,210,255,0.3); border-right:1px solid rgba(0,210,255,0.3); }
+
+/* Intel page */
+.sector-card {
+  background:var(--panel); border:1px solid var(--border);
+  padding:12px 14px; margin-bottom:8px;
+  display:flex; align-items:center; gap:12px;
+  border-left:2px solid var(--cyan);
+  transition:all 0.3s;
+}
+.sector-card:hover { border-color:var(--border-hot); }
+.sector-icon { font-size:22px; flex-shrink:0; }
+.sector-body { flex:1; }
+.sector-name { font-size:13px; color:var(--white); margin-bottom:2px; font-weight:600; }
+.sector-note { font-size:10px; color:var(--muted); }
+.sector-val { font-family:'Orbitron',monospace; font-size:16px; color:var(--gold); font-weight:700; text-shadow:0 0 8px rgba(255,215,0,0.4); }
+
+/* Timeline */
+.tl-item { display:flex; gap:14px; padding-bottom:18px; position:relative; }
+.tl-item::before { content:''; position:absolute; left:13px; top:26px; bottom:0; width:1px; background:var(--border); }
+.tl-item:last-child::before { display:none; }
+.tl-dot {
+  width:26px; height:26px; border-radius:50%;
+  flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  font-size:11px; border:1px solid var(--border); background:var(--panel);
+  position:relative; z-index:1;
+}
+.tl-dot.done { border-color:var(--cyan); background:rgba(0,210,255,0.1); }
+.tl-dot.active { border-color:var(--gold); animation:pulse-tl 2s ease-in-out infinite; }
+@keyframes pulse-tl { 0%,100%{box-shadow:0 0 0 0 rgba(255,215,0,0);} 50%{box-shadow:0 0 8px 3px rgba(255,215,0,0.2);} }
+.tl-content { flex:1; padding-top:3px; }
+.tl-title { font-size:12px; color:var(--text); margin-bottom:2px; font-weight:600; }
+.tl-date { font-size:8px; color:var(--muted); letter-spacing:2px; margin-bottom:4px; font-family:'Share Tech Mono',monospace; }
+.tl-body { font-size:10px; color:var(--muted); line-height:1.6; }
+
+/* ═══ HOLOGRAPHIC elements */
+.holo-ring {
+  position:fixed; border-radius:50%; pointer-events:none; z-index:3;
+  border:1px solid rgba(0,210,255,0.04);
+  animation:ringExpand 8s ease-in-out infinite;
+}
+
+@keyframes ringExpand {
+  0%,100% { transform:scale(1); opacity:0.6; }
+  50% { transform:scale(1.02); opacity:0.3; }
+}
+
+/* Responsive tweaks */
+@media (max-width:1100px) {
+  .body-grid { grid-template-columns:200px 1fr 240px; }
+  .kpi-row { grid-template-columns:1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Canvas background -->
+<canvas id="bgCanvas"></canvas>
+
+<!-- Holographic rings -->
+<div class="holo-ring" style="width:600px;height:600px;top:50%;left:50%;margin:-300px 0 0 -300px;animation-duration:12s;"></div>
+<div class="holo-ring" style="width:900px;height:900px;top:50%;left:50%;margin:-450px 0 0 -450px;animation-duration:18s;animation-delay:-6s;"></div>
+
+<!-- Corner deco -->
+<div class="corner-deco tl"></div>
+<div class="corner-deco tr"></div>
+<div class="corner-deco bl"></div>
+<div class="corner-deco br"></div>
+
+<!-- ══════════════════════════════ BOOT SCREEN -->
+<div id="bootScreen">
+  <div class="boot-hex">
+    <svg viewBox="0 0 100 100">
+      <polygon points="50,2 93,25 93,75 50,98 7,75 7,25" fill="none" stroke="rgba(0,210,255,0.6)" stroke-width="1.5"/>
+      <polygon points="50,12 83,30 83,70 50,88 17,70 17,30" fill="none" stroke="rgba(0,210,255,0.3)" stroke-width="0.8"/>
+      <text x="50" y="57" text-anchor="middle" fill="#00d2ff" font-family="Orbitron" font-size="20" font-weight="900">CG</text>
+    </svg>
+  </div>
+  <div class="boot-title">CLEARGLASS NEXUS</div>
+  <div class="boot-sub">EXECUTIVE INTELLIGENCE SYSTEM</div>
+  <div class="boot-bar-wrap"><div class="boot-bar" id="bootBar"></div></div>
+  <div class="boot-log" id="bootLog">INITIALIZING...</div>
+</div>
+
+<!-- ══════════════════════════════ MAIN UI -->
+<div id="mainUI">
+
+  <!-- HEADER -->
+  <header class="hdr">
+    <div class="hdr-logo">
+      <div class="logo-hex">
+        <svg width="32" height="32" viewBox="0 0 32 32">
+          <polygon points="16,2 29,9 29,23 16,30 3,23 3,9" fill="none" stroke="#00d2ff" stroke-width="1.2"/>
+          <text x="16" y="21" text-anchor="middle" fill="#00d2ff" font-family="Orbitron" font-size="10" font-weight="900">CG</text>
+        </svg>
+      </div>
+      <div>
+        <div class="logo-name">CLEARGLASS</div>
+        <div class="logo-ver">NEXUS v4.0 · ORACLE EDITION</div>
+      </div>
+    </div>
+
+    <div class="hdr-center">
+      <div class="hdr-nav-item active" onclick="activateTab('overview',this)">OVERVIEW</div>
+      <div class="hdr-nav-item" onclick="activateTab('pipeline',this)">PIPELINE</div>
+      <div class="hdr-nav-item" onclick="activateTab('contracts',this)">CONTRACTS</div>
+      <div class="hdr-nav-item" onclick="activateTab('tasks',this)">OPERATIONS</div>
+      <div class="hdr-nav-item" onclick="activateTab('intel',this)">MARKET INTEL</div>
+    </div>
+
+    <div class="hdr-right">
+      <div class="hdr-badge">
+        <div class="pulse-dot"></div>
+        AGENT ONLINE
+      </div>
+      <div class="hdr-exec">DESMOND OTIENO · COO</div>
+    </div>
+  </header>
+
+  <!-- BODY -->
+  <div class="body-grid">
+
+    <!-- LEFT PANEL -->
+    <aside class="left-panel">
+      <div class="lp-section">
+        <div class="lp-label">Executive</div>
+        <div class="exec-orb"><div class="exec-orb-inner">DO</div></div>
+        <div class="exec-name-lp">DESMOND OTIENO</div>
+        <div class="exec-title-lp">CHIEF OPERATING OFFICER</div>
+        <div class="stat-grid">
+          <div class="stat-cell"><div class="stat-val" id="sDeals">7</div><div class="stat-lbl">Deals</div></div>
+          <div class="stat-cell"><div class="stat-val" id="sRFPs">4</div><div class="stat-lbl">RFPs</div></div>
+          <div class="stat-cell"><div class="stat-val" id="sTasks">5</div><div class="stat-lbl">Tasks</div></div>
+          <div class="stat-cell"><div class="stat-val" id="sAlerts" style="color:var(--danger)">2</div><div class="stat-lbl">Urgent</div></div>
+        </div>
+      </div>
+
+      <div style="padding:0 0 8px;">
+        <div class="lp-label" style="padding:0 14px;">Navigation</div>
+        <div class="nav-btn active" onclick="activateTab('overview',null,this)"><span class="nav-icon">◈</span>Overview</div>
+        <div class="nav-btn" onclick="activateTab('pipeline',null,this)"><span class="nav-icon">◉</span>Pipeline<span class="nav-count" id="navDeals">7</span></div>
+        <div class="nav-btn" onclick="activateTab('contracts',null,this)"><span class="nav-icon">◫</span>Contracts<span class="nav-count" id="navRFPs">4</span></div>
+        <div class="nav-btn" onclick="activateTab('tasks',null,this)"><span class="nav-icon">◪</span>Operations</div>
+        <div class="nav-btn" onclick="activateTab('intel',null,this)"><span class="nav-icon">◬</span>Market Intel</div>
+      </div>
+
+      <div class="rev-orb-wrap">
+        <div class="lp-label">Revenue Target Progress</div>
+        <div class="rev-ring">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(0,210,255,0.08)" stroke-width="6"/>
+            <circle cx="60" cy="60" r="50" fill="none" stroke="url(#revGrad)" stroke-width="6"
+              stroke-dasharray="314" stroke-dashoffset="116"
+              stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            <circle cx="60" cy="60" r="42" fill="none" stroke="rgba(255,215,0,0.05)" stroke-width="1"/>
+            <defs>
+              <linearGradient id="revGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#00d2ff"/>
+                <stop offset="100%" stop-color="#ffd700"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="rev-ring-label">
+            <div class="rev-pct-big">63%</div>
+            <div class="rev-pct-sub">COMPLETE</div>
+          </div>
+        </div>
+        <div class="rev-title-lp">FY 2026 · $1,000,000 TARGET</div>
+        <div class="rev-amount">$630,000</div>
+      </div>
+    </aside>
+
+    <!-- CENTER PANEL -->
+    <div class="center-panel">
+      <div class="tab-body">
+
+        <!-- ══ OVERVIEW ══ -->
+        <div class="tab-content active" id="tab-overview">
+          <div class="kpi-row">
+            <div class="kpi g">
+              <div class="kpi-lbl">Total Pipeline</div>
+              <div class="kpi-val">$2.14M</div>
+              <div class="kpi-delta up">↑ +$340K this cycle</div>
+            </div>
+            <div class="kpi c">
+              <div class="kpi-lbl">Revenue Closed YTD</div>
+              <div class="kpi-val">$630K</div>
+              <div class="kpi-delta up">↑ 63% of target</div>
+            </div>
+            <div class="kpi e">
+              <div class="kpi-lbl">Active Opportunities</div>
+              <div class="kpi-val" id="kOpps">7</div>
+              <div class="kpi-delta">3 in final stages</div>
+            </div>
+            <div class="kpi d">
+              <div class="kpi-lbl">RFPs — Open Now</div>
+              <div class="kpi-val" id="kRFPs">4</div>
+              <div class="kpi-delta dn">2 expire &lt;14 days</div>
+            </div>
+          </div>
+
+          <!-- Revenue Chart + Pipeline Snapshot -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <div class="fpanel">
+              <div class="fpanel-hdr">
+                <div class="fpanel-title">Monthly Revenue</div>
+                <span style="font-size:8px;color:var(--muted);font-family:'Share Tech Mono',monospace;">CAD · FY2026</span>
+              </div>
+              <div class="fpanel-body">
+                <div class="rev-bars" id="revBars"></div>
+                <div style="display:flex;gap:16px;margin-top:8px;">
+                  <div style="display:flex;align-items:center;gap:5px;font-size:8px;color:var(--muted);font-family:'Share Tech Mono',monospace;">
+                    <div style="width:8px;height:2px;background:var(--cyan);"></div> ACTUAL
+                  </div>
+                  <div style="display:flex;align-items:center;gap:5px;font-size:8px;color:var(--muted);font-family:'Share Tech Mono',monospace;">
+                    <div style="width:8px;height:1px;border:1px dashed rgba(0,255,204,0.5);"></div> PROJECTED
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="fpanel">
+              <div class="fpanel-hdr">
+                <div class="fpanel-title">Top Deals — Live</div>
+                <button class="btn-sec" style="padding:3px 10px;font-size:8px;" onclick="activateTab('pipeline')">VIEW ALL →</button>
+              </div>
+              <div class="fpanel-body" id="topDealsPanel"></div>
+            </div>
+          </div>
+
+          <!-- Activity + Upcoming -->
+          <div class="fpanel">
+            <div class="fpanel-hdr">
+              <div class="fpanel-title">Agent Activity Feed</div>
+              <button class="btn-sec" style="padding:3px 10px;font-size:8px;" onclick="clearFeed()">CLEAR</button>
+            </div>
+            <div class="fpanel-body" id="activityFeed" style="max-height:160px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;"></div>
+          </div>
+        </div>
+
+        <!-- ══ PIPELINE ══ -->
+        <div class="tab-content" id="tab-pipeline">
+          <!-- Add Deal -->
+          <div class="fpanel" style="margin-bottom:12px;">
+            <div class="fpanel-hdr">
+              <div class="fpanel-title">+ New Opportunity</div>
+              <button class="btn-sec" style="padding:3px 12px;font-size:8px;" onclick="toggleForm('addDealFrm')">TOGGLE</button>
+            </div>
+            <div id="addDealFrm" style="display:none;" class="fpanel-body">
+              <div class="fld-row">
+                <div><div class="fld-lbl">Client</div><input class="fld-inp" id="dClient" placeholder="City of Hamilton"></div>
+                <div><div class="fld-lbl">Opportunity</div><input class="fld-inp" id="dName" placeholder="Security Assessment"></div>
+              </div>
+              <div class="fld-row">
+                <div><div class="fld-lbl">Value (CAD)</div><input class="fld-inp" id="dValue" type="number" placeholder="250000"></div>
+                <div><div class="fld-lbl">Stage</div>
+                  <select class="fld-sel" id="dStage">
+                    <option value="0">Prospect</option><option value="1">Qualified</option>
+                    <option value="2">Proposal</option><option value="3">Negotiation</option><option value="4">Closing</option>
+                  </select>
+                </div>
+              </div>
+              <div class="fld-row">
+                <div><div class="fld-lbl">Win Probability (%)</div><input class="fld-inp" id="dProb" type="number" min="0" max="100" placeholder="65"></div>
+                <div><div class="fld-lbl">Expected Close</div><input class="fld-inp" id="dClose" type="date"></div>
+              </div>
+              <div class="fld-row full"><div class="fld-lbl">Notes</div><textarea class="fld-ta" id="dNotes" placeholder="Key contacts, next steps, differentiators..."></textarea></div>
+              <button class="btn-pri" onclick="addDeal()">COMMIT TO PIPELINE</button>
+            </div>
+          </div>
+
+          <div class="fpanel">
+            <div class="fpanel-hdr">
+              <div class="fpanel-title">All Opportunities</div>
+              <span style="font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;" id="pipelineSumm">Loading...</span>
+            </div>
+            <div class="fpanel-body" style="overflow-x:auto;">
+              <table class="ptable">
+                <thead>
+                  <tr>
+                    <th>Client</th><th>Opportunity</th><th>Value</th>
+                    <th>Stage</th><th>Probability</th><th>Close</th><th></th>
+                  </tr>
+                </thead>
+                <tbody id="pipelineTbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ CONTRACTS ══ -->
+        <div class="tab-content" id="tab-contracts">
+          <div class="fpanel" style="margin-bottom:12px;">
+            <div class="fpanel-hdr">
+              <div class="fpanel-title">+ Track RFP / Tender</div>
+              <button class="btn-sec" style="padding:3px 12px;font-size:8px;" onclick="toggleForm('addRFPFrm')">TOGGLE</button>
+            </div>
+            <div id="addRFPFrm" style="display:none;" class="fpanel-body">
+              <div class="fld-row">
+                <div><div class="fld-lbl">Organization</div><input class="fld-inp" id="rOrg" placeholder="City of Burlington"></div>
+                <div><div class="fld-lbl">RFP Title</div><input class="fld-inp" id="rTitle" placeholder="Cybersecurity Assessment 2026"></div>
+              </div>
+              <div class="fld-row">
+                <div><div class="fld-lbl">Est. Value</div><input class="fld-inp" id="rValue" placeholder="$280,000"></div>
+                <div><div class="fld-lbl">Deadline</div><input class="fld-inp" id="rDeadline" type="date"></div>
+              </div>
+              <div class="fld-row full"><div class="fld-lbl">Source URL</div><input class="fld-inp" id="rUrl" placeholder="https://merx.com/..."></div>
+              <button class="btn-pri" onclick="addRFP()">TRACK RFP</button>
+            </div>
+          </div>
+          <div id="rfpList"></div>
+        </div>
+
+        <!-- ══ TASKS ══ -->
+        <div class="tab-content" id="tab-tasks">
+          <div class="fpanel" style="margin-bottom:12px;">
+            <div class="fpanel-hdr"><div class="fpanel-title">+ Add Task</div></div>
+            <div class="fpanel-body">
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <input class="fld-inp" id="tText" placeholder="Task description..." style="flex:1;min-width:180px;">
+                <select class="fld-sel" id="tPri" style="width:130px;">
+                  <option value="h">🔴 HIGH</option>
+                  <option value="m" selected>🟡 MEDIUM</option>
+                  <option value="l">🟢 LOW</option>
+                </select>
+                <select class="fld-sel" id="tCat" style="width:150px;">
+                  <option value="proposal">Proposal</option>
+                  <option value="followup">Follow-up</option>
+                  <option value="closing">Closing</option>
+                  <option value="business-dev">Business Dev</option>
+                  <option value="compliance">Compliance</option>
+                </select>
+                <button class="btn-pri" onclick="addTask()">ADD</button>
+              </div>
+            </div>
+          </div>
+          <div class="fpanel">
+            <div class="fpanel-hdr">
+              <div class="fpanel-title">Operations Queue</div>
+              <span style="font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;" id="taskCount">–</span>
+            </div>
+            <div class="fpanel-body" id="taskList"></div>
+          </div>
+        </div>
+
+        <!-- ══ INTEL ══ -->
+        <div class="tab-content" id="tab-intel">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <div class="fpanel">
+              <div class="fpanel-hdr"><div class="fpanel-title">Market Sectors — Ontario</div></div>
+              <div class="fpanel-body" id="sectorCards"></div>
+            </div>
+            <div class="fpanel">
+              <div class="fpanel-hdr"><div class="fpanel-title">Revenue Timeline</div></div>
+              <div class="fpanel-body" id="intelTimeline"></div>
+            </div>
+          </div>
+          <div class="fpanel">
+            <div class="fpanel-hdr">
+              <div class="fpanel-title">Canadian Cybersecurity Pricing Intelligence</div>
+              <span style="font-size:8px;color:var(--muted);font-family:'Share Tech Mono',monospace;">Market benchmarks · 2026</span>
+            </div>
+            <div class="fpanel-body" style="overflow-x:auto;">
+              <table class="ptable">
+                <thead>
+                  <tr><th>Service</th><th>Market Low</th><th>Market Mid</th><th>Market High</th><th>CG Position</th><th>Opportunity</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Municipal Cybersecurity Assessment</td><td>$45K</td><td>$120K</td><td>$280K</td><td><span class="stage-pip sp-2">MID-HIGH</span></td><td style="color:var(--electric)">↑ HIGH</td></tr>
+                  <tr><td>Network Monitoring (Annual SaaS)</td><td>$80K</td><td>$200K</td><td>$450K</td><td><span class="stage-pip sp-2">MID</span></td><td style="color:var(--electric)">↑ HIGH</td></tr>
+                  <tr><td>Incident Response Retainer</td><td>$30K</td><td>$90K</td><td>$180K</td><td><span class="stage-pip sp-won">MID-HIGH</span></td><td style="color:var(--warn)">→ MED</td></tr>
+                  <tr><td>Penetration Testing</td><td>$15K</td><td>$50K</td><td>$120K</td><td><span class="stage-pip sp-1">LOW-MID</span></td><td style="color:var(--electric)">↑ HIGH</td></tr>
+                  <tr><td>Bill C-26 Compliance Advisory</td><td>$25K</td><td>$75K</td><td>$150K</td><td><span class="stage-pip sp-2">EMERGING</span></td><td style="color:var(--danger)">⚡ URGENT</td></tr>
+                  <tr><td>NEXUS Platform License</td><td>$60K</td><td>$150K</td><td>$400K</td><td><span class="stage-pip sp-4">DIFFERENTIATOR</span></td><td style="color:var(--gold)">★ STRATEGIC</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /tab-body -->
+    </div><!-- /center -->
+
+    <!-- RIGHT PANEL — AI AGENT -->
+    <aside class="right-panel">
+      <div class="rp-hdr">
+        <div>
+          <div class="rp-title">◈ AI AGENT</div>
+          <div style="font-size:8px;color:var(--muted);letter-spacing:2px;font-family:'Share Tech Mono',monospace;margin-top:2px;">BRITISH ENGLISH · CLAUDE SONNET</div>
+        </div>
+        <button class="voice-btn" id="voiceToggle" onclick="toggleVoice()">
+          🔊 VOICE ON
+        </button>
+      </div>
+
+      <!-- Voice visualizer -->
+      <div class="voice-viz" id="voiceViz"></div>
+
+      <div class="ai-msgs" id="aiMsgs">
+        <div class="ai-msg agent">
+          <div class="msg-av">CG</div>
+          <div class="msg-bubble">
+            Good day, Desmond. ClearGlass NEXUS online and fully operational.<br><br>
+            I have complete visibility of your £2.14 million pipeline, four open government tenders, and the path to your million-dollar target.<br><br>
+            How shall we proceed?
+          </div>
+        </div>
+      </div>
+
+      <div class="qp-grid">
+        <button class="qp-btn" onclick="qp('Which deals should I close this month to hit the $1M target?')">🎯 Priority closes this month</button>
+        <button class="qp-btn" onclick="qp('Draft a professional proposal email to a municipal IT Director for the NEXUS platform')">📧 Draft municipal proposal email</button>
+        <button class="qp-btn" onclick="qp('What is the fastest path to $1M revenue at ClearGlass Inc right now?')">💰 Fastest path to $1M</button>
+        <button class="qp-btn" onclick="qp('How should we position against Bell and Rogers for the Burlington RFP?')">⚔️ Competitive strategy — Burlington</button>
+      </div>
+
+      <div class="ai-input-area">
+        <div class="ai-row">
+          <input class="ai-inp" id="aiInp" placeholder="Brief the agent..." onkeydown="if(event.key==='Enter')sendMsg()">
+          <button class="ai-send" id="aiSendBtn" onclick="sendMsg()">SEND</button>
+        </div>
+      </div>
+    </aside>
+
+  </div><!-- /body-grid -->
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div style="font-size:8px;color:var(--muted);letter-spacing:2px;font-family:'Share Tech Mono',monospace;flex-shrink:0;">LIVE FEED</div>
+    <div class="footer-ticker">
+      <div class="ticker-inner" id="tickerInner"></div>
+    </div>
+    <div class="footer-time" id="footerClock">00:00:00</div>
+    <div class="footer-status">
+      <div class="footer-status-dot"></div>
+      <div class="footer-status-txt">NEXUS ONLINE</div>
+    </div>
+  </footer>
+
+</div><!-- /mainUI -->
+
+<script>
+// ══════════════════════════════════════════════════════
+//  STORE
+// ══════════════════════════════════════════════════════
+const SK = 'cg_nexus_v4';
+function load() {
+  try { const r=localStorage.getItem(SK); if(r)return JSON.parse(r); } catch(e){}
+  return defaultStore();
+}
+function save() { try{localStorage.setItem(SK,JSON.stringify(DS));}catch(e){} }
+
+function defaultStore() {
+  return {
+    deals:[
+      {id:1,client:'City of Burlington',name:'Municipal NEXUS Platform',value:380000,stage:2,prob:75,close:'2026-04-15',notes:'RFP submitted. Strong NEXUS fit.'},
+      {id:2,client:'Joseph Brant Hospital',name:'Aurora Health Intelligence',value:290000,stage:3,prob:85,close:'2026-03-28',notes:'Legal reviewing contract.'},
+      {id:3,client:'Region of Halton',name:'Network Security Assessment',value:145000,stage:1,prob:55,close:'2026-05-10',notes:'Competing against Bell.'},
+      {id:4,client:'Hamilton Health Sciences',name:'AEGIS Endpoint Monitoring',value:320000,stage:0,prob:30,close:'2026-06-30',notes:'Discovery call March 5.'},
+      {id:5,client:'Halton Regional Police',name:'Threat Intelligence Retainer',value:180000,stage:4,prob:90,close:'2026-03-15',notes:'Final contract review.'},
+      {id:6,client:'City of Mississauga',name:'Cybersecurity Governance Program',value:450000,stage:2,prob:60,close:'2026-05-20',notes:'RFP response due March 10.'},
+      {id:7,client:'Oakville Transit',name:'OT/ICS Security Assessment',value:95000,stage:1,prob:65,close:'2026-04-01',notes:'Budget confirmed.'},
+    ],
+    rfps:[
+      {id:1,org:'City of Burlington',title:'Cybersecurity Assessment & Managed SOC 2026',value:'$280K',deadline:'2026-03-18',flag:'🏛️'},
+      {id:2,org:'PHSA British Columbia',title:'Network Security Monitoring Platform',value:'$450K',deadline:'2026-03-25',flag:'🏥'},
+      {id:3,org:'PSPC Canada',title:'Cybersecurity Standing Offer — SOR/2026',value:'$500K+',deadline:'2026-04-10',flag:'🇨🇦'},
+      {id:4,org:'Halton Region',title:'IT Security Services & Incident Response',value:'$160K',deadline:'2026-03-12',flag:'🏢'},
+    ],
+    tasks:[
+      {id:1,text:'Submit RFP — City of Mississauga (deadline March 10)',pri:'h',cat:'proposal',done:false},
+      {id:2,text:'Follow up — Joseph Brant legal team on contract',pri:'h',cat:'followup',done:false},
+      {id:3,text:'Book discovery call — Hamilton Health Sciences',pri:'m',cat:'business-dev',done:false},
+      {id:4,text:'Prepare Halton Region RFP response (deadline March 12)',pri:'h',cat:'proposal',done:false},
+      {id:5,text:'Get Halton Police contract signed this week',pri:'h',cat:'closing',done:false},
+    ],
+    feed:[],
+    nid:200
+  };
+}
+
+let DS = load();
+
+// ══════════════════════════════════════════════════════
+//  CANVAS BACKGROUND — PARTICLE GRID
+// ══════════════════════════════════════════════════════
+(function initCanvas() {
+  const canvas = document.getElementById('bgCanvas');
+  const ctx = canvas.getContext('2d');
+  let w, h, particles=[], connections=[];
+  const N = 60;
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  for(let i=0;i<N;i++) particles.push({
+    x:Math.random()*window.innerWidth,
+    y:Math.random()*window.innerHeight,
+    vx:(Math.random()-0.5)*0.3,
+    vy:(Math.random()-0.5)*0.3,
+    r:Math.random()*1.5+0.5,
+    o:Math.random()*0.5+0.1
+  });
+
+  function draw() {
+    ctx.clearRect(0,0,w,h);
+    // Gradient background
+    const g=ctx.createRadialGradient(w/2,h/2,0,w/2,h/2,Math.max(w,h)/1.5);
+    g.addColorStop(0,'rgba(0,3,18,0)');
+    g.addColorStop(1,'rgba(0,0,8,0.4)');
+    ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+
+    // Grid lines
+    ctx.strokeStyle='rgba(0,210,255,0.03)';
+    ctx.lineWidth=1;
+    const gs=80;
+    for(let x=0;x<w;x+=gs){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+    for(let y=0;y<h;y+=gs){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+
+    // Particles + connections
+    particles.forEach((p,i)=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>w)p.vx*=-1;
+      if(p.y<0||p.y>h)p.vy*=-1;
+
+      particles.slice(i+1).forEach(q=>{
+        const dx=p.x-q.x,dy=p.y-q.y,d=Math.sqrt(dx*dx+dy*dy);
+        if(d<160){
+          ctx.beginPath();
+          ctx.strokeStyle=`rgba(0,210,255,${0.06*(1-d/160)})`;
+          ctx.lineWidth=0.5;
+          ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke();
+        }
+      });
+
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(0,210,255,${p.o})`;
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ══════════════════════════════════════════════════════
+//  VOICE ENGINE — British English
+// ══════════════════════════════════════════════════════
+let voiceEnabled = true;
+let speechQueue = [];
+let isSpeaking = false;
+
+function toggleVoice() {
+  voiceEnabled = !voiceEnabled;
+  const btn = document.getElementById('voiceToggle');
+  if(voiceEnabled) {
+    btn.textContent='🔊 VOICE ON';
+    btn.classList.remove('muted');
+    speak('Voice output re-enabled, Desmond.');
+  } else {
+    btn.textContent='🔇 VOICE OFF';
+    btn.classList.add('muted');
+    window.speechSynthesis.cancel();
+    stopVizAnim();
+  }
+}
+
+function speak(text) {
+  if(!voiceEnabled||!window.speechSynthesis) return;
+  speechQueue.push(text);
+  if(!isSpeaking) processQueue();
+}
+
+function processQueue() {
+  if(speechQueue.length===0){isSpeaking=false;stopVizAnim();return;}
+  isSpeaking=true;
+  const text=speechQueue.shift();
+  const utt=new SpeechSynthesisUtterance(text);
+
+  // Select British English voice
+  const voices=window.speechSynthesis.getVoices();
+  const british = voices.find(v=>v.lang==='en-GB')||
+                  voices.find(v=>v.lang.startsWith('en-GB'))||
+                  voices.find(v=>v.name.toLowerCase().includes('british'))||
+                  voices.find(v=>v.name.toLowerCase().includes('daniel'))||
+                  voices.find(v=>v.name.toLowerCase().includes('oliver'))||
+                  voices.find(v=>v.lang.startsWith('en'));
+  if(british)utt.voice=british;
+  utt.lang='en-GB';
+  utt.rate=0.95; utt.pitch=0.95; utt.volume=1;
+
+  utt.onstart=()=>startVizAnim();
+  utt.onend=()=>{stopVizAnim();processQueue();};
+  utt.onerror=()=>{stopVizAnim();processQueue();};
+
+  window.speechSynthesis.speak(utt);
+}
+
+window.speechSynthesis && window.speechSynthesis.addEventListener &&
+  window.addEventListener('load', ()=>window.speechSynthesis.getVoices());
+
+// Voice visualizer
+(function buildViz(){
+  const viz=document.getElementById('voiceViz');
+  for(let i=0;i<60;i++){
+    const b=document.createElement('div');
+    b.className='viz-bar'; b.id='vb'+i;
+    b.style.height='3px';
+    viz.appendChild(b);
+  }
+})();
+
+let vizAF=null;
+function startVizAnim(){
+  if(vizAF)return;
+  function frame(){
+    for(let i=0;i<60;i++){
+      const b=document.getElementById('vb'+i);
+      if(!b)continue;
+      const h=Math.random()*22+2;
+      b.style.height=h+'px';
+      b.className='viz-bar active';
+    }
+    vizAF=requestAnimationFrame(frame);
+  }
+  vizAF=requestAnimationFrame(frame);
+}
+function stopVizAnim(){
+  if(vizAF){cancelAnimationFrame(vizAF);vizAF=null;}
+  for(let i=0;i<60;i++){
+    const b=document.getElementById('vb'+i);
+    if(b){b.style.height='3px';b.className='viz-bar';}
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  BOOT SEQUENCE
+// ══════════════════════════════════════════════════════
+const bootLogs=[
+  'NEXUS v4.0 ORACLE EDITION — LOADING...',
+  'Initialising intelligence matrix...',
+  'Loading pipeline data — 7 opportunities...',
+  'Connecting revenue engine...',
+  'Calibrating threat assessment protocols...',
+  'Agent context loaded — Desmond Otieno, COO',
+  'ClearGlass Inc. profile active...',
+  'Voice synthesis online — British English selected...',
+  'All systems operational. Welcome, sir.',
+];
+
+let bootIdx=0;
+const bootBar=document.getElementById('bootBar');
+const bootLog=document.getElementById('bootLog');
+
+function runBoot(){
+  if(bootIdx>=bootLogs.length){
+    setTimeout(()=>{
+      document.getElementById('bootScreen').style.opacity='0';
+      document.getElementById('bootScreen').style.transition='opacity 0.8s';
+      setTimeout(()=>{
+        document.getElementById('bootScreen').style.display='none';
+        const ui=document.getElementById('mainUI');
+        ui.classList.add('visible');
+        initUI();
+        setTimeout(()=>speak('Good day, Desmond. ClearGlass NEXUS is fully operational. I have visibility of your two point one four million pipeline and am ready to assist. How shall we proceed?'),1200);
+      },800);
+    },400);
+    return;
+  }
+  bootLog.textContent=bootLogs[bootIdx];
+  bootBar.style.width=Math.round((bootIdx+1)/bootLogs.length*100)+'%';
+  bootIdx++;
+  setTimeout(runBoot,300+Math.random()*200);
+}
+
+setTimeout(runBoot,600);
+
+// ══════════════════════════════════════════════════════
+//  TABS
+// ══════════════════════════════════════════════════════
+function activateTab(id, hdrEl, navEl){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.querySelectorAll('.hdr-nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(n=>n.classList.remove('active'));
+  if(hdrEl) hdrEl.classList.add('active');
+  if(navEl) navEl.classList.add('active');
+  renderTab(id);
+}
+
+function renderTab(id){
+  if(id==='overview'){renderOverview();}
+  if(id==='pipeline'){renderPipeline();}
+  if(id==='contracts'){renderContracts();}
+  if(id==='tasks'){renderTasks();}
+  if(id==='intel'){renderIntel();}
+}
+
+// ══════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════
+const stageNames=['PROSPECT','QUALIFIED','PROPOSAL','NEGOTIATION','CLOSING'];
+const stageCls=['sp-0','sp-1','sp-2','sp-3','sp-4'];
+
+function fv(v){
+  if(v>=1e6)return'$'+(v/1e6).toFixed(2)+'M';
+  if(v>=1e3)return'$'+Math.round(v/1e3)+'K';
+  return'$'+v;
+}
+
+function fdate(d){
+  if(!d)return'—';
+  return new Date(d).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'});
+}
+
+function daysLeft(d){
+  return Math.round((new Date(d)-Date.now())/86400000);
+}
+
+function pc(p){return p>=70?'':'med '.replace('med ','med')+(p<40?'low':'');}
+// simple version
+function probFillCls(p){ if(p>=70)return''; if(p>=40)return'med'; return'low'; }
+
+function toggleForm(id){
+  const el=document.getElementById(id);
+  el.style.display=el.style.display==='none'?'block':'none';
+}
+
+// ══════════════════════════════════════════════════════
+//  OVERVIEW
+// ══════════════════════════════════════════════════════
+function renderOverview(){
+  renderRevBars();
+  renderTopDeals();
+  renderFeed();
+  updateSidebar();
+}
+
+function renderRevBars(){
+  const el=document.getElementById('revBars');
+  if(!el)return;
+  const months=['Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul'];
+  const actuals=[48000,62000,85000,71000,55000,90000,120000,0,0,0,0,0];
+  const proj=[0,0,0,0,0,0,0,145000,180000,130000,95000,80000];
+  const max=Math.max(...actuals,...proj);
+  el.innerHTML=months.map((m,i)=>{
+    const h=actuals[i]?Math.round(actuals[i]/max*90):0;
+    const hp=proj[i]?Math.round(proj[i]/max*90):0;
+    const ht=h||hp, cls=proj[i]?'proj':'actual';
+    const v=fv(actuals[i]||proj[i]);
+    return`<div class="rb-wrap">
+      <div class="rb-bar ${cls}" style="height:${ht}px;" title="${v}"></div>
+      <div class="rb-lbl">${m}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderTopDeals(){
+  const el=document.getElementById('topDealsPanel');
+  if(!el)return;
+  const top=[...DS.deals].sort((a,b)=>b.value*b.prob/100-a.value*a.prob/100).slice(0,4);
+  el.innerHTML=`<table class="ptable"><tbody>`+top.map(d=>`<tr>
+    <td style="font-weight:600;color:var(--white);">${d.client}</td>
+    <td style="font-family:'Orbitron',monospace;font-size:16px;color:var(--gold);">${fv(d.value)}</td>
+    <td><span class="stage-pip ${stageCls[d.stage]}">${stageNames[d.stage]}</span></td>
+    <td><div class="prob-mini"><div class="prob-track"><div class="prob-fill ${probFillCls(d.prob)}" style="width:${d.prob}%"></div></div><div class="prob-num">${d.prob}%</div></div></td>
+  </tr>`).join('')+`</tbody></table>`;
+}
+
+function renderFeed(){
+  const el=document.getElementById('activityFeed');
+  if(!el)return;
+  if(!DS.feed.length){el.innerHTML='<div style="font-size:10px;color:var(--muted);text-align:center;padding:16px;font-family:\'Share Tech Mono\',monospace;">AGENT MONITORING ACTIVE...</div>';return;}
+  el.innerHTML=DS.feed.slice(0,12).map(f=>`
+    <div style="display:flex;gap:8px;align-items:flex-start;padding:7px 10px;background:var(--panel);border:1px solid var(--border);border-left:2px solid ${f.type==='warn'?'var(--warn)':f.type==='danger'?'var(--danger)':'var(--cyan)'};">
+      <span style="font-size:14px;flex-shrink:0;">${f.icon}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:10px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${f.msg}</div>
+        <div style="font-size:8px;color:var(--muted);font-family:'Share Tech Mono',monospace;margin-top:1px;">${f.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+function clearFeed(){DS.feed=[];save();renderFeed();}
+
+function logFeed(icon,msg,type='ok'){
+  DS.feed.unshift({icon,msg,type,time:new Date().toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'})});
+  if(DS.feed.length>60)DS.feed.pop();
+  save(); renderFeed();
+}
+
+function updateSidebar(){
+  document.getElementById('sDeals').textContent=DS.deals.length;
+  document.getElementById('sRFPs').textContent=DS.rfps.length;
+  const act=DS.tasks.filter(t=>!t.done).length;
+  document.getElementById('sTasks').textContent=act;
+  const urg=DS.rfps.filter(r=>daysLeft(r.deadline)<=14).length;
+  document.getElementById('sAlerts').textContent=urg;
+  document.getElementById('navDeals').textContent=DS.deals.length;
+  document.getElementById('navRFPs').textContent=DS.rfps.length;
+  document.getElementById('kOpps').textContent=DS.deals.length;
+  document.getElementById('kRFPs').textContent=DS.rfps.length;
+}
+
+// ══════════════════════════════════════════════════════
+//  PIPELINE
+// ══════════════════════════════════════════════════════
+function renderPipeline(){
+  const total=DS.deals.reduce((s,d)=>s+d.value,0);
+  const weighted=DS.deals.reduce((s,d)=>s+d.value*d.prob/100,0);
+  const el=document.getElementById('pipelineSumm');
+  if(el)el.textContent=`TOTAL: ${fv(total)} | WEIGHTED: ${fv(weighted)} | ${DS.deals.length} DEALS`;
+
+  const tb=document.getElementById('pipelineTbody');
+  if(!tb)return;
+  tb.innerHTML=DS.deals.map(d=>`<tr>
+    <td style="color:var(--white);font-weight:600;">${d.client}</td>
+    <td style="color:var(--muted);font-size:10px;">${d.name}</td>
+    <td style="font-family:'Orbitron',monospace;font-size:18px;color:var(--gold);font-weight:700;">${fv(d.value)}</td>
+    <td><span class="stage-pip ${stageCls[d.stage]}">${stageNames[d.stage]}</span></td>
+    <td><div class="prob-mini"><div class="prob-track"><div class="prob-fill ${probFillCls(d.prob)}" style="width:${d.prob}%"></div></div><div class="prob-num">${d.prob}%</div></div></td>
+    <td style="font-size:10px;color:var(--muted);font-family:'Share Tech Mono',monospace;">${fdate(d.close)}</td>
+    <td><button class="btn-sm" onclick="removeDeal(${d.id})">DEL</button></td>
+  </tr>`).join('');
+  updateSidebar();
+}
+
+function addDeal(){
+  const client=document.getElementById('dClient').value.trim();
+  const name=document.getElementById('dName').value.trim();
+  const value=parseInt(document.getElementById('dValue').value)||0;
+  const stage=parseInt(document.getElementById('dStage').value)||0;
+  const prob=parseInt(document.getElementById('dProb').value)||50;
+  const close=document.getElementById('dClose').value;
+  const notes=document.getElementById('dNotes').value.trim();
+  if(!client||!name||!value){alert('Client, Opportunity, and Value are required.');return;}
+  DS.deals.push({id:DS.nid++,client,name,value,stage,prob,close,notes});
+  save();
+  logFeed('💼',`Deal added: ${client} — ${fv(value)}`);
+  notify('Deal Added',`${name} — ${fv(value)}`);
+  speak(`New deal added. ${client}, ${fv(value)}. Good work, Desmond.`);
+  document.getElementById('addDealFrm').style.display='none';
+  renderPipeline();
+}
+
+function removeDeal(id){DS.deals=DS.deals.filter(d=>d.id!==id);save();renderPipeline();}
+
+// ══════════════════════════════════════════════════════
+//  CONTRACTS
+// ══════════════════════════════════════════════════════
+function renderContracts(){
+  const el=document.getElementById('rfpList');
+  if(!el)return;
+  el.innerHTML=DS.rfps.map(r=>{
+    const dl=daysLeft(r.deadline);
+    const urg=dl<=14;
+    return`<div class="rfp-card ${urg?'urgent':''}">
+      <div class="rfp-flag">${r.flag}</div>
+      <div class="rfp-body">
+        <div class="rfp-title">${r.title}</div>
+        <div class="rfp-meta">📍 ${r.org}</div>
+        <div class="rfp-val">${r.value}</div>
+        <div class="rfp-dl ${urg?'urgent':'ok'}">🗓 ${fdate(r.deadline)} — ${dl} DAYS REMAINING${urg?' ⚡ URGENT':''}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+        <button class="btn-pri" style="font-size:8px;padding:5px 10px;" onclick="rfpToPipeline(${r.id})">+ PIPELINE</button>
+        <button class="btn-sm" onclick="removeRFP(${r.id})">DEL</button>
+      </div>
+    </div>`;
+  }).join('');
+  updateSidebar();
+}
+
+function addRFP(){
+  const org=document.getElementById('rOrg').value.trim();
+  const title=document.getElementById('rTitle').value.trim();
+  const value=document.getElementById('rValue').value.trim();
+  const deadline=document.getElementById('rDeadline').value;
+  if(!org||!title){alert('Organization and Title required.');return;}
+  DS.rfps.push({id:DS.nid++,org,title,value,deadline,flag:'📋'});
+  save();
+  logFeed('📋',`RFP tracked: ${org}`)
+  notify('RFP Tracked',org,'warn');
+  speak(`New tender tracked. ${org}. I shall monitor the deadline and alert you accordingly.`);
+  document.getElementById('addRFPFrm').style.display='none';
+  renderContracts();
+}
+
+function removeRFP(id){DS.rfps=DS.rfps.filter(r=>r.id!==id);save();renderContracts();}
+
+function rfpToPipeline(id){
+  const r=DS.rfps.find(x=>x.id===id);
+  if(!r)return;
+  DS.deals.push({id:DS.nid++,client:r.org,name:r.title,value:parseInt((r.value||'0').replace(/\D/g,''))||0,stage:0,prob:25,close:r.deadline,notes:`Source: RFP`});
+  save();
+  logFeed('💼',`Deal created from RFP: ${r.org}`);
+  notify('Deal Created',r.org+' added to pipeline');
+  speak(`${r.org} has been added to your pipeline, Desmond.`);
+}
+
+// ══════════════════════════════════════════════════════
+//  TASKS
+// ══════════════════════════════════════════════════════
+function renderTasks(){
+  const el=document.getElementById('taskList');
+  if(!el)return;
+  const priMap={h:'HIGH',m:'MEDIUM',l:'LOW'};
+  const priCls={h:'pri-h',m:'pri-m',l:'pri-l'};
+  const active=DS.tasks.filter(t=>!t.done);
+  const done=DS.tasks.filter(t=>t.done);
+  document.getElementById('taskCount').textContent=`${active.length} ACTIVE · ${done.length} DONE`;
+  document.getElementById('sTasks').textContent=active.length;
+  el.innerHTML=[...active,...done].map(t=>`
+    <div class="task-item" style="opacity:${t.done?0.45:1};">
+      <div class="task-cb ${t.done?'done':''}" onclick="toggleTask(${t.id})"></div>
+      <div class="task-text ${t.done?'done':''}">${t.text}</div>
+      <span class="task-pri ${priCls[t.pri]}">${priMap[t.pri]}</span>
+      <span style="font-size:8px;color:var(--muted);font-family:'Share Tech Mono',monospace;text-transform:uppercase;padding:2px 6px;border:1px solid var(--border);">${t.cat}</span>
+      <button onclick="removeTask(${t.id})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;">✕</button>
+    </div>`).join('');
+}
+
+function addTask(){
+  const text=document.getElementById('tText').value.trim();
+  if(!text)return;
+  DS.tasks.unshift({id:DS.nid++,text,pri:document.getElementById('tPri').value,cat:document.getElementById('tCat').value,done:false});
+  save(); document.getElementById('tText').value='';
+  logFeed('✅',`Task: ${text}`);
+  renderTasks();
+}
+
+function toggleTask(id){const t=DS.tasks.find(x=>x.id===id);if(t){t.done=!t.done;save();renderTasks();}}
+function removeTask(id){DS.tasks=DS.tasks.filter(t=>t.id!==id);save();renderTasks();}
+
+// ══════════════════════════════════════════════════════
+//  INTEL
+// ══════════════════════════════════════════════════════
+function renderIntel(){
+  const sectors=[
+    {icon:'🏛️',name:'Municipal Government',val:'$800K–1.2M',note:'Bill C-26 compliance driving procurement surge'},
+    {icon:'🏥',name:'Healthcare & Hospitals',val:'$600K–900K',note:'Epic integration + cybersecurity mandates'},
+    {icon:'⚡',name:'Critical Infrastructure',val:'$400K–700K',note:'OT/ICS security mandates effective Q3 2026'},
+    {icon:'🚔',name:'Regional Police / Public Safety',val:'$300K–500K',note:'Federal compliance requirements expanding'},
+    {icon:'🚇',name:'Transit & Utilities',val:'$150K–350K',note:'Expanding digital attack surface post-COVID'},
+  ];
+  const sc=document.getElementById('sectorCards');
+  if(sc) sc.innerHTML=sectors.map(s=>`
+    <div class="sector-card">
+      <div class="sector-icon">${s.icon}</div>
+      <div class="sector-body"><div class="sector-name">${s.name}</div><div class="sector-note">${s.note}</div></div>
+      <div class="sector-val">${s.val}</div>
+    </div>`).join('');
+
+  const tl=document.getElementById('intelTimeline');
+  if(tl) tl.innerHTML=[
+    {done:true,active:false,icon:'✓',title:'NEXUS v4.0 Oracle Launch',date:'FEB 2026',body:'Unified intelligence platform available for enterprise sales.'},
+    {done:false,active:true,icon:'⚡',title:'Burlington + Halton Police Close',date:'MARCH 2026',body:'Two deals in final stage. Combined value $560K.'},
+    {done:false,active:false,icon:'📋',title:'PSPC Standing Offer Submission',date:'APRIL 2026',body:'Federal vehicle — could unlock $500K+ in pipeline.'},
+    {done:false,active:false,icon:'🏆',title:'$1M Revenue Target',date:'Q2 2026',body:'Current pipeline close rates project target by June.'},
+  ].map(e=>`<div class="tl-item">
+    <div class="tl-dot ${e.done?'done':e.active?'active':''}">${e.icon}</div>
+    <div class="tl-content">
+      <div class="tl-title">${e.title}</div>
+      <div class="tl-date">${e.date}</div>
+      <div class="tl-body">${e.body}</div>
+    </div>
+  </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════
+//  AI AGENT — Anthropic API
+// ══════════════════════════════════════════════════════
+const MSG_HISTORY=[];
+
+function buildSystem(){
+  const deals=DS.deals.map(d=>`${d.client}: ${d.name} — ${fv(d.value)} — ${stageNames[d.stage]} (${d.prob}%) — Close: ${fdate(d.close)}`).join('\n');
+  const rfps=DS.rfps.map(r=>`${r.org}: ${r.title} — ${r.value} — Deadline: ${fdate(r.deadline)} (${daysLeft(r.deadline)} days)`).join('\n');
+  const tasks=DS.tasks.filter(t=>!t.done).map(t=>`[${t.pri.toUpperCase()}] ${t.text}`).join('\n');
+  return`You are the ClearGlass NEXUS Revenue Agent — an elite business intelligence AI working exclusively for Desmond Otieno, COO of ClearGlass Inc., a Canadian cybersecurity firm focused on municipal cybersecurity governance.
+
+VOICE NOTE: Speak in a refined, confident British English tone — precise, authoritative, and action-focused. No filler words. Address the user as "Desmond" occasionally for personalization.
+
+YOUR MISSION: Help Desmond close deals and reach $1,000,000 CAD revenue in fiscal 2026.
+
+CLEARGLASS PROFILE:
+- Products: NEXUS (unified intelligence platform), AEGIS (endpoint/threat), OMEN (geopolitical intel), Aurora (healthcare)
+- Primary markets: Canadian municipalities, healthcare, critical infrastructure — Ontario focus
+- Differentiators: Bill C-26 compliance expertise, proprietary AI platforms, government governance specialization
+- Headquarters: Burlington, Ontario
+
+LIVE PIPELINE:
+Total: ${fv(DS.deals.reduce((s,d)=>s+d.value,0))} | Weighted: ${fv(DS.deals.reduce((s,d)=>s+d.value*d.prob/100,0))}
+${deals}
+
+OPEN RFPs:
+${rfps}
+
+OPEN TASKS:
+${tasks}
+
+RULES:
+- Be concise, direct, and decisive
+- Every recommendation must reference specific deals/values from above
+- Flag urgency when deadlines are within 30 days
+- Reference Bill C-26, PIPEDA, CRTC, PSPC, MERX where strategically relevant
+- When drafting communications, write them completely and professionally
+- Revenue impact is the primary filter for all recommendations`;
+}
+
+async function sendMsg(){
+  const inp=document.getElementById('aiInp');
+  const btn=document.getElementById('aiSendBtn');
+  const text=inp.value.trim();
+  if(!text)return;
+  inp.value=''; btn.disabled=true;
+  appendMsg('user',text);
+  MSG_HISTORY.push({role:'user',content:text});
+
+  const tid='t'+Date.now();
+  const wrap=document.createElement('div');
+  wrap.className='ai-msg agent'; wrap.id=tid;
+  wrap.innerHTML=`<div class="msg-av">CG</div><div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
+  document.getElementById('aiMsgs').appendChild(wrap);
+  document.getElementById('aiMsgs').scrollTop=99999;
+
+  try {
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:buildSystem(),
+        messages:MSG_HISTORY.slice(-10)
+      })
+    });
+    const data=await res.json();
+    const reply=data.content?.find(b=>b.type==='text')?.text||'I was unable to process that request. Please try again.';
+    document.getElementById(tid)?.remove();
+    appendMsg('agent',reply);
+    MSG_HISTORY.push({role:'assistant',content:reply});
+    logFeed('🤖',`Agent: ${text.slice(0,50)}...`);
+    // Speak first 2 sentences
+    const sentences=reply.replace(/\n/g,' ').split(/(?<=[.!?])\s+/).slice(0,2).join(' ');
+    speak(sentences);
+  } catch(err){
+    document.getElementById(tid)?.remove();
+    appendMsg('agent',`System error: ${err.message}. Ensure you are connected to claude.ai with API access.`);
+  }
+  btn.disabled=false;
+}
+
+function appendMsg(role,text){
+  const el=document.getElementById('aiMsgs');
+  const d=document.createElement('div');
+  d.className='ai-msg '+role;
+  const av=role==='user'?'DO':'CG';
+  const html=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>').replace(/\n/g,'<br>');
+  d.innerHTML=`<div class="msg-av">${av}</div><div class="msg-bubble">${html}</div>`;
+  el.appendChild(d); el.scrollTop=99999;
+}
+
+function qp(text){document.getElementById('aiInp').value=text;sendMsg();}
+
+// ══════════════════════════════════════════════════════
+//  NOTIFICATIONS
+// ══════════════════════════════════════════════════════
+function notify(title,body,type='ok'){
+  const n=document.createElement('div');
+  n.className=`notif ${type==='warn'?'warn':type==='danger'?'danger':type==='gold'?'gold':''}`;
+  n.innerHTML=`<div class="notif-title">${title}</div><div class="notif-body">${body}</div>`;
+  document.body.appendChild(n);
+  setTimeout(()=>n.remove(),4500);
+}
+
+// ══════════════════════════════════════════════════════
+//  TICKER
+// ══════════════════════════════════════════════════════
+const tickerData=[
+  {t:'Burlington RFP',v:'$280K',c:'ti-val'},
+  {t:'PHSA BC — Network Security',v:'$450K',c:'ti-val'},
+  {t:'PSPC Standing Offer',v:'OPEN',c:'ti-up'},
+  {t:'Bill C-26 Compliance Deadline',v:'Q3 2026',c:'ti-val'},
+  {t:'Pipeline Value',v:'$2.14M',c:'ti-val'},
+  {t:'Target Progress',v:'63%',c:'ti-up'},
+  {t:'Hamilton Health Sciences',v:'$320K',c:'ti-val'},
+  {t:'Close Rate This Quarter',v:'38%',c:'ti-up'},
+  {t:'Weighted Pipeline',v:'$1.27M',c:'ti-val'},
+  {t:'Halton Region Deadline',v:'12 DAYS',c:'ti-dn'},
+];
+
+function buildTicker(){
+  const items=tickerData.map(i=>`<span class="ticker-item">▸ ${i.t}: <span class="${i.c}">${i.v}</span></span>`).join('');
+  const el=document.getElementById('tickerInner');
+  if(el)el.innerHTML=items+items; // duplicate for infinite
+}
+
+// ══════════════════════════════════════════════════════
+//  CLOCK
+// ══════════════════════════════════════════════════════
+function updateClock(){
+  const now=new Date();
+  const t=now.toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+  const el=document.getElementById('footerClock');
+  if(el)el.textContent=t;
+}
+
+setInterval(updateClock,1000);
+updateClock();
+
+// ══════════════════════════════════════════════════════
+//  AUTO-AGENT ALERTS
+// ══════════════════════════════════════════════════════
+const autoAlerts=[
+  {delay:20000,icon:'⚡',msg:'Halton Region RFP — 12 days to deadline',type:'danger',speech:'Alert, Desmond. The Halton Region tender closes in twelve days. I recommend prioritising that response immediately.'},
+  {delay:45000,icon:'💼',msg:'Joseph Brant Hospital: nudge legal team today',type:'warn',speech:'Reminder: the Joseph Brant Hospital contract is with legal. A brief follow-up today could accelerate the signing.'},
+  {delay:80000,icon:'🇨🇦',msg:'PSPC Standing Offer Q&A closes March 3',type:'warn',speech:'The PSPC Standing Offer Q and A period closes on the third of March. Submitting questions now will strengthen your proposal position.'},
+  {delay:115000,icon:'🏆',msg:'Close Halton Police this week → +$180K toward $1M',type:'ok',speech:'Good news, Desmond. Halton Regional Police is at ninety percent probability. Closing this week adds one hundred and eighty thousand to your annual target.'},
+];
+
+autoAlerts.forEach(a=>{
+  setTimeout(()=>{
+    notify('◈ AGENT ALERT',a.msg,a.type==='danger'?'danger':a.type==='warn'?'warn':'');
+    logFeed(a.icon,a.msg,a.type);
+    speak(a.speech);
+  },a.delay);
+});
+
+// ══════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════
+function initUI(){
+  buildTicker();
+  renderOverview();
+  updateSidebar();
+  logFeed('⚡','NEXUS v4.0 ORACLE — All systems online');
+  logFeed('🎯','Pipeline loaded: $2.14M across 7 active deals');
+  logFeed('📋','4 government tenders under active monitoring');
+  logFeed('🤖','AI Agent ready — British English voice active');
+}
+
+// Voices load async on some browsers
+window.speechSynthesis && window.speechSynthesis.onvoiceschanged !== undefined &&
+  (window.speechSynthesis.onvoiceschanged = () => {});
+</script>
+</body>
+</html>

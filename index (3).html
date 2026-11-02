@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CLEARGLASS Guardian Command Nexus</title>
+  <meta name="description" content="Operational command-and-control dashboard prototype for CLEARGLASS Guardian Command Nexus." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="boot-overlay" class="boot-overlay" aria-live="polite">
+    <div class="boot-panel">
+      <div class="boot-badge">CLEARGLASSINC · GUARDIAN</div>
+      <h1>Command Nexus Boot Sequence</h1>
+      <p class="boot-subtitle">Initializing shell kernel, reactive state fabric, simulation grid, audit ledger, and AI command orchestration.</p>
+      <div class="boot-steps" id="boot-steps"></div>
+      <div class="progress-shell"><span id="boot-progress"></span></div>
+    </div>
+  </div>
+
+  <div class="app-shell hidden" id="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand-block">
+        <div class="brand-mark">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <div>
+          <p class="eyebrow">CLEARGLASSINC</p>
+          <h1>Guardian Command Nexus</h1>
+        </div>
+      </div>
+
+      <nav class="nav-stack" aria-label="Primary navigation" id="primary-nav"></nav>
+
+      <div class="sidebar-footer">
+        <div class="status-chip online">Simulation live</div>
+        <div class="status-chip neutral" id="role-chip">Role: Administrator</div>
+        <div class="hotkeys-card">
+          <h2>Hotkeys</h2>
+          <p><kbd>Alt</kbd> + <kbd>1-0</kbd> switch pages</p>
+          <p><kbd>Alt</kbd> + <kbd>/</kbd> opens AI Console</p>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-panel">
+      <header class="topbar">
+        <button class="icon-button mobile-menu" id="mobile-menu-btn" aria-label="Toggle navigation">☰</button>
+        <div>
+          <p class="eyebrow" id="breadcrumb">Operational Surface</p>
+          <h2 id="page-title">System Overview</h2>
+        </div>
+        <div class="topbar-actions">
+          <button class="ghost-button" id="quick-ack-btn">Acknowledge critical</button>
+          <button class="ghost-button" id="customize-page-btn">Customize panels</button>
+          <button class="ghost-button" id="theme-toggle-btn">Toggle theme</button>
+          <div class="live-clock" id="live-clock" aria-live="polite"></div>
+        </div>
+      </header>
+
+      <section class="hero-band">
+        <div>
+          <p class="eyebrow">Command posture</p>
+          <h3 id="hero-title">Operational visibility with simulated live state</h3>
+          <p id="hero-copy">A responsive command surface for threat posture, task routing, automation controls, audit visibility, and AI-assisted operator workflows.</p>
+        </div>
+        <div class="hero-stats" id="hero-stats"></div>
+      </section>
+
+      <section id="view-root" class="view-root" aria-live="polite"></section>
+    </main>
+  </div>
+
+  <dialog id="panel-dialog" class="panel-dialog">
+    <form method="dialog" class="panel-dialog-card">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">Page customization</p>
+          <h3 id="panel-dialog-title">Customize panels</h3>
+        </div>
+        <button class="icon-button" value="cancel" aria-label="Close dialog">✕</button>
+      </div>
+      <div id="panel-dialog-body" class="panel-dialog-body"></div>
+      <div class="dialog-actions">
+        <button class="ghost-button" value="cancel">Close</button>
+      </div>
+    </form>
+  </dialog>
+
+  <template id="table-search-template">
+    <label class="table-search">
+      <span class="sr-only">Search table</span>
+      <input type="search" placeholder="Search records" data-table-search />
+    </label>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>

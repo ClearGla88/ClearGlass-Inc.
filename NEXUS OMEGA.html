@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="color-scheme" content="dark">
+    <title>NEXUS OMEGA · Quantum Intelligence Core</title>
+    <style>
+        /* ------------------------------------------------
+           FUTURISTIC SMART CITY COMMAND CENTER (2036)
+           Production-ready design with glassmorphism, neon accents,
+           cinematic depth, and AI-adaptive layout foundations.
+        ------------------------------------------------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-deep: #05070a;
+            --bg-panel: rgba(8, 14, 22, 0.75);
+            --glass-edge: rgba(0, 255, 196, 0.25);
+            --neon-primary: #00ffc6;
+            --neon-secondary: #ff2a7a;
+            --neon-tertiary: #ffb347;
+            --neon-accent: #9d4eff;
+            --text-bright: #f0fcff;
+            --text-dim: #8ca0b0;
+            --glow-sm: 0 0 8px rgba(0,255,196,0.3);
+            --glow-md: 0 0 16px rgba(0,255,196,0.4);
+            --card-border: rgba(0, 255, 196, 0.18);
+            --transition-smooth: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        body {
+            background: radial-gradient(ellipse at 30% 20%, #0a111c, #020408);
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, 'SF Pro Text', sans-serif;
+            color: var(--text-bright);
+            height: 100vh;
+            overflow: hidden;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        /* CRT scanlines + subtle grid */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(0deg, rgba(0, 255, 200, 0.02) 0px, rgba(0, 255, 200, 0.02) 2px, transparent 2px, transparent 6px);
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* main layout */
+        .app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* ---------- TOP COMMAND BAR ---------- */
+        .command-bar {
+            background: rgba(4, 8, 14, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--glass-edge);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            z-index: 20;
+        }
+        .brand {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+        }
+        .brand h1 {
+            font-size: 1.3rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #fff, var(--neon-primary), var(--neon-accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .badge {
+            font-size: 0.65rem;
+            padding: 4px 10px;
+            border-radius: 40px;
+            background: rgba(0,255,196,0.1);
+            border: 1px solid var(--glass-edge);
+            color: var(--neon-primary);
+        }
+        .status-group {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--neon-primary);
+            box-shadow: 0 0 6px var(--neon-primary);
+            animation: pulse 2s infinite;
+        }
+        .quantum-load {
+            width: 80px;
+            height: 4px;
+            background: #1a2a3a;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .load-fill {
+            width: 74%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-primary), var(--neon-accent));
+            border-radius: 4px;
+            animation: loadPulse 3s ease infinite;
+        }
+        @keyframes loadPulse {
+            0% { opacity: 0.7; width: 74%; }
+            50% { opacity: 1; width: 82%; }
+            100% { opacity: 0.7; width: 74%; }
+        }
+
+        /* ---------- BODY: SIDEBAR + MAIN ---------- */
+        .dashboard-core {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* VERTICAL NAVIGATION RAIL */
+        .nav-rail {
+            width: 80px;
+            background: rgba(4, 8, 16, 0.7);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--glass-edge);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 0;
+            gap: 28px;
+            z-index: 15;
+        }
+        .nav-icon {
+            font-size: 1.6rem;
+            opacity: 0.6;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+            position: relative;
+        }
+        .nav-icon:hover, .nav-icon.active {
+            opacity: 1;
+            text-shadow: 0 0 12px var(--neon-primary);
+            transform: scale(1.05);
+        }
+        .nav-icon.active::after {
+            content: '';
+            position: absolute;
+            left: -12px;
+            top: 30%;
+            height: 40%;
+            width: 3px;
+            background: var(--neon-primary);
+            border-radius: 2px;
+            box-shadow: 0 0 8px var(--neon-primary);
+        }
+
+        /* MAIN WORKSPACE */
+        .workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 16px 20px 16px 20px;
+            gap: 18px;
+        }
+
+        /* KPI STRIP */
+        .kpi-strip {
+            display: flex;
+            gap: 18px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+            scrollbar-width: thin;
+        }
+        .kpi-card {
+            background: var(--bg-panel);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 12px 20px;
+            min-width: 150px;
+            transition: var(--transition-smooth);
+        }
+        .kpi-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+        }
+        .kpi-value {
+            font-size: 1.8rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #fff, var(--neon-primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1;
+        }
+        .trend {
+            font-size: 0.7rem;
+            color: var(--neon-tertiary);
+        }
+
+        /* TWO COLUMN LAYOUT (MAP + INSIGHTS) */
+        .insight-grid {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* MAP PANEL — Digital Twin Style */
+        .map-panel {
+            flex: 2;
+            background: rgba(0, 10, 18, 0.55);
+            backdrop-filter: blur(4px);
+            border-radius: 32px;
+            border: 1px solid var(--glass-edge);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+        .map-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--glass-edge);
+        }
+        .mode-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .mode-btn {
+            background: none;
+            border: 1px solid var(--card-border);
+            color: var(--text-dim);
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+        .mode-btn.active {
+            background: rgba(0,255,196,0.15);
+            border-color: var(--neon-primary);
+            color: var(--neon-primary);
+            box-shadow: 0 0 8px rgba(0,255,196,0.3);
+        }
+        .map-svg-container {
+            flex: 1;
+            padding: 16px;
+            position: relative;
+        }
+        svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 12px rgba(0,255,196,0.2));
+        }
+
+        /* RIGHT INSIGHTS STACK */
+        .insights-stack {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            min-width: 280px;
+        }
+        .ai-advisor {
+            background: var(--bg-panel);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            border: 1px solid var(--glass-edge);
+            padding: 18px;
+            transition: var(--transition-smooth);
+        }
+        .advisor-header {
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            color: var(--neon-primary);
+        }
+        .insight-card {
+            background: rgba(0, 20, 30, 0.6);
+            border-left: 3px solid var(--neon-secondary);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .insight-card:hover {
+            transform: translateX(4px);
+            background: rgba(0,255,196,0.05);
+        }
+        .insight-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .insight-meta {
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        .confidence {
+            color: var(--neon-primary);
+        }
+
+        /* SCENARIO PANEL */
+        .scenario-panel {
+            background: var(--bg-panel);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            border: 1px solid var(--glass-edge);
+            padding: 18px;
+        }
+        .scenario-options {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .scenario-btn {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--card-border);
+            padding: 8px 12px;
+            border-radius: 32px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .scenario-btn:hover {
+            border-color: var(--neon-primary);
+            background: rgba(0,255,196,0.1);
+        }
+
+        /* TIMELINE RAIL */
+        .timeline-rail {
+            background: rgba(4, 8, 16, 0.7);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--glass-edge);
+            padding: 12px 20px;
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            white-space: nowrap;
+            scroll-behavior: smooth;
+        }
+        .timeline-event {
+            background: rgba(0, 30, 40, 0.7);
+            border-radius: 40px;
+            padding: 6px 16px;
+            font-size: 0.7rem;
+            border-left: 2px solid var(--neon-tertiary);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .timeline-event:hover {
+            background: rgba(0,255,196,0.1);
+            transform: translateY(-2px);
+        }
+
+        /* AI ADAPTIVE LAYOUT (toggle) */
+        .ai-focus-mode .insights-stack {
+            flex: 1.6;
+        }
+        .ai-focus-mode .map-panel {
+            flex: 1.4;
+        }
+        .ai-focus-toggle {
+            background: none;
+            border: 1px solid var(--neon-primary);
+            border-radius: 30px;
+            padding: 4px 12px;
+            font-size: 0.65rem;
+            cursor: pointer;
+            color: var(--neon-primary);
+        }
+
+        /* helpers */
+        @keyframes pulse {
+            0% { opacity: 0.5; transform: scale(0.9);}
+            100% { opacity: 1; transform: scale(1.2);}
+        }
+
+        /* glow animation for nodes */
+        .node-glow {
+            filter: drop-shadow(0 0 8px #00ffc6);
+            transition: filter 0.2s;
+        }
+        .highlight-node {
+            filter: drop-shadow(0 0 18px #ff2a7a);
+            transition: all 0.2s;
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+    <header class="command-bar">
+        <div class="brand">
+            <h1>⚡ NEXUS OMEGA · Quantum Intelligence Core</h1>
+            <div class="badge">v.2036 · Adaptive AI</div>
+        </div>
+        <div class="status-group">
+            <div class="status-pill"><span class="dot"></span> QUANTUM STATE: COHERENT</div>
+            <div class="status-pill"><span>⚛️ COMPUTE LOAD</span><div class="quantum-load"><div class="load-fill"></div></div></div>
+            <div class="status-pill"><span>👤 DIRECTOR · OPS</span></div>
+            <button class="ai-focus-toggle" id="aiFocusBtn">🧠 AI ADAPTIVE LAYOUT</button>
+        </div>
+    </header>
+
+    <div class="dashboard-core">
+        <nav class="nav-rail">
+            <div class="nav-icon" data-domain="transport">🚆</div>
+            <div class="nav-icon active" data-domain="security">🛡️</div>
+            <div class="nav-icon" data-domain="logistics">📦</div>
+            <div class="nav-icon" data-domain="environment">🌿</div>
+            <div class="nav-icon" data-domain="grid">⚡</div>
+            <div class="nav-icon" data-domain="digitaltwin">🔄</div>
+            <div class="nav-icon" data-domain="advisor">🧠</div>
+        </nav>
+
+        <main class="workspace">
+            <!-- KPI STRIP -->
+            <div class="kpi-strip">
+                <div class="kpi-card"><div class="kpi-label">NETWORK UPTIME</div><div class="kpi-value">99.987%</div><div class="trend">▲0.002%</div></div>
+                <div class="kpi-card"><div class="kpi-label">INCIDENT RESOLUTION</div><div class="kpi-value">4.2min</div><div class="trend">▼12%</div></div>
+                <div class="kpi-card"><div class="kpi-label">ACTIVE ALERTS</div><div class="kpi-value">14</div><div class="trend">critical: 2</div></div>
+                <div class="kpi-card"><div class="kpi-label">CO₂ (ppm)</div><div class="kpi-value">412</div><div class="trend">▲3.1</div></div>
+                <div class="kpi-card"><div class="kpi-label">TRANSIT EFFICIENCY</div><div class="kpi-value">88%</div><div class="trend">+5%</div></div>
+                <div class="kpi-card"><div class="kpi-label">ENERGY LOAD</div><div class="kpi-value">1.42GW</div><div class="trend">peak -2%</div></div>
+            </div>
+
+            <div class="insight-grid" id="insightGrid">
+                <!-- MAP (Digital Twin) -->
+                <div class="map-panel" id="mapPanel">
+                    <div class="map-header">
+                        <span>🌍 QUANTUM SITUATIONAL MAP · DIGITAL TWIN</span>
+                        <div class="mode-buttons" id="mapModeGroup">
+                            <button class="mode-btn active" data-mode="city">🏙️ CITY</button>
+                            <button class="mode-btn" data-mode="transit">🚆 TRANSIT</button>
+                            <button class="mode-btn" data-mode="security">🛡️ SECURITY</button>
+                            <button class="mode-btn" data-mode="energy">⚡ ENERGY</button>
+                        </div>
+                    </div>
+                    <div class="map-svg-container">
+                        <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stop-color="#00ffc6" stop-opacity="0.8"/>
+                                    <stop offset="100%" stop-color="#00ffc6" stop-opacity="0"/>
+                                </radialGradient>
+                            </defs>
+                            <!-- background grid -->
+                            <path d="M50 50 L750 50 M50 100 L750 100 M50 150 L750 150 M50 200 L750 200 M50 250 L750 250 M50 300 L750 300 M50 350 L750 350 M50 400 L750 400 M50 450 L750 450" stroke="rgba(0,255,196,0.1)" stroke-width="0.6" fill="none"/>
+                            <path d="M50 50 L50 450 M100 50 L100 450 M150 50 L150 450 M200 50 L200 450 M250 50 L250 450 M300 50 L300 450 M350 50 L350 450 M400 50 L400 450 M450 50 L450 450 M500 50 L500 450 M550 50 L550 450 M600 50 L600 450 M650 50 L650 450 M700 50 L700 450 M750 50 L750 450" stroke="rgba(0,255,196,0.1)" stroke-width="0.6" fill="none"/>
+                            <!-- asset nodes -->
+                            <circle cx="200" cy="120" r="8" fill="url(#nodeGlow)" class="map-node" data-zone="transport" data-insight="traffic" stroke="#00ffc6" stroke-width="1.5"/>
+                            <circle cx="420" cy="210" r="10" fill="url(#nodeGlow)" class="map-node" data-zone="security" data-insight="camera" stroke="#ff2a7a" stroke-width="1.5"/>
+                            <circle cx="600" cy="340" r="9" fill="url(#nodeGlow)" class="map-node" data-zone="logistics" data-insight="fleet" stroke="#ffb347" stroke-width="1.5"/>
+                            <circle cx="90" cy="380" r="7" fill="url(#nodeGlow)" class="map-node" data-zone="environment" data-insight="air" stroke="#9d4eff" stroke-width="1.5"/>
+                            <circle cx="510" cy="70" r="8" fill="url(#nodeGlow)" class="map-node" data-zone="energy" data-insight="grid" stroke="#00ffc6" stroke-width="1.5"/>
+                            <circle cx="330" cy="410" r="9" fill="url(#nodeGlow)" class="map-node" data-zone="security" data-insight="anomaly" stroke="#ff2a7a" stroke-width="1.5"/>
+                            <polyline points="200,120 420,210 600,340 90,380 510,70 330,410" stroke="rgba(0,255,196,0.4)" stroke-dasharray="4 4" fill="none"/>
+                            <text x="190" y="110" fill="#8ca0b0" font-size="8">HUB A</text>
+                            <text x="410" y="200" fill="#8ca0b0" font-size="8">ZONE 7</text>
+                            <text x="590" y="330" fill="#8ca0b0" font-size="8">DEPOT 3</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- RIGHT INSIGHTS STACK -->
+                <div class="insights-stack" id="insightsStack">
+                    <div class="ai-advisor">
+                        <div class="advisor-header">🧠 AI ADVISOR · QUANTUM INTELLIGENCE</div>
+                        <div id="insightList">
+                            <div class="insight-card" data-insight-id="traffic-surge">
+                                <div class="insight-title">🚦 Traffic Surge Predicted in 18 min · District 7</div>
+                                <div class="insight-meta"><span>confidence 94%</span><span>impact: mobility</span></div>
+                            </div>
+                            <div class="insight-card" data-insight-id="camera-anomaly">
+                                <div class="insight-title">📷 Anomalous Camera Pattern – Zone 7 (Security)</div>
+                                <div class="insight-meta"><span>confidence 87%</span><span>recommendation: verify patrol</span></div>
+                            </div>
+                            <div class="insight-card" data-insight-id="logistics-optimize">
+                                <div class="insight-title">📦 Optimal Reroute for Fleet A12 · +22% efficiency</div>
+                                <div class="insight-meta"><span>confidence 91%</span><span>fuel savings projected</span></div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 16px;">
+                            <input type="text" placeholder="Ask NEXUS: 'Show me incident trends' ..." style="width:100%; background: rgba(0,0,0,0.5); border:1px solid var(--glass-edge); border-radius: 40px; padding: 8px 12px; color:white; font-size:0.7rem;">
+                        </div>
+                    </div>
+                    <div class="scenario-panel">
+                        <div class="advisor-header">⚡ COMMAND DECISION · ACTIVE INCIDENT</div>
+                        <div>District 7 traffic cascade + security anomaly detected</div>
+                        <div class="scenario-options">
+                            <div class="scenario-btn" data-scenario="stabilize">🛡️ Stabilize · Prioritize safety</div>
+                            <div class="scenario-btn" data-scenario="optimize">⚙️ Optimize · Reduce delay 32%</div>
+                            <div class="scenario-btn" data-scenario="conserve">🌿 Conserve · Energy/emissions focus</div>
+                        </div>
+                        <div style="font-size:0.65rem; margin-top:10px;">impact icons: ⚡cost 🟢risk ♻️sustainability</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TIMELINE EVENT RAIL -->
+            <div class="timeline-rail" id="timelineRail">
+                <div class="timeline-event" data-event="resolved">✅ 14:32 · Resolved: Substation Fault (Grid)</div>
+                <div class="timeline-event" data-event="live">🔴 LIVE 14:47 · Tunnel Congestion (QEW)</div>
+                <div class="timeline-event" data-event="forecast">🔮 15:10 · Forecast: Air Quality Drop District 3</div>
+                <div class="timeline-event" data-event="anomaly">⚠️ 14:55 · Anomalous camera activity flagged</div>
+                <div class="timeline-event" data-event="reroute">📦 15:00 · Fleet reroute active</div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+    // NEXUS OMEGA - 2036 interactive demo: mode switching, insight-map highlight, adaptive layout
+    (function() {
+        // 1. MODE SWITCHING for Quantum Map
+        const modeBtns = document.querySelectorAll('[data-mode]');
+        const svgNodes = document.querySelectorAll('.map-node');
+        const mapContainer = document.getElementById('mapPanel');
+        
+        function updateMapMode(mode) {
+            // change accent colors and labels (simulate digital twin context)
+            const nodes = document.querySelectorAll('.map-node');
+            nodes.forEach(node => {
+                const zone = node.getAttribute('data-zone');
+                if (mode === 'transit' && zone === 'transport') node.style.stroke = '#00ffc6';
+                else if (mode === 'security' && zone === 'security') node.style.stroke = '#ff2a7a';
+                else if (mode === 'energy' && zone === 'energy') node.style.stroke = '#ffb347';
+                else if (mode === 'city') node.style.stroke = '#00ffc6';
+                else node.style.stroke = '#4a6a7a';
+                if (mode === 'security') {
+                    node.style.filter = zone === 'security' ? 'drop-shadow(0 0 10px #ff2a7a)' : '';
+                } else if (mode === 'transit') {
+                    node.style.filter = zone === 'transport' ? 'drop-shadow(0 0 10px #00ffc6)' : '';
+                } else {
+                    node.style.filter = '';
+                }
+            });
+            // update panel hint
+            const headerSpan = mapContainer.querySelector('.map-header span');
+            if (headerSpan) headerSpan.innerHTML = `🌍 QUANTUM SITUATIONAL MAP · DIGITAL TWIN · ${mode.toUpperCase()} MODE`;
+        }
+        
+        modeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                modeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                updateMapMode(btn.getAttribute('data-mode'));
+            });
+        });
+        
+        // 2. INSIGHT HIGHLIGHT: click insight card → highlight relevant node + scroll timeline
+        const insightCards = document.querySelectorAll('.insight-card');
+        const timelineEvents = document.querySelectorAll('.timeline-event');
+        
+        function highlightNodeByInsight(insightId) {
+            svgNodes.forEach(node => {
+                node.classList.remove('highlight-node');
+                const nodeInsight = node.getAttribute('data-insight');
+                if ((insightId === 'traffic-surge' && nodeInsight === 'traffic') ||
+                    (insightId === 'camera-anomaly' && nodeInsight === 'anomaly') ||
+                    (insightId === 'logistics-optimize' && nodeInsight === 'fleet')) {
+                    node.classList.add('highlight-node');
+                    // also scroll map into view (just visual)
+                }
+            });
+            // scroll timeline to matching event
+            let matchedEvent = null;
+            if (insightId === 'traffic-surge') matchedEvent = 'live';
+            if (insightId === 'camera-anomaly') matchedEvent = 'anomaly';
+            if (insightId === 'logistics-optimize') matchedEvent = 'reroute';
+            if (matchedEvent) {
+                const targetEvent = Array.from(timelineEvents).find(ev => ev.getAttribute('data-event') === matchedEvent);
+                if (targetEvent) targetEvent.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
+        
+        insightCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const insightId = card.getAttribute('data-insight-id');
+                highlightNodeByInsight(insightId);
+                // also add a temporary glow to the card
+                card.style.transform = 'scale(1.01)';
+                setTimeout(() => card.style.transform = '', 300);
+            });
+        });
+        
+        // 3. AI ADAPTIVE LAYOUT toggle
+        const aiToggle = document.getElementById('aiFocusBtn');
+        const bodyEl = document.body;
+        aiToggle.addEventListener('click', () => {
+            bodyEl.classList.toggle('ai-focus-mode');
+            aiToggle.textContent = bodyEl.classList.contains('ai-focus-mode') ? '🎯 STANDARD LAYOUT' : '🧠 AI ADAPTIVE LAYOUT';
+        });
+        
+        // 4. Scenario buttons effect (simulate command decisions)
+        const scenarioBtns = document.querySelectorAll('.scenario-btn');
+        scenarioBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const choice = btn.innerText;
+                const alertDiv = document.createElement('div');
+                alertDiv.textContent = `⚡ NEXUS EXECUTING: ${choice} · simulation engaged.`;
+                alertDiv.style.position = 'fixed';
+                alertDiv.style.bottom = '80px';
+                alertDiv.style.right = '20px';
+                alertDiv.style.background = 'rgba(0,255,196,0.2)';
+                alertDiv.style.padding = '8px 16px';
+                alertDiv.style.borderRadius = '40px';
+                alertDiv.style.fontSize = '0.7rem';
+                alertDiv.style.border = '1px solid var(--neon-primary)';
+                alertDiv.style.zIndex = '2000';
+                document.body.appendChild(alertDiv);
+                setTimeout(() => alertDiv.remove(), 2000);
+            });
+        });
+        
+        // 5. Add click simulation for timeline events: optional highlight on map
+        timelineEvents.forEach(ev => {
+            ev.addEventListener('click', () => {
+                const eventType = ev.getAttribute('data-event');
+                if (eventType === 'live') highlightNodeByInsight('traffic-surge');
+                if (eventType === 'anomaly') highlightNodeByInsight('camera-anomaly');
+                if (eventType === 'reroute') highlightNodeByInsight('logistics-optimize');
+            });
+        });
+        
+        // small adaptive hint: show AI context label
+        const hintDiv = document.createElement('div');
+        hintDiv.style.position = 'absolute';
+        hintDiv.style.bottom = '10px';
+        hintDiv.style.right = '24px';
+        hintDiv.style.fontSize = '0.55rem';
+        hintDiv.style.color = 'var(--text-dim)';
+        hintDiv.style.background = 'rgba(0,0,0,0.3)';
+        hintDiv.style.padding = '2px 8px';
+        hintDiv.style.borderRadius = '12px';
+        hintDiv.innerHTML = '🧠 ADAPTIVE LAYOUT: AI prioritizes transport anomalies during peak hours · contextual UI';
+        document.body.appendChild(hintDiv);
+        
+        // additional: set default mode 'city' active
+        updateMapMode('city');
+    })();
+</script>
+</body>
+</html>

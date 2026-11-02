@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClearGlass Century v5 · Executive Intelligence · Desmond Otieno</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#00060f;--deep:#010d1a;--surface:rgba(0,20,45,0.65);
+  --glass:rgba(0,180,255,0.04);--border:rgba(0,200,255,0.15);
+  --glow:#00c8ff;--glow2:#00ff9d;--glow3:#ff6b35;
+  --gold:#f0c040;--danger:#ff2d55;--warn:#ffbe0b;
+  --text:#c8e8ff;--muted:rgba(100,160,200,0.5);--bright:#fff;
+  --panel-bg:rgba(0,15,35,0.75);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;min-height:100vh;background:var(--void);color:var(--text);font-family:'Share Tech Mono',monospace;overflow-x:hidden;cursor:crosshair;}
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.hex-overlay{position:fixed;inset:0;z-index:1;background-image:repeating-linear-gradient(60deg,rgba(0,200,255,0.025) 0px,transparent 1px,transparent 55px),repeating-linear-gradient(-60deg,rgba(0,200,255,0.025) 0px,transparent 1px,transparent 55px);pointer-events:none;}
+.scanline{position:fixed;inset:0;z-index:2;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,200,255,0.01) 3px,rgba(0,200,255,0.01) 4px);pointer-events:none;}
+.vignette{position:fixed;inset:0;z-index:2;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,10,0.8) 100%);pointer-events:none;}
+
+/* ── BOOT ── */
+#boot{position:fixed;inset:0;z-index:1000;background:var(--void);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;}
+#boot.hidden{display:none;}
+.boot-hex svg{width:110px;height:110px;animation:spin 2s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.boot-title{font-family:'Orbitron',monospace;font-size:26px;font-weight:900;letter-spacing:8px;color:var(--glow);text-shadow:0 0 30px var(--glow),0 0 60px rgba(0,200,255,0.3);animation:tp 1.5s ease-in-out infinite;}
+@keyframes tp{0%,100%{opacity:1}50%{opacity:0.65}}
+.boot-sub{font-size:10px;letter-spacing:4px;color:var(--muted);text-transform:uppercase;}
+.boot-bar-wrap{width:380px;height:2px;background:rgba(0,200,255,0.1);overflow:hidden;}
+.boot-bar{height:100%;background:linear-gradient(90deg,var(--glow2),var(--glow));width:0%;transition:width 0.15s linear;box-shadow:0 0 8px var(--glow);}
+.boot-log{font-size:9px;letter-spacing:2px;color:var(--muted);min-height:14px;}
+
+/* ── APP ── */
+#app{position:relative;z-index:10;min-height:100vh;display:flex;flex-direction:column;opacity:0;transition:opacity 0.8s;}
+
+/* ── TICKER ── */
+.ticker{display:flex;align-items:center;height:30px;background:rgba(0,200,255,0.04);border-bottom:1px solid var(--border);overflow:hidden;}
+.ticker-lbl{flex-shrink:0;padding:0 14px;font-size:8px;letter-spacing:3px;color:var(--glow);border-right:1px solid var(--border);text-transform:uppercase;white-space:nowrap;background:rgba(0,200,255,0.07);height:100%;display:flex;align-items:center;}
+.ticker-scroll{flex:1;overflow:hidden;}
+.ticker-track{display:flex;gap:44px;animation:tscroll 45s linear infinite;white-space:nowrap;}
+@keyframes tscroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ti{font-size:9px;color:var(--muted);display:flex;align-items:center;gap:7px;}
+.tv{color:var(--glow2);}.td{color:var(--danger);}.tg{color:var(--gold);}
+
+/* ── HEADER ── */
+header{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:62px;background:linear-gradient(180deg,rgba(0,10,25,0.97),rgba(0,10,25,0.75));border-bottom:1px solid var(--border);backdrop-filter:blur(20px);position:sticky;top:0;z-index:50;}
+.hdr-left{display:flex;align-items:center;gap:14px;}
+.logo-hex{width:42px;height:42px;position:relative;display:flex;align-items:center;justify-content:center;}
+.logo-hex svg{position:absolute;width:100%;height:100%;animation:logo-spin 12s linear infinite;}
+@keyframes logo-spin{to{transform:rotate(360deg);}}
+.logo-inner{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;color:var(--glow);position:relative;z-index:1;text-shadow:0 0 10px var(--glow);}
+.brand-name{font-family:'Orbitron',monospace;font-weight:700;font-size:15px;letter-spacing:4px;color:var(--bright);text-shadow:0 0 20px rgba(0,200,255,0.4);line-height:1;}
+.brand-sub{font-size:8px;letter-spacing:3px;color:var(--muted);margin-top:3px;}
+.hdr-center{display:flex;flex-direction:column;align-items:center;gap:3px;}
+.hdr-time{font-family:'Orbitron',monospace;font-size:20px;font-weight:600;color:var(--glow);letter-spacing:3px;text-shadow:0 0 15px var(--glow);}
+.hdr-date{font-size:8px;letter-spacing:3px;color:var(--muted);}
+.hdr-right{display:flex;align-items:center;gap:14px;}
+
+/* Global Search */
+.gsearch-wrap{position:relative;}
+.gsearch{background:rgba(0,200,255,0.05);border:1px solid var(--border);padding:6px 14px 6px 32px;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:10px;width:200px;outline:none;transition:all 0.3s;}
+.gsearch:focus{border-color:var(--glow);width:260px;box-shadow:0 0 10px rgba(0,200,255,0.1);}
+.gsearch::placeholder{color:var(--muted);}
+.gsearch-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--muted);}
+.gsearch-results{position:absolute;top:calc(100% + 6px);left:0;right:0;background:rgba(0,10,25,0.97);border:1px solid var(--border);z-index:200;max-height:250px;overflow-y:auto;display:none;}
+.gsearch-results.show{display:block;}
+.gsr-item{padding:8px 14px;font-size:10px;cursor:pointer;border-bottom:1px solid rgba(0,200,255,0.06);transition:background 0.15s;}
+.gsr-item:hover{background:rgba(0,200,255,0.07);}
+.gsr-type{font-size:8px;letter-spacing:2px;color:var(--muted);margin-left:6px;}
+
+.status-pill{display:flex;align-items:center;gap:8px;padding:5px 14px;border:1px solid rgba(0,255,157,0.3);background:rgba(0,255,157,0.05);font-size:9px;letter-spacing:2px;color:var(--glow2);text-transform:uppercase;}
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--glow2);animation:dpulse 1.4s ease-in-out infinite;box-shadow:0 0 6px var(--glow2);}
+@keyframes dpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.2;transform:scale(0.5)}}
+.exec-chip{display:flex;align-items:center;gap:10px;padding:5px 14px;border:1px solid rgba(240,192,64,0.3);background:rgba(240,192,64,0.05);}
+.exec-av{width:27px;height:27px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#ff8c42);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:9px;font-weight:700;color:var(--void);}
+.exec-name-h{font-size:10px;letter-spacing:1px;color:var(--gold);}
+.exec-role-h{font-size:7px;letter-spacing:2px;color:var(--muted);}
+.voice-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--glass);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:all 0.3s;}
+.voice-btn:hover{border-color:var(--glow);}
+.voice-btn.speaking{border-color:var(--glow2);animation:vring 1s ease-in-out infinite;}
+@keyframes vring{0%,100%{box-shadow:0 0 0 0 rgba(0,255,157,0.4)}50%{box-shadow:0 0 0 8px rgba(0,255,157,0)}}
+.hotkey-btn{padding:5px 10px;border:1px solid var(--border);background:var(--glass);color:var(--muted);font-size:8px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;}
+.hotkey-btn:hover{border-color:var(--glow);color:var(--glow);}
+
+/* ── NAV ── */
+nav{display:flex;align-items:center;padding:0 28px;background:rgba(0,8,20,0.85);border-bottom:1px solid var(--border);backdrop-filter:blur(10px);overflow-x:auto;gap:0;}
+nav::-webkit-scrollbar{height:0;}
+.ntab{padding:11px 20px;font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.25s;white-space:nowrap;position:relative;}
+.ntab::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--glow),transparent);opacity:0;transition:opacity 0.25s;}
+.ntab:hover{color:var(--text);}
+.ntab.active{color:var(--glow);}
+.ntab.active::after{opacity:1;}
+.nbadge{display:inline-block;margin-left:5px;background:var(--danger);color:white;font-size:7px;padding:1px 5px;border-radius:10px;}
+
+/* ── CONTENT ── */
+#content{flex:1;padding:20px 28px;}
+.tpane{display:none;}
+.tpane.active{display:block;}
+
+/* ── SECTION HEADER ── */
+.sec-hdr{display:flex;align-items:baseline;gap:14px;margin-bottom:20px;border-left:2px solid var(--glow);padding-left:14px;}
+.sec-title{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;letter-spacing:4px;color:var(--bright);text-shadow:0 0 15px rgba(0,200,255,0.35);}
+.sec-sub{font-size:8px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;}
+
+/* ── PANEL ── */
+.panel{background:var(--panel-bg);border:1px solid var(--border);backdrop-filter:blur(20px);position:relative;overflow:hidden;transition:border-color 0.3s;}
+.panel::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,200,255,0.025) 0%,transparent 55%);pointer-events:none;}
+.panel:hover{border-color:rgba(0,200,255,0.32);}
+.pc{position:absolute;width:10px;height:10px;}
+.pc.tl{top:0;left:0;border-top:2px solid var(--glow);border-left:2px solid var(--glow);}
+.pc.tr{top:0;right:0;border-top:2px solid var(--glow);border-right:2px solid var(--glow);}
+.pc.bl{bottom:0;left:0;border-bottom:2px solid var(--glow);border-left:2px solid var(--glow);}
+.pc.br{bottom:0;right:0;border-bottom:2px solid var(--glow);border-right:2px solid var(--glow);}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--border);}
+.pt{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:var(--glow);text-transform:uppercase;}
+.pa{font-size:8px;letter-spacing:2px;color:var(--muted);cursor:pointer;border:none;background:none;text-transform:uppercase;transition:color 0.2s;}
+.pa:hover{color:var(--glow);}
+
+/* ── KPI ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px;}
+.kpi{padding:18px;position:relative;overflow:hidden;}
+.kpi::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;}
+.kpi.c1::after{background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.kpi.c2::after{background:linear-gradient(90deg,transparent,var(--glow2),transparent);}
+.kpi.c3::after{background:linear-gradient(90deg,transparent,var(--glow),transparent);}
+.kpi.c4::after{background:linear-gradient(90deg,transparent,var(--danger),transparent);}
+.kpi.c5::after{background:linear-gradient(90deg,transparent,#c77dff,transparent);}
+.kpi-icon{font-size:20px;margin-bottom:8px;}
+.kpi-lbl{font-size:7px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:5px;}
+.kpi-val{font-family:'Orbitron',monospace;font-size:24px;font-weight:700;line-height:1;margin-bottom:5px;}
+.kpi.c1 .kpi-val{color:var(--gold);text-shadow:0 0 15px rgba(240,192,64,0.4);}
+.kpi.c2 .kpi-val{color:var(--glow2);text-shadow:0 0 15px rgba(0,255,157,0.4);}
+.kpi.c3 .kpi-val{color:var(--glow);text-shadow:0 0 15px rgba(0,200,255,0.4);}
+.kpi.c4 .kpi-val{color:var(--danger);text-shadow:0 0 15px rgba(255,45,85,0.4);}
+.kpi.c5 .kpi-val{color:#c77dff;text-shadow:0 0 15px rgba(199,125,255,0.4);}
+.kpi-chg{font-size:8px;letter-spacing:1px;}
+.up{color:var(--glow2);}.dn{color:var(--danger);}
+
+/* ── GRID ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px;}
+.g31{display:grid;grid-template-columns:3fr 1fr;gap:14px;margin-bottom:14px;}
+.g13{display:grid;grid-template-columns:1fr 3fr;gap:14px;margin-bottom:14px;}
+.full{grid-column:1/-1;}.mb14{margin-bottom:14px;}
+
+/* ── TABLE ── */
+.dtbl{width:100%;border-collapse:collapse;}
+.dtbl th{text-align:left;font-size:7px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;padding:0 10px 8px 0;border-bottom:1px solid var(--border);}
+.dtbl td{padding:10px 10px 10px 0;font-size:10px;border-bottom:1px solid rgba(0,200,255,0.04);vertical-align:middle;}
+.dtbl tr:hover td{background:rgba(0,200,255,0.025);}
+.stage{padding:2px 8px;font-size:7px;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;border:1px solid;}
+.s-prospect{color:var(--muted);border-color:var(--muted);}
+.s-qualified{color:#6ea8ff;border-color:#6ea8ff;}
+.s-proposal{color:var(--warn);border-color:var(--warn);}
+.s-negotiation{color:#ff8c42;border-color:#ff8c42;}
+.s-closing{color:var(--glow2);border-color:var(--glow2);}
+.s-won{color:var(--glow2);border-color:var(--glow2);background:rgba(0,255,157,0.1);}
+.s-lost{color:var(--danger);border-color:var(--danger);}
+
+/* ── PROB BAR ── */
+.pb{display:flex;align-items:center;gap:7px;}
+.pt2{flex:1;height:2px;background:rgba(0,200,255,0.1);min-width:45px;position:relative;}
+.pf{height:100%;background:linear-gradient(90deg,var(--glow),var(--glow2));box-shadow:0 0 5px var(--glow);position:relative;}
+.pf::after{content:'';position:absolute;right:-3px;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--bright);box-shadow:0 0 5px var(--glow);}
+.pn{font-family:'Orbitron',monospace;font-size:9px;color:var(--glow);min-width:26px;text-align:right;}
+
+/* ── DEAL SCORE BADGE ── */
+.score-badge{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;font-family:'Orbitron',monospace;font-size:10px;font-weight:700;border:2px solid;transition:all 0.3s;}
+.score-a{color:var(--glow2);border-color:var(--glow2);background:rgba(0,255,157,0.1);box-shadow:0 0 8px rgba(0,255,157,0.3);}
+.score-b{color:var(--glow);border-color:var(--glow);background:rgba(0,200,255,0.1);}
+.score-c{color:var(--warn);border-color:var(--warn);background:rgba(255,190,11,0.08);}
+.score-d{color:var(--danger);border-color:var(--danger);background:rgba(255,45,85,0.08);}
+
+/* ── KANBAN ── */
+.kanban{display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;min-height:400px;}
+.kanban::-webkit-scrollbar{height:4px;}
+.kanban::-webkit-scrollbar-thumb{background:var(--border);}
+.kb-col{min-width:200px;flex:1;display:flex;flex-direction:column;gap:0;}
+.kb-hdr{padding:10px 12px;border:1px solid var(--border);border-bottom:2px solid;font-size:8px;letter-spacing:3px;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;}
+.kb-hdr.s-prospect{border-bottom-color:rgba(100,160,200,0.5);}
+.kb-hdr.s-qualified{border-bottom-color:#6ea8ff;}
+.kb-hdr.s-proposal{border-bottom-color:var(--warn);}
+.kb-hdr.s-negotiation{border-bottom-color:#ff8c42;}
+.kb-hdr.s-closing{border-bottom-color:var(--glow2);}
+.kb-body{flex:1;background:rgba(0,10,25,0.4);border:1px solid rgba(0,200,255,0.07);border-top:none;padding:10px;display:flex;flex-direction:column;gap:8px;}
+.kb-card{background:rgba(0,20,50,0.8);border:1px solid var(--border);padding:10px;cursor:pointer;transition:all 0.2s;animation:card-in 0.3s ease;}
+@keyframes card-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.kb-card:hover{border-color:rgba(0,200,255,0.4);transform:translateY(-2px);}
+.kb-client{font-size:10px;color:var(--bright);margin-bottom:3px;}
+.kb-val{font-family:'Orbitron',monospace;font-size:13px;color:var(--gold);margin-bottom:5px;}
+.kb-meta{font-size:8px;color:var(--muted);display:flex;justify-content:space-between;}
+.kb-count{font-family:'Orbitron',monospace;font-size:11px;color:var(--glow);}
+
+/* ── ACTIVITY ── */
+.act-item{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;background:rgba(0,200,255,0.025);border:1px solid rgba(0,200,255,0.07);border-left:2px solid var(--glow);animation:ai2 0.4s ease;margin-bottom:7px;}
+.act-item.warn{border-left-color:var(--warn);}
+.act-item.danger{border-left-color:var(--danger);}
+.act-item.gold{border-left-color:var(--gold);}
+@keyframes ai2{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
+.act-icon{font-size:13px;flex-shrink:0;}
+.act-title{font-size:10px;color:var(--text);margin-bottom:1px;}
+.act-time{font-size:8px;color:var(--muted);letter-spacing:1px;}
+
+/* ── FORECAST / MONTE CARLO ── */
+.mc-canvas{width:100%;height:160px;display:block;}
+.scenario-row{display:flex;gap:12px;margin-bottom:14px;}
+.scenario{flex:1;padding:14px;border:1px solid var(--border);text-align:center;}
+.scenario.best{border-color:rgba(0,255,157,0.3);background:rgba(0,255,157,0.04);}
+.scenario.base{border-color:rgba(0,200,255,0.3);background:rgba(0,200,255,0.04);}
+.scenario.worst{border-color:rgba(255,45,85,0.3);background:rgba(255,45,85,0.04);}
+.sc-lbl{font-size:8px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+.sc-val{font-family:'Orbitron',monospace;font-size:22px;font-weight:700;}
+.scenario.best .sc-val{color:var(--glow2);}
+.scenario.base .sc-val{color:var(--glow);}
+.scenario.worst .sc-val{color:var(--danger);}
+.sc-sub{font-size:8px;color:var(--muted);margin-top:4px;}
+
+/* ── VELOCITY ── */
+.vel-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(0,200,255,0.05);}
+.vel-stage{font-size:8px;letter-spacing:2px;color:var(--muted);width:90px;text-transform:uppercase;}
+.vel-bar-wrap{flex:1;height:3px;background:rgba(0,200,255,0.1);}
+.vel-bar{height:100%;background:linear-gradient(90deg,var(--glow),var(--glow2));box-shadow:0 0 5px var(--glow);transition:width 1.5s ease;}
+.vel-val{font-family:'Orbitron',monospace;font-size:10px;color:var(--glow);min-width:40px;text-align:right;}
+
+/* ── WIN/LOSS ── */
+.wl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.wl-card{padding:14px;border:1px solid var(--border);text-align:center;}
+.wl-lbl{font-size:7px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+.wl-val{font-family:'Orbitron',monospace;font-size:26px;font-weight:700;color:var(--glow);}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;z-index:800;background:rgba(0,0,10,0.85);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal{background:rgba(0,10,28,0.98);border:1px solid var(--border);max-width:620px;width:90%;max-height:85vh;overflow-y:auto;position:relative;animation:modal-in 0.35s cubic-bezier(0.34,1.56,0.64,1);}
+@keyframes modal-in{from{opacity:0;transform:scale(0.88)}to{opacity:1;transform:scale(1)}}
+.modal-close{position:absolute;top:14px;right:16px;font-size:18px;cursor:pointer;color:var(--muted);background:none;border:none;transition:color 0.2s;}
+.modal-close:hover{color:var(--danger);}
+.modal-hdr{padding:20px 24px 14px;border-bottom:1px solid var(--border);}
+.modal-title{font-family:'Orbitron',monospace;font-size:14px;letter-spacing:3px;color:var(--bright);}
+.modal-sub{font-size:9px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+.modal-body{padding:20px 24px;}
+.detail-row{display:flex;gap:6px;padding:8px 0;border-bottom:1px solid rgba(0,200,255,0.05);font-size:10px;}
+.detail-lbl{color:var(--muted);letter-spacing:1px;min-width:110px;font-size:9px;}
+.detail-val{color:var(--text);flex:1;}
+.age-warn{color:var(--warn);font-size:8px;letter-spacing:1px;margin-top:8px;display:flex;align-items:center;gap:6px;}
+
+/* ── HOTKEYS MODAL ── */
+.hk-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:16px 24px;}
+.hk-item{display:flex;align-items:center;gap:10px;padding:6px 0;}
+.hk-key{padding:2px 8px;border:1px solid var(--border);font-family:'Orbitron',monospace;font-size:9px;color:var(--glow);min-width:28px;text-align:center;}
+.hk-desc{font-size:9px;color:var(--muted);letter-spacing:1px;}
+
+/* ── AI CHAT ── */
+.chat-wrap{display:flex;flex-direction:column;height:440px;padding:0 18px 14px;}
+.chat-msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:14px 0;}
+.chat-msgs::-webkit-scrollbar{width:3px;}
+.chat-msgs::-webkit-scrollbar-thumb{background:var(--border);}
+.msg{display:flex;gap:10px;animation:mi 0.3s ease;}
+@keyframes mi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.msg.user{flex-direction:row-reverse;}
+.msg-av{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:9px;font-weight:700;border:1px solid;}
+.msg.agent .msg-av{background:rgba(0,200,255,0.1);border-color:var(--glow);color:var(--glow);}
+.msg.user .msg-av{background:rgba(240,192,64,0.1);border-color:var(--gold);color:var(--gold);}
+.msg-bubble{max-width:78%;padding:11px 15px;font-size:10px;line-height:1.7;border:1px solid;border-radius:1px;}
+.msg.agent .msg-bubble{background:rgba(0,200,255,0.04);border-color:rgba(0,200,255,0.18);color:var(--text);}
+.msg.user .msg-bubble{background:rgba(240,192,64,0.05);border-color:rgba(240,192,64,0.18);color:var(--gold);text-align:right;}
+.typing{display:flex;gap:5px;align-items:center;padding:5px 0;}
+.typing span{width:5px;height:5px;border-radius:50%;background:var(--glow);animation:typdot 1.2s ease-in-out infinite;}
+.typing span:nth-child(2){animation-delay:0.2s}
+.typing span:nth-child(3){animation-delay:0.4s}
+@keyframes typdot{0%,60%,100%{opacity:0.2;transform:scale(0.7)}30%{opacity:1;transform:scale(1)}}
+.chat-ir{display:flex;gap:8px;}
+.chat-input{flex:1;background:rgba(0,200,255,0.04);border:1px solid var(--border);padding:9px 14px;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:10px;outline:none;transition:border-color 0.3s;}
+.chat-input:focus{border-color:var(--glow);box-shadow:0 0 8px rgba(0,200,255,0.08);}
+.chat-input::placeholder{color:var(--muted);}
+.send-btn{padding:9px 18px;background:transparent;border:1px solid var(--glow);color:var(--glow);font-family:'Orbitron',monospace;font-size:10px;font-weight:600;letter-spacing:2px;cursor:pointer;transition:all 0.3s;text-transform:uppercase;}
+.send-btn:hover{background:rgba(0,200,255,0.1);box-shadow:0 0 12px rgba(0,200,255,0.15);}
+.send-btn:disabled{opacity:0.3;cursor:default;}
+.qbtn{width:100%;text-align:left;padding:9px 13px;background:rgba(0,200,255,0.025);border:1px solid rgba(0,200,255,0.09);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:9px;cursor:pointer;transition:all 0.2s;margin-bottom:5px;letter-spacing:1px;display:flex;align-items:center;gap:7px;}
+.qbtn:hover{background:rgba(0,200,255,0.07);border-color:var(--glow);color:var(--glow);}
+
+/* ── FORMS ── */
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.frow.f1{grid-template-columns:1fr;}
+.fg{display:flex;flex-direction:column;gap:4px;}
+.fl{font-size:7px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
+.fi,.fs,.ft{background:rgba(0,200,255,0.04);border:1px solid var(--border);padding:7px 11px;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:10px;outline:none;transition:border-color 0.3s;}
+.fi:focus,.fs:focus,.ft:focus{border-color:var(--glow);}
+.fs{cursor:pointer;}.fs option{background:var(--deep);}
+.ft{resize:vertical;min-height:65px;}
+
+/* ── BUTTONS ── */
+.btn{padding:8px 18px;cursor:pointer;font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;font-weight:600;text-transform:uppercase;border:1px solid;transition:all 0.3s;}
+.btn-pri{background:rgba(0,200,255,0.08);border-color:var(--glow);color:var(--glow);}
+.btn-pri:hover{background:rgba(0,200,255,0.18);box-shadow:0 0 16px rgba(0,200,255,0.15);}
+.btn-dan{background:rgba(255,45,85,0.07);border-color:var(--danger);color:var(--danger);}
+.btn-dan:hover{background:rgba(255,45,85,0.18);}
+.btn-gld{background:rgba(240,192,64,0.07);border-color:var(--gold);color:var(--gold);}
+.btn-sm{padding:3px 9px;font-size:7px;}
+.btn-grn{background:rgba(0,255,157,0.07);border-color:var(--glow2);color:var(--glow2);}
+
+/* ── CONTRACT CARDS ── */
+.contract{display:flex;gap:14px;padding:14px;margin-bottom:9px;border:1px solid var(--border);background:rgba(0,200,255,0.02);transition:all 0.3s;position:relative;overflow:hidden;}
+.contract::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--glow);}
+.contract.urg::before{background:var(--danger);animation:upulse 1s ease-in-out infinite;}
+@keyframes upulse{0%,100%{opacity:1}50%{opacity:0.2}}
+.contract:hover{border-color:rgba(0,200,255,0.3);}
+.cf{font-size:26px;flex-shrink:0;}
+.cb{flex:1;}
+.ct{font-size:11px;color:var(--bright);margin-bottom:3px;letter-spacing:0.5px;}
+.co{font-size:8px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;}
+.cv{font-family:'Orbitron',monospace;font-size:20px;font-weight:700;color:var(--gold);text-shadow:0 0 10px rgba(240,192,64,0.3);}
+.cd{font-size:9px;color:var(--muted);margin-top:4px;}
+.cd.urg{color:var(--danger);}
+.ca{display:flex;gap:6px;align-items:flex-start;flex-shrink:0;}
+
+/* ── TASKS ── */
+.task-item{display:flex;align-items:center;gap:11px;padding:11px 14px;margin-bottom:7px;background:rgba(0,200,255,0.025);border:1px solid var(--border);transition:all 0.2s;}
+.task-item.done{opacity:0.38;}
+.task-item:hover{border-color:rgba(0,200,255,0.22);}
+.tchk{width:16px;height:16px;border:1px solid var(--glow);background:none;cursor:pointer;accent-color:var(--glow);flex-shrink:0;}
+.ttxt{flex:1;font-size:10px;color:var(--text);}
+.task-item.done .ttxt{text-decoration:line-through;}
+.tcat{font-size:7px;letter-spacing:2px;padding:2px 7px;border:1px solid;text-transform:uppercase;}
+.tcat-proposal{color:var(--warn);border-color:var(--warn);}
+.tcat-followup{color:var(--glow);border-color:var(--glow);}
+.tcat-admin{color:var(--muted);border-color:var(--muted);}
+.tcat-business-dev{color:#6ea8ff;border-color:#6ea8ff;}
+.tcat-compliance{color:#ff8c42;border-color:#ff8c42;}
+.tcat-closing{color:var(--gold);border-color:var(--gold);}
+
+/* ── SECTOR ── */
+.sector{padding:12px 14px;margin-bottom:9px;border:1px solid var(--border);background:rgba(0,200,255,0.02);border-left:2px solid var(--glow);display:flex;align-items:center;gap:12px;transition:all 0.2s;}
+.sector:hover{border-color:rgba(0,200,255,0.28);}
+.si{font-size:18px;}.sb{flex:1;}
+.sn{font-size:11px;color:var(--text);margin-bottom:2px;}
+.snt{font-size:8px;color:var(--muted);}
+.sv{font-family:'Orbitron',monospace;font-size:15px;color:var(--gold);white-space:nowrap;}
+
+/* ── TIMELINE ── */
+.tl{display:flex;flex-direction:column;}
+.tl-item{display:flex;gap:12px;padding-bottom:18px;position:relative;}
+.tl-item::before{content:'';position:absolute;left:12px;top:26px;bottom:0;width:1px;background:var(--border);}
+.tl-item:last-child::before{display:none;}
+.tl-dot{width:24px;height:24px;border-radius:50%;flex-shrink:0;border:1px solid var(--border);background:var(--deep);display:flex;align-items:center;justify-content:center;font-size:10px;position:relative;z-index:1;}
+.tl-dot.done{border-color:var(--glow2);background:rgba(0,255,157,0.1);}
+.tl-dot.now{border-color:var(--warn);animation:tpulse 2s ease-in-out infinite;}
+@keyframes tpulse{0%,100%{box-shadow:0 0 0 0 rgba(255,190,11,0)}50%{box-shadow:0 0 10px 4px rgba(255,190,11,0.15)}}
+.tl-body{flex:1;padding-top:2px;}
+.tl-t{font-size:11px;color:var(--text);margin-bottom:2px;}
+.tl-d{font-size:7px;color:var(--muted);letter-spacing:2px;margin-bottom:3px;}
+.tl-desc{font-size:9px;color:var(--muted);line-height:1.5;}
+
+/* ── REV CHART ── */
+.rev-chart{display:flex;align-items:flex-end;gap:5px;height:100px;padding-top:8px;}
+.rbc{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.rbi{width:100%;background:linear-gradient(to top,var(--glow),rgba(0,200,255,0.25));border-radius:1px 1px 0 0;cursor:pointer;transition:filter 0.2s;position:relative;}
+.rbi:hover{filter:brightness(1.4);}
+.rbi.proj{background:repeating-linear-gradient(45deg,rgba(0,200,255,0.12),rgba(0,200,255,0.12) 3px,transparent 3px,transparent 6px);border:1px dashed rgba(0,200,255,0.25);border-bottom:none;}
+.rbi:hover::before{content:attr(data-v);position:absolute;top:-20px;left:50%;transform:translateX(-50%);background:var(--deep);border:1px solid var(--border);padding:2px 5px;font-size:7px;color:var(--glow);white-space:nowrap;}
+.rbl{font-size:6px;color:var(--muted);letter-spacing:1px;}
+
+/* ── RING ── */
+.ring-svg{width:120px;height:120px;}
+.ring-track{fill:none;stroke:rgba(0,200,255,0.08);stroke-width:8;}
+.ring-fill{fill:none;stroke-width:8;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset 2s cubic-bezier(0.4,0,0.2,1);}
+.rf-gold{stroke:var(--gold);filter:drop-shadow(0 0 4px var(--gold));}
+.rf-teal{stroke:var(--glow);filter:drop-shadow(0 0 4px var(--glow));}
+.rf-green{stroke:var(--glow2);filter:drop-shadow(0 0 4px var(--glow2));}
+.ring-num{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;fill:var(--bright);}
+.ring-sub{font-size:7px;fill:var(--muted);}
+
+/* ── NOTIF ── */
+.notif{position:fixed;top:76px;right:18px;z-index:600;padding:12px 16px;min-width:270px;max-width:340px;background:rgba(0,8,22,0.97);border:1px solid var(--glow);border-left:3px solid var(--glow);backdrop-filter:blur(20px);animation:nin 0.4s cubic-bezier(0.34,1.56,0.64,1),nout 0.3s ease 4.8s forwards;}
+.notif.warn{border-color:var(--warn);}
+.notif.danger{border-color:var(--danger);}
+.notif.gold{border-color:var(--gold);}
+@keyframes nin{from{transform:translateX(120%);opacity:0}to{transform:none;opacity:1}}
+@keyframes nout{to{transform:translateX(120%);opacity:0}}
+.nt{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--bright);margin-bottom:3px;}
+.nb{font-size:9px;color:var(--muted);line-height:1.5;}
+
+/* ── EXPORT BTN ── */
+.export-row{display:flex;gap:8px;margin-bottom:14px;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1200px){.kpi-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.g2,.g3,.g31,.g13{grid-template-columns:1fr}}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-thumb{background:var(--border);}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div class="hex-overlay"></div>
+<div class="scanline"></div>
+<div class="vignette"></div>
+
+<!-- BOOT -->
+<div id="boot">
+  <div class="boot-hex"><svg viewBox="0 0 100 100"><polygon points="50,4 96,27 96,73 50,96 4,73 4,27" fill="none" stroke="rgba(0,200,255,0.6)" stroke-width="1"/><polygon points="50,14 86,32 86,68 50,86 14,68 14,32" fill="none" stroke="rgba(0,200,255,0.25)" stroke-width="0.5"/></svg></div>
+  <div class="boot-title">CLEARGLASS CENTURY</div>
+  <div class="boot-sub">Executive Intelligence Platform · v5.0 · Desmond Otieno · COO</div>
+  <div class="boot-bar-wrap"><div class="boot-bar" id="bootBar"></div></div>
+  <div class="boot-log" id="bootLog">Initialising secure channel...</div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-lbl">⚡ Live Intel</div>
+    <div class="ticker-scroll"><div class="ticker-track" id="tickerTrack"></div></div>
+  </div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="hdr-left">
+      <div class="logo-hex">
+        <svg viewBox="0 0 60 60"><polygon points="30,3 57,18 57,42 30,57 3,42 3,18" fill="none" stroke="rgba(0,200,255,0.5)" stroke-width="1"/><polygon points="30,10 50,21 50,39 30,50 10,39 10,21" fill="none" stroke="rgba(0,200,255,0.2)" stroke-width="0.5"/></svg>
+        <div class="logo-inner">CG</div>
+      </div>
+      <div>
+        <div class="brand-name">CLEARGLASS INC.</div>
+        <div class="brand-sub">Century Intelligence Platform · v5.0</div>
+      </div>
+    </div>
+    <div class="hdr-center">
+      <div class="hdr-time" id="hdrTime">--:--:--</div>
+      <div class="hdr-date" id="hdrDate">-- --- ----</div>
+    </div>
+    <div class="hdr-right">
+      <!-- Global Search -->
+      <div class="gsearch-wrap">
+        <span class="gsearch-icon">🔍</span>
+        <input class="gsearch" id="gsearch" placeholder="Search pipeline, RFPs, tasks..." oninput="globalSearch(this.value)" onblur="setTimeout(()=>hideSearch(),200)">
+        <div class="gsearch-results" id="gsearchResults"></div>
+      </div>
+      <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()" title="Toggle Voice (V)">🔊</button>
+      <button class="hotkey-btn" onclick="showHotkeys()">⌨ Keys</button>
+      <div class="status-pill"><div class="pulse-dot"></div>AGENT ACTIVE</div>
+      <div class="exec-chip">
+        <div class="exec-av">DO</div>
+        <div>
+          <div class="exec-name-h">Desmond Otieno</div>
+          <div class="exec-role-h">Chief Operating Officer</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- NAV -->
+  <nav>
+    <div class="ntab active" onclick="showTab('dashboard',this)">⬡ Dashboard</div>
+    <div class="ntab" onclick="showTab('pipeline',this)">◈ Pipeline <span class="nbadge" id="nb-pipeline">7</span></div>
+    <div class="ntab" onclick="showTab('kanban',this)">⊞ Kanban</div>
+    <div class="ntab" onclick="showTab('forecast',this)">△ Forecast</div>
+    <div class="ntab" onclick="showTab('contracts',this)">◻ Contracts <span class="nbadge" id="nb-contracts">4</span></div>
+    <div class="ntab" onclick="showTab('tasks',this)">▷ Tasks</div>
+    <div class="ntab" onclick="showTab('winloss',this)">◎ Win/Loss</div>
+    <div class="ntab" onclick="showTab('agent',this)">◈ AI Agent</div>
+    <div class="ntab" onclick="showTab('intel',this)">◈ Intel</div>
+  </nav>
+
+  <!-- CONTENT -->
+  <div id="content">
+
+    <!-- ═══ DASHBOARD ═══ -->
+    <div class="tpane active" id="tab-dashboard">
+      <div class="sec-hdr"><div class="sec-title">EXECUTIVE OVERVIEW</div><div class="sec-sub">Real-Time · ClearGlass Inc. · Burlington ON</div></div>
+      <div class="kpi-grid">
+        <div class="panel kpi c1"><div class="pc tl"></div><div class="pc br"></div><div class="kpi-icon">◈</div><div class="kpi-lbl">Total Pipeline</div><div class="kpi-val" id="kPipeline">—</div><div class="kpi-chg up" id="kPipelineChg">Loading...</div></div>
+        <div class="panel kpi c2"><div class="pc tl"></div><div class="pc br"></div><div class="kpi-icon">⬡</div><div class="kpi-lbl">Closed YTD</div><div class="kpi-val">$630K</div><div class="kpi-chg up">↑ 63% of $1M target</div></div>
+        <div class="panel kpi c3"><div class="pc tl"></div><div class="pc br"></div><div class="kpi-icon">▷</div><div class="kpi-lbl">Weighted Forecast</div><div class="kpi-val" id="kWeighted">—</div><div class="kpi-chg" id="kWeightedChg">—</div></div>
+        <div class="panel kpi c4"><div class="pc tl"></div><div class="pc br"></div><div class="kpi-icon">⚠</div><div class="kpi-lbl">Urgent Actions</div><div class="kpi-val" id="kUrgent">—</div><div class="kpi-chg dn" id="kUrgentChg">—</div></div>
+        <div class="panel kpi c5"><div class="pc tl"></div><div class="pc br"></div><div class="kpi-icon">★</div><div class="kpi-lbl">Avg Deal Score</div><div class="kpi-val" id="kScore">—</div><div class="kpi-chg" id="kScoreChg">—</div></div>
+      </div>
+      <div class="g31 mb14">
+        <div class="panel mb14">
+          <div class="pc tl"></div><div class="pc br"></div>
+          <div class="ph"><div class="pt">Revenue Trajectory</div><div style="font-size:8px;color:var(--muted);letter-spacing:2px;">AUG 2025 → JUL 2026</div></div>
+          <div style="padding:14px 18px;">
+            <div class="rev-chart" id="revChart"></div>
+            <div style="display:flex;gap:16px;margin-top:8px;">
+              <div style="display:flex;align-items:center;gap:5px;font-size:7px;color:var(--muted);"><div style="width:10px;height:2px;background:var(--glow);box-shadow:0 0 4px var(--glow);"></div>Actual</div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:7px;color:var(--muted);"><div style="width:10px;height:2px;border-top:1px dashed rgba(0,200,255,0.35);"></div>Projected</div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div class="panel">
+            <div class="pc tl"></div><div class="pc br"></div>
+            <div class="ph"><div class="pt">Target Gauges</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;padding:14px 16px;">
+              <svg class="ring-svg" viewBox="0 0 120 120">
+                <circle class="ring-track" cx="60" cy="60" r="54"/>
+                <circle class="ring-fill rf-gold" id="ringRevenue" cx="60" cy="60" r="54" stroke-dasharray="339.29" stroke-dashoffset="339.29"/>
+                <text class="ring-num" x="60" y="56" text-anchor="middle" dominant-baseline="middle">63%</text>
+                <text class="ring-sub" x="60" y="70" text-anchor="middle">REVENUE</text>
+              </svg>
+              <div style="font-size:8px;letter-spacing:2px;color:var(--muted);margin-top:6px;text-transform:uppercase;">$630K of $1M</div>
+            </div>
+            <div style="padding:0 16px 14px;display:flex;flex-direction:column;gap:8px;">
+              <div><div style="display:flex;justify-content:space-between;font-size:7px;color:var(--muted);margin-bottom:3px;letter-spacing:1px;"><span>WIN RATE</span><span style="color:var(--glow2);" id="winRatePct">38%</span></div><div style="height:2px;background:var(--border);"><div id="winRateBar" style="width:38%;height:100%;background:var(--glow2);box-shadow:0 0 4px var(--glow2);"></div></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:7px;color:var(--muted);margin-bottom:3px;letter-spacing:1px;"><span>PIPELINE HEALTH</span><span style="color:var(--gold);" id="healthPct">—</span></div><div style="height:2px;background:var(--border);"><div id="healthBar" style="height:100%;background:var(--gold);box-shadow:0 0 4px var(--gold);transition:width 1.5s ease;"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="panel">
+          <div class="pc tl"></div><div class="pc br"></div>
+          <div class="ph"><div class="pt">Top Priority Deals</div><button class="pa" onclick="showTab('pipeline',document.querySelectorAll('.ntab')[1])">Full Pipeline →</button></div>
+          <div style="padding:0 18px 14px;overflow-x:auto;"><table class="dtbl" id="dashDeals"></table></div>
+        </div>
+        <div class="panel">
+          <div class="pc tl"></div><div class="pc br"></div>
+          <div class="ph"><div class="pt">Agent Activity</div><button class="pa" onclick="clearFeed()">Clear</button></div>
+          <div style="padding:12px 14px;max-height:280px;overflow-y:auto;" id="actFeed"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PIPELINE ═══ -->
+    <div class="tpane" id="tab-pipeline">
+      <div class="sec-hdr"><div class="sec-title">REVENUE PIPELINE</div><div class="sec-sub">Weighted Forecast · AI Scored · ClearGlass</div></div>
+      <div class="export-row">
+        <button class="btn btn-pri" onclick="toggleForm('addDealF')">+ New Opportunity</button>
+        <button class="btn btn-gld" onclick="exportCSV()">↓ Export CSV</button>
+        <button class="btn btn-grn" onclick="autoGenerateTasks()">⚡ Auto-Generate Tasks</button>
+        <span style="margin-left:auto;font-size:9px;color:var(--muted);letter-spacing:1px;align-self:center;" id="pipelineSummary">—</span>
+      </div>
+      <div class="panel mb14" id="addDealPanel" style="display:none;">
+        <div class="pc tl"></div><div class="pc br"></div>
+        <div class="ph"><div class="pt">New Opportunity</div><button class="pa" onclick="toggleForm('addDealPanel')">✕ Close</button></div>
+        <div style="padding:14px 18px;">
+          <div class="frow"><div class="fg"><div class="fl">Client Name</div><input class="fi" id="dClient" placeholder="City of Hamilton"></div><div class="fg"><div class="fl">Opportunity Name</div><input class="fi" id="dName" placeholder="Network Security Assessment"></div></div>
+          <div class="frow"><div class="fg"><div class="fl">Value (CAD $)</div><input class="fi" id="dValue" type="number" placeholder="250000"></div><div class="fg"><div class="fl">Stage</div><select class="fs" id="dStage"><option value="prospect">Prospect</option><option value="qualified">Qualified</option><option value="proposal">Proposal Sent</option><option value="negotiation">Negotiation</option><option value="closing">Closing</option></select></div></div>
+          <div class="frow"><div class="fg"><div class="fl">Win Probability %</div><input class="fi" id="dProb" type="number" min="0" max="100" placeholder="65"></div><div class="fg"><div class="fl">Close Date</div><input class="fi" id="dClose" type="date"></div></div>
+          <div class="frow f1"><div class="fg"><div class="fl">Notes / Key Contacts</div><textarea class="ft" id="dNotes" placeholder="Key contacts, requirements, competitors, next steps..."></textarea></div></div>
+          <div style="display:flex;gap:8px;"><button class="btn btn-pri" onclick="addDeal()">◈ Add to Pipeline</button><button class="btn btn-dan" onclick="toggleForm('addDealPanel')">Cancel</button></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="pc tl"></div><div class="pc br"></div>
+        <div style="padding:0 18px 14px;overflow-x:auto;">
+          <table class="dtbl">
+            <thead><tr><th>Score</th><th>Client</th><th>Opportunity</th><th>Value</th><th>Stage</th><th>Prob</th><th>Close</th><th>Age</th><th></th></tr></thead>
+            <tbody id="pipelineTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ KANBAN ═══ -->
+    <div class="tpane" id="tab-kanban">
+      <div class="sec-hdr"><div class="sec-title">PIPELINE KANBAN</div><div class="sec-sub">Visual Stage View · Click Cards to Inspect</div></div>
+      <div class="kanban" id="kanbanBoard"></div>
+    </div>
+
+    <!-- ═══ FORECAST ═══ -->
+    <div class="tpane" id="tab-forecast">
+      <div class="sec-hdr"><div class="sec-title">REVENUE FORECAST ENGINE</div><div class="sec-sub">Monte Carlo Simulation · 10,000 Iterations · ClearGlass</div></div>
+      <div class="scenario-row" id="scenarioRow"></div>
+      <div class="g2 mb14">
+        <div class="panel">
+          <div class="pc tl"></div><div class="pc br"></div>
+          <div class="ph"><div class="pt">Probability Distribution</div><button class="pa" onclick="runMonteCarlo()">↺ Re-Run</button></div>
+          <div style="padding:14px 18px;"><canvas class="mc-canvas" id="mcCanvas"></canvas></div>
+          <div style="padding:0 18px 12px;font-size:8px;color:var(--muted);letter-spacing:1px;">Monte Carlo simulation across 10,000 revenue scenarios based on deal probabilities and values.</div>
+        </div>
+        <div class="panel">
+          <div class="pc tl"></div><div class="pc br"></div>
+          <div class="ph"><div class="pt">Pipeline Velocity</div><div style="font-size:8px;color:var(--muted);">Avg days per stage</div></div>
+          <div style="padding:14px 18px;" id="velocityPanel"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="pc tl"></div><div class="pc br"></div>
+        <div class="ph"><div class="pt">Deal Scoring Methodology</div></div>
+        <div style="padding:14px 18px;">
+          <table class="dtbl" id="scoringTable">
+            <thead><tr><th>Client</th><th>Value</th><th>Stage Wt.</th><th>Prob</th><th>Urgency</th><th>CG Score</th><th>Recommendation</th></tr></thead>
+            <tbody id="scoringTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CONTRACTS ═══ -->
+    <div class="tpane" id="tab-contracts">
+      <div class="sec-hdr"><div class="sec-title">GOVERNMENT CONTRACTS</div><div class="sec-sub">Canada · Ontario · MERX · BuyAndSell.gc.ca · Live Monitor</div></div>
+      <div style="margin-bottom:12px;display:flex;gap:8px;">
+        <button class="btn btn-pri" onclick="toggleForm('addRFPPanel')">+ Track RFP</button>
+        <span style="margin-left:auto;font-size:9px;color:var(--muted);letter-spacing:1px;align-self:center;" id="rfpSummary">—</span>
+      </div>
+      <div class="panel mb14" id="addRFPPanel" style="display:none;">
+        <div class="pc tl"></div><div class="pc br"></div>
+        <div class="ph"><div class="pt">Track New RFP</div><button class="pa" onclick="toggleForm('addRFPPanel')">✕ Close</button></div>
+        <div style="padding:14px 18px;">
+          <div class="frow"><div class="fg"><div class="fl">Organisation</div><input class="fi" id="rOrg" placeholder="City of Burlington"></div><div class="fg"><div class="fl">RFP Title</div><input class="fi" id="rTitle" placeholder="Cybersecurity Assessment 2026"></div></div>
+          <div class="frow"><div class="fg"><div class="fl">Estimated Value</div><input class="fi" id="rVal" placeholder="$250,000"></div><div class="fg"><div class="fl">Deadline</div><input class="fi" id="rDead" type="date"></div></div>
+          <button class="btn btn-pri" onclick="addRFP()">◈ Track RFP</button>
+        </div>
+      </div>
+      <div id="contractList"></div>
+    </div>
+
+    <!-- ═══ TASKS ═══ -->
+    <div class="tpane" id="tab-tasks">
+      <div class="sec-hdr"><div class="sec-title">TASK ENGINE</div><div class="sec-sub">Revenue-Driving Actions · AI-Generated + Manual</div></div>
+      <div class="panel mb14">
+        <div class="pc tl"></div><div class="pc br"></div>
+        <div class="ph"><div class="pt">+ New Task</div></div>
+        <div style="padding:10px 18px;display:flex;gap:8px;flex-wrap:wrap;">
+          <input class="fi" id="tInput" placeholder="Task description..." style="flex:1;min-width:200px;">
+          <select class="fs" id="tPri" style="width:120px;"><option value="high">🔴 High</option><option value="medium" selected>🟡 Medium</option><option value="low">🟢 Low</option></select>
+          <select class="fs" id="tCat" style="width:145px;"><option value="proposal">Proposal</option><option value="followup">Follow-up</option><option value="business-dev">Business Dev</option><option value="compliance">Compliance</option><option value="closing">Closing</option><option value="admin">Admin</option></select>
+          <button class="btn btn-pri" onclick="addTask()">ADD</button>
+          <button class="btn btn-grn" onclick="autoGenerateTasks()">⚡ AI Generate</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="pc tl"></div><div class="pc br"></div>
+        <div class="ph"><div class="pt">All Tasks</div><span style="font-size:8px;color:var(--muted);letter-spacing:1px;" id="taskCount">—</span></div>
+        <div style="padding:10px 14px;" id="taskList"></div>
+      </div>
+    </div>
+
+    <!-- ═══ WIN/LOSS ═══ -->
+    <div class="tpane" id="tab-winloss">
+      <div class="sec-hdr"><div class="sec-title">WIN / LOSS TRACKER</div><div class="sec-sub">Historical Close Analysis · ClearGlass Sales Intelligence</div></div>
+      <div class="wl-grid" id="wlStats"></div>
+      <div class="g2 mb14">
+        <div class="panel">
+          <div class="pc tl"></div><div class="pc br"></div>
+          <div class="ph"><div class="pt">Mark Deal Outcome</div></div>
+          <div style="padding:14px 18px;">
+            <div class="frow"><div class="fg"><div class="fl">Deal</div><select class="fs" id="wlDeal"><option value="">— Select Deal —</option></select></div><div class="fg"><div class="fl">Outcome</div><select class="fs" id="wlOutcome"><option value="won">Won ✓</option><option value="lost">Lost ✗</option></select></div></div>
+            <div class="frow f1"><div class="fg"><div class="fl">Reason / Notes</div><textarea class="ft" id="wlReason" placeholder="Why did we win / lose? Competitor? Price? Timing?"></textarea></div></div>
+            <button class="btn btn-gld" onclick="markOutcome()">◈ Record Outcome</button>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="pc tl"></div><div class="pc br"></div>
+          <div class="ph"><div class="pt">Closed Deals Archive</div></div>
+          <div style="padding:10px 14px;max-height:320px;overflow-y:auto;" id="closedList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ AI AGENT ═══ -->
+    <div class="tpane" id="tab-agent">
+      <div class="sec-hdr"><div class="sec-title">AI REVENUE AGENT</div><div class="sec-sub">Powered by Claude · British English Voice · Full Pipeline Context</div></div>
+      <div class="g31">
+        <div class="panel">
+          <div class="pc tl"></div><div class="pc br"></div>
+          <div class="ph"><div class="pt">◎ Agent Console</div><div style="display:flex;align-items:center;gap:7px;"><div class="pulse-dot"></div><span style="font-size:7px;letter-spacing:2px;color:var(--glow2);">VOICE EN-GB</span></div></div>
+          <div class="chat-wrap">
+            <div class="chat-msgs" id="chatMsgs">
+              <div class="msg agent"><div class="msg-av">CG</div><div class="msg-bubble">Good day, Desmond. I am your ClearGlass Century Intelligence Agent — version five.<br><br>Pipeline: <strong>$2.14M</strong> · Weighted: <strong>$1.02M</strong> · Target Progress: <strong>63%</strong><br><br>Highest urgency: Halton Police close and Mississauga RFP. Shall I brief you fully?</div></div>
+            </div>
+            <div class="chat-ir">
+              <input class="chat-input" id="chatInput" placeholder="Ask anything about revenue, deals, strategy..." onkeydown="if(event.key==='Enter')sendMsg()">
+              <button class="send-btn" id="sendBtn" onclick="sendMsg()">SEND</button>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="panel">
+            <div class="pc tl"></div><div class="pc br"></div>
+            <div class="ph"><div class="pt">Quick Actions</div></div>
+            <div style="padding:10px 14px;">
+              <button class="qbtn" onclick="qPrompt('Which deals should I prioritise closing this month and what is the exact next action for each?')">🎯 Prioritise this month's closes</button>
+              <button class="qbtn" onclick="qPrompt('Draft a complete professional cold outreach email to a municipal IT director in Ontario about ClearGlass NEXUS platform')">📧 Draft municipal outreach email</button>
+              <button class="qbtn" onclick="qPrompt('What is the fastest evidence-based path to reach $1M revenue at ClearGlass this fiscal year?')">💰 Fastest path to $1M</button>
+              <button class="qbtn" onclick="qPrompt('How should ClearGlass position Bill C-26 compliance urgency as a sales accelerator for Ontario municipalities in 2026?')">🏛️ Bill C-26 sales positioning</button>
+              <button class="qbtn" onclick="qPrompt('Give me a sharp competitive analysis: ClearGlass vs Bell, Rogers, Telus for Ontario municipal cybersecurity contracts — where do we win?')">🔍 Beat Bell Rogers Telus</button>
+              <button class="qbtn" onclick="qPrompt('Write a complete executive summary proposal for the City of Mississauga cybersecurity governance program')">📄 Mississauga proposal draft</button>
+              <button class="qbtn" onclick="qPrompt('What are the three non-obvious revenue moves I should make this week that most people would miss?')">⚡ Non-obvious revenue moves</button>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="pc tl"></div><div class="pc br"></div>
+            <div class="ph"><div class="pt">Agent Context</div></div>
+            <div style="padding:10px 14px;font-size:8px;color:var(--muted);line-height:2.2;letter-spacing:1px;">
+              <div>🏢 <span style="color:var(--text);">ClearGlass Inc.</span> — Burlington, ON</div>
+              <div>👤 <span style="color:var(--text);">Desmond Otieno</span> — COO</div>
+              <div>🎯 <span style="color:var(--text);">Municipal Cybersecurity Governance</span></div>
+              <div>💼 <span style="color:var(--text);">Pipeline: $2.14M</span> · 7 active deals</div>
+              <div>🏆 <span style="color:var(--text);">Revenue Target: $1M</span> FY2026</div>
+              <div>🔧 <span style="color:var(--text);">NEXUS · AEGIS · OMEN · Aurora</span></div>
+              <div>⚖️ <span style="color:var(--text);">Bill C-26 · PIPEDA · CIS · PSPC</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ INTEL ═══ -->
+    <div class="tpane" id="tab-intel">
+      <div class="sec-hdr"><div class="sec-title">MARKET INTELLIGENCE</div><div class="sec-sub">Canadian Cybersecurity Landscape · 2026</div></div>
+      <div class="g2 mb14">
+        <div class="panel"><div class="pc tl"></div><div class="pc br"></div><div class="ph"><div class="pt">Revenue Sectors</div></div><div style="padding:10px 14px;" id="sectorList"></div></div>
+        <div class="panel"><div class="pc tl"></div><div class="pc br"></div><div class="ph"><div class="pt">Milestone Timeline</div></div><div style="padding:14px 18px;" id="intelTL"></div></div>
+      </div>
+      <div class="panel"><div class="pc tl"></div><div class="pc br"></div>
+        <div class="ph"><div class="pt">Market Pricing Intelligence</div><span style="font-size:7px;color:var(--muted);letter-spacing:2px;">Industry Benchmarks · Canada · 2026</span></div>
+        <div style="padding:0 18px 14px;overflow-x:auto;">
+          <table class="dtbl"><thead><tr><th>Service</th><th>Market Low</th><th>Mid</th><th>High</th><th>CG Position</th><th>Opportunity</th></tr></thead>
+          <tbody>
+            <tr><td>Municipal Cybersecurity Assessment</td><td>$45K</td><td>$120K</td><td>$280K</td><td><span class="stage s-proposal">MID-HIGH</span></td><td style="color:var(--glow2);">↑ HIGH</td></tr>
+            <tr><td>Network Monitoring (Annual SaaS)</td><td>$80K</td><td>$200K</td><td>$450K</td><td><span class="stage s-negotiation">MID</span></td><td style="color:var(--glow2);">↑ HIGH</td></tr>
+            <tr><td>Incident Response Retainer</td><td>$30K</td><td>$90K</td><td>$180K</td><td><span class="stage s-won">MID-HIGH</span></td><td style="color:var(--warn);">→ MED</td></tr>
+            <tr><td>Penetration Testing</td><td>$15K</td><td>$50K</td><td>$120K</td><td><span class="stage s-qualified">LOW-MID</span></td><td style="color:var(--glow2);">↑ HIGH</td></tr>
+            <tr><td>Bill C-26 Compliance Advisory</td><td>$25K</td><td>$75K</td><td>$150K</td><td><span class="stage s-proposal">EMERGING</span></td><td style="color:var(--danger);">⚡ URGENT</td></tr>
+            <tr><td>NEXUS Platform License</td><td>$60K</td><td>$150K</td><td>$400K</td><td><span class="stage s-closing">DIFFERENTIATOR</span></td><td style="color:var(--gold);">★ STRATEGIC</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /app -->
+
+<!-- DEAL MODAL -->
+<div class="modal-overlay" id="dealModal">
+  <div class="modal"><div class="pc tl"></div><div class="pc br"></div>
+    <button class="modal-close" onclick="closeModal('dealModal')">✕</button>
+    <div class="modal-hdr"><div class="modal-title" id="modalTitle">—</div><div class="modal-sub" id="modalSub">—</div></div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- HOTKEYS MODAL -->
+<div class="modal-overlay" id="hotkeysModal">
+  <div class="modal" style="max-width:460px;"><div class="pc tl"></div><div class="pc br"></div>
+    <button class="modal-close" onclick="closeModal('hotkeysModal')">✕</button>
+    <div class="modal-hdr"><div class="modal-title">KEYBOARD SHORTCUTS</div><div class="modal-sub">ClearGlass Century v5.0</div></div>
+    <div class="hk-grid">
+      <div class="hk-item"><div class="hk-key">D</div><div class="hk-desc">Dashboard</div></div>
+      <div class="hk-item"><div class="hk-key">P</div><div class="hk-desc">Pipeline</div></div>
+      <div class="hk-item"><div class="hk-key">K</div><div class="hk-desc">Kanban</div></div>
+      <div class="hk-item"><div class="hk-key">F</div><div class="hk-desc">Forecast</div></div>
+      <div class="hk-item"><div class="hk-key">C</div><div class="hk-desc">Contracts</div></div>
+      <div class="hk-item"><div class="hk-key">T</div><div class="hk-desc">Tasks</div></div>
+      <div class="hk-item"><div class="hk-key">A</div><div class="hk-desc">AI Agent</div></div>
+      <div class="hk-item"><div class="hk-key">I</div><div class="hk-desc">Market Intel</div></div>
+      <div class="hk-item"><div class="hk-key">V</div><div class="hk-desc">Toggle Voice</div></div>
+      <div class="hk-item"><div class="hk-key">/</div><div class="hk-desc">Global Search</div></div>
+      <div class="hk-item"><div class="hk-key">N</div><div class="hk-desc">New Deal</div></div>
+      <div class="hk-item"><div class="hk-key">ESC</div><div class="hk-desc">Close Modal</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// CANVAS BACKGROUND
+// ═══════════════════════════════════════════════
+const canvas=document.getElementById('bg-canvas');
+const ctx=canvas.getContext('2d');
+let W,H,pts=[],nds=[];
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+for(let i=0;i<55;i++)pts.push({x:Math.random()*2000,y:Math.random()*1000,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*1.4+.4,a:Math.random()*.35+.08,c:Math.random()>.7?'0,255,157':'0,200,255'});
+for(let i=0;i<16;i++)nds.push({x:Math.random()*2000,y:Math.random()*1000,vx:(Math.random()-.5)*.12,vy:(Math.random()-.5)*.12,r:Math.random()*1.8+.8,p:Math.random()*Math.PI*2});
+function animBg(){
+  ctx.clearRect(0,0,W,H);
+  nds.forEach(n=>{n.x+=n.vx;n.y+=n.vy;n.p+=.015;if(n.x<0||n.x>W)n.vx*=-1;if(n.y<0||n.y>H)n.vy*=-1;
+    nds.forEach(m=>{const d=Math.hypot(n.x-m.x,n.y-m.y);if(d<180){ctx.beginPath();ctx.moveTo(n.x,n.y);ctx.lineTo(m.x,m.y);ctx.strokeStyle=`rgba(0,200,255,${.05*(1-d/180)})`;ctx.lineWidth=.5;ctx.stroke();}});
+    const p=Math.sin(n.p)*.5+.5;ctx.beginPath();ctx.arc(n.x,n.y,n.r+p*.8,0,Math.PI*2);ctx.fillStyle=`rgba(0,200,255,${.25+p*.25})`;ctx.fill();
+  });
+  pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(${p.c},${p.a})`;ctx.fill();});
+  requestAnimationFrame(animBg);
+}
+animBg();
+
+// ═══════════════════════════════════════════════
+// VOICE ENGINE — British English
+// ═══════════════════════════════════════════════
+let voiceOn=true,selVoice=null,vReady=false;
+function initVoice(){
+  if(!('speechSynthesis' in window))return;
+  const load=()=>{
+    const vs=speechSynthesis.getVoices();
+    const pref=['Google UK English Female','Google UK English Male','Daniel (Enhanced)','Daniel','Serena','Kate','en-GB'];
+    for(const p of pref){const v=vs.find(x=>x.name.includes(p)||x.lang==='en-GB');if(v){selVoice=v;break;}}
+    if(!selVoice)selVoice=vs.find(v=>v.lang.startsWith('en'))||vs[0];
+    vReady=true;
+  };
+  speechSynthesis.onvoiceschanged=load;
+  setTimeout(load,500);
+}
+function speak(text,priority=false){
+  if(!voiceOn||!vReady)return;
+  if(priority)speechSynthesis.cancel();
+  const clean=text.replace(/<[^>]*>/g,'').replace(/[*#◈⬡▷◻◎★↑↓$]/g,'').trim().slice(0,280);
+  const u=new SpeechSynthesisUtterance(clean);
+  if(selVoice)u.voice=selVoice;
+  u.lang='en-GB';u.rate=0.93;u.pitch=1.0;u.volume=0.9;
+  u.onstart=()=>document.getElementById('voiceBtn').classList.add('speaking');
+  u.onend=()=>document.getElementById('voiceBtn').classList.remove('speaking');
+  speechSynthesis.speak(u);
+}
+function toggleVoice(){
+  voiceOn=!voiceOn;
+  const b=document.getElementById('voiceBtn');
+  b.textContent=voiceOn?'🔊':'🔇';
+  if(!voiceOn)speechSynthesis.cancel();
+}
+initVoice();
+
+// ═══════════════════════════════════════════════
+// CLOCK
+// ═══════════════════════════════════════════════
+setInterval(()=>{
+  const n=new Date();
+  document.getElementById('hdrTime').textContent=n.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('hdrDate').textContent=n.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).toUpperCase();
+},1000);
+
+// ═══════════════════════════════════════════════
+// DATA STORE
+// ═══════════════════════════════════════════════
+const SK='cg_v5';
+let S;
+function loadS(){try{const r=localStorage.getItem(SK);if(r)return JSON.parse(r);}catch(e){}return defS();}
+function save(){try{localStorage.setItem(SK,JSON.stringify(S));}catch(e){}}
+function defS(){return{
+  deals:[
+    {id:1,client:'City of Burlington',name:'Municipal NEXUS Platform',value:380000,stage:'proposal',prob:75,close:'2026-04-15',notes:'RFP submitted. Strong fit.',created:'2026-01-15'},
+    {id:2,client:'Joseph Brant Hospital',name:'Aurora Health Intelligence',value:290000,stage:'negotiation',prob:85,close:'2026-03-28',notes:'Legal reviewing contract.',created:'2026-01-20'},
+    {id:3,client:'Region of Halton',name:'Network Security Assessment',value:145000,stage:'qualified',prob:55,close:'2026-05-10',notes:'Competing vs Bell. Strong compliance angle.',created:'2026-02-01'},
+    {id:4,client:'Hamilton Health Sciences',name:'AEGIS Endpoint Monitoring',value:320000,stage:'prospect',prob:30,close:'2026-06-30',notes:'Discovery call March 5.',created:'2026-02-10'},
+    {id:5,client:'Halton Regional Police',name:'Threat Intelligence Retainer',value:180000,stage:'closing',prob:90,close:'2026-03-15',notes:'Final contract. Sign this week.',created:'2025-12-10'},
+    {id:6,client:'City of Mississauga',name:'Cybersecurity Governance Program',value:450000,stage:'proposal',prob:60,close:'2026-05-20',notes:'RFP due March 10. Bill C-26 angle.',created:'2026-01-28'},
+    {id:7,client:'Oakville Transit',name:'OT/ICS Security Assessment',value:95000,stage:'qualified',prob:65,close:'2026-04-01',notes:'Budget confirmed. Referral.',created:'2026-02-05'},
+  ],
+  closed:[
+    {id:98,client:'York Region',name:'Vulnerability Assessment',value:85000,outcome:'won',reason:'Best price, fastest turnaround',date:'2025-12-01'},
+    {id:99,client:'City of Guelph',name:'Security Audit',value:52000,outcome:'lost',reason:'Lost on price to local vendor',date:'2025-11-15'},
+  ],
+  rfps:[
+    {id:1,org:'City of Burlington',title:'Cybersecurity Assessment & Managed SOC 2026',value:'$280K',deadline:'2026-03-18',flag:'🏛️'},
+    {id:2,org:'PHSA British Columbia',title:'Network Security Monitoring Platform',value:'$450K',deadline:'2026-03-25',flag:'🏥'},
+    {id:3,org:'PSPC Canada',title:'Cybersecurity Standing Offer SOR/2026',value:'$500K+',deadline:'2026-04-10',flag:'🇨🇦'},
+    {id:4,org:'Halton Region',title:'IT Security Services & Incident Response',value:'$160K',deadline:'2026-03-12',flag:'🏢'},
+  ],
+  tasks:[
+    {id:1,text:'Submit RFP — City of Mississauga (deadline March 10)',priority:'high',category:'proposal',done:false,created:Date.now()},
+    {id:2,text:'Follow up with Joseph Brant legal team re: contract signature',priority:'high',category:'followup',done:false,created:Date.now()},
+    {id:3,text:'Schedule discovery demo — Hamilton Health Sciences March 5',priority:'medium',category:'business-dev',done:false,created:Date.now()},
+    {id:4,text:'Prepare Halton Region RFP response — deadline March 12',priority:'high',category:'proposal',done:false,created:Date.now()},
+    {id:5,text:'Close Halton Police contract — get signature this week',priority:'high',category:'closing',done:false,created:Date.now()},
+  ],
+  feed:[],nextId:100
+};}
+S=loadS();
+
+// ═══════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════
+function fv(v){if(v>=1000000)return '$'+(v/1000000).toFixed(2)+'M';if(v>=1000)return '$'+Math.round(v/1000)+'K';return '$'+v;}
+function sl(s){return{prospect:'Prospect',qualified:'Qualified',proposal:'Proposal',negotiation:'Negotiation',closing:'Closing',won:'Won',lost:'Lost'}[s]||s;}
+function dl(d){if(!d)return 999;return Math.round((new Date(d)-Date.now())/86400000);}
+function fd(s){if(!s)return '—';return new Date(s).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'});}
+function ageDays(d){if(!d)return 0;return Math.round((Date.now()-new Date(d))/86400000);}
+function toggleForm(id){const el=document.getElementById(id);el.style.display=el.style.display==='none'||el.style.display===''?'block':'none';}
+
+// DEAL SCORE ALGORITHM
+function scoreD(d){
+  const stageW={prospect:10,qualified:30,proposal:55,negotiation:70,closing:90};
+  const sw=stageW[d.stage]||10;
+  const probW=d.prob;
+  const vw=Math.min(100,Math.round(d.value/8000));
+  const daysLeft=dl(d.close);
+  const urgW=daysLeft<14?20:daysLeft<30?12:daysLeft<60?6:0;
+  const ageP=ageDays(d.created);
+  const ageW=ageP>90?-10:ageP>60?-5:0;
+  const score=Math.round((sw*.35+probW*.35+vw*.2+urgW*.1)+ageW);
+  return Math.max(0,Math.min(100,score));
+}
+function scoreCls(s){if(s>=80)return'score-a';if(s>=60)return'score-b';if(s>=40)return'score-c';return'score-d';}
+function scoreRec(d,s){
+  if(d.stage==='closing'&&d.prob>=80)return'Sign contract immediately';
+  if(d.stage==='negotiation')return'Accelerate — negotiate final terms';
+  if(d.stage==='proposal'&&dl(d.close)<30)return'Follow up within 48hrs';
+  if(d.stage==='qualified')return'Submit proposal this week';
+  if(d.stage==='prospect')return'Book discovery call';
+  if(s<40)return'Re-qualify or archive';
+  return'Maintain momentum';
+}
+
+function logFeed(icon,title,type='success'){
+  const now=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  S.feed.unshift({icon,title,type,time:now});
+  if(S.feed.length>50)S.feed.pop();
+  save();renderFeed();
+}
+
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+const tabMap={d:'dashboard',p:'pipeline',k:'kanban',f:'forecast',c:'contracts',t:'tasks',a:'agent',i:'intel'};
+function showTab(id,el){
+  document.querySelectorAll('.tpane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.querySelectorAll('.ntab').forEach(n=>n.classList.remove('active'));
+  if(el){if(typeof el==='string')el=document.querySelector(`[onclick*="${id}"]`);el.classList.add('active');}
+  ({dashboard:renderDash,pipeline:renderPipeline,kanban:renderKanban,forecast:renderForecast,contracts:renderContracts,tasks:renderTasks,winloss:renderWinLoss,intel:renderIntel}[id]||function(){})();
+}
+document.addEventListener('keydown',e=>{
+  if(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))return;
+  const t={d:'dashboard',p:'pipeline',k:'kanban',f:'forecast',c:'contracts',t:'tasks',a:'agent',i:'intel',v:'voice','/':'search',n:'new',Escape:'esc'};
+  const k=e.key.toLowerCase();
+  if(k==='v'){toggleVoice();return;}
+  if(k==='/'){e.preventDefault();document.getElementById('gsearch').focus();return;}
+  if(k==='n'){showTab('pipeline',null);setTimeout(()=>toggleForm('addDealPanel'),100);return;}
+  if(k==='escape'){document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('show'));return;}
+  if(t[k]&&t[k]!=='voice'&&t[k]!=='search'&&t[k]!=='new'&&t[k]!=='esc')showTab(t[k],null);
+});
+
+// ═══════════════════════════════════════════════
+// GLOBAL SEARCH
+// ═══════════════════════════════════════════════
+function globalSearch(q){
+  const r=document.getElementById('gsearchResults');
+  if(!q||q.length<2){r.classList.remove('show');return;}
+  const lq=q.toLowerCase();
+  const res=[];
+  S.deals.forEach(d=>{if(d.client.toLowerCase().includes(lq)||d.name.toLowerCase().includes(lq))res.push({type:'DEAL',label:`${d.client} — ${d.name}`,val:fv(d.value),action:()=>openDealModal(d.id)});});
+  S.rfps.forEach(r2=>{if(r2.org.toLowerCase().includes(lq)||r2.title.toLowerCase().includes(lq))res.push({type:'RFP',label:`${r2.org}: ${r2.title}`,val:r2.value,action:()=>showTab('contracts',null)});});
+  S.tasks.filter(t=>!t.done).forEach(t=>{if(t.text.toLowerCase().includes(lq))res.push({type:'TASK',label:t.text,val:'',action:()=>showTab('tasks',null)});});
+  r.innerHTML=res.slice(0,8).map((item,i)=>`<div class="gsr-item" onclick="gsrClick(${i})">${item.label}<span class="gsr-type">${item.type}</span> <span style="color:var(--gold);font-size:9px;">${item.val}</span></div>`).join('');
+  r._items=res;
+  r.classList.toggle('show',res.length>0);
+}
+function gsrClick(i){const r=document.getElementById('gsearchResults');if(r._items&&r._items[i])r._items[i].action();r.classList.remove('show');document.getElementById('gsearch').value='';}
+function hideSearch(){document.getElementById('gsearchResults').classList.remove('show');}
+
+// ═══════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════
+function renderDash(){
+  const total=S.deals.reduce((s,d)=>s+d.value,0);
+  const weighted=S.deals.reduce((s,d)=>s+d.value*d.prob/100,0);
+  const urgent=S.deals.filter(d=>dl(d.close)<=30).length+S.rfps.filter(r=>dl(r.deadline)<=14).length;
+  const scores=S.deals.map(d=>scoreD(d));
+  const avgScore=scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):0;
+  document.getElementById('kPipeline').textContent=fv(total);
+  document.getElementById('kPipelineChg').textContent=`${S.deals.length} active deals`;
+  document.getElementById('kWeighted').textContent=fv(weighted);
+  document.getElementById('kWeightedChg').innerHTML=`<span class="up">↑ ${Math.round(weighted/10000)/100}x base</span>`;
+  document.getElementById('kUrgent').textContent=urgent;
+  document.getElementById('kUrgentChg').textContent=`Deadlines ≤ 30 days`;
+  document.getElementById('kScore').textContent=avgScore;
+  document.getElementById('kScoreChg').textContent=avgScore>=70?'↑ Strong pipeline':'↓ Needs attention';
+  document.getElementById('nb-pipeline').textContent=S.deals.length;
+  document.getElementById('nb-contracts').textContent=S.rfps.length;
+  // Health
+  const health=Math.round(((weighted/total)||0)*100+avgScore*.2);
+  document.getElementById('healthPct').textContent=Math.min(99,health)+'%';
+  document.getElementById('healthBar').style.width=Math.min(99,health)+'%';
+  // Win rate
+  const closed=S.closed;const won=closed.filter(c=>c.outcome==='won').length;
+  const wr=closed.length?Math.round(won/closed.length*100):38;
+  document.getElementById('winRatePct').textContent=wr+'%';
+  document.getElementById('winRateBar').style.width=wr+'%';
+  // Ring
+  const circ=339.29;const pct=63;
+  const ring=document.getElementById('ringRevenue');
+  if(ring)setTimeout(()=>ring.style.strokeDashoffset=circ-(circ*pct/100),300);
+  renderRevChart();renderFeed();
+  // Top deals
+  const top=[...S.deals].sort((a,b)=>scoreD(b)-scoreD(a)).slice(0,5);
+  document.getElementById('dashDeals').innerHTML=`<thead><tr><th>Score</th><th>Client</th><th>Value</th><th>Stage</th><th>Prob</th></tr></thead><tbody>${top.map(d=>{const sc=scoreD(d);return`<tr style="cursor:pointer;" onclick="openDealModal(${d.id})"><td><div class="score-badge ${scoreCls(sc)}">${sc}</div></td><td style="color:var(--bright);">${d.client}</td><td style="font-family:'Orbitron',monospace;color:var(--gold);font-size:12px;">${fv(d.value)}</td><td><span class="stage s-${d.stage}">${sl(d.stage)}</span></td><td><div class="pb"><div class="pt2"><div class="pf" style="width:${d.prob}%"></div></div><div class="pn">${d.prob}%</div></div></td></tr>`;}).join('')}</tbody>`;
+}
+
+function renderRevChart(){
+  const c=document.getElementById('revChart');if(!c)return;
+  const mo=['Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul'];
+  const ac=[48,62,85,71,55,90,120,0,0,0,0,0];
+  const pr=[0,0,0,0,0,0,0,145,180,130,95,80];
+  const mx=Math.max(...ac,...pr);
+  c.innerHTML=mo.map((m,i)=>{
+    const h=ac[i]?Math.round(ac[i]/mx*90):0;const hp=pr[i]?Math.round(pr[i]/mx*90):0;
+    const dv=fv((ac[i]||pr[i])*1000);
+    return`<div class="rbc"><div class="rbi${pr[i]?' proj':''}" style="height:${h||hp}px;" data-v="${dv}"></div><div class="rbl">${m}</div></div>`;
+  }).join('');
+}
+
+function renderFeed(){
+  const f=document.getElementById('actFeed');if(!f)return;
+  if(!S.feed.length){f.innerHTML='<div style="font-size:8px;color:var(--muted);text-align:center;padding:18px;letter-spacing:2px;">MONITORING ACTIVE...</div>';return;}
+  f.innerHTML=S.feed.slice(0,14).map(a=>`<div class="act-item ${a.type==='warn'?'warn':a.type==='danger'?'danger':a.type==='gold'?'gold':''}"><div class="act-icon">${a.icon}</div><div class="act-body"><div class="act-title">${a.title}</div><div class="act-time">${a.time}</div></div></div>`).join('');
+}
+function clearFeed(){S.feed=[];save();renderFeed();}
+
+// ═══════════════════════════════════════════════
+// PIPELINE
+// ═══════════════════════════════════════════════
+function renderPipeline(){
+  const total=S.deals.reduce((s,d)=>s+d.value,0);
+  const weighted=S.deals.reduce((s,d)=>s+d.value*d.prob/100,0);
+  document.getElementById('pipelineSummary').textContent=`Total: ${fv(total)} · Weighted: ${fv(weighted)} · ${S.deals.length} deals`;
+  const sorted=[...S.deals].sort((a,b)=>scoreD(b)-scoreD(a));
+  document.getElementById('pipelineTbody').innerHTML=sorted.map(d=>{
+    const sc=scoreD(d);const age=ageDays(d.created);const daysL=dl(d.close);
+    const ageWarn=age>90?`<div style="color:var(--danger);font-size:7px;">⚠ ${age}d stale</div>`:'';
+    return`<tr style="cursor:pointer;" onclick="openDealModal(${d.id})">
+      <td><div class="score-badge ${scoreCls(sc)}">${sc}</div></td>
+      <td style="color:var(--bright);font-weight:600;">${d.client}</td>
+      <td style="color:var(--muted);font-size:9px;">${d.name}</td>
+      <td style="font-family:'Orbitron',monospace;color:var(--gold);font-size:13px;">${fv(d.value)}</td>
+      <td><span class="stage s-${d.stage}">${sl(d.stage)}</span></td>
+      <td><div class="pb"><div class="pt2"><div class="pf" style="width:${d.prob}%"></div></div><div class="pn">${d.prob}%</div></div></td>
+      <td style="font-size:9px;color:${daysL<14?'var(--danger)':daysL<30?'var(--warn)':'var(--muted)'};">${fd(d.close)}</td>
+      <td style="font-size:8px;color:${age>60?'var(--warn)':'var(--muted)'};">${age}d${ageWarn}</td>
+      <td onclick="event.stopPropagation()"><button class="btn btn-dan btn-sm" onclick="removeDeal(${d.id})">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function addDeal(){
+  const c=document.getElementById('dClient').value.trim();
+  const n=document.getElementById('dName').value.trim();
+  const v=parseInt(document.getElementById('dValue').value)||0;
+  const st=document.getElementById('dStage').value;
+  const pr=parseInt(document.getElementById('dProb').value)||50;
+  const cl=document.getElementById('dClose').value;
+  const no=document.getElementById('dNotes').value.trim();
+  if(!c||!n||!v){alert('Client, name, and value required.');return;}
+  const deal={id:S.nextId++,client:c,name:n,value:v,stage:st,prob:pr,close:cl,notes:no,created:new Date().toISOString().split('T')[0]};
+  S.deals.push(deal);save();
+  logFeed('💼',`New deal: ${c} — ${fv(v)}`,'success');
+  speak(`New deal added. ${c}. ${fv(v)}.`);
+  notify('Deal Added',`${n} — ${fv(v)}`,'success');
+  renderPipeline();renderDash();
+  toggleForm('addDealPanel');
+}
+function removeDeal(id){if(!confirm('Remove this deal?'))return;S.deals=S.deals.filter(d=>d.id!==id);save();renderPipeline();renderDash();}
+
+// ═══════════════════════════════════════════════
+// DEAL MODAL (Client Briefing)
+// ═══════════════════════════════════════════════
+function openDealModal(id){
+  const d=S.deals.find(x=>x.id===id);if(!d)return;
+  const sc=scoreD(d);const age=ageDays(d.created);const daysL=dl(d.close);
+  document.getElementById('modalTitle').textContent=d.client.toUpperCase();
+  document.getElementById('modalSub').textContent=d.name;
+  document.getElementById('modalBody').innerHTML=`
+    <div style="display:flex;gap:14px;margin-bottom:14px;">
+      <div class="score-badge ${scoreCls(sc)}" style="width:52px;height:52px;font-size:18px;">${sc}</div>
+      <div>
+        <div style="font-family:'Orbitron',monospace;font-size:26px;color:var(--gold);">${fv(d.value)}</div>
+        <div style="font-size:8px;color:var(--muted);letter-spacing:2px;margin-top:2px;">CG INTELLIGENCE SCORE: ${sc}/100</div>
+      </div>
+    </div>
+    <div class="detail-row"><div class="detail-lbl">Stage</div><div class="detail-val"><span class="stage s-${d.stage}">${sl(d.stage)}</span></div></div>
+    <div class="detail-row"><div class="detail-lbl">Win Probability</div><div class="detail-val"><div class="pb"><div class="pt2" style="max-width:200px;"><div class="pf" style="width:${d.prob}%"></div></div><div class="pn">${d.prob}%</div></div></div></div>
+    <div class="detail-row"><div class="detail-lbl">Close Date</div><div class="detail-val" style="color:${daysL<14?'var(--danger)':daysL<30?'var(--warn)':'var(--text)'};">${fd(d.close)} (${daysL} days)</div></div>
+    <div class="detail-row"><div class="detail-lbl">Deal Age</div><div class="detail-val" style="color:${age>90?'var(--danger)':age>60?'var(--warn)':'var(--muted)'};">${age} days in pipeline</div></div>
+    <div class="detail-row"><div class="detail-lbl">Weighted Value</div><div class="detail-val" style="color:var(--glow2);">${fv(d.value*d.prob/100)}</div></div>
+    <div class="detail-row"><div class="detail-lbl">Notes</div><div class="detail-val" style="color:var(--muted);">${d.notes||'—'}</div></div>
+    <div style="margin-top:14px;padding:12px;background:rgba(0,200,255,0.04);border:1px solid rgba(0,200,255,0.15);">
+      <div style="font-size:7px;letter-spacing:3px;color:var(--glow);text-transform:uppercase;margin-bottom:6px;">◈ Agent Recommendation</div>
+      <div style="font-size:10px;color:var(--text);">${scoreRec(d,sc)}</div>
+    </div>
+    ${age>90?`<div class="age-warn">⚠ This deal has been in the pipeline over 90 days. Consider re-qualifying or escalating.</div>`:''}
+    <div style="display:flex;gap:8px;margin-top:14px;">
+      <button class="btn btn-pri" onclick="closeModal('dealModal');showTab('agent',null);setTimeout(()=>qPrompt('Give me a complete strategic plan to close the deal with ${d.client} — ${d.name}, valued at ${fv(d.value)}'),300)">◈ Get AI Strategy</button>
+      <button class="btn btn-dan" onclick="closeModal('dealModal');removeDeal(${d.id})">Remove Deal</button>
+    </div>`;
+  document.getElementById('dealModal').classList.add('show');
+}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+
+// ═══════════════════════════════════════════════
+// KANBAN
+// ═══════════════════════════════════════════════
+function renderKanban(){
+  const stages=['prospect','qualified','proposal','negotiation','closing'];
+  const labels={prospect:'Prospect',qualified:'Qualified',proposal:'Proposal',negotiation:'Negotiation',closing:'Closing ✓'};
+  const board=document.getElementById('kanbanBoard');
+  board.innerHTML=stages.map(s=>{
+    const deals=S.deals.filter(d=>d.stage===s);
+    const total=deals.reduce((a,d)=>a+d.value,0);
+    return`<div class="kb-col">
+      <div class="kb-hdr s-${s}"><span style="color:var(--text);">${labels[s]}</span><span class="kb-count">${deals.length}</span></div>
+      <div style="font-size:8px;color:var(--muted);padding:5px 10px;background:rgba(0,200,255,0.04);border:1px solid rgba(0,200,255,0.06);border-top:none;letter-spacing:1px;">${fv(total)}</div>
+      <div class="kb-body">${deals.map(d=>`<div class="kb-card" onclick="openDealModal(${d.id})">
+        <div class="kb-client">${d.client}</div>
+        <div class="kb-val">${fv(d.value)}</div>
+        <div class="kb-meta"><span>${d.prob}% prob</span><div class="score-badge ${scoreCls(scoreD(d))}" style="width:22px;height:22px;font-size:8px;">${scoreD(d)}</div></span></div>
+        <div style="font-size:7px;color:var(--muted);margin-top:4px;">${fd(d.close)}</div>
+      </div>`).join('')}${deals.length===0?`<div style="font-size:8px;color:var(--muted);text-align:center;padding:16px;letter-spacing:1px;">NO DEALS</div>`:''}</div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// MONTE CARLO FORECAST
+// ═══════════════════════════════════════════════
+function runMonteCarlo(){
+  const N=10000;
+  const results=[];
+  for(let i=0;i<N;i++){
+    let rev=630000;// YTD closed
+    S.deals.forEach(d=>{if(Math.random()*100<d.prob)rev+=d.value;});
+    results.push(rev);
+  }
+  results.sort((a,b)=>a-b);
+  const p10=results[Math.floor(N*.1)];
+  const p50=results[Math.floor(N*.5)];
+  const p90=results[Math.floor(N*.9)];
+  // Scenarios
+  document.getElementById('scenarioRow').innerHTML=`
+    <div class="scenario worst"><div class="sc-lbl">Worst Case (P10)</div><div class="sc-val">${fv(p10)}</div><div class="sc-sub">10th percentile</div></div>
+    <div class="scenario base"><div class="sc-lbl">Base Case (P50)</div><div class="sc-val">${fv(p50)}</div><div class="sc-sub">Median outcome</div></div>
+    <div class="scenario best"><div class="sc-lbl">Best Case (P90)</div><div class="sc-val">${fv(p90)}</div><div class="sc-sub">90th percentile · Target: $1M</div></div>`;
+  // Draw distribution
+  const cv=document.getElementById('mcCanvas');if(!cv)return;
+  const cx=cv.getContext('2d');
+  cv.width=cv.offsetWidth||600;cv.height=160;
+  const bins=40;const minR=results[0];const maxR=results[N-1];
+  const bw=(maxR-minR)/bins;
+  const counts=new Array(bins).fill(0);
+  results.forEach(r=>{const bi=Math.min(bins-1,Math.floor((r-minR)/bw));counts[bi]++;});
+  const maxC=Math.max(...counts);
+  cx.clearRect(0,0,cv.width,cv.height);
+  const barW=(cv.width-40)/bins;
+  counts.forEach((c,i)=>{
+    const x=20+i*barW;const h=(c/maxC)*(cv.height-30);const y=cv.height-20-h;
+    const v=minR+i*bw;
+    const g=cx.createLinearGradient(0,y,0,cv.height-20);
+    g.addColorStop(0,v>=1000000?'rgba(0,255,157,0.8)':'rgba(0,200,255,0.7)');
+    g.addColorStop(1,v>=1000000?'rgba(0,255,157,0.2)':'rgba(0,200,255,0.1)');
+    cx.fillStyle=g;cx.fillRect(x,y,barW-1,h);
+  });
+  // Target line
+  const tx=20+((1000000-minR)/(maxR-minR))*(cv.width-40);
+  cx.beginPath();cx.moveTo(tx,10);cx.lineTo(tx,cv.height-20);
+  cx.strokeStyle='rgba(240,192,64,0.8)';cx.lineWidth=2;cx.setLineDash([4,4]);cx.stroke();cx.setLineDash([]);
+  cx.fillStyle='rgba(240,192,64,0.9)';cx.font='8px Orbitron,monospace';cx.textAlign='center';cx.fillText('$1M TARGET',tx,8);
+  // Axis labels
+  cx.fillStyle='rgba(100,160,200,0.5)';cx.font='7px Share Tech Mono,monospace';cx.textAlign='left';cx.fillText(fv(minR),20,cv.height-6);
+  cx.textAlign='right';cx.fillText(fv(maxR),cv.width-20,cv.height-6);
+}
+
+function renderForecast(){
+  runMonteCarlo();
+  // Velocity panel
+  const stages=['prospect','qualified','proposal','negotiation','closing'];
+  const avgDays={prospect:45,qualified:28,proposal:21,negotiation:14,closing:7};
+  const vp=document.getElementById('velocityPanel');
+  if(vp)vp.innerHTML=stages.map(s=>`<div class="vel-item"><div class="vel-stage">${s}</div><div class="vel-bar-wrap"><div class="vel-bar" style="width:${Math.round(avgDays[s]/45*100)}%"></div></div><div class="vel-val">${avgDays[s]}d avg</div></div>`).join('');
+  // Scoring table
+  const sorted=[...S.deals].sort((a,b)=>scoreD(b)-scoreD(a));
+  const stageW={prospect:10,qualified:30,proposal:55,negotiation:70,closing:90};
+  document.getElementById('scoringTbody').innerHTML=sorted.map(d=>{
+    const sc=scoreD(d);const sw=stageW[d.stage]||10;const daysL=dl(d.close);const urgW=daysL<14?20:daysL<30?12:daysL<60?6:0;
+    return`<tr><td style="color:var(--bright);">${d.client}</td><td style="color:var(--gold);font-family:'Orbitron',monospace;">${fv(d.value)}</td><td style="color:var(--glow);">${sw}%</td><td style="color:var(--glow2);">${d.prob}%</td><td style="color:${daysL<14?'var(--danger)':daysL<30?'var(--warn)':'var(--muted)'};">${urgW>0?urgW+'pts':'—'}</td><td><div class="score-badge ${scoreCls(sc)}" style="width:32px;height:32px;">${sc}</div></td><td style="font-size:9px;color:var(--muted);">${scoreRec(d,sc)}</td></tr>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// CONTRACTS
+// ═══════════════════════════════════════════════
+function renderContracts(){
+  document.getElementById('nb-contracts').textContent=S.rfps.length;
+  const urgCount=S.rfps.filter(r=>dl(r.deadline)<=14).length;
+  document.getElementById('rfpSummary').textContent=`${S.rfps.length} tracked · ${urgCount} urgent`;
+  document.getElementById('contractList').innerHTML=S.rfps.map(r=>{
+    const d=dl(r.deadline);const urg=d<=14;
+    return`<div class="contract${urg?' urg':''}">
+      <div class="cf">${r.flag}</div>
+      <div class="cb">
+        <div class="ct">${r.title}</div>
+        <div class="co">${r.org}</div>
+        <div class="cv">${r.value}</div>
+        <div class="cd${urg?' urg':''}">🗓️ ${fd(r.deadline)} · ${d} days ${urg?'⚡ URGENT':''}</div>
+      </div>
+      <div class="ca">
+        <button class="btn btn-pri btn-sm" onclick="rfpToPipeline(${r.id})">+ Pipeline</button>
+        <button class="btn btn-dan btn-sm" onclick="removeRFP(${r.id})">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function addRFP(){
+  const org=document.getElementById('rOrg').value.trim();
+  const title=document.getElementById('rTitle').value.trim();
+  const val=document.getElementById('rVal').value.trim();
+  const dead=document.getElementById('rDead').value;
+  if(!org||!title){alert('Organisation and title required.');return;}
+  S.rfps.push({id:S.nextId++,org,title,value:val,deadline:dead,flag:'📋'});
+  save();logFeed('📋',`RFP tracked: ${org}`,'warn');
+  speak(`R F P tracked for ${org}.`);
+  notify('RFP Tracked',org,'warn');
+  renderContracts();toggleForm('addRFPPanel');
+}
+function removeRFP(id){S.rfps=S.rfps.filter(r=>r.id!==id);save();renderContracts();}
+function rfpToPipeline(id){
+  const r=S.rfps.find(x=>x.id===id);if(!r)return;
+  S.deals.push({id:S.nextId++,client:r.org,name:r.title,value:parseInt((r.value||'0').replace(/\D/g,''))||0,stage:'prospect',prob:25,close:r.deadline,notes:'Source: RFP',created:new Date().toISOString().split('T')[0]});
+  save();logFeed('💼',`RFP → Pipeline: ${r.org}`,'success');speak(`${r.org} added to pipeline.`);renderDash();
+}
+
+// ═══════════════════════════════════════════════
+// TASKS
+// ═══════════════════════════════════════════════
+function renderTasks(){
+  const ac=S.tasks.filter(t=>!t.done);const dn=S.tasks.filter(t=>t.done);
+  document.getElementById('taskCount').textContent=`${ac.length} active · ${dn.length} done`;
+  const catC={'proposal':'tcat-proposal','followup':'tcat-followup','admin':'tcat-admin','business-dev':'tcat-business-dev','compliance':'tcat-compliance','closing':'tcat-closing'};
+  const pi={high:'🔴',medium:'🟡',low:'🟢'};
+  document.getElementById('taskList').innerHTML=[...ac,...dn].map(t=>`<div class="task-item${t.done?' done':''}">
+    <input type="checkbox" class="tchk" ${t.done?'checked':''} onchange="toggleTask(${t.id})">
+    <div class="ttxt">${t.text}</div>
+    <span class="tcat ${catC[t.category]||''}">${t.category}</span>
+    <span>${pi[t.priority]||'🟡'}</span>
+    <button class="btn btn-dan btn-sm" onclick="removeTask(${t.id})">✕</button>
+  </div>`).join('');
+}
+function addTask(){
+  const text=document.getElementById('tInput').value.trim();
+  const priority=document.getElementById('tPri').value;
+  const category=document.getElementById('tCat').value;
+  if(!text)return;
+  S.tasks.unshift({id:S.nextId++,text,priority,category,done:false,created:Date.now()});
+  save();document.getElementById('tInput').value='';
+  logFeed('✅',`Task: ${text}`,'success');renderTasks();
+}
+function toggleTask(id){const t=S.tasks.find(x=>x.id===id);if(t){t.done=!t.done;save();renderTasks();}}
+function removeTask(id){S.tasks=S.tasks.filter(t=>t.id!==id);save();renderTasks();}
+
+// AUTO TASK GENERATOR
+function autoGenerateTasks(){
+  const generated=[];
+  S.deals.forEach(d=>{
+    const daysL=dl(d.close);
+    if(d.stage==='closing'&&!S.tasks.find(t=>!t.done&&t.text.includes(d.client)&&t.category==='closing'))
+      generated.push({text:`Close contract — ${d.client} (${fv(d.value)}) — ${daysL} days left`,priority:'high',category:'closing'});
+    if(d.stage==='proposal'&&daysL<30&&!S.tasks.find(t=>!t.done&&t.text.includes(d.client)&&t.category==='followup'))
+      generated.push({text:`Follow up on proposal — ${d.client} — deadline approaching ${fd(d.close)}`,priority:'high',category:'followup'});
+    if(d.stage==='qualified'&&ageDays(d.created)>21)
+      generated.push({text:`Move ${d.client} to proposal stage — deal aging (${ageDays(d.created)} days)`,priority:'medium',category:'proposal'});
+  });
+  S.rfps.filter(r=>dl(r.deadline)<=21).forEach(r=>{
+    if(!S.tasks.find(t=>!t.done&&t.text.includes(r.org)&&t.category==='proposal'))
+      generated.push({text:`RFP response — ${r.org}: ${r.title} — due ${fd(r.deadline)}`,priority:'high',category:'proposal'});
+  });
+  if(!generated.length){notify('Auto-Tasks','No new tasks needed — pipeline is on track.','success');return;}
+  generated.forEach(t=>S.tasks.unshift({id:S.nextId++,...t,done:false,created:Date.now()}));
+  save();renderTasks();
+  notify('Auto-Tasks Generated',`${generated.length} AI-recommended tasks added`,'success');
+  speak(`${generated.length} priority tasks generated from your pipeline analysis.`);
+  logFeed('⚡',`Auto-generated ${generated.length} tasks from pipeline`,'gold');
+}
+
+// ═══════════════════════════════════════════════
+// WIN / LOSS
+// ═══════════════════════════════════════════════
+function renderWinLoss(){
+  const won=S.closed.filter(c=>c.outcome==='won');
+  const lost=S.closed.filter(c=>c.outcome==='lost');
+  const wr=S.closed.length?Math.round(won.length/S.closed.length*100):0;
+  const wonVal=won.reduce((s,c)=>s+c.value,0);
+  document.getElementById('wlStats').innerHTML=`
+    <div class="wl-card"><div class="wl-lbl">Win Rate</div><div class="wl-val" style="color:var(--glow2);">${wr}%</div></div>
+    <div class="wl-card"><div class="wl-lbl">Revenue Won</div><div class="wl-val" style="color:var(--gold);">${fv(wonVal)}</div></div>
+    <div class="wl-card"><div class="wl-lbl">Deals Closed</div><div class="wl-val" style="color:var(--glow);">${S.closed.length}</div></div>`;
+  // Populate deal dropdown
+  const sel=document.getElementById('wlDeal');
+  sel.innerHTML='<option value="">— Select Deal —</option>'+S.deals.map(d=>`<option value="${d.id}">${d.client} — ${fv(d.value)}</option>`).join('');
+  // Closed list
+  document.getElementById('closedList').innerHTML=S.closed.map(c=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(0,200,255,0.05);">
+    <span style="font-size:16px;">${c.outcome==='won'?'✅':'❌'}</span>
+    <div style="flex:1;"><div style="font-size:10px;color:var(--bright);">${c.client}</div><div style="font-size:8px;color:var(--muted);">${c.name} · ${fd(c.date)}</div>${c.reason?`<div style="font-size:8px;color:var(--muted);margin-top:2px;font-style:italic;">"${c.reason}"</div>`:''}</div>
+    <div style="font-family:'Orbitron',monospace;font-size:13px;color:${c.outcome==='won'?'var(--glow2)':'var(--danger)'};">${fv(c.value)}</div>
+  </div>`).join('');
+}
+function markOutcome(){
+  const id=parseInt(document.getElementById('wlDeal').value);
+  const outcome=document.getElementById('wlOutcome').value;
+  const reason=document.getElementById('wlReason').value.trim();
+  if(!id){alert('Select a deal first.');return;}
+  const d=S.deals.find(x=>x.id===id);if(!d)return;
+  S.closed.unshift({id:d.id,client:d.client,name:d.name,value:d.value,outcome,reason,date:new Date().toISOString().split('T')[0]});
+  S.deals=S.deals.filter(x=>x.id!==id);
+  save();
+  const msg=outcome==='won'?`Deal WON: ${d.client} — ${fv(d.value)}`:`Deal lost: ${d.client}`;
+  logFeed(outcome==='won'?'🏆':'📉',msg,outcome==='won'?'gold':'danger');
+  speak(outcome==='won'?`Excellent. Deal won with ${d.client}. ${fv(d.value)} secured.`:`Deal with ${d.client} marked as lost. Recording for analysis.`,true);
+  notify(outcome==='won'?'Deal Won! 🏆':'Deal Lost',d.client,outcome==='won'?'gold':'danger');
+  renderWinLoss();renderDash();
+  document.getElementById('wlReason').value='';
+}
+
+// ═══════════════════════════════════════════════
+// INTEL
+// ═══════════════════════════════════════════════
+function renderIntel(){
+  document.getElementById('sectorList').innerHTML=[
+    {n:'Municipal Government',v:'$800K–1.2M',icon:'🏛️',note:'Bill C-26 compliance driving urgent demand'},
+    {n:'Healthcare',v:'$600K–900K',icon:'🏥',note:'Epic + cybersecurity integration gap — Aurora differentiates'},
+    {n:'Critical Infrastructure',v:'$400K–700K',icon:'⚡',note:'OT/ICS security mandates expanding 2026'},
+    {n:'Regional Police',v:'$300K–500K',icon:'🚔',note:'Federal compliance + threat intelligence retainers'},
+    {n:'Transit & Utilities',v:'$150K–350K',icon:'🚇',note:'Expanding digital attack surface — ICS exposure'},
+  ].map(s=>`<div class="sector"><div class="si">${s.icon}</div><div class="sb"><div class="sn">${s.n}</div><div class="snt">${s.note}</div></div><div class="sv">${s.v}</div></div>`).join('');
+  document.getElementById('intelTL').innerHTML=[
+    {done:true,now:false,icon:'✓',t:'NEXUS Platform v5.0 Launch',d:'Feb 2026',desc:'Unified intelligence platform ready for enterprise sales.'},
+    {done:false,now:true,icon:'⚡',t:'Burlington + Halton Police Close',d:'March 2026',desc:'Two final-stage deals. Combined value $560K. Priority this week.'},
+    {done:false,now:false,icon:'◈',t:'PSPC Standing Offer Submission',d:'April 2026',desc:'Federal standing offer — unlocks $500K+ pipeline annually.'},
+    {done:false,now:false,icon:'★',t:'$1M Revenue Target Achieved',d:'Q2 2026',desc:'Based on current pipeline and close rates — achievable by June.'},
+  ].map(e=>`<div class="tl-item"><div class="tl-dot${e.done?' done':e.now?' now':''}">${e.icon}</div><div class="tl-body"><div class="tl-t">${e.t}</div><div class="tl-d">${e.d}</div><div class="tl-desc">${e.desc}</div></div></div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+// AI AGENT
+// ═══════════════════════════════════════════════
+const hist=[];
+function buildSys(){
+  const deals=S.deals.map(d=>`${d.client}: ${d.name} — ${fv(d.value)} — ${d.stage} (${d.prob}%) — Close: ${d.close||'TBD'} — Score: ${scoreD(d)}/100`).join('\n');
+  const rfps=S.rfps.map(r=>`${r.org}: ${r.title} — ${r.value} — Deadline: ${r.deadline} (${dl(r.deadline)} days)`).join('\n');
+  const tasks=S.tasks.filter(t=>!t.done).map(t=>`[${t.priority.toUpperCase()}] ${t.text}`).join('\n');
+  const total=fv(S.deals.reduce((s,d)=>s+d.value,0));
+  const weighted=fv(S.deals.reduce((s,d)=>s+d.value*d.prob/100,0));
+  return`You are the ClearGlass Century Revenue Intelligence Agent v5. You work exclusively for Desmond Otieno, COO of ClearGlass Inc., a Canadian cybersecurity firm specialising in municipal cybersecurity governance. Speak with the precision and authority of a senior British intelligence officer. Concise. Specific. Actionable. Every sentence earns its place.
+
+MISSION: Help Desmond Otieno close deals, win contracts, and hit CAD $1,000,000 in revenue for fiscal 2026. 63% achieved. $370K remaining.
+
+CLEARGLASS PRODUCTS: NEXUS Platform (unified intelligence/monitoring), AEGIS (endpoint security), OMEN (geopolitical intelligence), Aurora (healthcare cyber).
+
+MARKET: Canadian municipalities, healthcare, critical infrastructure — Ontario primary. Key levers: Bill C-26, PIPEDA, PSPC, CIS benchmarks, MERX procurement.
+
+LIVE PIPELINE (Total: ${total} | Weighted: ${weighted}):
+${deals}
+
+OPEN RFPs:
+${rfps}
+
+OPEN TASKS:
+${tasks}
+
+RULES: Direct answers only. Reference specific clients and dollar values. Write complete emails and proposals when asked — no placeholders. Flag deadlines within 30 days as urgent. Prioritise by revenue impact × probability × urgency. Never speculate — give your best professional assessment.`;
+}
+async function sendMsg(){
+  const inp=document.getElementById('chatInput');
+  const btn=document.getElementById('sendBtn');
+  const msg=inp.value.trim();if(!msg)return;
+  inp.value='';btn.disabled=true;
+  appendMsg('user',msg);hist.push({role:'user',content:msg});
+  const msgs=document.getElementById('chatMsgs');
+  const tid='t_'+Date.now();
+  const tel=document.createElement('div');
+  tel.className='msg agent';tel.id=tid;
+  tel.innerHTML='<div class="msg-av">CG</div><div class="msg-bubble"><div class="typing"><span></span><span></span><span></span></div></div>';
+  msgs.appendChild(tel);msgs.scrollTop=msgs.scrollHeight;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:buildSys(),messages:hist.slice(-12)})});
+    const data=await res.json();
+    const reply=data.content?.find(b=>b.type==='text')?.text||'Unable to process. Please retry.';
+    document.getElementById(tid)?.remove();
+    appendMsg('agent',reply);hist.push({role:'assistant',content:reply});
+    logFeed('🤖',`Agent: ${msg.slice(0,48)}...`,'success');
+    const first=reply.replace(/<[^>]*>/g,'').split(/[.!?]/)[0];
+    speak(first,true);
+  }catch(err){document.getElementById(tid)?.remove();appendMsg('agent',`⚠️ Connection error: ${err.message}`);}
+  btn.disabled=false;
+  const m=document.getElementById('chatMsgs');if(m)m.scrollTop=m.scrollHeight;
+}
+function appendMsg(role,text){
+  const msgs=document.getElementById('chatMsgs');if(!msgs)return;
+  const d=document.createElement('div');d.className='msg '+role;
+  const fmt=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>').replace(/\*(.*?)\*/g,'<em>$1</em>');
+  d.innerHTML=`<div class="msg-av">${role==='user'?'DO':'CG'}</div><div class="msg-bubble">${fmt}</div>`;
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+}
+function qPrompt(t){document.getElementById('chatInput').value=t;sendMsg();}
+
+// ═══════════════════════════════════════════════
+// NOTIFICATIONS
+// ═══════════════════════════════════════════════
+function notify(title,body,type='success'){
+  const el=document.createElement('div');
+  el.className=`notif ${type}`;
+  el.innerHTML=`<div class="nt">◈ ${title.toUpperCase()}</div><div class="nb">${body}</div>`;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),5200);
+}
+
+// ═══════════════════════════════════════════════
+// HOTKEYS MODAL
+// ═══════════════════════════════════════════════
+function showHotkeys(){document.getElementById('hotkeysModal').classList.add('show');}
+
+// ═══════════════════════════════════════════════
+// EXPORT CSV
+// ═══════════════════════════════════════════════
+function exportCSV(){
+  const rows=[['Client','Opportunity','Value','Stage','Probability','Close Date','Score','Weighted Value']];
+  S.deals.forEach(d=>rows.push([d.client,d.name,d.value,d.stage,d.prob,d.close,scoreD(d),Math.round(d.value*d.prob/100)]));
+  const csv=rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='clearglass-pipeline-'+new Date().toISOString().split('T')[0]+'.csv';a.click();
+  logFeed('↓','Pipeline exported to CSV','success');notify('CSV Exported','Pipeline data downloaded','success');
+}
+
+// ═══════════════════════════════════════════════
+// TICKER
+// ═══════════════════════════════════════════════
+function buildTicker(){
+  const items=[
+    `🏛️ Burlington RFP <span class="tv">$280K · 18 Mar</span>`,
+    `🏥 PHSA BC Network Security <span class="tv">$450K</span>`,
+    `🇨🇦 PSPC Standing Offer <span class="tv">OPEN</span>`,
+    `⚠️ Bill C-26 Enforcement <span class="td">Q3 2026</span>`,
+    `◈ Pipeline <span class="tg">$2.14M</span>`,
+    `🏆 Revenue Target $1M <span class="tv">63%</span>`,
+    `🔔 Hamilton Health Sciences <span class="tv">$320K</span>`,
+    `📈 Win Rate <span class="tg">38%</span>`,
+    `⚡ Halton Deadline <span class="td">12 days</span>`,
+    `★ Halton Police — Closing <span class="tv">$180K · 90%</span>`,
+  ];
+  const t=document.getElementById('tickerTrack');
+  if(t)t.innerHTML=[...items,...items].map(i=>`<span class="ti">${i}</span>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+// BOOT SEQUENCE
+// ═══════════════════════════════════════════════
+const bootLogs=[
+  'Establishing secure channel...',
+  'Authenticating: Desmond Otieno · COO · ClearGlass Inc...',
+  'Loading pipeline data — 7 active deals...',
+  'Activating Monte Carlo forecast engine...',
+  'Initialising deal scoring algorithm...',
+  'Activating AI Revenue Agent...',
+  'Calibrating voice engine — en-GB...',
+  'Loading market intelligence feeds...',
+  'Scanning RFP landscape — 4 open tenders...',
+  'All systems nominal. Welcome, Desmond.',
+];
+function boot(){
+  const bar=document.getElementById('bootBar');const log=document.getElementById('bootLog');let step=0;
+  const iv=setInterval(()=>{
+    if(step>=bootLogs.length){
+      clearInterval(iv);
+      setTimeout(()=>{
+        document.getElementById('boot').classList.add('hidden');
+        document.getElementById('app').style.opacity='1';
+        buildTicker();renderDash();
+        setTimeout(()=>speak('Good day, Desmond. ClearGlass Century version five is online. Your pipeline stands at two point one four million dollars. You are sixty three percent to your one million revenue target. Highest urgency: close Halton Police and submit the Mississauga R F P.',true),700);
+        scheduleAlerts();
+      },300);return;
+    }
+    bar.style.width=Math.round((step+1)/bootLogs.length*100)+'%';
+    log.textContent=bootLogs[step];step++;
+  },320);
+}
+function scheduleAlerts(){
+  const as=[
+    {d:28000,t:'Urgent: Halton RFP closes in 12 days.',b:'Deadline 12 March. Proposal must be submitted.',type:'danger',icon:'⚠️',v:'Alert. Halton Region R F P closes in 12 days. Submit your proposal immediately.'},
+    {d:65000,t:'Advisory: Halton Police close pending.',b:'Contract ready for signature. Follow up today.',type:'warn',icon:'📋',v:'Halton Police contract is ready for signature. Follow up today, Desmond.'},
+    {d:110000,t:'New RFP: Halton Hills IT Security $195K',b:'MERX posting matched ClearGlass profile.',type:'success',icon:'🔔',v:'New R F P detected on MERX. Halton Hills IT Security Services. Estimated value one hundred ninety five thousand dollars.'},
+    {d:165000,t:'Joseph Brant: Legal confirmation received.',b:'Contract proceeding to final signature stage.',type:'success',icon:'✅',v:'Good news. Joseph Brant Hospital legal team has confirmed. Contract proceeding to signature.'},
+  ];
+  as.forEach(a=>setTimeout(()=>{notify(a.t,a.b,a.type);logFeed(a.icon,a.b,a.type==='danger'?'danger':a.type==='warn'?'warn':'success');speak(a.v,true);},a.d));
+}
+boot();
+</script>
+</body>
+</html>

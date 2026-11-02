@@ -1,0 +1,2736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob:; img-src 'self' data: blob:; media-src 'self' data:; font-src 'self' data:;">
+  <title>CLEARGLASSINC // Guardian Command Nexus</title>
+  <style>
+    :root{
+      --bg:#050807;
+      --bg-2:#0a0f0d;
+      --panel:rgba(10,16,14,.82);
+      --panel-2:rgba(14,22,19,.92);
+      --panel-3:rgba(17,28,24,.96);
+      --line:rgba(123,173,137,.16);
+      --line-2:rgba(169,216,180,.34);
+      --text:#ecf5ef;
+      --muted:#9caea2;
+      --soft:#6e7d74;
+      --green:#9aff88;
+      --green-2:#4dffb2;
+      --amber:#ffdb69;
+      --red:#ff7189;
+      --cyan:#79d8ff;
+      --blue:#6ca0ff;
+      --shadow:0 28px 80px rgba(0,0,0,.45);
+      --radius:20px;
+      --radius-sm:12px;
+      --radius-lg:28px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --sidebar: 252px;
+      --header: 74px;
+    }
+
+    *{ box-sizing:border-box; }
+    html, body { height:100%; }
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(circle at 15% 0%, rgba(89,255,152,.08), transparent 28%),
+        radial-gradient(circle at 100% 0%, rgba(121,216,255,.07), transparent 24%),
+        linear-gradient(180deg, #050807 0%, #090d0b 46%, #050806 100%);
+      overflow:hidden;
+    }
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.012) 1px, transparent 1px);
+      background-size: 34px 34px;
+      opacity:.18;
+      z-index:0;
+    }
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(transparent 0%, rgba(255,255,255,.02) 50%, transparent 100%);
+      background-size:100% 5px;
+      mix-blend-mode:screen;
+      opacity:.18;
+      z-index:2;
+    }
+
+    .hidden{ display:none !important; }
+    .app-shell{
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns: var(--sidebar) 1fr;
+      grid-template-rows: var(--header) 1fr;
+      height:100vh;
+      width:100vw;
+      gap:16px;
+      padding:16px;
+    }
+
+    .boot{
+      position:fixed;
+      inset:0;
+      z-index:30;
+      background:
+        radial-gradient(circle at center, rgba(154,255,136,.08), transparent 30%),
+        linear-gradient(180deg, #030504 0%, #070907 100%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transition: opacity .45s ease, visibility .45s ease;
+    }
+    .boot.hidden{
+      opacity:0;
+      visibility:hidden;
+    }
+    .boot-card{
+      width:min(760px, calc(100vw - 48px));
+      background:rgba(7,10,9,.88);
+      border:1px solid rgba(169,216,180,.2);
+      border-radius:24px;
+      box-shadow:var(--shadow);
+      padding:28px;
+      overflow:hidden;
+      position:relative;
+    }
+    .boot-card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(90deg, transparent, rgba(154,255,136,.04), transparent);
+      transform:translateX(-100%);
+      animation: sweep 4s linear infinite;
+      pointer-events:none;
+    }
+
+    @keyframes sweep{
+      to{ transform:translateX(100%); }
+    }
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(169,216,180,.18);
+      background:rgba(255,255,255,.02);
+      color:var(--muted);
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+    }
+
+    .boot h1, .pane h2, .panel-title{
+      margin:0;
+      letter-spacing:.04em;
+    }
+
+    .boot-grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns:1.35fr .95fr;
+      gap:18px;
+    }
+    .terminal{
+      background:#050706;
+      border:1px solid rgba(169,216,180,.14);
+      border-radius:18px;
+      min-height:280px;
+      padding:14px;
+      font-family:var(--mono);
+      font-size:12px;
+      line-height:1.62;
+      color:#cfead3;
+      overflow:auto;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+    }
+    .terminal .ok{ color:var(--green); }
+    .terminal .warn{ color:var(--amber); }
+    .terminal .err{ color:var(--red); }
+
+    .boot-side{
+      display:grid;
+      gap:14px;
+      align-content:start;
+    }
+
+    .badge-grid, .meta-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:10px;
+    }
+
+    .chip, .meta{
+      border:1px solid rgba(169,216,180,.14);
+      background:rgba(255,255,255,.02);
+      border-radius:14px;
+      padding:12px;
+    }
+    .chip b, .meta b{
+      display:block;
+      font-size:11px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      margin-bottom:6px;
+    }
+    .chip span, .meta span{
+      font-size:14px;
+      font-weight:700;
+    }
+
+    .progress{
+      height:10px;
+      border-radius:999px;
+      overflow:hidden;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(169,216,180,.12);
+      margin:12px 0 10px;
+    }
+    .progress > div{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg, rgba(154,255,136,.16), rgba(154,255,136,.95), rgba(121,216,255,.9));
+      box-shadow:0 0 22px rgba(154,255,136,.22);
+      transition:width .28s ease;
+    }
+
+    .topbar{
+      grid-column:1 / -1;
+      display:grid;
+      grid-template-columns: 1fr auto auto;
+      gap:16px;
+      align-items:center;
+      height:100%;
+      padding:16px 18px;
+      border-radius:var(--radius-lg);
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(12,18,16,.92), rgba(9,13,11,.94));
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .topbar::after{
+      content:"";
+      position:absolute;
+      inset:auto 0 0 0;
+      height:2px;
+      background:linear-gradient(90deg, transparent, rgba(154,255,136,.55), transparent);
+      opacity:.7;
+    }
+
+    .brand{
+      display:grid;
+      gap:4px;
+    }
+    .brand .title{
+      font-size:20px;
+      font-weight:850;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .brand .subtitle{
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+    }
+
+    .classification{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,113,137,.08);
+      border:1px solid rgba(255,113,137,.18);
+      color:#ffd7dd;
+      font-size:11px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+    }
+
+    .kpi-strip{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .kpi{
+      min-width:132px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.02);
+      padding:10px 12px;
+    }
+    .kpi b{
+      display:block;
+      color:var(--muted);
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.15em;
+      margin-bottom:4px;
+    }
+    .kpi span{
+      font-family:var(--mono);
+      font-size:18px;
+      font-weight:800;
+      color:var(--green);
+    }
+
+    .sidebar{
+      border-radius:var(--radius-lg);
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(10,16,14,.95), rgba(8,12,11,.96));
+      box-shadow:var(--shadow);
+      padding:16px;
+      display:grid;
+      grid-template-rows:auto auto 1fr auto;
+      gap:16px;
+      min-height:0;
+    }
+
+    .nav-section{
+      display:grid;
+      gap:8px;
+    }
+    .nav-label{
+      color:var(--soft);
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      padding:0 8px;
+    }
+    .nav-btn{
+      appearance:none;
+      border:1px solid transparent;
+      background:rgba(255,255,255,.02);
+      color:var(--text);
+      border-radius:16px;
+      padding:12px 14px;
+      text-align:left;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      transition:transform .18s ease, border-color .18s ease, background .18s ease;
+      font-family:inherit;
+    }
+    .nav-btn:hover{ transform:translateX(2px); border-color:var(--line); }
+    .nav-btn.active{
+      background:linear-gradient(180deg, rgba(154,255,136,.08), rgba(255,255,255,.03));
+      border-color:rgba(154,255,136,.26);
+      box-shadow: inset 0 0 0 1px rgba(154,255,136,.08), 0 0 0 1px rgba(255,255,255,.02);
+    }
+    .nav-btn .left{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+    .nav-btn .icon{
+      width:34px;
+      height:34px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.05);
+      font-family:var(--mono);
+      color:var(--green);
+      font-size:13px;
+    }
+    .nav-btn .meta{
+      padding:0;
+      border:0;
+      background:transparent;
+      display:grid;
+      gap:2px;
+      min-width:0;
+    }
+    .nav-btn .meta strong{
+      display:block;
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .nav-btn .meta small{
+      display:block;
+      color:var(--muted);
+      font-size:11px;
+      letter-spacing:.09em;
+      text-transform:uppercase;
+    }
+
+    .sidebar-footer{
+      border-top:1px solid var(--line);
+      padding-top:14px;
+      display:grid;
+      gap:10px;
+    }
+    .mini-stat{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background:rgba(255,255,255,.02);
+      font-size:12px;
+      color:var(--muted);
+      font-family:var(--mono);
+    }
+    .mini-stat b{ color:var(--text); font-size:14px; }
+
+    .workspace{
+      display:grid;
+      gap:16px;
+      min-height:0;
+    }
+
+    .pane{
+      min-height:0;
+      border-radius:var(--radius-lg);
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(10,15,14,.92), rgba(8,11,10,.96));
+      box-shadow:var(--shadow);
+      padding:18px;
+      display:grid;
+      grid-template-rows:auto 1fr;
+      gap:16px;
+      overflow:hidden;
+    }
+
+    .pane-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:18px;
+      flex-wrap:wrap;
+    }
+    .pane-headline{
+      display:grid;
+      gap:6px;
+    }
+    .pane-headline h2{
+      font-size:24px;
+      text-transform:uppercase;
+    }
+    .pane-headline p{
+      margin:0;
+      color:var(--muted);
+      max-width:72ch;
+      font-size:13px;
+      line-height:1.5;
+    }
+
+    .toolbar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .btn, .field, select{
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      font:inherit;
+      padding:11px 14px;
+      outline:none;
+    }
+    .btn{
+      cursor:pointer;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      font-size:12px;
+      font-weight:750;
+      transition:transform .16s ease, border-color .16s ease, background .16s ease;
+    }
+    .btn:hover{
+      transform:translateY(-1px);
+      border-color:var(--line-2);
+    }
+    .btn.primary{
+      background:linear-gradient(180deg, rgba(154,255,136,.12), rgba(154,255,136,.05));
+      border-color:rgba(154,255,136,.28);
+      color:#f2fff0;
+    }
+    .btn.warn{
+      background:linear-gradient(180deg, rgba(255,219,105,.12), rgba(255,219,105,.04));
+      border-color:rgba(255,219,105,.26);
+    }
+    .btn.danger{
+      background:linear-gradient(180deg, rgba(255,113,137,.14), rgba(255,113,137,.05));
+      border-color:rgba(255,113,137,.26);
+    }
+
+    .content-scroll{
+      min-height:0;
+      overflow:auto;
+      padding-right:4px;
+    }
+    .content-scroll::-webkit-scrollbar,
+    .terminal::-webkit-scrollbar,
+    textarea::-webkit-scrollbar{ width:10px; height:10px; }
+    .content-scroll::-webkit-scrollbar-thumb,
+    .terminal::-webkit-scrollbar-thumb,
+    textarea::-webkit-scrollbar-thumb{
+      background:rgba(255,255,255,.08);
+      border-radius:999px;
+      border:2px solid transparent;
+      background-clip:padding-box;
+    }
+
+    .grid{
+      display:grid;
+      gap:16px;
+    }
+    .grid.cols-12{ grid-template-columns:repeat(12, minmax(0,1fr)); }
+    .span-3{ grid-column:span 3; }
+    .span-4{ grid-column:span 4; }
+    .span-5{ grid-column:span 5; }
+    .span-6{ grid-column:span 6; }
+    .span-7{ grid-column:span 7; }
+    .span-8{ grid-column:span 8; }
+    .span-12{ grid-column:span 12; }
+
+    .card{
+      border-radius:20px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.028), rgba(255,255,255,.016));
+      padding:16px;
+      position:relative;
+      overflow:hidden;
+      min-height:80px;
+    }
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(135deg, rgba(154,255,136,.04), transparent 35%);
+      pointer-events:none;
+    }
+
+    .card-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      margin-bottom:12px;
+    }
+    .card-head h3{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+    .card-head small{
+      color:var(--muted);
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+    }
+
+    .metric{
+      display:grid;
+      gap:6px;
+    }
+    .metric .value{
+      font-family:var(--mono);
+      font-size:30px;
+      font-weight:900;
+      letter-spacing:.02em;
+      color:var(--green);
+    }
+    .metric .delta{
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+
+    .stack{
+      display:grid;
+      gap:12px;
+    }
+    .list{
+      display:grid;
+      gap:10px;
+    }
+    .row-item{
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
+      border:1px solid rgba(255,255,255,.05);
+      border-radius:14px;
+      padding:12px;
+      background:rgba(255,255,255,.02);
+      align-items:flex-start;
+    }
+    .row-item strong{
+      display:block;
+      font-size:13px;
+      letter-spacing:.05em;
+      text-transform:uppercase;
+    }
+    .row-item p{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.45;
+    }
+    .row-item .right{
+      text-align:right;
+      min-width:112px;
+      font-family:var(--mono);
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .status{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      white-space:nowrap;
+      font-size:11px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:var(--text);
+    }
+    .status::before{
+      content:"";
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background:var(--green);
+      box-shadow:0 0 12px currentColor;
+      display:inline-block;
+    }
+    .status.warn::before{ background:var(--amber); }
+    .status.danger::before{ background:var(--red); }
+    .status.info::before{ background:var(--cyan); }
+
+    .bar{
+      height:10px;
+      border-radius:999px;
+      overflow:hidden;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.04);
+    }
+    .bar span{
+      display:block;
+      height:100%;
+      border-radius:999px;
+      background:linear-gradient(90deg, rgba(154,255,136,.18), rgba(154,255,136,.92));
+    }
+
+    .split{
+      display:grid;
+      grid-template-columns:1.3fr .95fr;
+      gap:16px;
+    }
+
+    canvas.panel-canvas{
+      width:100%;
+      height:100%;
+      min-height:260px;
+      display:block;
+      border-radius:18px;
+      background:
+        radial-gradient(circle at center, rgba(154,255,136,.06), transparent 40%),
+        linear-gradient(180deg, rgba(4,6,5,.98), rgba(8,12,10,.98));
+      border:1px solid rgba(169,216,180,.08);
+    }
+
+    .table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:12px;
+      font-family:var(--mono);
+    }
+    .table th, .table td{
+      border-bottom:1px solid rgba(255,255,255,.05);
+      padding:10px 8px;
+      text-align:left;
+      vertical-align:top;
+    }
+    .table th{
+      color:var(--muted);
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      font-weight:700;
+    }
+    .table td strong{
+      display:block;
+      font-family:var(--sans);
+      font-size:13px;
+      letter-spacing:.05em;
+    }
+
+    .log{
+      font-family:var(--mono);
+      display:grid;
+      gap:8px;
+      font-size:12px;
+    }
+    .log-line{
+      display:grid;
+      grid-template-columns:112px 84px 1fr;
+      gap:12px;
+      border-bottom:1px solid rgba(255,255,255,.05);
+      padding-bottom:8px;
+      color:#d6e6d8;
+    }
+    .log-line time{ color:var(--muted); }
+    .log-line code{
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.05);
+      padding:2px 6px;
+      border-radius:8px;
+      color:var(--cyan);
+      display:inline-block;
+      width:max-content;
+    }
+
+    .console{
+      display:grid;
+      gap:12px;
+      min-height:0;
+    }
+    .command-line{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+    }
+    textarea{
+      resize:vertical;
+      min-height:126px;
+      max-height:260px;
+      width:100%;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:rgba(3,5,4,.8);
+      color:var(--text);
+      padding:14px;
+      font: 13px/1.55 var(--mono);
+      outline:none;
+    }
+    .assistant-bubble{
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:rgba(255,255,255,.02);
+      padding:14px;
+      display:grid;
+      gap:10px;
+    }
+    .assistant-bubble h4{
+      margin:0;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      color:var(--muted);
+    }
+    .assistant-bubble p{
+      margin:0;
+      font-size:13px;
+      line-height:1.55;
+      color:#e9f2eb;
+    }
+
+    .payload{
+      display:grid;
+      gap:8px;
+    }
+    .pill-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border-radius:999px;
+      padding:8px 10px;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.06);
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:var(--muted);
+    }
+
+    .banner{
+      border-radius:18px;
+      padding:14px 16px;
+      border:1px solid rgba(255,113,137,.2);
+      background:linear-gradient(180deg, rgba(255,113,137,.08), rgba(255,113,137,.03));
+      color:#ffe6eb;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
+    .arch{
+      display:grid;
+      gap:14px;
+      font-family:var(--mono);
+      font-size:12px;
+      color:#dbe7de;
+      line-height:1.65;
+    }
+    .codeblock{
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:rgba(2,4,3,.88);
+      padding:16px;
+      white-space:pre-wrap;
+      overflow:auto;
+    }
+
+    .footer-note{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.55;
+    }
+
+    .toast-layer{
+      position:fixed;
+      right:16px;
+      bottom:16px;
+      z-index:40;
+      display:grid;
+      gap:10px;
+      width:min(420px, calc(100vw - 32px));
+    }
+    .toast{
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:rgba(8,12,10,.96);
+      padding:14px 16px;
+      box-shadow:var(--shadow);
+      animation:slideUp .25s ease;
+    }
+    .toast strong{
+      display:block;
+      font-size:12px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      margin-bottom:6px;
+    }
+    .toast p{
+      margin:0;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.5;
+    }
+    .toast.danger{ border-color:rgba(255,113,137,.28); }
+    .toast.warn{ border-color:rgba(255,219,105,.28); }
+    .toast.info{ border-color:rgba(121,216,255,.28); }
+
+    @keyframes slideUp{
+      from{ transform:translateY(12px); opacity:0; }
+      to{ transform:translateY(0); opacity:1; }
+    }
+
+    @media (max-width: 1180px){
+      .app-shell{
+        grid-template-columns: 1fr;
+        grid-template-rows: var(--header) auto 1fr;
+      }
+      .sidebar{
+        grid-row:auto;
+        grid-template-rows:auto auto;
+      }
+      .split{ grid-template-columns:1fr; }
+      .span-3, .span-4, .span-5, .span-6, .span-7, .span-8, .span-12{ grid-column:span 12; }
+      .boot-grid{ grid-template-columns:1fr; }
+    }
+
+    @media (max-width: 760px){
+      .topbar{ grid-template-columns:1fr; }
+      .kpi-strip{ justify-content:flex-start; }
+      .command-line{ grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div id="boot" class="boot">
+    <div class="boot-card">
+      <span class="eyebrow">NEXUS OMEGA // hardened startup profile</span>
+      <div style="margin-top:14px; display:grid; gap:8px;">
+        <h1 style="font-size:34px; text-transform:uppercase;">Defense-Grade Operations Console</h1>
+        <p style="margin:0; color:var(--muted); max-width:72ch; line-height:1.6;">
+          Initializing shell kernel, reactive state fabric, simulation grid, audit ledger, operator routing, and AI command orchestration.
+        </p>
+      </div>
+      <div class="boot-grid">
+        <div class="terminal" id="boot-log"></div>
+        <div class="boot-side">
+          <div class="badge-grid">
+            <div class="chip"><b>Integrity</b><span id="boot-integrity">97.2%</span></div>
+            <div class="chip"><b>Trust Domain</b><span>Local Sandbox</span></div>
+            <div class="chip"><b>Runtime</b><span>Single-file / No deps</span></div>
+            <div class="chip"><b>Audit Mode</b><span>Strict</span></div>
+          </div>
+          <div class="meta-grid">
+            <div class="meta"><b>Operator</b><span>CONTROL-01</span></div>
+            <div class="meta"><b>Condition</b><span id="boot-condition">DELTA-2</span></div>
+            <div class="meta"><b>Modules</b><span id="boot-module-count">08</span></div>
+            <div class="meta"><b>Event Bus</b><span>Online</span></div>
+          </div>
+          <div>
+            <div class="progress"><div id="boot-progress"></div></div>
+            <div class="footer-note">Boot sequence simulates compartment checks, capability registration, and subsystem attestation. This is an operations UI and does not include offensive or weapons controls.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="title">
+          <span>NEXUS OMEGA</span>
+          <span class="classification">Restricted // Operator Console</span>
+        </div>
+        <div class="subtitle">Reactive shell · event-driven modules · simulation and audit fabric</div>
+      </div>
+      <div class="kpi-strip" id="top-kpis"></div>
+      <div class="kpi-strip">
+        <div class="kpi"><b>Clock</b><span id="clock">--:--:--</span></div>
+        <div class="kpi"><b>Uptime</b><span id="uptime">00:00:00</span></div>
+      </div>
+    </header>
+
+    <aside class="sidebar">
+      <div class="eyebrow">Module Registry</div>
+      <nav id="nav" class="nav-section"></nav>
+      <div class="nav-section">
+        <div class="nav-label">Quick Actions</div>
+        <button class="btn primary" id="quick-escalate">Escalate anomaly</button>
+        <button class="btn warn" id="quick-task">Prioritize task</button>
+        <button class="btn danger" id="quick-lockdown">Lockdown mode</button>
+      </div>
+      <div class="sidebar-footer">
+        <div class="mini-stat"><span>Threat posture</span><b id="mini-threat">MODERATE</b></div>
+        <div class="mini-stat"><span>Queue depth</span><b id="mini-queue">00</b></div>
+        <div class="mini-stat"><span>Event rate</span><b id="mini-event-rate">0.0/s</b></div>
+      </div>
+    </aside>
+
+    <main id="workspace" class="workspace"></main>
+  </div>
+
+  <div id="toast-layer" class="toast-layer"></div>
+
+  <script>
+    (() => {
+      const nowISO = () => new Date().toISOString();
+      const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
+      const rand = (min, max) => Math.random() * (max - min) + min;
+      const sample = arr => arr[Math.floor(Math.random() * arr.length)];
+      const uid = (prefix='id') => prefix + '_' + Math.random().toString(36).slice(2, 10);
+      const fmtTime = (d = new Date()) => d.toLocaleTimeString([], { hour12:false });
+      const fmtDateTime = (iso) => new Date(iso).toLocaleString([], { hour12:false });
+      const pad = n => String(n).padStart(2, '0');
+      const uptimeFmt = ms => {
+        const s = Math.floor(ms / 1000);
+        const h = Math.floor(s / 3600);
+        const m = Math.floor((s % 3600) / 60);
+        const sec = s % 60;
+        return [pad(h), pad(m), pad(sec)].join(':');
+      };
+      const pct = n => Math.round(n * 100);
+
+      class EventBus {
+        constructor() {
+          this.listeners = new Map();
+          this.wildcards = new Set();
+          this.eventCount = 0;
+          this.history = [];
+          this.windowStart = performance.now();
+        }
+        on(type, handler) {
+          if (type === '*') {
+            this.wildcards.add(handler);
+            return () => this.wildcards.delete(handler);
+          }
+          if (!this.listeners.has(type)) this.listeners.set(type, new Set());
+          this.listeners.get(type).add(handler);
+          return () => this.listeners.get(type)?.delete(handler);
+        }
+        emit(type, payload = {}, meta = {}) {
+          const event = {
+            id: uid('evt'),
+            type,
+            payload,
+            at: nowISO(),
+            meta: { source: meta.source || 'system', ...meta }
+          };
+          this.eventCount += 1;
+          this.history.unshift(event);
+          this.history = this.history.slice(0, 200);
+          const specific = this.listeners.get(type);
+          if (specific) [...specific].forEach(fn => fn(event));
+          [...this.wildcards].forEach(fn => fn(event));
+          return event;
+        }
+        rate() {
+          const elapsed = (performance.now() - this.windowStart) / 1000;
+          return elapsed <= 0 ? 0 : this.eventCount / elapsed;
+        }
+      }
+
+      class Store {
+        constructor(initialState, bus) {
+          this.state = structuredClone(initialState);
+          this.bus = bus;
+          this.reducers = new Map();
+          this.subscribers = new Set();
+        }
+        registerReducer(type, reducer) {
+          this.reducers.set(type, reducer);
+        }
+        getState() {
+          return this.state;
+        }
+        subscribe(selector, listener) {
+          const sub = { selector, listener, value: selector(this.state) };
+          this.subscribers.add(sub);
+          listener(sub.value, this.state, null);
+          return () => this.subscribers.delete(sub);
+        }
+        notify(prev) {
+          for (const sub of this.subscribers) {
+            const next = sub.selector(this.state);
+            if (JSON.stringify(next) !== JSON.stringify(sub.value)) {
+              const old = sub.value;
+              sub.value = structuredClone(next);
+              sub.listener(next, this.state, old, prev);
+            }
+          }
+        }
+        dispatch(type, payload = {}, meta = {}) {
+          const reducer = this.reducers.get(type);
+          const prev = structuredClone(this.state);
+          if (reducer) {
+            this.state = reducer(this.state, payload, meta) || this.state;
+          }
+          this.bus.emit(type, payload, meta);
+          this.notify(prev);
+        }
+      }
+
+      class SimulationEngine {
+        constructor(store, bus) {
+          this.store = store;
+          this.bus = bus;
+          this.agents = new Map();
+          this.timer = null;
+          this.interval = 1000;
+        }
+        registerAgent(id, handler) {
+          this.agents.set(id, handler);
+          return () => this.agents.delete(id);
+        }
+        setIntervalMs(ms) {
+          this.interval = ms;
+          if (this.timer) {
+            this.stop();
+            this.start();
+          }
+        }
+        tick() {
+          const state = this.store.getState();
+          if (state.sim.paused) return;
+          this.store.dispatch('SIM_TICK', { at: nowISO() }, { source:'sim' });
+          const frame = this.store.getState();
+          for (const [id, agent] of this.agents.entries()) {
+            try {
+              agent({ id, state: frame, store:this.store, bus:this.bus });
+            } catch (error) {
+              this.bus.emit('AGENT_ERROR', { agent:id, message:error.message }, { source:'sim' });
+            }
+          }
+        }
+        start() {
+          if (this.timer) return;
+          this.timer = setInterval(() => this.tick(), this.interval);
+        }
+        stop() {
+          if (!this.timer) return;
+          clearInterval(this.timer);
+          this.timer = null;
+        }
+      }
+
+      class Shell {
+        constructor({ bus, store }) {
+          this.bus = bus;
+          this.store = store;
+          this.modules = [];
+          this.currentId = null;
+          this.activeCleanup = [];
+          this.workspace = document.getElementById('workspace');
+          this.nav = document.getElementById('nav');
+        }
+        register(module) {
+          this.modules.push(module);
+          module.onInit?.(this.context());
+        }
+        context() {
+          return {
+            bus: this.bus,
+            store: this.store,
+            shell: this,
+            selectors,
+            utils: { fmtTime, fmtDateTime, uptimeFmt, clamp, rand, sample, uid }
+          };
+        }
+        buildNav() {
+          this.nav.innerHTML = '';
+          const group = document.createElement('div');
+          group.className = 'nav-label';
+          group.textContent = 'Operational Views';
+          this.nav.appendChild(group);
+          this.modules.forEach(mod => {
+            const btn = document.createElement('button');
+            btn.className = 'nav-btn';
+            btn.dataset.module = mod.id;
+            btn.innerHTML = `
+              <span class="left">
+                <span class="icon">${mod.icon || '[]'}</span>
+                <span class="meta"><strong>${mod.label}</strong><small>${mod.tagline || 'subsystem'}</small></span>
+              </span>
+              <span class="status ${mod.statusTone || 'info'}">${mod.statusText || 'active'}</span>`;
+            btn.addEventListener('click', () => this.activate(mod.id));
+            this.nav.appendChild(btn);
+          });
+        }
+        activate(id) {
+          if (this.currentId === id) return;
+          this.activeCleanup.forEach(fn => fn?.());
+          this.activeCleanup = [];
+          const prev = this.modules.find(m => m.id === this.currentId);
+          prev?.onDeactivate?.(this.context());
+          this.currentId = id;
+          const mod = this.modules.find(m => m.id === id) || this.modules[0];
+          if (!mod) return;
+          this.workspace.innerHTML = '';
+          const pane = document.createElement('section');
+          pane.className = 'pane';
+          this.workspace.appendChild(pane);
+          pane.innerHTML = `
+            <div class="pane-header">
+              <div class="pane-headline">
+                <h2>${mod.label}</h2>
+                <p>${mod.description || ''}</p>
+              </div>
+              <div class="toolbar" id="toolbar"></div>
+            </div>
+            <div class="content-scroll" id="pane-content"></div>`;
+          const toolbar = pane.querySelector('#toolbar');
+          (mod.actions || []).forEach(action => {
+            const button = document.createElement('button');
+            button.className = 'btn ' + (action.tone || '');
+            button.textContent = action.label;
+            button.addEventListener('click', () => action.handler(this.context()));
+            toolbar.appendChild(button);
+          });
+          const cleanup = mod.render(this.context(), pane.querySelector('#pane-content')) || [];
+          this.activeCleanup = Array.isArray(cleanup) ? cleanup : [cleanup];
+          mod.onActivate?.(this.context());
+          [...this.nav.querySelectorAll('.nav-btn')].forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.module === mod.id);
+          });
+          this.bus.emit('MODULE_ACTIVATED', { module:id }, { source:'shell' });
+        }
+      }
+
+      const initialState = {
+        meta: {
+          bootedAt: Date.now(),
+          operator: 'CONTROL-01',
+          classification: 'RESTRICTED',
+          posture: 'DELTA-2'
+        },
+        sim: {
+          tick: 0,
+          paused: false,
+          speed: 1,
+          lastTickAt: nowISO()
+        },
+        pipeline: [
+          { id:'tsk-301', name:'Signal triage', owner:'OMEGA-4', priority:'high', confidence:0.86, status:'active', eta:18, lane:'intel' },
+          { id:'tsk-302', name:'Sector scan refresh', owner:'GHOST-2', priority:'medium', confidence:0.73, status:'queued', eta:42, lane:'surveillance' },
+          { id:'tsk-303', name:'Air quality anomaly review', owner:'VECTOR-7', priority:'high', confidence:0.91, status:'active', eta:11, lane:'environment' },
+          { id:'tsk-304', name:'Comms integrity sweep', owner:'STATIC-1', priority:'low', confidence:0.69, status:'queued', eta:26, lane:'systems' }
+        ],
+        threats: [
+          { id:'thr-101', zone:'Grid A3', level:42, vector:'signal', confidence:0.61, status:'tracking' },
+          { id:'thr-102', zone:'Grid F7', level:67, vector:'thermal', confidence:0.74, status:'elevated' },
+          { id:'thr-103', zone:'Grid C2', level:29, vector:'traffic', confidence:0.52, status:'observed' }
+        ],
+        systems: [
+          { id:'sys-core', label:'Core shell', health:98, latency:12, power:87, state:'online' },
+          { id:'sys-bus', label:'Event bus', health:97, latency:9, power:92, state:'online' },
+          { id:'sys-ai', label:'AI orchestration', health:94, latency:31, power:81, state:'online' },
+          { id:'sys-sim', label:'Simulation grid', health:91, latency:24, power:76, state:'online' },
+          { id:'sys-rec', label:'Audit recorder', health:99, latency:7, power:90, state:'online' }
+        ],
+        env: {
+          temp: 21.4,
+          pressure: 101.8,
+          aqi: 48,
+          co2: 604,
+          humidity: 37
+        },
+        commands: [
+          { id:'cmd-811', label:'Reconcile anomaly narrative', status:'queued', owner:'AI', createdAt:nowISO() },
+          { id:'cmd-812', label:'Refresh surveillance sweep', status:'running', owner:'OPS', createdAt:nowISO() }
+        ],
+        ai: {
+          transcript: [],
+          proactive: [],
+          suggestions: ['status summary', 'show anomalies', 'prioritize next task', 'lockdown status'],
+          lastResponse: null
+        },
+        audit: [],
+        ui: {
+          activeModule:'overview',
+          banner:null
+        }
+      };
+
+      const bus = new EventBus();
+      const store = new Store(initialState, bus);
+      const selectors = {
+        posture: s => {
+          const maxThreat = Math.max(...s.threats.map(t => t.level), 0);
+          if (maxThreat >= 85) return 'CRITICAL';
+          if (maxThreat >= 65) return 'ELEVATED';
+          if (maxThreat >= 40) return 'MODERATE';
+          return 'STABLE';
+        },
+        queueDepth: s => s.commands.filter(c => c.status !== 'done').length,
+        activeTasks: s => s.pipeline.filter(t => t.status === 'active').length,
+        threatSummary: s => ({
+          average: s.threats.reduce((a, t) => a + t.level, 0) / Math.max(1, s.threats.length),
+          max: Math.max(...s.threats.map(t => t.level), 0),
+          critical: s.threats.filter(t => t.level >= 75).length
+        }),
+        systemHealth: s => Math.round(s.systems.reduce((a, x) => a + x.health, 0) / Math.max(1, s.systems.length)),
+        readiness: s => Math.round(
+          (selectors.systemHealth(s) * 0.45) +
+          ((100 - Math.min(100, selectors.threatSummary(s).average)) * 0.25) +
+          ((s.env.aqi < 80 ? 100 : 70) * 0.10) +
+          ((100 - selectors.queueDepth(s) * 6) * 0.20)
+        ),
+        recentAudit: s => s.audit.slice(0, 14),
+        anomalies: s => s.threats.filter(t => t.level >= 55),
+        moduleCounts: s => ({
+          threats: s.threats.length,
+          systems: s.systems.length,
+          tasks: s.pipeline.length
+        })
+      };
+
+      const auditEntry = (state, action, severity, summary, details = {}) => {
+        const entry = {
+          id: uid('log'),
+          at: nowISO(),
+          action,
+          severity,
+          summary,
+          details
+        };
+        return { ...state, audit: [entry, ...state.audit].slice(0, 180) };
+      };
+
+      store.registerReducer('SIM_TICK', (state, payload) => ({
+        ...state,
+        sim: { ...state.sim, tick: state.sim.tick + 1, lastTickAt: payload.at }
+      }));
+
+      store.registerReducer('THREAT_ESCALATE', (state, payload) => {
+        const threats = state.threats.map(t => t.id === payload.id ? {
+          ...t,
+          level: clamp(t.level + (payload.delta || 12), 0, 100),
+          status: payload.status || 'elevated'
+        } : t);
+        const target = threats.find(t => t.id === payload.id);
+        return auditEntry({ ...state, threats }, 'THREAT_ESCALATE', 'warn', `Threat ${payload.id} escalated`, { zone: target?.zone, level: target?.level });
+      });
+
+      store.registerReducer('THREAT_ACK', (state, payload) => {
+        const threats = state.threats.map(t => t.id === payload.id ? { ...t, status:'acknowledged', level: clamp(t.level - 8, 0, 100) } : t);
+        return auditEntry({ ...state, threats }, 'THREAT_ACK', 'info', `Threat ${payload.id} acknowledged`);
+      });
+
+      store.registerReducer('TASK_PRIORITIZE', (state, payload) => {
+        const pipeline = [...state.pipeline]
+          .map(t => t.id === payload.id ? { ...t, priority:'critical', status:'active', eta: Math.max(4, t.eta - 8) } : t)
+          .sort((a, b) => priorityRank(b.priority) - priorityRank(a.priority));
+        return auditEntry({ ...state, pipeline }, 'TASK_PRIORITIZE', 'info', `Task ${payload.id} reprioritized`);
+      });
+
+      store.registerReducer('COMMAND_SUBMIT', (state, payload) => {
+        const next = {
+          id: uid('cmd'),
+          label: payload.label,
+          status:'queued',
+          owner: payload.owner || 'OPS',
+          createdAt: nowISO()
+        };
+        return auditEntry({ ...state, commands:[next, ...state.commands].slice(0, 120) }, 'COMMAND_SUBMIT', 'info', `Command queued: ${payload.label}`);
+      });
+
+      store.registerReducer('COMMAND_STATUS', (state, payload) => {
+        const commands = state.commands.map(c => c.id === payload.id ? { ...c, status:payload.status } : c);
+        return auditEntry({ ...state, commands }, 'COMMAND_STATUS', payload.status === 'failed' ? 'warn' : 'info', `Command ${payload.id} -> ${payload.status}`);
+      });
+
+      store.registerReducer('SYSTEM_DRIFT', (state, payload) => {
+        const systems = state.systems.map(sys => ({
+          ...sys,
+          health: clamp(sys.health + (payload.healthDelta?.[sys.id] ?? 0), 70, 100),
+          latency: clamp(sys.latency + (payload.latencyDelta?.[sys.id] ?? 0), 5, 120),
+          power: clamp(sys.power + (payload.powerDelta?.[sys.id] ?? 0), 35, 100)
+        }));
+        return { ...state, systems };
+      });
+
+      store.registerReducer('ENV_DRIFT', (state, payload) => ({
+        ...state,
+        env: {
+          temp: +(state.env.temp + (payload.temp ?? 0)).toFixed(1),
+          pressure: +(state.env.pressure + (payload.pressure ?? 0)).toFixed(1),
+          aqi: Math.round(clamp(state.env.aqi + (payload.aqi ?? 0), 15, 180)),
+          co2: Math.round(clamp(state.env.co2 + (payload.co2 ?? 0), 380, 1600)),
+          humidity: Math.round(clamp(state.env.humidity + (payload.humidity ?? 0), 12, 82))
+        }
+      }));
+
+      store.registerReducer('AI_RESPONSE', (state, payload) => ({
+        ...state,
+        ai: {
+          ...state.ai,
+          lastResponse: payload,
+          transcript: [{ role:'assistant', at:nowISO(), text:payload.primary, payload }, ...state.ai.transcript].slice(0, 80)
+        }
+      }));
+
+      store.registerReducer('AI_INPUT', (state, payload) => ({
+        ...state,
+        ai: {
+          ...state.ai,
+          transcript: [{ role:'operator', at:nowISO(), text:payload.text }, ...state.ai.transcript].slice(0, 80)
+        }
+      }));
+
+      store.registerReducer('BANNER_SET', (state, payload) => ({ ...state, ui:{ ...state.ui, banner:payload } }));
+      store.registerReducer('LOCKDOWN', (state, payload) => {
+        const nextState = {
+          ...state,
+          meta: { ...state.meta, posture: payload.mode || 'LOCKDOWN' },
+          commands: [{ id:uid('cmd'), label:'Compartment lockdown enforced', status:'running', owner:'OPS', createdAt:nowISO() }, ...state.commands].slice(0, 120),
+          threats: state.threats.map(t => ({ ...t, status: t.level >= 60 ? 'contained' : t.status }))
+        };
+        return auditEntry(nextState, 'LOCKDOWN', 'warn', 'Lockdown mode enabled', { mode: payload.mode || 'LOCKDOWN' });
+      });
+
+      store.registerReducer('ANOMALY_CREATE', (state, payload) => {
+        const entry = {
+          id: uid('thr'),
+          zone: payload.zone,
+          level: payload.level,
+          vector: payload.vector,
+          confidence: payload.confidence,
+          status:'tracking'
+        };
+        return auditEntry({ ...state, threats:[entry, ...state.threats].slice(0, 24) }, 'ANOMALY_CREATE', 'warn', `New anomaly detected in ${payload.zone}`);
+      });
+
+
+      store.registerReducer('SIM_PAUSE_TOGGLE', (state) => ({
+        ...state,
+        sim: { ...state.sim, paused: !state.sim.paused }
+      }));
+      store.registerReducer('TASK_PROGRESS', (state) => {
+        const pipeline = state.pipeline.map(task => {
+          const eta = task.status === 'active' ? Math.max(0, task.eta - 1) : task.eta;
+          const status = eta === 0 ? 'complete' : task.status;
+          return { ...task, eta, status };
+        });
+        return { ...state, pipeline };
+      });
+
+      function priorityRank(priority){
+        return { low:1, medium:2, high:3, critical:4 }[priority] || 0;
+      }
+
+      const sim = new SimulationEngine(store, bus);
+
+      sim.registerAgent('threat-grid', ({ state, store, bus }) => {
+        const spike = Math.random() < 0.12;
+        const target = sample(state.threats);
+        if (!target) return;
+        if (spike) {
+          const delta = Math.round(rand(8, 18));
+          store.dispatch('THREAT_ESCALATE', { id:target.id, delta, status: target.level + delta > 76 ? 'critical' : 'elevated' }, { source:'agent:threat-grid' });
+          if (target.level + delta >= 78) {
+            bus.emit('ANOMALY_DETECTED', { id:target.id, zone:target.zone, level: target.level + delta }, { source:'agent:threat-grid' });
+          }
+        } else if (Math.random() < 0.18) {
+          store.dispatch('THREAT_ACK', { id:target.id }, { source:'agent:threat-grid' });
+        }
+      });
+
+      sim.registerAgent('env-grid', ({ store }) => {
+        store.dispatch('ENV_DRIFT', {
+          temp: rand(-0.12, 0.16),
+          pressure: rand(-0.2, 0.2),
+          aqi: rand(-2.5, 3.5),
+          co2: rand(-9, 15),
+          humidity: rand(-1.1, 1.2)
+        }, { source:'agent:env-grid' });
+      });
+
+      sim.registerAgent('system-pulse', ({ state, store, bus }) => {
+        const healthDelta = {};
+        const latencyDelta = {};
+        const powerDelta = {};
+        state.systems.forEach(sys => {
+          healthDelta[sys.id] = rand(-0.8, 0.5);
+          latencyDelta[sys.id] = Math.round(rand(-2, 4));
+          powerDelta[sys.id] = rand(-0.7, 0.6);
+        });
+        store.dispatch('SYSTEM_DRIFT', { healthDelta, latencyDelta, powerDelta }, { source:'agent:system-pulse' });
+
+        if (Math.random() < 0.1) {
+          store.dispatch('TASK_PROGRESS', {}, { source:'agent:system-pulse' });
+        }
+        if (Math.random() < 0.08) {
+          const zones = ['Grid B1', 'Grid D4', 'Grid H2', 'Grid E6', 'Grid C8'];
+          const vectors = ['signal', 'thermal', 'network', 'traffic', 'airspace'];
+          const level = Math.round(rand(48, 88));
+          const zone = sample(zones);
+          store.dispatch('ANOMALY_CREATE', {
+            zone, vector:sample(vectors), level,
+            confidence:+rand(0.51, 0.93).toFixed(2)
+          }, { source:'agent:system-pulse' });
+          bus.emit('ANOMALY_DETECTED', { zone, level }, { source:'agent:system-pulse' });
+        }
+      });
+
+      sim.registerAgent('command-executor', ({ state, store }) => {
+        const next = state.commands.find(c => c.status === 'queued');
+        if (next && Math.random() < 0.4) {
+          store.dispatch('COMMAND_STATUS', { id:next.id, status:'running' }, { source:'agent:command-executor' });
+        }
+        const running = state.commands.find(c => c.status === 'running');
+        if (running && Math.random() < 0.3) {
+          store.dispatch('COMMAND_STATUS', { id:running.id, status:'done' }, { source:'agent:command-executor' });
+        }
+      });
+
+      const ai = (() => {
+        const intents = [
+          {
+            id:'status_summary',
+            score: text => /(status|summary|overview|sitrep|report)/i.test(text) ? 0.94 : 0.0,
+            run: ({ state }) => {
+              const threat = selectors.threatSummary(state);
+              const primary = `Operational posture is ${selectors.posture(state)} with ${selectors.activeTasks(state)} active tasks, queue depth ${selectors.queueDepth(state)}, and system health ${selectors.systemHealth(state)}%.`;
+              return {
+                primary,
+                secondary:`Highest anomaly load is ${Math.round(threat.max)} with ${threat.critical} critical tracks under observation.`,
+                payload:{
+                  readiness: selectors.readiness(state),
+                  posture: selectors.posture(state),
+                  threatAverage: Math.round(threat.average),
+                  activeTasks: selectors.activeTasks(state)
+                },
+                followUps:['show anomalies', 'prioritize next task', 'systems health']
+              };
+            }
+          },
+          {
+            id:'show_anomalies',
+            score: text => /(anomal|threat|alert|hot zone|hostile|risk)/i.test(text) ? 0.92 : 0.0,
+            run: ({ state }) => {
+              const anomalies = selectors.anomalies(state).slice(0, 3);
+              const primary = anomalies.length
+                ? `Tracked anomalies: ${anomalies.map(a => `${a.zone} at level ${a.level}`).join(', ')}.`
+                : 'No significant anomalies exceed the configured threshold.';
+              return {
+                primary,
+                secondary:`Current posture: ${selectors.posture(state)}.`,
+                payload:{ anomalies },
+                followUps:['ack highest anomaly', 'status summary', 'lockdown status']
+              };
+            }
+          },
+          {
+            id:'prioritize_task',
+            score: text => /(priorit|next task|important task|critical task)/i.test(text) ? 0.95 : 0.0,
+            run: ({ state, store }) => {
+              const candidate = [...state.pipeline]
+                .filter(t => t.status !== 'complete')
+                .sort((a,b) => priorityRank(b.priority) - priorityRank(a.priority) || a.eta - b.eta)[0];
+              if (candidate) {
+                store.dispatch('TASK_PRIORITIZE', { id:candidate.id }, { source:'ai:intent' });
+              }
+              return {
+                primary: candidate
+                  ? `Task ${candidate?.name} reassigned to critical priority with ETA compression.`
+                  : 'No eligible task was found for reprioritization.',
+                secondary:candidate ? `Owner ${candidate.owner} / lane ${candidate.lane}.` : '',
+                payload:{ task:candidate },
+                followUps:['show queue', 'status summary']
+              };
+            }
+          },
+          {
+            id:'lockdown_status',
+            score: text => /(lockdown|secure|containment|posture|condition)/i.test(text) ? 0.89 : 0.0,
+            run: ({ state }) => ({
+              primary:`Current containment mode is ${state.meta.posture}.`,
+              secondary:`${selectors.anomalies(state).length} tracked anomalies remain above advisory threshold.`,
+              payload:{ posture:state.meta.posture, anomalies:selectors.anomalies(state).length },
+              followUps:['enable lockdown', 'show anomalies']
+            })
+          },
+          {
+            id:'enable_lockdown',
+            score: text => /(enable lockdown|initiate lockdown|hard lockdown|seal compartments)/i.test(text) ? 0.99 : 0.0,
+            run: ({ store }) => {
+              store.dispatch('LOCKDOWN', { mode:'LOCKDOWN-ALPHA' }, { source:'ai:intent' });
+              return {
+                primary:'Lockdown sequence initiated. Compartments shifted to restricted movement and elevated audit mode.',
+                secondary:'All changes were recorded in the audit ledger.',
+                payload:{ mode:'LOCKDOWN-ALPHA' },
+                followUps:['status summary', 'show audit']
+              };
+            }
+          },
+          {
+            id:'systems_health',
+            score: text => /(systems|health|latency|power|integrity)/i.test(text) ? 0.86 : 0.0,
+            run: ({ state }) => {
+              const weakest = [...state.systems].sort((a,b) => a.health - b.health)[0];
+              return {
+                primary:`Average system health is ${selectors.systemHealth(state)}%. Weakest subsystem is ${weakest.label} at ${weakest.health.toFixed(0)}% health and ${weakest.latency} ms latency.`,
+                secondary:`Power reserve ranges from ${Math.min(...state.systems.map(s => s.power)).toFixed(0)}% to ${Math.max(...state.systems.map(s => s.power)).toFixed(0)}%.`,
+                payload:{ weakest },
+                followUps:['status summary', 'show audit', 'simulation speed']
+              };
+            }
+          },
+        ];
+
+        bus.on('ANOMALY_DETECTED', event => {
+          const narrative = {
+            primary:`Proactive advisory: anomaly in ${event.payload.zone} now trending high at level ${event.payload.level}.`,
+            secondary:'Recommend acknowledgement, task reprioritization, and surveillance refresh.',
+            payload:event.payload,
+            followUps:['ack highest anomaly', 'prioritize next task', 'status summary']
+          };
+          store.dispatch('AI_RESPONSE', narrative, { source:'ai:proactive' });
+          toast('AI advisory', narrative.primary, 'warn');
+        });
+
+        function process(text) {
+          const state = store.getState();
+          store.dispatch('AI_INPUT', { text }, { source:'operator' });
+          const ranked = intents
+            .map(intent => ({ intent, score:intent.score(text) }))
+            .sort((a,b) => b.score - a.score);
+          const match = ranked[0];
+          let response;
+          if (!match || match.score < 0.45) {
+            response = {
+              primary:'Intent confidence below threshold. I can summarize status, list anomalies, prioritize the next task, inspect systems health, or apply lockdown mode.',
+              secondary:'Try: "status summary", "show anomalies", or "systems health".',
+              payload:{ ranked: ranked.slice(0, 3).map(x => ({ id:x.intent.id, score:+x.score.toFixed(2) })) },
+              followUps:['status summary', 'show anomalies', 'systems health']
+            };
+          } else {
+            response = match.intent.run({ text, state:store.getState(), store, bus, selectors });
+          }
+          store.dispatch('AI_RESPONSE', response, { source:'ai' });
+          return response;
+        }
+        return { process };
+      })();
+
+      function toneBySeverity(sev){
+        return sev === 'warn' ? 'warn' : sev === 'danger' ? 'danger' : 'info';
+      }
+
+      function toast(title, text, tone='info') {
+        const layer = document.getElementById('toast-layer');
+        const el = document.createElement('div');
+        el.className = `toast ${tone}`;
+        el.innerHTML = `<strong>${title}</strong><p>${text}</p>`;
+        layer.prepend(el);
+        setTimeout(() => {
+          el.style.opacity = '0';
+          el.style.transform = 'translateY(8px)';
+          setTimeout(() => el.remove(), 220);
+        }, 4200);
+      }
+
+      function renderTopKpis() {
+        const holder = document.getElementById('top-kpis');
+        store.subscribe(s => ({
+          posture: selectors.posture(s),
+          readiness: selectors.readiness(s),
+          health: selectors.systemHealth(s),
+          anomalies: selectors.anomalies(s).length
+        }), next => {
+          holder.innerHTML = `
+            <div class="kpi"><b>Posture</b><span>${next.posture}</span></div>
+            <div class="kpi"><b>Readiness</b><span>${next.readiness}%</span></div>
+            <div class="kpi"><b>System Health</b><span>${next.health}%</span></div>
+            <div class="kpi"><b>Anomalies</b><span>${pad(next.anomalies)}</span></div>
+          `;
+        });
+      }
+
+      function renderMiniStats() {
+        store.subscribe(s => ({
+          posture: selectors.posture(s),
+          queue: selectors.queueDepth(s),
+          rate: bus.rate()
+        }), next => {
+          document.getElementById('mini-threat').textContent = next.posture;
+          document.getElementById('mini-queue').textContent = pad(next.queue);
+          document.getElementById('mini-event-rate').textContent = next.rate.toFixed(1) + '/s';
+        });
+      }
+
+      function bootSequence(onDone) {
+        const lines = [
+          '[OK] bootloader attached to shell kernel',
+          '[OK] layout container verified',
+          '[OK] event bus and reactive store initialized',
+          '[OK] module manifest signed and registered',
+          '[OK] simulation agents admitted to runtime',
+          '[OK] audit recorder online in strict mode',
+          '[WARN] external network adapters disabled by policy',
+          '[OK] AI orchestration lane calibrated',
+          '[OK] command pathways verified',
+          '[OK] canvas subsystems armed',
+          '[OK] operator console ready'
+        ];
+        const log = document.getElementById('boot-log');
+        const bar = document.getElementById('boot-progress');
+        let i = 0;
+        const timer = setInterval(() => {
+          const line = lines[i];
+          const cls = line.includes('[WARN]') ? 'warn' : line.includes('[ERR]') ? 'err' : 'ok';
+          const div = document.createElement('div');
+          div.innerHTML = `<span class="${cls}">${line}</span>`;
+          log.appendChild(div);
+          log.scrollTop = log.scrollHeight;
+          i += 1;
+          bar.style.width = Math.round((i / lines.length) * 100) + '%';
+          if (i >= lines.length) {
+            clearInterval(timer);
+            setTimeout(() => {
+              document.getElementById('boot').classList.add('hidden');
+              onDone();
+            }, 380);
+          }
+        }, 180);
+      }
+
+      function startClocks() {
+        const clock = document.getElementById('clock');
+        const uptime = document.getElementById('uptime');
+        setInterval(() => {
+          clock.textContent = fmtTime();
+          uptime.textContent = uptimeFmt(Date.now() - store.getState().meta.bootedAt);
+        }, 1000);
+      }
+
+      function createOverviewModule() {
+        return {
+          id:'overview',
+          label:'Strategic Overview',
+          icon:'OV',
+          tagline:'command posture',
+          description:'Executive operational picture combining readiness, anomaly pressure, system health, environmental stability, and recent audit activity.',
+          actions:[
+            { label:'Generate sitrep', tone:'primary', handler:() => {
+              const res = ai.process('status summary');
+              toast('Situation report', res.primary, 'info');
+            }},
+            { label:'Sync queue', tone:'', handler:({ store }) => {
+              store.dispatch('COMMAND_SUBMIT', { label:'Queue reconciliation run', owner:'OPS' }, { source:'ui' });
+              toast('Queue sync', 'Command reconciliation queued.', 'info');
+            }}
+          ],
+          render(ctx, root) {
+            root.innerHTML = `
+              <div class="grid cols-12">
+                <div class="card span-3">
+                  <div class="card-head"><h3>Readiness</h3><small>composite score</small></div>
+                  <div class="metric"><div class="value" id="ov-readiness">--</div><div class="delta" id="ov-posture">--</div></div>
+                </div>
+                <div class="card span-3">
+                  <div class="card-head"><h3>Active Tasks</h3><small>pipeline load</small></div>
+                  <div class="metric"><div class="value" id="ov-tasks">--</div><div class="delta">priority-sorted execution</div></div>
+                </div>
+                <div class="card span-3">
+                  <div class="card-head"><h3>Threat Average</h3><small>rolling level</small></div>
+                  <div class="metric"><div class="value" id="ov-threat">--</div><div class="delta" id="ov-threat-detail">--</div></div>
+                </div>
+                <div class="card span-3">
+                  <div class="card-head"><h3>System Health</h3><small>mean integrity</small></div>
+                  <div class="metric"><div class="value" id="ov-health">--</div><div class="delta" id="ov-env">--</div></div>
+                </div>
+
+                <div class="card span-7">
+                  <div class="card-head"><h3>Tactical Field</h3><small>sensor and anomaly canvas</small></div>
+                  <canvas id="overview-canvas" class="panel-canvas"></canvas>
+                </div>
+
+                <div class="card span-5">
+                  <div class="card-head"><h3>Priority Board</h3><small>top queue items</small></div>
+                  <div class="list" id="ov-board"></div>
+                </div>
+
+                <div class="card span-6">
+                  <div class="card-head"><h3>Recent Audit</h3><small>strict event ledger</small></div>
+                  <div class="log" id="ov-audit"></div>
+                </div>
+
+                <div class="card span-6">
+                  <div class="card-head"><h3>Environment</h3><small>stability envelope</small></div>
+                  <div class="stack" id="ov-env-cards"></div>
+                </div>
+              </div>
+            `;
+
+            const canvas = root.querySelector('#overview-canvas');
+            const ctx2d = canvas.getContext('2d');
+            let raf = 0;
+            function resize() {
+              const rect = canvas.getBoundingClientRect();
+              canvas.width = rect.width * devicePixelRatio;
+              canvas.height = rect.height * devicePixelRatio;
+              ctx2d.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+            }
+            resize();
+            const onResize = () => resize();
+            window.addEventListener('resize', onResize);
+
+            function draw(state) {
+              const rect = canvas.getBoundingClientRect();
+              const w = rect.width;
+              const h = rect.height;
+              ctx2d.clearRect(0, 0, w, h);
+
+              ctx2d.strokeStyle = 'rgba(154,255,136,.08)';
+              ctx2d.lineWidth = 1;
+              for (let x = 0; x < w; x += 28) {
+                ctx2d.beginPath();
+                ctx2d.moveTo(x, 0);
+                ctx2d.lineTo(x, h);
+                ctx2d.stroke();
+              }
+              for (let y = 0; y < h; y += 28) {
+                ctx2d.beginPath();
+                ctx2d.moveTo(0, y);
+                ctx2d.lineTo(w, y);
+                ctx2d.stroke();
+              }
+
+              const cx = w / 2;
+              const cy = h / 2;
+              ctx2d.strokeStyle = 'rgba(121,216,255,.18)';
+              [60, 110, 160].forEach(r => {
+                ctx2d.beginPath();
+                ctx2d.arc(cx, cy, r, 0, Math.PI * 2);
+                ctx2d.stroke();
+              });
+
+              state.threats.forEach((threat, index) => {
+                const angle = (index / Math.max(1, state.threats.length)) * Math.PI * 2 + state.sim.tick * 0.02;
+                const radius = 60 + threat.level * 1.4;
+                const x = cx + Math.cos(angle) * radius * 0.68;
+                const y = cy + Math.sin(angle) * radius * 0.42;
+                const size = 4 + (threat.level / 18);
+                ctx2d.fillStyle = threat.level >= 75 ? 'rgba(255,113,137,.95)' : threat.level >= 55 ? 'rgba(255,219,105,.95)' : 'rgba(154,255,136,.95)';
+                ctx2d.shadowBlur = 18;
+                ctx2d.shadowColor = ctx2d.fillStyle;
+                ctx2d.beginPath();
+                ctx2d.arc(x, y, size, 0, Math.PI * 2);
+                ctx2d.fill();
+                ctx2d.shadowBlur = 0;
+                ctx2d.strokeStyle = 'rgba(255,255,255,.25)';
+                ctx2d.strokeRect(x - 8, y - 8, 16, 16);
+              });
+
+              ctx2d.strokeStyle = 'rgba(154,255,136,.55)';
+              ctx2d.lineWidth = 1.4;
+              ctx2d.beginPath();
+              const pulse = 48 + Math.sin(state.sim.tick * 0.25) * 8;
+              ctx2d.arc(cx, cy, pulse, 0, Math.PI * 2);
+              ctx2d.stroke();
+
+              raf = requestAnimationFrame(() => draw(store.getState()));
+            }
+            draw(store.getState());
+
+            const unsub = store.subscribe(s => ({
+              readiness: selectors.readiness(s),
+              posture: selectors.posture(s),
+              activeTasks: selectors.activeTasks(s),
+              threat: selectors.threatSummary(s),
+              health: selectors.systemHealth(s),
+              env: s.env,
+              pipeline: s.pipeline.slice(0, 4),
+              audit: s.audit.slice(0, 8)
+            }), next => {
+              root.querySelector('#ov-readiness').textContent = next.readiness + '%';
+              root.querySelector('#ov-posture').textContent = next.posture;
+              root.querySelector('#ov-tasks').textContent = String(next.activeTasks).padStart(2, '0');
+              root.querySelector('#ov-threat').textContent = Math.round(next.threat.average).toString();
+              root.querySelector('#ov-threat-detail').textContent = `${next.threat.critical} critical tracks`;
+              root.querySelector('#ov-health').textContent = next.health + '%';
+              root.querySelector('#ov-env').textContent = `AQI ${next.env.aqi} / CO₂ ${next.env.co2} ppm`;
+
+              root.querySelector('#ov-board').innerHTML = next.pipeline.map(item => `
+                <div class="row-item">
+                  <div><strong>${item.name}</strong><p>${item.owner} · ${item.lane} · ${item.priority}</p></div>
+                  <div class="right">${item.status}<br>ETA ${item.eta}m</div>
+                </div>
+              `).join('');
+
+              root.querySelector('#ov-audit').innerHTML = next.audit.length ? next.audit.map(log => `
+                <div class="log-line">
+                  <time>${fmtTime(new Date(log.at))}</time>
+                  <code>${log.action}</code>
+                  <span>${log.summary}</span>
+                </div>
+              `).join('') : '<div class="footer-note">No audit entries yet.</div>';
+
+              root.querySelector('#ov-env-cards').innerHTML = [
+                ['Temperature', next.env.temp + '°C', Math.round((next.env.temp / 40) * 100)],
+                ['Pressure', next.env.pressure + ' kPa', Math.round((next.env.pressure / 120) * 100)],
+                ['AQI', String(next.env.aqi), Math.min(100, next.env.aqi)],
+                ['CO₂', next.env.co2 + ' ppm', Math.min(100, Math.round(next.env.co2 / 12))]
+              ].map(([label, value, prog]) => `
+                <div class="row-item">
+                  <div style="width:100%;">
+                    <strong>${label}</strong>
+                    <p>${value}</p>
+                    <div class="bar"><span style="width:${clamp(prog, 0, 100)}%"></span></div>
+                  </div>
+                </div>
+              `).join('');
+            });
+
+            return [() => cancelAnimationFrame(raf), () => window.removeEventListener('resize', onResize), unsub];
+          }
+        };
+      }
+
+      function createCommandModule() {
+        return {
+          id:'command',
+          label:'Command Console',
+          icon:'CC',
+          tagline:'operator actions',
+          description:'Intent-driven operator interface for commands, recommendations, safe orchestration, and structured AI responses backed by store selectors and domain events.',
+          actions:[
+            { label:'Status summary', tone:'primary', handler:() => fillAndRun('status summary') },
+            { label:'Show anomalies', tone:'', handler:() => fillAndRun('show anomalies') },
+            { label:'Systems health', tone:'', handler:() => fillAndRun('systems health') }
+          ],
+          render(ctx, root) {
+            root.innerHTML = `
+              <div class="split">
+                <div class="console">
+                  <div class="card">
+                    <div class="card-head"><h3>Operator Input</h3><small>safe orchestration lane</small></div>
+                    <div class="command-line">
+                      <textarea id="ai-input" placeholder="Enter a command, e.g. status summary, show anomalies, prioritize next task, enable lockdown..."></textarea>
+                      <div class="stack" style="width:180px;">
+                        <button class="btn primary" id="ai-run">Execute</button>
+                        <button class="btn" id="ai-clear">Clear</button>
+                        <button class="btn warn" id="ai-voice">Speak last response</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="assistant-bubble">
+                    <h4>AI response</h4>
+                    <p id="ai-primary">Awaiting operator input.</p>
+                    <p id="ai-secondary" style="color:var(--muted);">Intent responses can inspect store state, recommend actions, and perform limited safe state changes.</p>
+                    <div class="payload" id="ai-payload"></div>
+                  </div>
+                  <div class="card">
+                    <div class="card-head"><h3>Conversation Ledger</h3><small>latest transcript</small></div>
+                    <div class="log" id="ai-transcript"></div>
+                  </div>
+                </div>
+
+                <div class="stack">
+                  <div class="card">
+                    <div class="card-head"><h3>Suggested Queries</h3><small>high-confidence lanes</small></div>
+                    <div class="pill-row" id="ai-suggest"></div>
+                  </div>
+                  <div class="card">
+                    <div class="card-head"><h3>Command Queue</h3><small>dispatch lifecycle</small></div>
+                    <div class="list" id="cmd-queue"></div>
+                  </div>
+                  <div class="card">
+                    <div class="card-head"><h3>Proactive Notes</h3><small>event-reactive narrative</small></div>
+                    <div class="list" id="ai-notes"></div>
+                  </div>
+                </div>
+              </div>
+            `;
+
+            const input = root.querySelector('#ai-input');
+            const run = () => {
+              const value = input.value.trim();
+              if (!value) return;
+              const response = ai.process(value);
+              toast('AI executed', response.primary, 'info');
+            };
+            root.querySelector('#ai-run').addEventListener('click', run);
+            root.querySelector('#ai-clear').addEventListener('click', () => input.value = '');
+            root.querySelector('#ai-voice').addEventListener('click', () => {
+              const text = store.getState().ai.lastResponse?.primary;
+              if (!text || !('speechSynthesis' in window)) {
+                toast('Speech unavailable', 'No response is available to speak.', 'warn');
+                return;
+              }
+              const utter = new SpeechSynthesisUtterance(text);
+              utter.rate = 1;
+              utter.pitch = 0.8;
+              speechSynthesis.speak(utter);
+            });
+            input.addEventListener('keydown', ev => {
+              if ((ev.metaKey || ev.ctrlKey) && ev.key === 'Enter') {
+                ev.preventDefault();
+                run();
+              }
+            });
+            window.fillAndRun = (text) => {
+              input.value = text;
+              run();
+            };
+
+            const unsub = store.subscribe(s => ({
+              last: s.ai.lastResponse,
+              transcript: s.ai.transcript.slice(0, 10),
+              queue: s.commands.slice(0, 8),
+              suggestions: s.ai.lastResponse?.followUps || s.ai.suggestions,
+              notes: s.audit.filter(x => ['THREAT_ESCALATE','ANOMALY_CREATE','LOCKDOWN'].includes(x.action)).slice(0, 5)
+            }), next => {
+              root.querySelector('#ai-primary').textContent = next.last?.primary || 'Awaiting operator input.';
+              root.querySelector('#ai-secondary').textContent = next.last?.secondary || 'No structured payload yet.';
+              root.querySelector('#ai-payload').innerHTML = next.last
+                ? `<div class="pill-row">${Object.entries(next.last.payload || {}).slice(0, 8).map(([k, v]) =>
+                    `<span class="pill">${k}: ${typeof v === 'object' ? JSON.stringify(v).slice(0, 40) : String(v)}</span>`
+                  ).join('')}</div>`
+                : '';
+
+              root.querySelector('#ai-transcript').innerHTML = next.transcript.map(item => `
+                <div class="log-line">
+                  <time>${fmtTime(new Date(item.at))}</time>
+                  <code>${item.role}</code>
+                  <span>${item.text}</span>
+                </div>
+              `).join('');
+
+              root.querySelector('#cmd-queue').innerHTML = next.queue.map(c => `
+                <div class="row-item">
+                  <div><strong>${c.label}</strong><p>${c.owner} · ${fmtDateTime(c.createdAt)}</p></div>
+                  <div class="right">${c.status}</div>
+                </div>
+              `).join('');
+
+              root.querySelector('#ai-suggest').innerHTML = next.suggestions.map(q => `<button class="btn" data-suggest="${q}">${q}</button>`).join('');
+              [...root.querySelectorAll('[data-suggest]')].forEach(btn => btn.addEventListener('click', () => fillAndRun(btn.dataset.suggest)));
+
+              root.querySelector('#ai-notes').innerHTML = next.notes.length
+                ? next.notes.map(note => `
+                    <div class="row-item">
+                      <div><strong>${note.action}</strong><p>${note.summary}</p></div>
+                      <div class="right">${fmtTime(new Date(note.at))}</div>
+                    </div>
+                  `).join('')
+                : '<div class="footer-note">No proactive notes generated yet.</div>';
+            });
+
+            return [unsub];
+          }
+        };
+      }
+
+      function createThreatModule() {
+        return {
+          id:'threats',
+          label:'Threat Matrix',
+          icon:'TM',
+          tagline:'anomaly control',
+          description:'Track anomaly zones, acknowledge events, escalate high-confidence signals, and visualize pressure across the operating grid.',
+          actions:[
+            { label:'Acknowledge highest', tone:'primary', handler:({ store }) => {
+              const target = [...store.getState().threats].sort((a,b) => b.level - a.level)[0];
+              if (!target) return;
+              store.dispatch('THREAT_ACK', { id:target.id }, { source:'ui' });
+              toast('Anomaly acknowledged', `${target.zone} reduced to advisory handling.`, 'info');
+            }},
+            { label:'Escalate highest', tone:'danger', handler:({ store }) => {
+              const target = [...store.getState().threats].sort((a,b) => b.level - a.level)[0];
+              if (!target) return;
+              store.dispatch('THREAT_ESCALATE', { id:target.id, delta:14, status:'critical' }, { source:'ui' });
+              toast('Escalation applied', `${target.zone} escalated.`, 'warn');
+            }}
+          ],
+          render(ctx, root) {
+            root.innerHTML = `
+              <div class="grid cols-12">
+                <div class="card span-7">
+                  <div class="card-head"><h3>Threat Topology</h3><small>canvas projection</small></div>
+                  <canvas id="threat-canvas" class="panel-canvas"></canvas>
+                </div>
+                <div class="card span-5">
+                  <div class="card-head"><h3>Hot Zones</h3><small>sorted by level</small></div>
+                  <div id="hot-zones" class="list"></div>
+                </div>
+                <div class="card span-12">
+                  <div class="card-head"><h3>Threat Ledger</h3><small>live registry</small></div>
+                  <div style="overflow:auto;">
+                    <table class="table">
+                      <thead><tr><th>ID</th><th>Zone</th><th>Vector</th><th>Level</th><th>Confidence</th><th>Status</th><th>Action</th></tr></thead>
+                      <tbody id="threat-table"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            `;
+            const canvas = root.querySelector('#threat-canvas');
+            const g = canvas.getContext('2d');
+            let raf = 0;
+            function resize() {
+              const rect = canvas.getBoundingClientRect();
+              canvas.width = rect.width * devicePixelRatio;
+              canvas.height = rect.height * devicePixelRatio;
+              g.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+            }
+            resize();
+            const onResize = () => resize();
+            window.addEventListener('resize', onResize);
+
+            function draw() {
+              const state = store.getState();
+              const rect = canvas.getBoundingClientRect();
+              const w = rect.width, h = rect.height;
+              g.clearRect(0, 0, w, h);
+
+              g.strokeStyle = 'rgba(154,255,136,.08)';
+              for (let i = 0; i < 7; i++) {
+                const y = 30 + i * ((h - 60) / 6);
+                g.beginPath(); g.moveTo(30, y); g.lineTo(w - 30, y); g.stroke();
+              }
+              for (let i = 0; i < 9; i++) {
+                const x = 30 + i * ((w - 60) / 8);
+                g.beginPath(); g.moveTo(x, 30); g.lineTo(x, h - 30); g.stroke();
+              }
+
+              state.threats.forEach((threat, i) => {
+                const x = 50 + (i * 97 + state.sim.tick * 7) % (w - 100);
+                const y = 60 + ((i * 59) % (h - 120));
+                const radius = 12 + threat.level * 0.42;
+                const tone = threat.level >= 75 ? '255,113,137' : threat.level >= 55 ? '255,219,105' : '154,255,136';
+                g.strokeStyle = `rgba(${tone}, .7)`;
+                g.fillStyle = `rgba(${tone}, .14)`;
+                g.lineWidth = 1.5;
+                g.beginPath(); g.arc(x, y, radius, 0, Math.PI * 2); g.fill(); g.stroke();
+                g.beginPath(); g.arc(x, y, radius + 10 + Math.sin(state.sim.tick * .18 + i) * 4, 0, Math.PI * 2); g.stroke();
+                g.fillStyle = `rgba(${tone}, .96)`;
+                g.beginPath(); g.arc(x, y, 3.4, 0, Math.PI * 2); g.fill();
+                g.fillStyle = '#dff7e3';
+                g.font = '11px ui-monospace, monospace';
+                g.fillText(threat.zone, x + 12, y - 10);
+              });
+              raf = requestAnimationFrame(draw);
+            }
+            draw();
+
+            const unsub = store.subscribe(s => [...s.threats].sort((a,b) => b.level - a.level), next => {
+              root.querySelector('#hot-zones').innerHTML = next.slice(0, 5).map(t => `
+                <div class="row-item">
+                  <div><strong>${t.zone}</strong><p>${t.vector} · confidence ${pct(t.confidence)}%</p></div>
+                  <div class="right">${t.level}<br>${t.status}</div>
+                </div>
+              `).join('');
+
+              root.querySelector('#threat-table').innerHTML = next.map(t => `
+                <tr>
+                  <td>${t.id}</td>
+                  <td><strong>${t.zone}</strong></td>
+                  <td>${t.vector}</td>
+                  <td>${t.level}</td>
+                  <td>${pct(t.confidence)}%</td>
+                  <td><span class="status ${t.level >= 75 ? 'danger' : t.level >= 55 ? 'warn' : 'info'}">${t.status}</span></td>
+                  <td>
+                    <button class="btn" data-ack="${t.id}">Ack</button>
+                    <button class="btn danger" data-esc="${t.id}">Esc</button>
+                  </td>
+                </tr>
+              `).join('');
+              [...root.querySelectorAll('[data-ack]')].forEach(btn => btn.addEventListener('click', () => store.dispatch('THREAT_ACK', { id:btn.dataset.ack }, { source:'ui' })));
+              [...root.querySelectorAll('[data-esc]')].forEach(btn => btn.addEventListener('click', () => store.dispatch('THREAT_ESCALATE', { id:btn.dataset.esc, delta:10, status:'critical' }, { source:'ui' })));
+            });
+
+            return [() => cancelAnimationFrame(raf), () => window.removeEventListener('resize', onResize), unsub];
+          }
+        };
+      }
+
+      function createSystemsModule() {
+        return {
+          id:'systems',
+          label:'Systems Integrity',
+          icon:'SI',
+          tagline:'platform health',
+          description:'Monitor shell, event fabric, simulation runtime, AI orchestrator, and audit recorder with drift, latency, power reserve, and subsystem health.',
+          actions:[
+            { label:'Submit maintenance', tone:'primary', handler:({ store }) => {
+              store.dispatch('COMMAND_SUBMIT', { label:'Maintenance integrity pass', owner:'ENG' }, { source:'ui' });
+            }},
+            { label:'Pause simulation', tone:'warn', handler:({ store }) => {
+              const current = store.getState().sim.paused;
+              store.dispatch('SIM_PAUSE_TOGGLE', {}, { source:'ui' });
+              toast('Simulation state', current ? 'Simulation resumed.' : 'Simulation paused.', 'warn');
+            }}
+          ],
+          render(ctx, root) {
+            root.innerHTML = `
+              <div class="grid cols-12">
+                <div class="card span-4">
+                  <div class="card-head"><h3>Mean Health</h3><small>aggregate</small></div>
+                  <div class="metric"><div id="sys-health" class="value">--</div><div class="delta">service envelope</div></div>
+                </div>
+                <div class="card span-4">
+                  <div class="card-head"><h3>Mean Latency</h3><small>milliseconds</small></div>
+                  <div class="metric"><div id="sys-latency" class="value">--</div><div class="delta">bus + render + command</div></div>
+                </div>
+                <div class="card span-4">
+                  <div class="card-head"><h3>Power Reserve</h3><small>mean capacity</small></div>
+                  <div class="metric"><div id="sys-power" class="value">--</div><div class="delta">resilience buffer</div></div>
+                </div>
+
+                <div class="card span-12">
+                  <div class="card-head"><h3>Subsystem Matrix</h3><small>hardened runtime inventory</small></div>
+                  <div id="sys-list" class="stack"></div>
+                </div>
+              </div>
+            `;
+
+            const unsub = store.subscribe(s => s.systems, next => {
+              const meanHealth = Math.round(next.reduce((a,b) => a + b.health, 0) / next.length);
+              const meanLatency = Math.round(next.reduce((a,b) => a + b.latency, 0) / next.length);
+              const meanPower = Math.round(next.reduce((a,b) => a + b.power, 0) / next.length);
+              root.querySelector('#sys-health').textContent = meanHealth + '%';
+              root.querySelector('#sys-latency').textContent = meanLatency;
+              root.querySelector('#sys-power').textContent = meanPower + '%';
+
+              root.querySelector('#sys-list').innerHTML = next.map(sys => `
+                <div class="row-item">
+                  <div style="flex:1;">
+                    <strong>${sys.label}</strong>
+                    <p>${sys.state} · latency ${sys.latency} ms · power ${sys.power.toFixed(0)}%</p>
+                    <div class="bar"><span style="width:${sys.health}%"></span></div>
+                  </div>
+                  <div class="right">${sys.health.toFixed(0)}%</div>
+                </div>
+              `).join('');
+            });
+
+            return [unsub];
+          }
+        };
+      }
+
+      function createSimulationModule() {
+        return {
+          id:'simulation',
+          label:'Simulation Grid',
+          icon:'SG',
+          tagline:'agent runtime',
+          description:'Time-based synthetic environment where task flow, anomaly pressure, system drift, and environmental readings evolve through modular simulation agents.',
+          actions:[
+            { label:'Speed x1', tone:'', handler:() => { sim.setIntervalMs(1000); toast('Simulation speed', 'Interval set to 1000 ms.', 'info'); } },
+            { label:'Speed x2', tone:'', handler:() => { sim.setIntervalMs(500); toast('Simulation speed', 'Interval set to 500 ms.', 'info'); } },
+            { label:'Inject anomaly', tone:'danger', handler:({ store }) => {
+              const zones = ['Grid A9', 'Grid G4', 'Grid D8', 'Grid B6'];
+              const vectors = ['signal', 'thermal', 'network', 'traffic'];
+              store.dispatch('ANOMALY_CREATE', { zone:sample(zones), vector:sample(vectors), level:Math.round(rand(60, 92)), confidence:+rand(.62,.95).toFixed(2) }, { source:'ui' });
+            }}
+          ],
+          render(ctx, root) {
+            root.innerHTML = `
+              <div class="grid cols-12">
+                <div class="card span-4">
+                  <div class="card-head"><h3>Tick Count</h3><small>current frame</small></div>
+                  <div class="metric"><div class="value" id="sim-tick">0</div><div class="delta" id="sim-state">running</div></div>
+                </div>
+                <div class="card span-4">
+                  <div class="card-head"><h3>Agent Count</h3><small>registered</small></div>
+                  <div class="metric"><div class="value">${sim.agents.size}</div><div class="delta">pluggable simulation units</div></div>
+                </div>
+                <div class="card span-4">
+                  <div class="card-head"><h3>Last Tick</h3><small>timestamp</small></div>
+                  <div class="metric"><div class="value" style="font-size:18px;" id="sim-last">--</div><div class="delta">synchronized state update</div></div>
+                </div>
+
+                <div class="card span-7">
+                  <div class="card-head"><h3>Agent Registry</h3><small>simulation participation</small></div>
+                  <div class="list" id="sim-agents"></div>
+                </div>
+                <div class="card span-5">
+                  <div class="card-head"><h3>Recent Simulation Events</h3><small>runtime excerpt</small></div>
+                  <div class="log" id="sim-events"></div>
+                </div>
+              </div>
+            `;
+            root.querySelector('#sim-agents').innerHTML = [...sim.agents.keys()].map(id => `
+              <div class="row-item"><div><strong>${id}</strong><p>registered for each simulation tick</p></div><div class="right">active</div></div>
+            `).join('');
+            const unsub = store.subscribe(s => ({
+              tick:s.sim.tick,
+              paused:s.sim.paused,
+              last:s.sim.lastTickAt,
+              events:s.audit.filter(x => x.action.includes('THREAT') || x.action.includes('COMMAND')).slice(0, 10)
+            }), next => {
+              root.querySelector('#sim-tick').textContent = String(next.tick);
+              root.querySelector('#sim-state').textContent = next.paused ? 'paused' : 'running';
+              root.querySelector('#sim-last').textContent = fmtTime(new Date(next.last));
+              root.querySelector('#sim-events').innerHTML = next.events.map(item => `
+                <div class="log-line">
+                  <time>${fmtTime(new Date(item.at))}</time>
+                  <code>${item.action}</code>
+                  <span>${item.summary}</span>
+                </div>
+              `).join('');
+            });
+            return [unsub];
+          }
+        };
+      }
+
+      function createAuditModule() {
+        return {
+          id:'audit',
+          label:'Audit Ledger',
+          icon:'AL',
+          tagline:'strict trace',
+          description:'Immutable-style view of recent operational events, command submissions, anomaly shifts, and state transitions produced by reducers and proactive agents.',
+          actions:[
+            { label:'Export concept', tone:'', handler:() => toast('Export', 'This single-file demo keeps audit data in memory/local runtime only.', 'info') }
+          ],
+          render(ctx, root) {
+            root.innerHTML = `
+              <div class="card">
+                <div class="card-head"><h3>Ledger</h3><small>newest first</small></div>
+                <div style="overflow:auto;">
+                  <table class="table">
+                    <thead><tr><th>Timestamp</th><th>Action</th><th>Severity</th><th>Summary</th><th>Details</th></tr></thead>
+                    <tbody id="audit-table"></tbody>
+                  </table>
+                </div>
+              </div>
+            `;
+            const unsub = store.subscribe(s => s.audit, entries => {
+              root.querySelector('#audit-table').innerHTML = entries.map(item => `
+                <tr>
+                  <td>${fmtDateTime(item.at)}</td>
+                  <td>${item.action}</td>
+                  <td><span class="status ${toneBySeverity(item.severity)}">${item.severity}</span></td>
+                  <td>${item.summary}</td>
+                  <td>${JSON.stringify(item.details || {})}</td>
+                </tr>
+              `).join('');
+            });
+            return [unsub];
+          }
+        };
+      }
+
+      function createArchitectureModule() {
+        return {
+          id:'architecture',
+          label:'Architecture',
+          icon:'AR',
+          tagline:'runtime blueprint',
+          description:'Single-file implementation pattern for a modular shell: plugin registration, reducer-backed store, event bus, simulation agents, and intent orchestration.',
+          actions:[
+            { label:'Queue bootstrap check', tone:'primary', handler:({ store }) => store.dispatch('COMMAND_SUBMIT', { label:'Bootstrap verification pass', owner:'ENG' }, { source:'ui' }) }
+          ],
+          render(ctx, root) {
+            root.innerHTML = `
+              <div class="arch">
+                <div class="banner">
+                  <div>
+                    <strong style="display:block; text-transform:uppercase; letter-spacing:.12em; margin-bottom:6px;">Design posture</strong>
+                    This version is stronger, denser, and more operations-grade than the previous shell, but it intentionally avoids offensive or weapons functionality.
+                  </div>
+                  <span class="status danger">Safe boundaries enforced</span>
+                </div>
+                <div class="codeblock">Core Shell
+  ├─ Topbar / Sidebar / Workspace
+  ├─ Module Registry
+  ├─ Module Lifecycle: onInit → render → onActivate → onDeactivate → onDispose
+  └─ Route Activation
+
+Reactive Fabric
+  ├─ EventBus.emit(type, payload, meta)
+  ├─ Store.dispatch(type, payload, meta)
+  ├─ Reducers mutate state slices
+  └─ Selector subscriptions drive rendering
+
+Simulation Grid
+  ├─ threat-grid agent
+  ├─ env-grid agent
+  ├─ system-pulse agent
+  └─ command-executor agent
+
+AI Orchestration
+  ├─ intent scoring
+  ├─ safe action handlers
+  ├─ proactive event narratives
+  └─ structured response payloads</div>
+
+                <div class="codeblock">@startuml
+skinparam backgroundColor transparent
+skinparam componentStyle rectangle
+
+package "Core Shell" {
+  [Topbar]
+  [Sidebar]
+  [Workspace Router]
+  [Module Loader]
+}
+
+package "Reactive Runtime" {
+  [Event Bus]
+  [Store]
+  [Reducers]
+  [Selectors]
+}
+
+package "Simulation Grid" {
+  [Threat Agent]
+  [Environment Agent]
+  [System Drift Agent]
+  [Command Executor]
+}
+
+package "AI Orchestration" {
+  [Intent Graph]
+  [Action Handlers]
+  [Proactive Narrator]
+}
+
+[Module Loader] --> [Workspace Router]
+[Module Loader] --> [Store]
+[Module Loader] --> [Event Bus]
+[Store] --> [Reducers]
+[Store] --> [Selectors]
+[Simulation Grid] --> [Store]
+[Simulation Grid] --> [Event Bus]
+[AI Orchestration] --> [Store]
+[AI Orchestration] --> [Event Bus]
+@enduml</div>
+
+                <div class="footer-note">
+                  Migration path: split this single file into <code>core/shell</code>, <code>runtime/store</code>, <code>runtime/bus</code>, <code>runtime/sim</code>, and <code>features/*</code>. Keep module contracts stable while moving rendering to framework components later.
+                </div>
+              </div>
+            `;
+          }
+        };
+      }
+
+      function createEnvironmentModule() {
+        return {
+          id:'environment',
+          label:'Environmental Control',
+          icon:'EC',
+          tagline:'stability metrics',
+          description:'Environmental telemetry with drift tracking for temperature, AQI, humidity, pressure, and CO₂ so the operator can distinguish systems incidents from ambient instability.',
+          actions:[
+            { label:'Calibrate sensors', tone:'primary', handler:({ store }) => {
+              store.dispatch('COMMAND_SUBMIT', { label:'Environmental calibration sweep', owner:'ENV' }, { source:'ui' });
+            }}
+          ],
+          render(ctx, root) {
+            root.innerHTML = `
+              <div class="grid cols-12">
+                <div class="card span-3"><div class="card-head"><h3>Temp</h3><small>°C</small></div><div class="metric"><div class="value" id="env-temp">--</div><div class="delta">thermal envelope</div></div></div>
+                <div class="card span-3"><div class="card-head"><h3>AQI</h3><small>air quality</small></div><div class="metric"><div class="value" id="env-aqi">--</div><div class="delta">particulate load</div></div></div>
+                <div class="card span-3"><div class="card-head"><h3>CO₂</h3><small>ppm</small></div><div class="metric"><div class="value" id="env-co2">--</div><div class="delta">ventilation stress</div></div></div>
+                <div class="card span-3"><div class="card-head"><h3>Humidity</h3><small>% RH</small></div><div class="metric"><div class="value" id="env-hum">--</div><div class="delta">relative humidity</div></div></div>
+                <div class="card span-12">
+                  <div class="card-head"><h3>Telemetry Board</h3><small>current readings</small></div>
+                  <div id="env-board" class="stack"></div>
+                </div>
+              </div>
+            `;
+            const unsub = store.subscribe(s => s.env, env => {
+              root.querySelector('#env-temp').textContent = env.temp.toFixed(1);
+              root.querySelector('#env-aqi').textContent = env.aqi;
+              root.querySelector('#env-co2').textContent = env.co2;
+              root.querySelector('#env-hum').textContent = env.humidity;
+              root.querySelector('#env-board').innerHTML = [
+                ['Temperature', env.temp.toFixed(1) + '°C', Math.round(env.temp / 0.35)],
+                ['Pressure', env.pressure.toFixed(1) + ' kPa', Math.round(env.pressure)],
+                ['AQI', String(env.aqi), env.aqi],
+                ['CO₂', env.co2 + ' ppm', Math.round(env.co2 / 11)],
+                ['Humidity', env.humidity + '%', env.humidity]
+              ].map(([label, value, progress]) => `
+                <div class="row-item">
+                  <div style="width:100%;">
+                    <strong>${label}</strong>
+                    <p>${value}</p>
+                    <div class="bar"><span style="width:${clamp(progress, 0, 100)}%"></span></div>
+                  </div>
+                  <div class="right">${value}</div>
+                </div>
+              `).join('');
+            });
+            return [unsub];
+          }
+        };
+      }
+
+
+      function createBridgeModule() {
+        return {
+          id:'bridge',
+          label:'Backend Bridge',
+          icon:'BG',
+          tagline:'html + backend contract',
+          description:'Single-file browser console that fronts a host-native Guardian backend. The HTML handles visualization and orchestration; PowerShell or any local API handles privileged collection and persistence.',
+          actions:[
+            {
+              label:'Queue sync request',
+              tone:'primary',
+              handler:({ store }) => {
+                store.dispatch('COMMAND_SUBMIT', { label:'Backend state sync request', owner:'API' }, { source:'ui' });
+                toast('Bridge', 'Backend sync request queued in command lane.', 'info');
+              }
+            },
+            {
+              label:'Export bridge manifest',
+              tone:'ghost',
+              handler:({ store }) => {
+                store.dispatch('COMMAND_SUBMIT', { label:'Export integration manifest', owner:'ENG' }, { source:'ui' });
+                toast('Bridge', 'Integration manifest prepared for download.', 'info');
+              }
+            }
+          ],
+          render(ctx, root) {
+            const fetchSnippet = [
+              "async function syncGuardianState(){",
+              "  const res = await fetch('http://127.0.0.1:8787/api/state');",
+              "  if(!res.ok) throw new Error('Backend unavailable');",
+              "  const envelope = await res.json();",
+              "  // validate schemaVersion before hydrating slices",
+              "  console.log(envelope.SchemaVersion, envelope.Guardian);",
+              "}"
+            ].join("\n");
+
+            const schemaSnippet = JSON.stringify({
+              SchemaVersion: "3.2.0",
+              ExportedAt: "2026-03-27T13:05:20Z",
+              Guardian: {
+                SecurityPosture: { Score: 86 },
+                NetworkDefense: {
+                  ConnectedDevices: [
+                    { IP:"192.168.1.22", MAC:"40:B0:76:9F:8A:11", Hostname:"ops-laptop-01", StabilityScore:88 }
+                  ],
+                  LastScanSummary: {
+                    DeviceCount: 14,
+                    NewDeviceCount: 1,
+                    ChangedDeviceCount: 0,
+                    StabilityScore: 92.8
+                  }
+                },
+                IntrusionDetection: {
+                  Alerts: [
+                    { Type:"NEW_DEVICE_ALERT", Severity:"High", Message:"New device detected", Timestamp:"2026-03-27T13:05:20Z" }
+                  ]
+                },
+                State: {
+                  AutoSaveEnabled: true,
+                  LastSavedAt: "2026-03-27T13:05:20Z"
+                }
+              }
+            }, null, 2);
+
+            root.innerHTML = `
+              <div class="grid cols-12">
+                <div class="card span-8">
+                  <div class="card-head"><h3>Master packaging posture</h3><small>what this HTML is</small></div>
+                  <div class="banner">
+                    <div>
+                      <strong style="display:block; text-transform:uppercase; letter-spacing:.12em; margin-bottom:6px;">Separation of concerns</strong>
+                      This file is the browser-native command surface. It is ready to bind to a local Guardian backend, but it does not pretend to execute PowerShell in the browser.
+                    </div>
+                    <span class="status info">Safe integration model</span>
+                  </div>
+                  <div class="stack" style="margin-top:14px;">
+                    <div class="row-item">
+                      <div>
+                        <strong>Front-end artifact</strong>
+                        <p>Single HTML file with boot shell, modules, audit lane, AI console, state store, simulation, and visual systems.</p>
+                      </div>
+                      <span class="status ok">READY</span>
+                    </div>
+                    <div class="row-item">
+                      <div>
+                        <strong>Backend expectation</strong>
+                        <p>Any local service may expose JSON state, device history, trend summaries, alerts, and report metadata over a narrow localhost API.</p>
+                      </div>
+                      <span class="status warn">OPTIONAL</span>
+                    </div>
+                    <div class="row-item">
+                      <div>
+                        <strong>Recommended bridge surface</strong>
+                        <p>/api/state, /api/summary, /api/alerts, /api/devices, /api/history, /api/actions with strict schema validation and loopback-only binding.</p>
+                      </div>
+                      <span class="status info">LOCALHOST</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card span-4">
+                  <div class="card-head"><h3>Live binding status</h3><small>derived from current shell state</small></div>
+                  <div class="metric"><div class="value" id="bridge-posture">--</div><div class="delta">operational posture</div></div>
+                  <div class="split-compact" style="margin-top:14px;">
+                    <div class="mini-stat"><span>Queued Commands</span><strong id="bridge-queue">--</strong></div>
+                    <div class="mini-stat"><span>Tracked Anomalies</span><strong id="bridge-anomalies">--</strong></div>
+                    <div class="mini-stat"><span>Simulation</span><strong id="bridge-sim">--</strong></div>
+                    <div class="mini-stat"><span>Schema Target</span><strong>3.2.0</strong></div>
+                  </div>
+                </div>
+
+                <div class="card span-6">
+                  <div class="card-head"><h3>Fetch contract</h3><small>drop-in browser side</small></div>
+                  <div class="codeblock" id="bridge-fetch-snippet"></div>
+                  <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
+                    <button class="action-btn primary" id="bridge-copy-fetch">Copy fetch stub</button>
+                    <button class="action-btn ghost" id="bridge-download-manifest">Download manifest</button>
+                  </div>
+                </div>
+
+                <div class="card span-6">
+                  <div class="card-head"><h3>Expected state envelope</h3><small>schema-aligned payload</small></div>
+                  <div class="codeblock" id="bridge-schema-snippet"></div>
+                  <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
+                    <button class="action-btn primary" id="bridge-copy-schema">Copy schema sample</button>
+                  </div>
+                </div>
+
+                <div class="card span-12">
+                  <div class="card-head"><h3>Backend integration steps</h3><small>clean packaging sequence</small></div>
+                  <div class="stack">
+                    <div class="row-item">
+                      <div><strong>1. Keep the browser file single</strong><p>This HTML remains self-contained and can be opened directly or served statically.</p></div>
+                      <span class="status ok">HTML</span>
+                    </div>
+                    <div class="row-item">
+                      <div><strong>2. Keep host-native collectors separate</strong><p>State export, device discovery, alerts, and history stay in PowerShell or another trusted host process.</p></div>
+                      <span class="status ok">BACKEND</span>
+                    </div>
+                    <div class="row-item">
+                      <div><strong>3. Add a narrow localhost adapter</strong><p>Expose read-only telemetry first, then controlled actions with explicit confirmation and audit logging.</p></div>
+                      <span class="status warn">API</span>
+                    </div>
+                    <div class="row-item">
+                      <div><strong>4. Hydrate slices safely</strong><p>Validate <code>SchemaVersion</code>, map payloads to store slices, and reject malformed data before rendering.</p></div>
+                      <span class="status info">VALIDATE</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+
+            root.querySelector('#bridge-fetch-snippet').textContent = fetchSnippet;
+            root.querySelector('#bridge-schema-snippet').textContent = schemaSnippet;
+
+            const manifest = {
+              app: "CLEARGLASSINC Guardian Command Nexus",
+              version: "1.0.0",
+              artifact: "single-file-html",
+              bridge: {
+                mode: "localhost-api",
+                endpoints: ["/api/state", "/api/summary", "/api/alerts", "/api/devices", "/api/history", "/api/actions"],
+                schemaVersion: "3.2.0"
+              },
+              slices: ["meta", "sim", "pipeline", "threats", "systems", "env", "audit", "commands", "ai", "ui"]
+            };
+
+            const copyText = async (value, label) => {
+              try {
+                await navigator.clipboard.writeText(value);
+                toast('Bridge', `${label} copied to clipboard.`, 'info');
+              } catch (error) {
+                toast('Bridge', `Clipboard unavailable for ${label.toLowerCase()}.`, 'warn');
+              }
+            };
+
+            const copyFetch = () => copyText(fetchSnippet, 'Fetch stub');
+            const copySchema = () => copyText(schemaSnippet, 'Schema sample');
+            const downloadManifest = () => {
+              const blob = new Blob([JSON.stringify(manifest, null, 2)], { type:'application/json' });
+              const url = URL.createObjectURL(blob);
+              const anchor = document.createElement('a');
+              anchor.href = url;
+              anchor.download = 'clearglassinc-guardian-bridge-manifest.json';
+              anchor.click();
+              setTimeout(() => URL.revokeObjectURL(url), 1500);
+              toast('Bridge', 'Integration manifest downloaded.', 'info');
+            };
+
+            const fetchBtn = root.querySelector('#bridge-copy-fetch');
+            const schemaBtn = root.querySelector('#bridge-copy-schema');
+            const manifestBtn = root.querySelector('#bridge-download-manifest');
+
+            fetchBtn.addEventListener('click', copyFetch);
+            schemaBtn.addEventListener('click', copySchema);
+            manifestBtn.addEventListener('click', downloadManifest);
+
+            const unsubscribe = store.subscribe(
+              s => ({
+                posture: selectors.posture(s),
+                queued: selectors.queueDepth(s),
+                anomalies: selectors.anomalies(s).length,
+                paused: s.sim.paused
+              }),
+              value => {
+                root.querySelector('#bridge-posture').textContent = value.posture;
+                root.querySelector('#bridge-queue').textContent = value.queued;
+                root.querySelector('#bridge-anomalies').textContent = value.anomalies;
+                root.querySelector('#bridge-sim').textContent = value.paused ? 'PAUSED' : 'ACTIVE';
+              }
+            );
+
+            return [
+              unsubscribe,
+              () => fetchBtn.removeEventListener('click', copyFetch),
+              () => schemaBtn.removeEventListener('click', copySchema),
+              () => manifestBtn.removeEventListener('click', downloadManifest)
+            ];
+          }
+        };
+      }
+
+      const shell = new Shell({ bus, store });
+      [
+        createOverviewModule(),
+        createCommandModule(),
+        createThreatModule(),
+        createSystemsModule(),
+        createEnvironmentModule(),
+        createSimulationModule(),
+        createAuditModule(),
+        createArchitectureModule(),
+        createBridgeModule()
+      ].forEach(mod => shell.register(mod));
+
+      function bindQuickActions() {
+        document.getElementById('quick-escalate').addEventListener('click', () => {
+          const target = [...store.getState().threats].sort((a,b) => b.level - a.level)[0];
+          if (!target) return;
+          store.dispatch('THREAT_ESCALATE', { id:target.id, delta:16, status:'critical' }, { source:'quick-action' });
+          toast('Quick action', `Highest anomaly ${target.zone} escalated.`, 'warn');
+        });
+        document.getElementById('quick-task').addEventListener('click', () => {
+          const target = [...store.getState().pipeline].sort((a,b) => a.eta - b.eta)[0];
+          if (!target) return;
+          store.dispatch('TASK_PRIORITIZE', { id:target.id }, { source:'quick-action' });
+          toast('Quick action', `Task ${target.name} moved to critical priority.`, 'info');
+        });
+        document.getElementById('quick-lockdown').addEventListener('click', () => {
+          store.dispatch('LOCKDOWN', { mode:'LOCKDOWN-ALPHA' }, { source:'quick-action' });
+          toast('Quick action', 'Lockdown mode applied.', 'warn');
+        });
+      }
+
+      bus.on('*', (event) => {
+        if (['THREAT_ESCALATE', 'ANOMALY_CREATE', 'LOCKDOWN'].includes(event.type)) {
+          const tone = event.type === 'LOCKDOWN' ? 'danger' : 'warn';
+          toast(event.type, JSON.stringify(event.payload).slice(0, 120) || 'state transition', tone);
+        }
+      });
+
+      function init() {
+        document.getElementById('boot-module-count').textContent = String(shell.modules.length).padStart(2, '0');
+        document.getElementById('boot-condition').textContent = store.getState().meta.posture;
+        renderTopKpis();
+        renderMiniStats();
+        shell.buildNav();
+        shell.activate('overview');
+        bindQuickActions();
+        startClocks();
+        sim.start();
+
+        // Seed some audit lines for immediate UX density.
+        [
+          ['BOOT', 'info', 'Shell boot completed'],
+          ['ATTEST', 'info', 'Module registry verified'],
+          ['READY', 'info', 'Operator console standing by']
+        ].forEach(([action, severity, summary]) => {
+          store.state = auditEntry(store.getState(), action, severity, summary);
+        });
+        store.notify(store.getState());
+      }
+
+      bootSequence(init);
+    })();
+  </script>
+</body>
+</html>

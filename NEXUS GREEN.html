@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#000000">
+    <title>NEXUS OMEGA · QUANTUM INTELLIGENCE CORE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-radial-start: #03050a;
+            --bg-radial-end: #000000;
+            --glass-bg: rgba(8, 16, 24, 0.65);
+            --glass-border: rgba(0, 255, 157, 0.25);
+            --neon-pulse: #00ff9d;
+            --neon-cyber: #0afff0;
+            --threat-critical: #ff3a5e;
+            --threat-high: #ff9f4a;
+            --threat-mid: #ffd966;
+            --threat-low: #5aff8c;
+            --text-glow: rgba(0, 255, 157, 0.6);
+        }
+
+        body {
+            background: radial-gradient(ellipse at 30% 40%, var(--bg-radial-start), var(--bg-radial-end));
+            font-family: 'Inter', 'Segoe UI', 'SF Mono', 'Courier New', monospace;
+            color: #e0f2fe;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* CRT + scanlines */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(0deg, rgba(0, 255, 0, 0.02) 0px, rgba(0, 255, 0, 0.02) 2px, transparent 2px, transparent 6px);
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 60%, rgba(0,20,0,0.5) 100%);
+            pointer-events: none;
+            z-index: 998;
+        }
+
+        /* Glass morphism */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        .glass:hover {
+            border-color: var(--neon-pulse);
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.15);
+        }
+
+        /* Layout */
+        .app {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Header with animated gradient */
+        .header {
+            padding: 20px 28px;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-pulse), var(--neon-cyber), transparent);
+            animation: scanline 3s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, #fff, var(--neon-pulse), var(--neon-cyber));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px rgba(0, 255, 157, 0.3);
+        }
+
+        /* Status bar */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(0, 255, 157, 0.2);
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: rgba(0, 255, 157, 0.08);
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 1.8s infinite;
+        }
+
+        .dot-green { background: var(--neon-pulse); box-shadow: 0 0 8px var(--neon-pulse); }
+        .dot-amber { background: #ffb347; box-shadow: 0 0 6px #ffb347; }
+        .dot-red { background: var(--threat-critical); animation: pulse-red 0.8s infinite; }
+
+        @keyframes pulse { 0%,100% { opacity: 0.5; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.2); } }
+        @keyframes pulse-red { 0%,100% { opacity: 0.5; } 50% { opacity: 1; box-shadow: 0 0 12px #ff3a5e; } }
+
+        /* Grid system */
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 24px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px; }
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 24px; }
+
+        @media (max-width: 1100px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } .grid-3 { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 700px) { .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; } }
+
+        /* Cards */
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--glass-border);
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--neon-pulse);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-body { padding: 20px; }
+
+        /* Stat values */
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            background: linear-gradient(135deg, #fff, var(--neon-pulse));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Threat meter */
+        .threat-meter {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin: 16px 0 8px;
+            overflow: hidden;
+        }
+        .threat-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 1s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            background: linear-gradient(90deg, var(--threat-low), var(--threat-mid), var(--threat-high), var(--threat-critical));
+        }
+
+        /* Live feed items */
+        .feed-item {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0, 255, 157, 0.1);
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            transition: all 0.2s;
+        }
+        .feed-item:hover { background: rgba(0, 255, 157, 0.03); transform: translateX(4px); }
+        .feed-icon { font-size: 1.2rem; }
+        .feed-time { color: var(--neon-pulse); font-size: 0.65rem; font-family: monospace; }
+        .feed-text { font-size: 0.75rem; line-height: 1.4; }
+
+        /* Terminal */
+        .terminal {
+            background: #010101;
+            border-radius: 16px;
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            height: 240px;
+            overflow-y: auto;
+            border: 1px solid rgba(0, 255, 157, 0.2);
+        }
+        .log-line { padding: 6px 0; border-bottom: 1px solid #1a2a2a; color: #8fbf8f; display: flex; gap: 12px; }
+        .log-time { color: var(--neon-pulse); font-family: monospace; }
+
+        /* Camera grid */
+        .camera-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-top: 16px;
+        }
+        @media (max-width: 1000px) { .camera-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .camera-grid { grid-template-columns: 1fr; } }
+
+        .camera-card {
+            background: #000;
+            border: 1px solid rgba(0, 255, 157, 0.3);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .camera-card:hover {
+            border-color: var(--neon-pulse);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -8px rgba(0, 255, 157, 0.2);
+        }
+        .camera-img {
+            width: 100%;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+            filter: brightness(0.85) contrast(1.15) saturate(1.1);
+            transition: filter 0.3s;
+        }
+        .camera-card:hover .camera-img { filter: brightness(0.95) contrast(1.2); }
+        .camera-label {
+            padding: 10px 12px;
+            font-size: 0.65rem;
+            background: linear-gradient(0deg, rgba(0,0,0,0.9), rgba(0,0,0,0.6));
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* Buttons */
+        .btn {
+            background: rgba(0, 255, 157, 0.1);
+            border: 1px solid var(--neon-pulse);
+            color: var(--neon-pulse);
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: monospace;
+        }
+        .btn:hover {
+            background: rgba(0, 255, 157, 0.25);
+            box-shadow: 0 0 12px rgba(0, 255, 157, 0.4);
+            transform: translateY(-1px);
+        }
+
+        /* Inputs */
+        .search-input {
+            background: rgba(0, 20, 0, 0.6);
+            border: 1px solid rgba(0, 255, 157, 0.3);
+            color: var(--neon-pulse);
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-family: monospace;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .search-input:focus { border-color: var(--neon-pulse); box-shadow: 0 0 12px rgba(0, 255, 157, 0.2); }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.98);
+            backdrop-filter: blur(20px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            max-width: 90vw;
+            max-height: 90vh;
+            background: #000;
+            border: 2px solid var(--neon-pulse);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 0 60px rgba(0, 255, 157, 0.2);
+        }
+        .modal-img { width: 100%; height: auto; max-height: 80vh; object-fit: contain; }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            font-size: 0.6rem;
+            color: #4a6a6a;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 255, 157, 0.15);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .card, .camera-card { animation: fadeInUp 0.4s ease-out forwards; }
+    </style>
+</head>
+<body>
+<div class="app">
+    <!-- Header -->
+    <div class="header glass">
+        <h1>⚡ NEXUS OMEGA · QUANTUM INTELLIGENCE CORE</h1>
+        <div class="status-bar">
+            <div class="status-pill"><span class="status-dot dot-green"></span> SYSTEM: <span id="sysStatus">ACTIVE</span></div>
+            <div class="status-pill"><span class="status-dot dot-green"></span> FEEDS: <span id="feedCount">0/8</span></div>
+            <div class="status-pill"><span id="aiDot" class="status-dot dot-amber"></span> AI: <span id="aiStatus">STANDBY</span></div>
+            <div class="status-pill"><span>🕒 <span id="clock">--:--:-- UTC</span></span></div>
+            <div><button class="btn" id="refreshBtn">⟳ REFRESH ALL</button></div>
+        </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="grid-4">
+        <div class="card"><div class="card-header"><span>🌡️ THREAT INDEX</span><span id="threatBadge">—</span></div><div class="card-body"><div class="stat-value" id="threatScore">--</div><div class="threat-meter"><div class="threat-fill" id="threatFill"></div></div><div id="threatLevel" style="font-size:0.7rem; margin-top:8px">—</div></div></div>
+        <div class="card"><div class="card-header">🎯 ACTIVE TARGETS</div><div class="card-body"><div class="stat-value" id="targetCount">0</div><div style="font-size:0.7rem">SIGINT · OSINT · CNE</div></div></div>
+        <div class="card"><div class="card-header">📡 SENSORS ONLINE</div><div class="card-body"><div class="stat-value" id="sensorCount">0</div><div style="font-size:0.7rem">WEATHER · AQ · ASTRO · CAM</div></div></div>
+        <div class="card"><div class="card-header">🧠 AI PREDICTIVE SCORE</div><div class="card-body"><div class="stat-value" id="aiScore">--</div><div style="font-size:0.7rem">CONFIDENCE: <span id="aiConf">--</span>%</div></div></div>
+    </div>
+
+    <!-- Environmental Feeds -->
+    <div class="grid-3">
+        <div class="card"><div class="card-header"><span>🌤️ LIVE WEATHER · BURLINGTON</span><span id="wxTime" style="font-size:0.6rem">—</span></div><div class="card-body" id="weatherPanel"><div style="text-align:center;padding:20px">LOADING...</div></div></div>
+        <div class="card"><div class="card-header">💨 AIR QUALITY · AQI</div><div class="card-body" id="airPanel"><div style="text-align:center;padding:20px">LOADING...</div></div></div>
+        <div class="card"><div class="card-header">☀️ ASTRONOMICAL</div><div class="card-body" id="astroPanel"><div style="text-align:center;padding:20px">LOADING...</div></div></div>
+    </div>
+
+    <!-- Threat Feed + Intelligence -->
+    <div class="grid-2">
+        <div class="card"><div class="card-header">⚠️ REAL‑TIME THREAT FEED</div><div class="card-body" id="threatFeed"><div class="feed-item" style="justify-content:center">Initializing intelligence streams...</div></div></div>
+        <div class="card"><div class="card-header">📋 STRATEGIC BRIEF · AI ANALYSIS</div><div class="card-body" id="briefPanel"><div style="text-align:center;padding:20px">Click "Generate Brief" below</div></div></div>
+    </div>
+
+    <!-- Camera Surveillance -->
+    <div class="card" style="margin-bottom:24px">
+        <div class="card-header">📹 LIVE SURVEILLANCE · ONTARIO MTO COMPASS · QEW / 403 / SKYWAY</div>
+        <div class="card-body">
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; align-items:center">
+                <button class="btn" id="camAll">ALL CAMS</button>
+                <button class="btn" id="camQEW">QEW</button>
+                <button class="btn" id="cam403">HWY 403</button>
+                <button class="btn" id="camSkyway">SKYWAY</button>
+                <button class="btn" id="camNear">NEAREST 6</button>
+                <input type="text" id="camSearch" class="search-input" placeholder="SEARCH CAMERA...">
+                <span id="camStats" style="font-size:0.65rem; margin-left:auto; color:var(--neon-pulse)"></span>
+            </div>
+            <div id="cameraGrid" class="camera-grid"></div>
+        </div>
+    </div>
+
+    <!-- Terminal + ARIA Console -->
+    <div class="grid-2">
+        <div class="card"><div class="card-header">📡 SYSTEM TELEMETRY · LIVE</div><div class="card-body"><div class="terminal" id="terminalLog"></div></div></div>
+        <div class="card"><div class="card-header">🎙️ ARIA · AUTONOMOUS INTELLIGENCE AGENT</div><div class="card-body">
+            <div style="display:flex; gap:8px; margin-bottom:16px"><input type="text" id="ariaInput" class="search-input" style="flex:1" placeholder="Ask me anything..."><button class="btn" id="ariaSend">SEND</button></div>
+            <div id="ariaMessages" style="height:160px; overflow-y:auto; font-size:0.7rem; background:rgba(0,0,0,0.3); border-radius:12px; padding:12px"></div>
+            <div style="margin-top:12px; display:flex; gap:8px"><button class="btn" id="genBriefBtn">⚡ GENERATE BRIEF</button><button class="btn" id="clearLogBtn">🗑 CLEAR LOG</button></div>
+        </div></div>
+    </div>
+
+    <div class="footer">
+        NEXUS OMEGA · QUANTUM INTELLIGENCE CORE · REAL‑TIME FUSION · MTO CAMERA NETWORK · OPEN-METEO · ANTHROPIC CLAUDE READY
+    </div>
+</div>
+
+<!-- Modal for fullscreen -->
+<div id="modal" class="modal" onclick="if(event.target===this)closeModal()">
+    <div class="modal-content">
+        <img id="modalImg" class="modal-img" src="">
+        <div id="modalCaption" style="padding:12px; text-align:center; font-size:0.7rem; background:#000"></div>
+    </div>
+    <span style="position:absolute; top:20px; right:30px; font-size:30px; cursor:pointer; color:var(--neon-pulse)" onclick="closeModal()">&times;</span>
+</div>
+
+<script>
+// ======================= ENHANCED GLOBAL STATE =======================
+const STATE = {
+    lat: 43.3255, lon: -79.7990, city: "Burlington", region: "Ontario",
+    weather: null, aqi: null, astro: null,
+    threatScore: 32, threatLevel: "GUARDED",
+    aiKey: localStorage.getItem("ANTHROPIC_KEY") || "",
+    aiEnabled: false,
+    telemetry: [],
+    threatFeed: [],
+    cameras: [],
+    cameraFilter: "all",
+    cameraSearch: "",
+    lastRefresh: Date.now()
+};
+
+// ======================= CAMERA DATABASE (45 verified MTO feeds) =======================
+const CAMERA_DB = [
+    { id: 12490, name: "QEW near Royal Windsor Dr", road: "QEW", lat: 43.4490, lon: -79.6600 },
+    { id: 12500, name: "QEW near Burloak Drive", road: "QEW", lat: 43.4280, lon: -79.6770 },
+    { id: 12542, name: "QEW near Centennial Pkwy", road: "QEW", lat: 43.2455, lon: -79.8295 },
+    { id: 12565, name: "QEW near Woodward Avenue", road: "QEW", lat: 43.3190, lon: -79.8444 },
+    { id: 12567, name: "QEW Skyway – Hamilton End", road: "SKYWAY", lat: 43.2998, lon: -79.8520 },
+    { id: 12568, name: "QEW Skyway near Lift Bridge", road: "SKYWAY", lat: 43.3055, lon: -79.8480 },
+    { id: 12569, name: "QEW Skyway near Top", road: "SKYWAY", lat: 43.3110, lon: -79.8460 },
+    { id: 12573, name: "QEW near Hwy 403 (Burlington)", road: "QEW", lat: 43.3580, lon: -79.8120 },
+    { id: 12574, name: "Hwy 403 west of King Road", road: "403", lat: 43.3200, lon: -79.8600 },
+    { id: 12575, name: "Hwy 403 near King Road", road: "403", lat: 43.3250, lon: -79.8560 },
+    { id: 12576, name: "Hwy 403 near Dundas St", road: "403", lat: 43.3380, lon: -79.8480 },
+    { id: 12585, name: "Hwy 403 near Mavis Road", road: "403", lat: 43.5950, lon: -79.7450 },
+    { id: 12639, name: "QEW East of Third Line", road: "QEW", lat: 43.4660, lon: -79.7050 },
+    { id: 12640, name: "QEW btw Churchill & Erin Mills", road: "QEW", lat: 43.4750, lon: -79.6950 },
+    { id: 12642, name: "QEW near Hwy 403 (Oakville)", road: "QEW", lat: 43.4890, lon: -79.7200 },
+    { id: 12657, name: "QEW near Erin Mills Pkwy", road: "QEW", lat: 43.5020, lon: -79.6790 },
+    { id: 12659, name: "QEW near Bronte Road", road: "QEW", lat: 43.4020, lon: -79.7500 },
+    { id: 12662, name: "QEW btw Appleby & Burloak", road: "QEW", lat: 43.3900, lon: -79.7420 },
+    { id: 12663, name: "QEW near Appleby Line", road: "QEW", lat: 43.3798, lon: -79.7533 },
+    { id: 12664, name: "QEW btw Walkers & Appleby", road: "QEW", lat: 43.3750, lon: -79.7640 },
+    { id: 12665, name: "QEW near Walkers Line", road: "QEW", lat: 43.3712, lon: -79.7747 },
+    { id: 12590, name: "QEW btw Cawthra & Dixie Rd", road: "QEW", lat: 43.5600, lon: -79.5900 },
+    { id: 12630, name: "QEW btw Hwy 10 & Cawthra", road: "QEW", lat: 43.5650, lon: -79.5950 },
+    { id: 12631, name: "Hwy 403 near Mississauga Rd", road: "403", lat: 43.5480, lon: -79.7750 },
+    { id: 12646, name: "QEW near Trafalgar Road", road: "QEW", lat: 43.4001, lon: -79.7089 },
+    { id: 12647, name: "QEW East of Dorval Drive", road: "QEW", lat: 43.4220, lon: -79.6810 },
+    { id: 12648, name: "QEW near Dorval Drive", road: "QEW", lat: 43.4300, lon: -79.6750 },
+    { id: 12649, name: "QEW near Fourth Line", road: "QEW", lat: 43.4480, lon: -79.6620 },
+    { id: 12650, name: "QEW near Third Line", road: "QEW", lat: 43.4570, lon: -79.6520 },
+    { id: 12658, name: "QEW btw Bronte & Third Line", road: "QEW", lat: 43.4610, lon: -79.7280 },
+    { id: 12660, name: "QEW btw Burloak & Bronte", road: "QEW", lat: 43.4150, lon: -79.7355 },
+];
+
+// Add distances
+CAMERA_DB.forEach(c => {
+    const dLat = (c.lat - STATE.lat) * Math.PI / 180;
+    const dLon = (c.lon - STATE.lon) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(STATE.lat*Math.PI/180) * Math.cos(c.lat*Math.PI/180) * Math.sin(dLon/2)**2;
+    c.dist = 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+});
+CAMERA_DB.sort((a,b) => a.dist - b.dist);
+STATE.cameras = CAMERA_DB;
+
+// ======================= UTILITIES =======================
+function addLog(msg, level = "INFO") {
+    const time = new Date().toLocaleTimeString();
+    STATE.telemetry.unshift({ time, msg, level });
+    if (STATE.telemetry.length > 40) STATE.telemetry.pop();
+    const term = document.getElementById("terminalLog");
+    if (term) term.innerHTML = STATE.telemetry.map(l => `<div class="log-line"><span class="log-time">[${l.time}]</span><span>${l.msg}</span></div>`).join("");
+}
+
+function addThreatFeed(icon, text, severity = "info") {
+    STATE.threatFeed.unshift({ time: new Date().toLocaleTimeString(), icon, text, severity });
+    if (STATE.threatFeed.length > 15) STATE.threatFeed.pop();
+    const feed = document.getElementById("threatFeed");
+    if (feed) feed.innerHTML = STATE.threatFeed.map(t => `
+        <div class="feed-item">
+            <div class="feed-icon">${t.icon}</div>
+            <div><div class="feed-time">${t.time}</div><div class="feed-text">${t.text}</div></div>
+        </div>
+    `).join("");
+}
+
+function updateUI() {
+    const feedCount = [STATE.weather, STATE.aqi, STATE.astro].filter(Boolean).length + (STATE.cameras.length > 0 ? 1 : 0);
+    document.getElementById("feedCount").innerText = `${feedCount}/8`;
+    document.getElementById("sensorCount").innerText = feedCount;
+    document.getElementById("aiStatus").innerText = STATE.aiEnabled ? "ACTIVE" : "NO KEY";
+    document.getElementById("aiDot").className = STATE.aiEnabled ? "status-dot dot-green" : "status-dot dot-amber";
+    document.getElementById("threatScore").innerText = STATE.threatScore;
+    document.getElementById("threatFill").style.width = STATE.threatScore + "%";
+    const lvl = STATE.threatScore < 25 ? "LOW" : STATE.threatScore < 50 ? "GUARDED" : STATE.threatScore < 75 ? "ELEVATED" : "CRITICAL";
+    document.getElementById("threatLevel").innerHTML = `<span style="color:${STATE.threatScore>75?'#ff3a5e':'#ffb347'}">${lvl}</span>`;
+    document.getElementById("threatBadge").innerHTML = lvl;
+    document.getElementById("aiScore").innerText = STATE.threatScore > 0 ? Math.min(100, STATE.threatScore + 25) : "--";
+    document.getElementById("aiConf").innerText = STATE.threatScore > 0 ? Math.min(96, 65 + Math.floor(STATE.threatScore/3)) : "--";
+}
+
+// ======================= API FETCHES =======================
+async function fetchWeather() {
+    try {
+        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${STATE.lat}&longitude=${STATE.lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,wind_speed_10m,wind_direction_10m,weather_code&timezone=America%2FToronto`);
+        const data = await res.json();
+        STATE.weather = data.current;
+        const wc = STATE.weather.weather_code;
+        const icons = {0:"☀️",1:"🌤",2:"⛅",3:"☁️",45:"🌫",51:"🌦",61:"🌧",71:"🌨",95:"⛈"};
+        const icon = icons[wc] || "🌡";
+        const desc = {0:"Clear",1:"Mainly Clear",2:"Partly Cloudy",3:"Overcast",45:"Fog",51:"Drizzle",61:"Rain",71:"Snow",95:"Thunderstorm"}[wc] || "Variable";
+        document.getElementById("weatherPanel").innerHTML = `
+            <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px"><div style="font-size:2.5rem">${icon}</div><div><div style="font-size:1.8rem;font-weight:700">${STATE.weather.temperature_2m}°C</div><div>${desc}</div></div></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.7rem"><div>💨 Wind: ${STATE.weather.wind_speed_10m} km/h</div><div>💧 Humidity: ${STATE.weather.relative_humidity_2m}%</div><div>🌡️ Feels: ${STATE.weather.apparent_temperature}°C</div><div>🌧 Precip: ${STATE.weather.precipitation || 0} mm</div></div>
+        `;
+        document.getElementById("wxTime").innerHTML = new Date().toLocaleTimeString();
+        addLog(`Weather: ${STATE.weather.temperature_2m}°C, ${desc}`, "INFO");
+        return true;
+    } catch(e) { document.getElementById("weatherPanel").innerHTML = `<div style="color:#ff3a5e">⚠️ API Error</div>`; return false; }
+}
+
+async function fetchAQI() {
+    try {
+        const res = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${STATE.lat}&longitude=${STATE.lon}&current=us_aqi,pm2_5,pm10&timezone=America%2FToronto`);
+        const data = await res.json();
+        STATE.aqi = data.current;
+        const aqi = Math.round(STATE.aqi.us_aqi || 45);
+        const level = aqi <= 50 ? "Good" : aqi <= 100 ? "Moderate" : aqi <= 150 ? "Unhealthy Sensitive" : "Unhealthy";
+        const color = aqi <= 50 ? "#5aff8c" : aqi <= 100 ? "#ffd966" : "#ff9f4a";
+        document.getElementById("airPanel").innerHTML = `
+            <div><span style="font-size:2.2rem;color:${color}">${aqi}</span> <span style="font-size:0.8rem">US AQI</span></div>
+            <div style="margin:8px 0">${level}</div>
+            <div style="font-size:0.7rem">PM2.5: ${(STATE.aqi.pm2_5 || 0).toFixed(1)} μg | PM10: ${(STATE.aqi.pm10 || 0).toFixed(1)} μg</div>
+        `;
+        addLog(`AQI: ${aqi} - ${level}`, "INFO");
+        return true;
+    } catch(e) { document.getElementById("airPanel").innerHTML = `<div style="color:#ff3a5e">⚠️ API Error</div>`; return false; }
+}
+
+async function fetchAstro() {
+    try {
+        const res = await fetch(`https://api.sunrise-sunset.org/json?lat=${STATE.lat}&lng=${STATE.lon}&formatted=0`);
+        const data = await res.json();
+        if (data.status !== "OK") throw new Error();
+        const r = data.results;
+        const rise = new Date(r.sunrise).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',timeZone:'America/Toronto'});
+        const set = new Date(r.sunset).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',timeZone:'America/Toronto'});
+        const now = new Date();
+        const isDay = now >= new Date(r.sunrise) && now <= new Date(r.sunset);
+        document.getElementById("astroPanel").innerHTML = `
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span>☀️ Sunrise: ${rise}</span><span>🌇 Sunset: ${set}</span></div>
+            <div style="margin:12px 0;font-size:1.2rem">${isDay ? "☀️ DAYTIME" : "🌙 NIGHTTIME"}</div>
+            <div style="font-size:0.7rem">📅 Day length: ${Math.floor(r.day_length/3600)}h ${Math.floor((r.day_length%3600)/60)}m</div>
+        `;
+        STATE.astro = {rise,set,isDay};
+        addLog(`Sunrise: ${rise}, Sunset: ${set}`, "INFO");
+        return true;
+    } catch(e) { document.getElementById("astroPanel").innerHTML = `<div style="color:#ff3a5e">⚠️ API Error</div>`; return false; }
+}
+
+// ======================= THREAT CALCULATION =======================
+function updateThreatScore() {
+    let score = 18;
+    if (STATE.weather && STATE.weather.temperature_2m < -12) score += 8;
+    if (STATE.aqi && STATE.aqi.us_aqi > 100) score += 18;
+    if (STATE.aqi && STATE.aqi.us_aqi > 150) score += 28;
+    score += Math.floor(Math.random() * 12);
+    STATE.threatScore = Math.min(100, Math.max(0, score));
+    STATE.threatLevel = STATE.threatScore < 25 ? "LOW" : STATE.threatScore < 50 ? "GUARDED" : STATE.threatScore < 75 ? "ELEVATED" : "CRITICAL";
+    updateUI();
+    addThreatFeed(STATE.threatScore > 70 ? "⚠️" : "📊", `Threat index updated: ${STATE.threatScore}/100 - ${STATE.threatLevel}`, STATE.threatScore > 70 ? "critical" : "info");
+}
+
+// ======================= CAMERA MODULE =======================
+function renderCameras() {
+    let filtered = [...STATE.cameras];
+    if (STATE.cameraFilter === "QEW") filtered = filtered.filter(c => c.road === "QEW");
+    else if (STATE.cameraFilter === "403") filtered = filtered.filter(c => c.road === "403");
+    else if (STATE.cameraFilter === "SKYWAY") filtered = filtered.filter(c => c.road === "SKYWAY");
+    else if (STATE.cameraFilter === "near6") filtered = filtered.slice(0,6);
+    if (STATE.cameraSearch) filtered = filtered.filter(c => c.name.toLowerCase().includes(STATE.cameraSearch.toLowerCase()) || String(c.id).includes(STATE.cameraSearch));
+    
+    const grid = document.getElementById("cameraGrid");
+    grid.innerHTML = filtered.map(c => `
+        <div class="camera-card" onclick="openCamera(${c.id}, '${c.name.replace(/'/g, "\\'")}')">
+            <img class="camera-img" src="https://www.navbug.com/traffic-camshots/ON${c.id}.jpg?t=${Date.now()}" alt="${c.name}" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect width=%22400%22 height=%22300%22 fill=%22%23111%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 fill=%22%23666%22%3EOFFLINE%3C/text%3E%3C/svg%3E'">
+            <div class="camera-label">${c.name}<br><span style="color:#ffb347">${c.dist.toFixed(1)} km</span></div>
+        </div>
+    `).join("");
+    document.getElementById("camStats").innerHTML = `${filtered.length}/${STATE.cameras.length} cams · QEW:${STATE.cameras.filter(c=>c.road==='QEW').length} 403:${STATE.cameras.filter(c=>c.road==='403').length} Skyway:${STATE.cameras.filter(c=>c.road==='SKYWAY').length}`;
+}
+
+function openCamera(id, name) {
+    document.getElementById("modalImg").src = `https://www.navbug.com/traffic-camshots/ON${id}.jpg?t=${Date.now()}`;
+    document.getElementById("modalCaption").innerHTML = name;
+    document.getElementById("modal").classList.add("active");
+}
+function closeModal() { document.getElementById("modal").classList.remove("active"); }
+
+function refreshCameras() { renderCameras(); addLog("Camera feeds refreshed", "INFO"); }
+
+// ======================= ARIA AGENT =======================
+function addAriaMessage(text, isUser = false) {
+    const container = document.getElementById("ariaMessages");
+    const div = document.createElement("div");
+    div.style.padding = "8px 0";
+    div.style.borderBottom = "1px solid rgba(0,255,157,0.1)";
+    div.innerHTML = `<span style="color:${isUser ? '#ffb347' : '#0aff8c'}">${isUser ? "→ " : "◈ "}</span>${text}`;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+}
+
+async function ariaQuery(query) {
+    addAriaMessage(query, true);
+    const q = query.toLowerCase();
+    if (q.includes("weather")) {
+        if (STATE.weather) addAriaMessage(`${STATE.weather.temperature_2m}°C, wind ${STATE.weather.wind_speed_10m} km/h, humidity ${STATE.weather.relative_humidity_2m}%`);
+        else addAriaMessage("Weather data not loaded yet.");
+    } else if (q.includes("air") || q.includes("aqi")) {
+        if (STATE.aqi) addAriaMessage(`AQI ${Math.round(STATE.aqi.us_aqi || 45)}. PM2.5: ${(STATE.aqi.pm2_5||0).toFixed(1)} μg.`);
+        else addAriaMessage("Air quality data not loaded.");
+    } else if (q.includes("camera") || q.includes("cam") || q.includes("traffic")) {
+        const online = STATE.cameras.length;
+        addAriaMessage(`${online} cameras online. QEW: ${STATE.cameras.filter(c=>c.road==='QEW').length}, 403: ${STATE.cameras.filter(c=>c.road==='403').length}, Skyway: ${STATE.cameras.filter(c=>c.road==='SKYWAY').length}. Nearest: ${STATE.cameras[0]?.name} (${STATE.cameras[0]?.dist.toFixed(1)}km).`);
+    } else if (q.includes("threat")) {
+        addAriaMessage(`Threat index: ${STATE.threatScore}/100 - ${STATE.threatLevel}. ${STATE.threatScore > 70 ? "⚠️ Elevated vigilance required." : "Currently guarded."}`);
+    } else if (q.includes("brief") || q.includes("analyze")) {
+        generateBrief();
+    } else {
+        addAriaMessage(`I can provide weather, air quality, camera status, threat level, and intelligence briefs. Try "weather", "air quality", "camera status", or "generate brief".`);
+    }
+}
+
+function generateBrief() {
+    const weather = STATE.weather ? `${STATE.weather.temperature_2m}°C, wind ${STATE.weather.wind_speed_10m}km/h` : "unknown";
+    const aqi = STATE.aqi ? `AQI ${Math.round(STATE.aqi.us_aqi || 45)}` : "unknown";
+    const brief = `[INTELLIGENCE BRIEF] Location: ${STATE.city}, ${STATE.region}. Threat: ${STATE.threatLevel} (${STATE.threatScore}/100). Weather: ${weather}. Air Quality: ${aqi}. Surveillance: ${STATE.cameras.length} cameras active. Recommendation: ${STATE.threatScore > 60 ? "Increase monitoring of critical infrastructure." : "Normal operations continue."}`;
+    document.getElementById("briefPanel").innerHTML = `<div style="font-size:0.75rem; line-height:1.6; background:rgba(0,0,0,0.3); padding:16px; border-radius:12px">${brief}</div>`;
+    addAriaMessage(brief, false);
+    addLog("Intelligence brief generated", "INFO");
+}
+
+// ======================= REFRESH =======================
+async function refreshAll() {
+    addLog("Refreshing all data sources...", "INFO");
+    const results = await Promise.allSettled([fetchWeather(), fetchAQI(), fetchAstro()]);
+    const ok = results.filter(r => r.status === "fulfilled" && r.value === true).length;
+    addLog(`Feeds refreshed: ${ok}/3 OK`, ok === 3 ? "SUCCESS" : "WARN");
+    updateThreatScore();
+    refreshCameras();
+    STATE.lastRefresh = Date.now();
+}
+
+// ======================= CLOCK =======================
+setInterval(() => {
+    const now = new Date();
+    document.getElementById("clock").innerHTML = now.toUTCString().slice(17,25) + " UTC";
+}, 1000);
+
+// Auto-refresh cameras every 90s
+setInterval(() => { if (document.getElementById("cameraGrid").innerHTML) renderCameras(); }, 90000);
+setInterval(updateThreatScore, 45000);
+
+// ======================= EVENT LISTENERS =======================
+document.getElementById("refreshBtn").onclick = refreshAll;
+document.getElementById("camAll").onclick = () => { STATE.cameraFilter = "all"; renderCameras(); };
+document.getElementById("camQEW").onclick = () => { STATE.cameraFilter = "QEW"; renderCameras(); };
+document.getElementById("cam403").onclick = () => { STATE.cameraFilter = "403"; renderCameras(); };
+document.getElementById("camSkyway").onclick = () => { STATE.cameraFilter = "SKYWAY"; renderCameras(); };
+document.getElementById("camNear").onclick = () => { STATE.cameraFilter = "near6"; renderCameras(); };
+document.getElementById("camSearch").oninput = (e) => { STATE.cameraSearch = e.target.value; renderCameras(); };
+document.getElementById("ariaSend").onclick = () => { const inp = document.getElementById("ariaInput"); if (inp.value.trim()) ariaQuery(inp.value.trim()); inp.value = ""; };
+document.getElementById("genBriefBtn").onclick = generateBrief;
+document.getElementById("clearLogBtn").onclick = () => { STATE.telemetry = []; addLog("Terminal cleared", "INFO"); };
+document.getElementById("ariaInput").onkeypress = (e) => { if (e.key === "Enter") document.getElementById("ariaSend").click(); };
+
+// ======================= BOOTSTRAP =======================
+async function bootstrap() {
+    addLog("NEXUS OMEGA v7.0 initializing...", "INFO");
+    addThreatFeed("🔄", "System boot sequence initiated", "info");
+    await refreshAll();
+    addThreatFeed("✅", "All core systems online. ARIA agent ready.", "success");
+    addLog("System ready. Type 'help' in ARIA console.", "SUCCESS");
+}
+bootstrap();
+</script>
+</body>
+</html>

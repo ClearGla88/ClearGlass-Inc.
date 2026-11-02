@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClearGlass Inc. · Strategic Intelligence Platform · Burlington ON</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════
+   CLEARGLASS INC. STRATEGIC INTELLIGENCE PLATFORM
+   Burlington, Ontario · Keyless Live Intelligence
+   All feeds: GDELT, NVD, USGS, ADSB.one, Open-Meteo,
+   HackerNews, CoinGecko(free), ExchangeRate, Safecast
+═══════════════════════════════════════════ */
+:root{
+  --void:#020408;--deep:#030810;--panel:rgba(2,8,18,0.97);
+  --glass:rgba(4,14,28,0.85);--border:rgba(220,20,60,0.10);
+  --border2:rgba(220,20,60,0.22);--border3:rgba(220,20,60,0.45);
+  --red:#dc143c;--red2:rgba(220,20,60,0.55);--red3:rgba(220,20,60,0.12);
+  --red4:rgba(220,20,60,0.06);--red5:#5c0011;
+  --white:#fff;--off:rgba(235,235,240,0.92);--grey:rgba(160,170,180,0.6);
+  --muted:rgba(110,120,130,0.45);
+  --green:#00e87a;--green2:rgba(0,232,122,0.5);--green3:rgba(0,232,122,0.12);
+  --blue:#00aaff;--blue2:rgba(0,170,255,0.5);--blue3:rgba(0,170,255,0.12);
+  --amber:#ffbb00;--amber2:rgba(255,187,0,0.5);--amber3:rgba(255,187,0,0.10);
+  --purple:#bb44ff;--purple2:rgba(187,68,255,0.4);
+  --mono:'JetBrains Mono',monospace;--hud:'Orbitron',monospace;--body:'Rajdhani',sans-serif;
+  --glow-r:0 0 4px var(--red2),0 0 14px var(--red3),0 0 30px rgba(220,20,60,0.05);
+  --glow-g:0 0 4px var(--green2),0 0 12px var(--green3);
+  --glow-b:0 0 4px var(--blue2),0 0 12px var(--blue3);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--void);color:var(--off);font-family:var(--mono);font-size:12px}
+::selection{background:rgba(220,20,60,0.3);color:#fff}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:rgba(0,0,0,0.3)}
+::-webkit-scrollbar-thumb{background:rgba(220,20,60,0.25);border-radius:2px}
+::-webkit-scrollbar-thumb:hover{background:rgba(220,20,60,0.5)}
+button{cursor:pointer;border:none;background:none;font-family:var(--mono)}
+input,textarea,select{font-family:var(--mono)}
+
+/* ── CRT ── */
+#crt{position:fixed;inset:0;z-index:9999;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.035) 2px,rgba(0,0,0,0.035) 4px);}
+#crt::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,0.7) 100%);}
+#crt::after{content:'';position:absolute;left:0;right:0;height:2px;top:-2px;
+  background:linear-gradient(transparent,rgba(220,20,60,0.07),transparent);
+  animation:crt-scan 8s linear infinite;}
+@keyframes crt-scan{from{top:-2px}to{top:100%}}
+
+/* ── BOOT ── */
+#boot{position:fixed;inset:0;z-index:8000;background:var(--void);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;}
+.boot-cg{display:flex;align-items:center;gap:16px;margin-bottom:8px;}
+.boot-badge{width:56px;height:56px;border:2px solid var(--red);display:flex;align-items:center;justify-content:center;
+  font-family:var(--hud);font-size:18px;font-weight:900;color:var(--red);box-shadow:var(--glow-r);}
+.boot-title{font-family:var(--hud);font-size:28px;font-weight:900;letter-spacing:10px;color:#fff;}
+.boot-title span{color:var(--red);}
+.boot-sub{font-size:8px;letter-spacing:5px;color:var(--muted);text-transform:uppercase;}
+.boot-track{width:400px;height:2px;background:rgba(220,20,60,0.08);overflow:hidden;}
+.boot-fill{height:100%;background:var(--red);box-shadow:var(--glow-r);width:0;transition:width 0.12s linear;}
+.boot-info{display:flex;justify-content:space-between;width:400px;}
+.boot-log{font-size:7px;color:var(--muted);letter-spacing:1px;}
+.boot-pct{font-family:var(--hud);font-size:10px;color:var(--red);letter-spacing:2px;}
+.boot-segs{display:flex;gap:3px;}
+.boot-seg{width:16px;height:32px;background:rgba(220,20,60,0.04);border:1px solid rgba(220,20,60,0.08);transition:all 0.15s;}
+.boot-seg.lit{background:rgba(220,20,60,0.3);box-shadow:0 0 8px rgba(220,20,60,0.5);border-color:var(--red);}
+
+/* ── API GATE (optional — for Claude AI) ── */
+#apigate{position:fixed;inset:0;z-index:7000;background:rgba(0,2,6,0.97);
+  display:none;align-items:center;justify-content:center;}
+.gate-wrap{width:460px;padding:36px;background:var(--glass);border:1px solid var(--border2);
+  position:relative;}
+.gate-wrap::before{content:'';position:absolute;top:0;left:15%;right:15%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--red),transparent);}
+.gate-top{display:flex;align-items:center;gap:14px;margin-bottom:22px;}
+.gate-badge{width:40px;height:40px;border:1.5px solid var(--red);display:flex;align-items:center;justify-content:center;
+  font-family:var(--hud);font-size:13px;font-weight:900;color:var(--red);box-shadow:var(--glow-r);}
+.gate-title{font-family:var(--hud);font-size:10px;letter-spacing:4px;color:#fff;}
+.gate-sub{font-size:8px;color:var(--muted);letter-spacing:1px;}
+.gate-note-free{background:var(--green3);border:1px solid var(--green2);padding:10px 14px;
+  font-size:8px;color:var(--green);letter-spacing:1px;line-height:1.7;margin-bottom:18px;}
+.gate-label{font-size:7px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:5px;}
+.gate-input{width:100%;padding:9px 12px;background:rgba(0,10,20,0.6);border:1px solid var(--border2);
+  color:var(--off);font-family:var(--mono);font-size:11px;outline:none;transition:border-color 0.2s;margin-bottom:14px;}
+.gate-input:focus{border-color:var(--red);}
+.gate-row{display:flex;gap:8px;margin-bottom:20px;}
+.gate-btn-sm{flex:1;padding:7px 4px;background:rgba(0,10,20,0.5);border:1px solid var(--border);
+  color:var(--muted);font-size:7px;letter-spacing:1px;transition:all 0.2s;}
+.gate-btn-sm.active{background:var(--red4);border-color:var(--red);color:var(--red);}
+.gate-launch{width:100%;padding:11px;background:transparent;border:1px solid var(--red);
+  color:var(--red);font-family:var(--hud);font-size:8px;letter-spacing:4px;text-transform:uppercase;transition:all 0.2s;}
+.gate-launch:hover{background:var(--red);color:#fff;box-shadow:var(--glow-r);}
+.gate-skip{text-align:center;margin-top:12px;font-size:7px;color:var(--muted);cursor:pointer;
+  letter-spacing:2px;text-decoration:underline;text-underline-offset:3px;}
+.gate-skip:hover{color:var(--grey);}
+
+/* ── MAIN LAYOUT ── */
+#app{width:100vw;height:100vh;display:grid;
+  grid-template-columns:210px 1fr 280px;
+  grid-template-rows:44px 1fr 64px 24px;
+  grid-template-areas:"hdr hdr hdr" "nav main sb" "nav console sb" "status status status";
+  gap:1px;background:rgba(220,20,60,0.07);display:none;}
+
+/* ── HEADER ── */
+#hdr{grid-area:hdr;background:rgba(1,4,10,0.99);border-bottom:1px solid var(--border2);
+  display:flex;align-items:center;gap:0;overflow:hidden;position:relative;}
+.hdr-brand{padding:0 16px;height:100%;display:flex;align-items:center;gap:10px;
+  border-right:1px solid var(--border);flex-shrink:0;}
+.hdr-badge{width:28px;height:28px;border:1.5px solid var(--red);display:flex;align-items:center;justify-content:center;
+  font-family:var(--hud);font-size:10px;font-weight:900;color:var(--red);}
+.hdr-name{font-family:var(--hud);font-size:12px;font-weight:700;color:#fff;letter-spacing:2px;}
+.hdr-name span{color:var(--red);}
+.hdr-tagline{font-size:6px;color:var(--muted);letter-spacing:2px;}
+.hdr-tabs{display:flex;height:100%;flex:1;overflow:hidden;}
+.htab{padding:0 14px;height:100%;display:flex;align-items:center;gap:5px;
+  font-size:7px;letter-spacing:2px;color:var(--muted);border-right:1px solid var(--border);
+  cursor:pointer;transition:all 0.15s;text-transform:uppercase;white-space:nowrap;flex-shrink:0;}
+.htab:hover{background:var(--red4);color:var(--off);}
+.htab.active{background:var(--red4);color:var(--red);border-bottom:1px solid var(--red);}
+.htab-pip{width:4px;height:4px;border-radius:50%;background:currentColor;opacity:0.6;}
+.hdr-live{padding:0 12px;display:flex;align-items:center;gap:6px;
+  font-family:var(--hud);font-size:9px;color:var(--red);letter-spacing:2px;}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--red);
+  box-shadow:var(--glow-r);animation:lp 1.2s ease-in-out infinite;}
+@keyframes lp{0%,100%{opacity:1}50%{opacity:0.25}}
+.hdr-clock{font-family:var(--hud);font-size:12px;font-weight:700;color:#fff;letter-spacing:2px;padding:0 14px;flex-shrink:0;}
+.hdr-ticker{flex:1;overflow:hidden;padding:0 10px;min-width:0;display:flex;align-items:center;border-left:1px solid var(--border);}
+.ticker-scroll{white-space:nowrap;animation:tkr 80s linear infinite;font-size:7px;display:inline-flex;gap:0;}
+.tick-item{display:inline-flex;align-items:center;gap:5px;padding:0 18px;color:var(--grey);}
+.tick-tag{font-size:6px;letter-spacing:1px;padding:1px 4px;border:1px solid;text-transform:uppercase;}
+.tt-cve{color:var(--red);border-color:var(--red2);}
+.tt-geo{color:var(--blue);border-color:var(--blue2);}
+.tt-air{color:var(--green);border-color:var(--green2);}
+.tt-mkt{color:var(--amber);border-color:var(--amber2);}
+.tt-quake{color:var(--purple);border-color:var(--purple2);}
+@keyframes tkr{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.hdr-ai-btn{padding:0 12px;height:100%;display:flex;align-items:center;gap:5px;
+  font-size:7px;letter-spacing:2px;color:var(--muted);border-left:1px solid var(--border);
+  cursor:pointer;transition:all 0.15s;flex-shrink:0;}
+.hdr-ai-btn:hover{background:var(--red4);color:var(--red);}
+.hdr-ai-btn.armed{color:var(--green);border-left-color:var(--green2);}
+
+/* ── NAV ── */
+#nav{grid-area:nav;background:rgba(1,3,8,0.99);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;}
+.ns-hdr{padding:8px 12px 5px;font-size:6px;letter-spacing:4px;color:var(--muted);
+  text-transform:uppercase;border-bottom:1px solid rgba(220,20,60,0.03);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.ns-live{display:flex;align-items:center;gap:3px;font-size:6px;color:var(--green);}
+.ns-dot{width:3px;height:3px;border-radius:50%;background:var(--green);animation:lp 2s ease-in-out infinite;}
+
+.kpi-card{padding:9px 12px;border-bottom:1px solid rgba(220,20,60,0.03);flex-shrink:0;}
+.kpi-label{font-size:6px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:3px;}
+.kpi-val{font-family:var(--hud);font-size:18px;font-weight:700;line-height:1;}
+.kpi-sub{font-size:7px;color:var(--muted);margin-top:2px;}
+.kpi-bar{height:2px;background:rgba(220,20,60,0.08);margin-top:5px;}
+.kpi-bar-fill{height:100%;transition:width 1.2s ease;}
+
+.nav-btn{display:flex;align-items:center;gap:7px;padding:7px 12px;
+  border-bottom:1px solid rgba(220,20,60,0.025);cursor:pointer;
+  font-size:7px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;
+  transition:all 0.15s;flex-shrink:0;}
+.nav-btn:hover{background:var(--red4);color:var(--off);}
+.nav-btn.active{background:var(--red4);color:var(--red);border-left:2px solid var(--red);}
+.nav-ic{font-size:12px;width:14px;text-align:center;flex-shrink:0;}
+.nav-btn-badge{margin-left:auto;font-size:6px;padding:1px 5px;border:1px solid;border-radius:0;}
+.nb-red{color:var(--red);border-color:var(--red2);}
+.nb-grn{color:var(--green);border-color:var(--green2);}
+
+.deal-row{padding:8px 12px;border-bottom:1px solid rgba(220,20,60,0.025);flex-shrink:0;cursor:pointer;transition:background 0.12s;}
+.deal-row:hover{background:var(--red4);}
+.dr-top{display:flex;align-items:center;gap:6px;margin-bottom:3px;}
+.dr-name{flex:1;font-size:8px;color:var(--off);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dr-val{font-family:var(--hud);font-size:10px;font-weight:700;color:var(--red);}
+.dr-stage{font-size:6px;letter-spacing:1px;padding:1px 5px;text-transform:uppercase;}
+.ds-close{color:var(--green);border:1px solid var(--green2);}
+.ds-prop{color:var(--amber);border:1px solid var(--amber2);}
+.ds-qual{color:var(--blue);border:1px solid var(--blue2);}
+.ds-pros{color:var(--muted);border:1px solid rgba(120,130,140,0.3);}
+.dr-bar{height:1px;background:rgba(220,20,60,0.06);margin-top:4px;}
+.dr-bar-fill{height:100%;background:var(--red);transition:width 1s ease;}
+
+.threat-actor{display:flex;align-items:center;gap:7px;padding:6px 12px;
+  border-bottom:1px solid rgba(220,20,60,0.02);cursor:pointer;transition:background 0.12s;flex-shrink:0;}
+.threat-actor:hover{background:var(--red4);}
+.ta-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.ta-name{flex:1;font-size:7px;color:var(--grey);letter-spacing:0.5px;}
+.ta-badge{font-size:5px;letter-spacing:1px;padding:1px 4px;text-transform:uppercase;}
+
+/* ── MAIN CONTENT PANE ── */
+#main{grid-area:main;background:rgba(0,3,8,0.98);overflow:hidden;position:relative;display:flex;flex-direction:column;}
+.main-pane{flex:1;overflow:hidden;display:none;flex-direction:column;}
+.main-pane.active{display:flex;}
+
+/* OVERVIEW GRID */
+.overview-grid{flex:1;overflow-y:auto;padding:12px;display:grid;
+  grid-template-columns:repeat(3,1fr);gap:8px;align-content:start;}
+@media(max-width:900px){.overview-grid{grid-template-columns:repeat(2,1fr);}}
+
+.info-panel{background:rgba(2,8,18,0.8);border:1px solid var(--border);position:relative;overflow:hidden;}
+.info-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--red2),transparent);}
+.ip-hdr{padding:8px 12px;border-bottom:1px solid rgba(220,20,60,0.05);
+  display:flex;align-items:center;justify-content:space-between;}
+.ip-title{font-family:var(--hud);font-size:7px;letter-spacing:3px;color:var(--red);text-transform:uppercase;}
+.ip-status{font-size:6px;letter-spacing:1px;color:var(--muted);}
+.ip-status.live{color:var(--green);}
+.ip-body{padding:10px 12px;}
+.ip-big{font-family:var(--hud);font-size:26px;font-weight:900;color:#fff;line-height:1;}
+.ip-big.red{color:var(--red);text-shadow:var(--glow-r);}
+.ip-big.green{color:var(--green);}
+.ip-big.amber{color:var(--amber);}
+.ip-sub{font-size:7px;color:var(--muted);margin-top:3px;letter-spacing:1px;}
+.ip-list{display:flex;flex-direction:column;gap:3px;}
+.ip-item{display:flex;align-items:flex-start;gap:6px;padding:4px 0;
+  border-bottom:1px solid rgba(220,20,60,0.02);font-size:8px;color:var(--grey);line-height:1.4;}
+.ip-item-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.ip-item-txt{flex:1;min-width:0;}
+.ip-item-meta{font-size:6px;color:var(--muted);flex-shrink:0;letter-spacing:0.5px;}
+.data-row{display:flex;align-items:center;gap:6px;padding:4px 0;
+  border-bottom:1px solid rgba(220,20,60,0.025);}
+.data-lbl{font-size:7px;color:var(--muted);flex:1;letter-spacing:0.5px;}
+.data-val{font-family:var(--hud);font-size:9px;font-weight:600;}
+.dv-red{color:var(--red);}
+.dv-green{color:var(--green);}
+.dv-amber{color:var(--amber);}
+.dv-white{color:#fff;}
+
+/* CANVAS MAP */
+#mapCanvas{width:100%;height:100%;display:block;}
+.map-overlay{position:absolute;top:0;left:0;right:0;padding:8px 12px;
+  background:linear-gradient(rgba(0,3,8,0.9),transparent);pointer-events:none;
+  display:flex;align-items:center;gap:8px;}
+.map-title{font-family:var(--hud);font-size:8px;letter-spacing:3px;color:var(--red);}
+.map-badge{font-size:6px;letter-spacing:2px;padding:1px 6px;border:1px solid var(--border2);color:var(--muted);}
+.map-legend{position:absolute;bottom:8px;left:10px;display:flex;gap:10px;flex-wrap:wrap;}
+.ml-item{display:flex;align-items:center;gap:4px;font-size:6px;color:var(--muted);}
+.ml-dot{width:6px;height:6px;border-radius:50%;}
+.map-ctrl{position:absolute;top:8px;right:10px;display:flex;gap:3px;}
+.mc-btn{width:22px;height:22px;background:rgba(0,5,12,0.8);border:1px solid var(--border2);
+  color:var(--muted);font-size:13px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;}
+.mc-btn:hover{border-color:var(--red);color:var(--red);}
+.map-tooltip{position:absolute;background:rgba(0,5,15,0.96);border:1px solid var(--border2);
+  padding:7px 10px;font-size:8px;color:var(--off);pointer-events:none;display:none;z-index:10;
+  max-width:200px;line-height:1.6;box-shadow:var(--glow-r);}
+
+/* INTEL PIPELINE */
+.pipeline-view{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;}
+.pipeline-hdr{display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-shrink:0;}
+.ph-title{font-family:var(--hud);font-size:9px;letter-spacing:3px;color:var(--red);}
+.ph-total{font-family:var(--hud);font-size:16px;font-weight:700;color:#fff;margin-left:auto;}
+.ph-sub{font-size:7px;color:var(--muted);align-self:flex-end;margin-bottom:1px;}
+.pl-stage{border-left:2px solid var(--red2);padding-left:10px;margin-bottom:8px;}
+.pl-stage-hdr{display:flex;align-items:center;gap:7px;margin-bottom:5px;}
+.pl-stage-nm{font-size:7px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
+.pl-stage-cnt{font-family:var(--hud);font-size:8px;color:var(--red);}
+.pl-stage-val{font-family:var(--hud);font-size:9px;color:var(--grey);margin-left:auto;}
+.pl-deal{display:flex;align-items:center;gap:8px;padding:7px 10px;
+  background:rgba(2,6,14,0.6);border:1px solid rgba(220,20,60,0.04);
+  margin-bottom:4px;cursor:pointer;transition:border-color 0.15s;}
+.pl-deal:hover{border-color:var(--border2);}
+.pl-client{flex:1;font-size:9px;color:var(--off);font-weight:500;}
+.pl-product{font-size:7px;color:var(--muted);letter-spacing:1px;}
+.pl-val{font-family:var(--hud);font-size:11px;font-weight:700;color:var(--red);}
+.pl-prob{font-size:7px;color:var(--muted);letter-spacing:1px;}
+.pl-score{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:var(--hud);font-size:8px;font-weight:700;flex-shrink:0;}
+.ps-a{background:rgba(0,232,122,0.15);border:1px solid var(--green2);color:var(--green);}
+.ps-b{background:rgba(255,187,0,0.12);border:1px solid var(--amber2);color:var(--amber);}
+.ps-c{background:var(--red4);border:1px solid var(--red2);color:var(--red);}
+
+/* CONSOLE / AI */
+#console{grid-area:console;background:rgba(1,3,9,0.99);border-top:1px solid var(--border);
+  display:flex;flex-direction:column;}
+.con-hdr{padding:5px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0;
+  background:rgba(0,2,8,0.95);}
+.con-title{font-family:var(--hud);font-size:7px;letter-spacing:3px;color:var(--red);}
+.con-mode{padding:2px 7px;border:1px solid var(--border);font-size:6px;letter-spacing:2px;
+  color:var(--muted);text-transform:uppercase;cursor:pointer;transition:all 0.15s;}
+.con-mode:hover,.con-mode.active{border-color:var(--red);color:var(--red);background:var(--red4);}
+.con-status{font-size:6px;color:var(--muted);letter-spacing:1px;margin-left:auto;}
+.con-status.live{color:var(--green);}
+.con-msgs{flex:1;overflow-y:auto;padding:6px 12px;display:flex;flex-direction:column;gap:4px;}
+.cmsg{padding:5px 8px;border:1px solid rgba(220,20,60,0.03);animation:fadeUp 0.2s ease;font-size:9px;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.cmsg.user{background:var(--blue3);border-left:2px solid var(--blue);color:var(--off);}
+.cmsg.ai{background:var(--red4);border-left:2px solid rgba(220,20,60,0.3);color:var(--off);}
+.cmsg.sys{background:rgba(255,187,0,0.04);border-left:2px solid rgba(255,187,0,0.3);color:var(--amber);}
+.cmsg.think{background:rgba(187,68,255,0.05);border-left:2px solid rgba(187,68,255,0.3);color:rgba(200,160,255,0.75);font-size:8px;}
+.cmsg-src{font-size:6px;letter-spacing:3px;text-transform:uppercase;margin-bottom:2px;}
+.cmsg-src.user{color:var(--blue);}
+.cmsg-src.ai{color:var(--red);}
+.cmsg-src.sys{color:var(--amber);}
+.cmsg-src.think{color:var(--purple);}
+.cmsg-body{line-height:1.65;white-space:pre-wrap;word-break:break-word;}
+.cursor-blink{display:inline-block;width:6px;height:11px;background:var(--red);
+  margin-left:2px;vertical-align:middle;animation:cblink 1s step-end infinite;}
+@keyframes cblink{0%,100%{opacity:1}50%{opacity:0}}
+.tool-block{margin-top:4px;background:rgba(0,170,255,0.04);border:1px solid var(--blue3);padding:5px 8px;}
+.tb-hdr{font-size:6px;letter-spacing:2px;color:var(--blue);text-transform:uppercase;margin-bottom:3px;}
+.tb-body{font-size:8px;color:var(--grey);white-space:pre-wrap;max-height:70px;overflow:hidden;}
+.con-input{padding:5px 12px;border-top:1px solid var(--border);display:flex;align-items:flex-end;gap:7px;flex-shrink:0;}
+.con-prompt{font-family:var(--hud);font-size:8px;color:var(--red);letter-spacing:2px;padding-bottom:7px;flex-shrink:0;}
+.con-ta{flex:1;background:transparent;border:none;color:var(--off);font-family:var(--mono);font-size:10px;
+  resize:none;outline:none;line-height:1.5;min-height:26px;max-height:70px;caret-color:var(--red);}
+.con-send{padding:5px 12px;background:transparent;border:1px solid var(--red);color:var(--red);
+  font-family:var(--hud);font-size:7px;letter-spacing:3px;text-transform:uppercase;transition:all 0.2s;flex-shrink:0;}
+.con-send:hover{background:var(--red);color:#fff;box-shadow:var(--glow-r);}
+.con-send:disabled{opacity:0.3;cursor:not-allowed;}
+.quick-btns{padding:0 12px 5px;display:flex;gap:4px;flex-wrap:wrap;}
+.qb{font-size:6px;letter-spacing:1px;padding:2px 7px;border:1px solid var(--border);
+  color:var(--muted);text-transform:uppercase;transition:all 0.15s;}
+.qb:hover{border-color:var(--red);color:var(--red);}
+
+/* ── SIDEBAR ── */
+#sb{grid-area:sb;background:rgba(1,3,8,0.99);border-left:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;}
+.sb-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;}
+.sbtab{flex:1;padding:6px 4px;font-size:6px;letter-spacing:1px;color:var(--muted);
+  text-align:center;cursor:pointer;transition:all 0.15s;text-transform:uppercase;border-right:1px solid var(--border);}
+.sbtab:last-child{border-right:none;}
+.sbtab:hover{color:var(--off);background:var(--red4);}
+.sbtab.active{color:var(--red);background:var(--red4);border-bottom:1px solid var(--red);}
+.sbp{flex:1;overflow-y:auto;display:none;}
+.sbp.active{display:block;}
+
+/* CVE cards */
+.cve-card{padding:8px 10px;border-bottom:1px solid rgba(220,20,60,0.03);cursor:pointer;transition:background 0.12s;}
+.cve-card:hover{background:var(--red4);}
+.cve-card::before{display:none;}
+.cc-top{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
+.cc-id{font-family:var(--hud);font-size:8px;color:var(--red);font-weight:700;}
+.cc-score{font-family:var(--hud);font-size:10px;font-weight:700;margin-left:auto;}
+.cs-crit{color:var(--red);}
+.cs-high{color:var(--amber);}
+.cs-med{color:var(--blue);}
+.cs-low{color:var(--muted);}
+.cc-sev{font-size:5px;letter-spacing:2px;padding:1px 4px;border:1px solid;text-transform:uppercase;}
+.cc-desc{font-size:7px;color:var(--grey);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+
+/* Feed items */
+.feed-item{display:flex;gap:7px;padding:7px 10px;border-bottom:1px solid rgba(220,20,60,0.025);}
+.fi-type{font-size:5px;letter-spacing:2px;padding:2px 4px;text-transform:uppercase;flex-shrink:0;align-self:flex-start;margin-top:1px;border:1px solid;}
+.fi-gdelt{color:var(--blue);border-color:var(--blue2);}
+.fi-quake{color:var(--purple);border-color:var(--purple2);}
+.fi-air{color:var(--green);border-color:var(--green2);}
+.fi-hn{color:var(--amber);border-color:var(--amber2);}
+.fi-mkt{color:var(--red);border-color:var(--red2);}
+.fi-body{flex:1;min-width:0;}
+.fi-txt{font-size:8px;color:var(--grey);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.fi-meta{display:flex;gap:5px;margin-top:3px;font-size:6px;color:var(--muted);}
+.fi-src{color:var(--red);}
+
+/* Mkt items */
+.mkt-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-bottom:1px solid rgba(220,20,60,0.025);}
+.mkt-sym{font-family:var(--hud);font-size:8px;font-weight:700;color:var(--off);min-width:48px;}
+.mkt-name{font-size:7px;color:var(--muted);flex:1;}
+.mkt-price{font-family:var(--hud);font-size:10px;font-weight:700;color:#fff;text-align:right;}
+.mkt-chg{font-size:7px;text-align:right;margin-top:1px;}
+.mkt-chg.up{color:var(--green);}
+.mkt-chg.dn{color:var(--red);}
+.mkt-bar{width:100%;height:1px;background:rgba(255,255,255,0.05);margin-top:3px;}
+.mkt-bar-fill{height:100%;transition:width 1s ease;}
+
+/* ── STATUS BAR ── */
+#status{grid-area:status;background:rgba(0,2,6,0.99);border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:0;padding:0 12px;font-size:6px;letter-spacing:1.5px;
+  color:var(--muted);text-transform:uppercase;overflow:hidden;}
+.st-item{display:flex;align-items:center;gap:4px;padding:0 10px;border-right:1px solid var(--border);}
+.st-val{color:var(--grey);}
+.st-live{color:var(--green);}
+.st-red{color:var(--red);}
+.st-right{margin-left:auto;display:flex;align-items:center;gap:0;}
+
+/* ── NOTIFICATIONS ── */
+.notif{position:fixed;top:50px;right:14px;background:rgba(1,5,14,0.98);
+  border:1px solid var(--border2);border-top-width:2px;padding:9px 13px;max-width:280px;z-index:6000;
+  animation:ni 0.25s cubic-bezier(.34,1.56,.64,1),no 0.25s ease 5s forwards;}
+.notif.nred{border-top-color:var(--red);}
+.notif.ngrn{border-top-color:var(--green);}
+.notif.namb{border-top-color:var(--amber);}
+@keyframes ni{from{transform:translateX(110%);opacity:0}to{transform:none;opacity:1}}
+@keyframes no{to{transform:translateX(110%);opacity:0}}
+.notif-t{font-family:var(--hud);font-size:6px;letter-spacing:2px;color:#fff;margin-bottom:2px;text-transform:uppercase;}
+.notif-b{font-size:8px;color:var(--grey);line-height:1.5;}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,0.88);
+  backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;}
+.modal-bg.open{display:flex;}
+.modal-box{background:var(--glass);border:1px solid var(--border2);padding:26px;max-width:560px;width:92%;
+  max-height:82vh;overflow-y:auto;position:relative;}
+.modal-close{position:absolute;top:10px;right:10px;font-size:13px;color:var(--muted);cursor:pointer;transition:color 0.15s;}
+.modal-close:hover{color:var(--red);}
+.modal-title{font-family:var(--hud);font-size:9px;letter-spacing:3px;color:var(--red);margin-bottom:14px;text-transform:uppercase;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.form-lbl{font-size:6px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+.form-input{width:100%;padding:7px 10px;background:rgba(0,8,18,0.7);border:1px solid var(--border2);
+  color:var(--off);font-family:var(--mono);font-size:10px;outline:none;transition:border-color 0.2s;}
+.form-input:focus{border-color:var(--red);}
+.form-select{width:100%;padding:7px 10px;background:rgba(0,8,18,0.7);border:1px solid var(--border2);
+  color:var(--off);font-family:var(--mono);font-size:10px;outline:none;appearance:none;}
+.form-btn{padding:9px 18px;background:transparent;border:1px solid var(--red);color:var(--red);
+  font-family:var(--hud);font-size:7px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+.form-btn:hover{background:var(--red);color:#fff;box-shadow:var(--glow-r);}
+.form-btn-sec{border-color:var(--border2);color:var(--muted);}
+.form-btn-sec:hover{border-color:var(--grey);color:var(--off);background:transparent;box-shadow:none;}
+
+/* ── INTEL GRAPH VIEW ── */
+#graphCanvas{display:block;width:100%;height:100%;}
+
+/* Utility */
+.sep{border:none;border-top:1px solid var(--border);margin:6px 0;}
+.tag{display:inline-block;font-size:6px;letter-spacing:1px;padding:1px 5px;border:1px solid;text-transform:uppercase;}
+.hidden{display:none!important;}
+.loading-ring{display:inline-block;width:12px;height:12px;border:1.5px solid rgba(220,20,60,0.2);
+  border-top-color:var(--red);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.feed-loading{padding:14px 12px;text-align:center;font-size:7px;color:var(--muted);letter-spacing:2px;}
+</style>
+</head>
+<body>
+<div id="crt"></div>
+
+<!-- BOOT -->
+<div id="boot">
+  <div class="boot-segs" id="bootSegs"></div>
+  <div class="boot-cg">
+    <div class="boot-badge">CG</div>
+    <div>
+      <div class="boot-title">CLEAR<span>GLASS</span> INC.</div>
+      <div style="font-family:var(--hud);font-size:8px;letter-spacing:4px;color:var(--muted);">STRATEGIC INTELLIGENCE PLATFORM</div>
+    </div>
+  </div>
+  <div style="font-size:7px;letter-spacing:3px;color:var(--muted);">Burlington, Ontario · Live Data · No API Keys Required</div>
+  <div style="width:400px;">
+    <div class="boot-track" style="width:100%;margin-bottom:7px;"><div class="boot-fill" id="bootFill"></div></div>
+    <div class="boot-info">
+      <div class="boot-log" id="bootLog">Initialising...</div>
+      <div class="boot-pct" id="bootPct">0%</div>
+    </div>
+  </div>
+</div>
+
+<!-- API GATE (OPTIONAL) -->
+<div id="apigate">
+  <div class="gate-wrap">
+    <div class="gate-top">
+      <div class="gate-badge">CG</div>
+      <div><div class="gate-title">ENHANCE WITH AI ANALYSIS</div><div class="gate-sub" style="margin-top:3px;">Add Claude API key to enable AI-powered strategic analysis</div></div>
+    </div>
+    <div class="gate-note-free">✓ Platform runs fully without a key — all live feeds active<br>✓ NVD CVEs · GDELT news · ADSB aviation · USGS quakes · Crypto prices<br>✓ Claude AI layer is optional — enhances analysis only</div>
+    <div class="gate-label">Anthropic API Key (Optional)</div>
+    <input type="password" class="gate-input" id="apiKeyInput" placeholder="sk-ant-api03-... (optional)">
+    <div class="gate-label">Claude Model</div>
+    <div class="gate-row">
+      <button class="gate-btn-sm active" data-model="claude-sonnet-4-5" onclick="selectModel(this)">Sonnet 4.5</button>
+      <button class="gate-btn-sm" data-model="claude-opus-4-5" onclick="selectModel(this)">Opus 4.5</button>
+      <button class="gate-btn-sm" data-model="claude-haiku-4-5-20251001" onclick="selectModel(this)">Haiku 4.5</button>
+    </div>
+    <button class="gate-launch" onclick="launchWithKey()">LAUNCH WITH AI ENHANCED</button>
+    <div class="gate-skip" onclick="launchNoKey()">Skip — Launch with live data only (no AI key)</div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+
+  <!-- HEADER -->
+  <div id="hdr">
+    <div class="hdr-brand">
+      <div class="hdr-badge">CG</div>
+      <div>
+        <div class="hdr-name">CLEAR<span>GLASS</span></div>
+        <div class="hdr-tagline">Strategic Intelligence · Burlington ON</div>
+      </div>
+    </div>
+    <div class="hdr-tabs">
+      <div class="htab active" onclick="showView('overview',this)" id="tab-overview"><div class="htab-pip"></div>Overview</div>
+      <div class="htab" onclick="showView('pipeline',this)" id="tab-pipeline"><div class="htab-pip"></div>Pipeline</div>
+      <div class="htab" onclick="showView('threats',this)" id="tab-threats"><div class="htab-pip"></div>Threats</div>
+      <div class="htab" onclick="showView('intel',this)" id="tab-intel"><div class="htab-pip"></div>Intel Graph</div>
+      <div class="htab" onclick="showView('strategy',this)" id="tab-strategy"><div class="htab-pip"></div>Strategy</div>
+    </div>
+    <div class="hdr-ticker"><div class="ticker-scroll" id="tickerScroll"></div></div>
+    <div class="hdr-live"><div class="live-dot"></div><span id="liveCount">0</span> LIVE</div>
+    <div class="hdr-clock" id="hdrClock">00:00:00Z</div>
+    <div class="hdr-ai-btn" id="aiBtn" onclick="showAIGate()">◈ AI <span id="aiStatus">OFF</span></div>
+    <div class="hdr-ai-btn" onclick="showSettings()">⚙</div>
+  </div>
+
+  <!-- LEFT NAV -->
+  <div id="nav">
+    <!-- Pipeline KPIs -->
+    <div class="ns-hdr">Pipeline KPIs <span class="ns-live"><div class="ns-dot"></div>Live</span></div>
+    <div class="kpi-card">
+      <div class="kpi-label">Total Pipeline</div>
+      <div class="kpi-val" id="kpiPipe">$2.14M</div>
+      <div class="kpi-sub">7 active deals</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" id="kpiPipeBar" style="width:72%;background:var(--red);"></div></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">FY2026 Target Progress</div>
+      <div class="kpi-val" id="kpiTarget" style="color:var(--green);">63%</div>
+      <div class="kpi-sub">$630K closed of $1M target</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" id="kpiTargBar" style="width:63%;background:var(--green);"></div></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Weighted Forecast (P50)</div>
+      <div class="kpi-val" id="kpiForecast" style="color:var(--amber);">$847K</div>
+      <div class="kpi-sub">Monte Carlo P50 · 87 days</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Live Threat Level</div>
+      <div class="kpi-val" id="kpiThreat" style="color:var(--red);">HIGH</div>
+      <div class="kpi-sub" id="kpiThreatSub">6 critical CVEs · 2 active APTs</div>
+    </div>
+
+    <!-- Priority Deals -->
+    <div class="ns-hdr" style="margin-top:2px;">Priority Deals</div>
+    <div class="deal-row" onclick="qp('Generate a tactical sales strategy for winning the Burlington NEXUS deal — identify decision-makers, competitive threats, and next 3 actions')">
+      <div class="dr-top"><div class="dr-name">Burlington · NEXUS</div><div class="dr-val">$380K</div></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span class="dr-stage ds-prop">Proposal</span><span style="font-size:6px;color:var(--muted);">75% · Close Mar 28</span>
+      </div>
+      <div class="dr-bar"><div class="dr-bar-fill" style="width:75%"></div></div>
+    </div>
+    <div class="deal-row" onclick="qp('Halton Police AEGIS deal — what cybersecurity threat intelligence should I reference in our closing pitch to accelerate the $180K contract signature?')">
+      <div class="dr-top"><div class="dr-name">Halton Police · AEGIS</div><div class="dr-val">$180K</div></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span class="dr-stage ds-close">Closing</span><span style="font-size:6px;color:var(--muted);">90% · Close Mar 22</span>
+      </div>
+      <div class="dr-bar"><div class="dr-bar-fill" style="width:90%;background:var(--green);"></div></div>
+    </div>
+    <div class="deal-row" onclick="qp('Joseph Brant Hospital Aurora deal $290K — draft an executive brief on cyber threats to Ontario healthcare that positions ClearGlass Aurora as the solution')">
+      <div class="dr-top"><div class="dr-name">Joseph Brant · Aurora</div><div class="dr-val">$290K</div></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span class="dr-stage ds-prop">Negotiation</span><span style="font-size:6px;color:var(--muted);">85% · Close Apr 3</span>
+      </div>
+      <div class="dr-bar"><div class="dr-bar-fill" style="width:85%;background:var(--amber);"></div></div>
+    </div>
+    <div class="deal-row" onclick="qp('Mississauga $450K NEXUS deal — what is our competitive differentiation and what compliance angles should we lead with under Bill C-26?')">
+      <div class="dr-top"><div class="dr-name">Mississauga · NEXUS</div><div class="dr-val">$450K</div></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span class="dr-stage ds-qual">Qualified</span><span style="font-size:6px;color:var(--muted);">60% · Close Apr 18</span>
+      </div>
+      <div class="dr-bar"><div class="dr-bar-fill" style="width:60%;background:var(--blue);"></div></div>
+    </div>
+
+    <!-- Active Threats -->
+    <div class="ns-hdr" style="margin-top:2px;">Active Threat Actors</div>
+    <div class="threat-actor" onclick="qp('Full APT41 intelligence brief — current Canadian targets, TTPs, IOCs, and how ClearGlass should leverage this in municipal sales conversations')">
+      <div class="ta-dot" style="background:#ff2244;box-shadow:0 0 4px #ff2244;"></div>
+      <div class="ta-name">APT41 · China</div>
+      <div class="ta-badge" style="font-size:5px;color:var(--red);border:1px solid var(--red2);padding:1px 4px;">CRITICAL</div>
+    </div>
+    <div class="threat-actor" onclick="qp('Sandworm threat brief — infrastructure targeting patterns relevant to Ontario municipalities and how to position ClearGlass OMEN for this threat')">
+      <div class="ta-dot" style="background:#ff8800;box-shadow:0 0 4px #ff8800;"></div>
+      <div class="ta-name">Sandworm · Russia</div>
+      <div class="ta-badge" style="font-size:5px;color:var(--amber);border:1px solid var(--amber2);padding:1px 4px;">HIGH</div>
+    </div>
+    <div class="threat-actor" onclick="qp('FIN7 ransomware analysis — recent Ontario targets and insurance/compliance talking points for ClearGlass client conversations')">
+      <div class="ta-dot" style="background:#ffcc00;box-shadow:0 0 4px #ffcc00;"></div>
+      <div class="ta-name">FIN7 · E.Europe</div>
+      <div class="ta-badge" style="font-size:5px;color:var(--amber);border:1px solid var(--amber2);padding:1px 4px;">HIGH</div>
+    </div>
+    <div class="threat-actor" onclick="qp('Scattered Spider lateral movement — targeting patterns and Bill C-26 compliance angle for ClearGlass Zero Trust pitch')">
+      <div class="ta-dot" style="background:#00aaff;box-shadow:0 0 4px #00aaff;"></div>
+      <div class="ta-name">Scattered Spider</div>
+      <div class="ta-badge" style="font-size:5px;color:var(--blue);border:1px solid var(--blue2);padding:1px 4px;">MEDIUM</div>
+    </div>
+
+    <!-- Nav Buttons -->
+    <div class="ns-hdr" style="margin-top:2px;">Actions</div>
+    <div class="nav-btn active" id="nbOverview" onclick="showView('overview',this);setNB(this)">
+      <div class="nav-ic">⬡</div>Intelligence Overview<span class="nav-btn-badge nb-red">LIVE</span>
+    </div>
+    <div class="nav-btn" id="nbPipeline" onclick="showView('pipeline',this);setNB(this)">
+      <div class="nav-ic">◈</div>Deal Pipeline<span class="nav-btn-badge nb-red">7</span>
+    </div>
+    <div class="nav-btn" id="nbThreats" onclick="showView('threats',this);setNB(this)">
+      <div class="nav-ic">⚠</div>Threat Intelligence<span class="nav-btn-badge nb-red">NEW</span>
+    </div>
+    <div class="nav-btn" id="nbIntel" onclick="showView('intel',this);setNB(this)">
+      <div class="nav-ic">🕸</div>Entity Graph<span class="nav-btn-badge nb-grn">D3</span>
+    </div>
+    <div class="nav-btn" id="nbStrategy" onclick="showView('strategy',this);setNB(this)">
+      <div class="nav-ic">🎯</div>Strategy Planner
+    </div>
+    <div class="nav-btn" onclick="showAddDeal()">
+      <div class="nav-ic">+</div>Add Deal
+    </div>
+    <div class="nav-btn" onclick="showSettings()">
+      <div class="nav-ic">⚙</div>Settings
+    </div>
+  </div>
+
+  <!-- MAIN PANES -->
+  <div id="main">
+
+    <!-- OVERVIEW -->
+    <div class="main-pane active" id="pane-overview">
+      <div class="overview-grid" id="overviewGrid">
+
+        <!-- Live CVE count -->
+        <div class="info-panel">
+          <div class="ip-hdr"><div class="ip-title">Critical CVEs · NVD</div><div class="ip-status live" id="nvdStatus">● fetching</div></div>
+          <div class="ip-body">
+            <div class="ip-big red" id="nvdCount">—</div>
+            <div class="ip-sub" id="nvdSub">Critical vulns published this week</div>
+            <div class="ip-list" id="nvdList"></div>
+          </div>
+        </div>
+
+        <!-- Live Earthquakes -->
+        <div class="info-panel">
+          <div class="ip-hdr"><div class="ip-title">Seismic Activity · USGS</div><div class="ip-status live" id="usgsStatus">● fetching</div></div>
+          <div class="ip-body">
+            <div class="ip-big" id="usgsCount" style="color:var(--purple);">—</div>
+            <div class="ip-sub" id="usgsSub">M4.5+ earthquakes past 24h</div>
+            <div class="ip-list" id="usgsList"></div>
+          </div>
+        </div>
+
+        <!-- Live Aviation -->
+        <div class="info-panel">
+          <div class="ip-hdr"><div class="ip-title">ADS-B Aviation · adsb.one</div><div class="ip-status live" id="adsbStatus">● fetching</div></div>
+          <div class="ip-body">
+            <div class="ip-big green" id="adsbCount">—</div>
+            <div class="ip-sub" id="adsbSub">Aircraft tracked · Canada region</div>
+            <div class="ip-list" id="adsbList"></div>
+          </div>
+        </div>
+
+        <!-- Live Geopolitical News GDELT -->
+        <div class="info-panel" style="grid-column:span 2;">
+          <div class="ip-hdr"><div class="ip-title">Geopolitical Events · GDELT</div><div class="ip-status live" id="gdeltStatus">● fetching</div></div>
+          <div class="ip-body">
+            <div class="ip-list" id="gdeltList" style="max-height:130px;overflow-y:auto;"></div>
+          </div>
+        </div>
+
+        <!-- Crypto / Markets -->
+        <div class="info-panel">
+          <div class="ip-hdr"><div class="ip-title">Crypto Markets</div><div class="ip-status live" id="mktStatus">● fetching</div></div>
+          <div class="ip-body" id="mktBody" style="padding-top:6px;"></div>
+        </div>
+
+        <!-- HackerNews security -->
+        <div class="info-panel" style="grid-column:span 2;">
+          <div class="ip-hdr"><div class="ip-title">Security Intelligence · Hacker News</div><div class="ip-status live" id="hnStatus">● fetching</div></div>
+          <div class="ip-body">
+            <div class="ip-list" id="hnList" style="max-height:120px;overflow-y:auto;"></div>
+          </div>
+        </div>
+
+        <!-- Weather / Burlington -->
+        <div class="info-panel">
+          <div class="ip-hdr"><div class="ip-title">Burlington Weather</div><div class="ip-status live" id="wxStatus">● fetching</div></div>
+          <div class="ip-body" id="wxBody">
+            <div class="ip-big" id="wxTemp" style="color:var(--blue);">—</div>
+            <div class="ip-sub" id="wxSub">Burlington, Ontario</div>
+            <div class="ip-list" id="wxList" style="margin-top:6px;"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PIPELINE VIEW -->
+    <div class="main-pane" id="pane-pipeline">
+      <div class="pipeline-view" id="pipelineView">
+        <div class="pipeline-hdr">
+          <div class="ph-title">ClearGlass Deal Pipeline · FY2026</div>
+          <div style="display:flex;align-items:flex-end;gap:4px;margin-left:auto;">
+            <div class="ph-sub">Total Active:</div>
+            <div class="ph-total" id="pipeTotal">$2.14M</div>
+          </div>
+        </div>
+        <div id="pipelineDeals"></div>
+      </div>
+    </div>
+
+    <!-- THREATS VIEW -->
+    <div class="main-pane" id="pane-threats">
+      <div style="flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+          <div style="font-family:var(--hud);font-size:9px;letter-spacing:3px;color:var(--red);">THREAT INTELLIGENCE DASHBOARD</div>
+          <button class="qb" onclick="refreshCVEs()">↻ Refresh CVEs</button>
+          <button class="qb" onclick="qp('Generate a threat intelligence brief for ClearGlass municipal clients in Ontario — map current active CVEs and threat actors to our product lineup NEXUS, AEGIS, AURORA, OMEN')">AI Analysis</button>
+        </div>
+        <!-- CVE table -->
+        <div class="info-panel" style="flex:1;">
+          <div class="ip-hdr"><div class="ip-title">Critical CVEs This Week · NVD Live</div><div class="ip-status live" id="cveTableStatus">● loading</div></div>
+          <div style="overflow:auto;max-height:calc(100vh - 280px);">
+            <table style="width:100%;border-collapse:collapse;font-size:8px;" id="cveTable">
+              <thead><tr style="border-bottom:1px solid var(--border2);font-size:6px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;">
+                <th style="padding:6px 10px;text-align:left;">CVE ID</th>
+                <th style="padding:6px 8px;text-align:center;">CVSS</th>
+                <th style="padding:6px 8px;text-align:left;">Severity</th>
+                <th style="padding:6px 8px;text-align:left;">Description</th>
+                <th style="padding:6px 8px;text-align:left;">Published</th>
+                <th style="padding:6px 8px;text-align:center;">Action</th>
+              </tr></thead>
+              <tbody id="cveTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTEL GRAPH VIEW -->
+    <div class="main-pane" id="pane-intel" style="position:relative;">
+      <div class="map-overlay">
+        <div class="map-title">ENTITY LINK ANALYSIS</div>
+        <div class="map-badge" id="graphNodeBadge">0 NODES</div>
+        <div class="map-badge" id="graphLinkBadge">0 LINKS</div>
+        <button class="qb" style="pointer-events:all;" onclick="loadDefaultGraph()">Load Default</button>
+        <button class="qb" style="pointer-events:all;" onclick="clearGraph()">Clear</button>
+      </div>
+      <canvas id="graphCanvas"></canvas>
+      <div class="map-ctrl">
+        <button class="mc-btn" onclick="gZoom(1.15)">+</button>
+        <button class="mc-btn" onclick="gZoom(0.87)">−</button>
+        <button class="mc-btn" onclick="gReset()">◎</button>
+      </div>
+      <div class="map-legend">
+        <div class="ml-item"><div class="ml-dot" style="background:var(--red);"></div>Threat Actor</div>
+        <div class="ml-item"><div class="ml-dot" style="background:var(--amber);"></div>IOC</div>
+        <div class="ml-item"><div class="ml-dot" style="background:var(--green);"></div>ClearGlass</div>
+        <div class="ml-item"><div class="ml-dot" style="background:var(--blue);"></div>Target / Client</div>
+        <div class="ml-item"><div class="ml-dot" style="background:var(--purple);"></div>Malware</div>
+      </div>
+      <div class="map-tooltip" id="graphTip"></div>
+    </div>
+
+    <!-- STRATEGY PLANNER -->
+    <div class="main-pane" id="pane-strategy">
+      <div style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;">
+        <div style="font-family:var(--hud);font-size:9px;letter-spacing:3px;color:var(--red);flex-shrink:0;">CLEARGGLASS STRATEGIC PLANNER · FY2026</div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;flex-shrink:0;">
+          <!-- Win Rate -->
+          <div class="info-panel">
+            <div class="ip-hdr"><div class="ip-title">Win Rate</div></div>
+            <div class="ip-body"><div class="ip-big green">68%</div><div class="ip-sub">Closed / Total Opportunities</div></div>
+          </div>
+          <!-- Avg Deal Size -->
+          <div class="info-panel">
+            <div class="ip-hdr"><div class="ip-title">Avg Deal Size</div></div>
+            <div class="ip-body"><div class="ip-big" style="color:var(--amber);">$306K</div><div class="ip-sub">7 active deals</div></div>
+          </div>
+          <!-- Days to Close -->
+          <div class="info-panel">
+            <div class="ip-hdr"><div class="ip-title">Avg Sales Cycle</div></div>
+            <div class="ip-body"><div class="ip-big" style="color:var(--blue);">87d</div><div class="ip-sub">Municipal procurement avg</div></div>
+          </div>
+        </div>
+
+        <!-- Bill C-26 Compliance Matrix -->
+        <div class="info-panel" style="flex-shrink:0;">
+          <div class="ip-hdr"><div class="ip-title">Bill C-26 Compliance Opportunity Matrix</div>
+            <button class="qb" onclick="qp('Analyze the Bill C-26 Critical Cyber Systems Protection Act and create a specific sales strategy for ClearGlass to leverage the compliance mandate with Ontario municipalities and critical infrastructure operators — include pricing, timelines, and which ClearGlass products map to which requirements')">AI Brief</button>
+          </div>
+          <div class="ip-body">
+            <div id="c26Matrix"></div>
+          </div>
+        </div>
+
+        <!-- Product-Threat Matrix -->
+        <div class="info-panel" style="flex-shrink:0;">
+          <div class="ip-hdr"><div class="ip-title">ClearGlass Product × Current Threat Matrix</div>
+            <button class="qb" onclick="qp('Map current live CVEs and threat actors to ClearGlass products NEXUS, AEGIS, AURORA, OMEN — for each active deal, what specific threat intelligence should we use to accelerate the sale?')">AI Map</button>
+          </div>
+          <div class="ip-body" id="threatProductMatrix"></div>
+        </div>
+
+        <!-- Strategy Actions -->
+        <div class="info-panel">
+          <div class="ip-hdr"><div class="ip-title">30-Day Action Plan</div>
+            <button class="qb" onclick="qp('Generate a detailed 30-day action plan for ClearGlass to reach $1M revenue target — prioritize by deal probability × deal size, include specific next steps for each deal, and identify 3 new prospects to add to pipeline')">AI Generate</button>
+          </div>
+          <div class="ip-body" id="actionPlan">
+            <div style="font-size:8px;color:var(--muted);text-align:center;padding:14px;">Click AI Generate to create a personalized 30-day plan →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONSOLE -->
+  <div id="console">
+    <div class="con-hdr">
+      <div class="con-title">CG·INTEL</div>
+      <button class="con-mode active" id="mSales" onclick="setMode('sales',this)">Sales Intel</button>
+      <button class="con-mode" id="mThreat" onclick="setMode('threat',this)">Threat</button>
+      <button class="con-mode" id="mStrategy" onclick="setMode('strategy',this)">Strategy</button>
+      <button class="con-mode" id="mBrief" onclick="setMode('brief',this)">Client Brief</button>
+      <div class="con-status" id="conStatus">Ready · Live feeds active</div>
+      <div class="con-status live" id="aiConnStatus" style="display:none;">● AI Connected</div>
+    </div>
+    <div class="con-msgs" id="conMsgs"></div>
+    <div class="quick-btns">
+      <button class="qb" onclick="qp('Analyze the current top 3 CVEs from NVD and create sales talking points for ClearGlass — which products address each vulnerability?')">CVE → Sales</button>
+      <button class="qb" onclick="qp('What is the strongest pitch for a Burlington municipal CIO to adopt ClearGlass NEXUS today — use current threat intelligence to make the case urgent')">Burlington Pitch</button>
+      <button class="qb" onclick="qp('Draft an executive 1-pager for Halton Police on why they need ClearGlass AEGIS — reference specific threats to law enforcement networks')">Halton Brief</button>
+      <button class="qb" onclick="qp('Generate a competitive analysis of ClearGlass vs generic MSSP offerings for Canadian municipalities — Bill C-26 angle')">Competitive</button>
+      <button class="qb" onclick="qp('What are the top 5 Ontario municipal RFP opportunities I should be pursuing right now for cybersecurity?')">RFP Scan</button>
+      <button class="qb" onclick="qp('Create a threat intelligence report I can share with my next 3 prospects to demonstrate ClearGlass value')">Client Intel Report</button>
+    </div>
+    <div class="con-input">
+      <div class="con-prompt">CG&gt;</div>
+      <textarea class="con-ta" id="conInput" placeholder="Ask for sales strategy, threat analysis, client briefings, or market intelligence..." rows="1" onkeydown="handleKey(event)" oninput="autoRz(this)"></textarea>
+      <button class="con-send" id="sendBtn" onclick="sendMsg()">SEND</button>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div id="sb">
+    <div class="sb-tabs">
+      <div class="sbtab active" onclick="setSBTab('cves',this)">CVEs</div>
+      <div class="sbtab" onclick="setSBTab('geo',this)">Geo</div>
+      <div class="sbtab" onclick="setSBTab('market',this)">Markets</div>
+      <div class="sbtab" onclick="setSBTab('news',this)">News</div>
+    </div>
+    <div class="sbp active" id="sbp-cves"><div class="feed-loading"><div class="loading-ring"></div><br>Loading CVE feed...</div></div>
+    <div class="sbp" id="sbp-geo"><div class="feed-loading"><div class="loading-ring"></div><br>Loading geo events...</div></div>
+    <div class="sbp" id="sbp-market"><div class="feed-loading"><div class="loading-ring"></div><br>Loading markets...</div></div>
+    <div class="sbp" id="sbp-news"><div class="feed-loading"><div class="loading-ring"></div><br>Loading news feed...</div></div>
+  </div>
+
+  <!-- STATUS BAR -->
+  <div id="status">
+    <div class="st-item"><div class="live-dot"></div><span class="st-live">LIVE</span></div>
+    <div class="st-item">NVD: <span class="st-val" id="stNvd">—</span></div>
+    <div class="st-item">USGS: <span class="st-val" id="stUsgs">—</span></div>
+    <div class="st-item">ADSB: <span class="st-val" id="stAdsb">—</span></div>
+    <div class="st-item">GDELT: <span class="st-val" id="stGdelt">—</span></div>
+    <div class="st-item">Crypto: <span class="st-val" id="stMkt">—</span></div>
+    <div class="st-item">HN: <span class="st-val" id="stHn">—</span></div>
+    <div class="st-right">
+      <div class="st-item">AI: <span class="st-val" id="stAi">No key</span></div>
+      <div class="st-item">Feeds: <span class="st-val st-live" id="stFeeds">0/7</span></div>
+      <div class="st-item">Burlington ON · ClearGlass Inc. · <span class="st-red">FY2026</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-bg" id="settingsModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('settingsModal')">✕</button>
+    <div class="modal-title">Platform Configuration · ClearGlass</div>
+    <div class="form-row">
+      <div><div class="form-lbl">Claude API Key</div><input type="password" class="form-input" id="cfgApiKey" placeholder="sk-ant-..."></div>
+      <div><div class="form-lbl">Claude Model</div><select class="form-select" id="cfgModel"><option value="claude-sonnet-4-5">claude-sonnet-4-5</option><option value="claude-opus-4-5">claude-opus-4-5</option><option value="claude-haiku-4-5-20251001">claude-haiku-4-5</option></select></div>
+    </div>
+    <div class="form-row">
+      <div><div class="form-lbl">CoinGecko Demo Key (optional)</div><input class="form-input" id="cfgCoinGecko" placeholder="Free key from coingecko.com"></div>
+      <div><div class="form-lbl">Feed Refresh Interval</div><select class="form-select" id="cfgRefresh"><option value="60000">60s</option><option value="120000" selected>2min</option><option value="300000">5min</option></select></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px;">
+      <button class="form-btn" onclick="applySettings()">Apply & Save</button>
+      <button class="form-btn form-btn-sec" onclick="closeModal('settingsModal')">Close</button>
+      <button class="form-btn form-btn-sec" onclick="clearData()">Clear All Data</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD DEAL MODAL -->
+<div class="modal-bg" id="addDealModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('addDealModal')">✕</button>
+    <div class="modal-title">Add Deal to Pipeline</div>
+    <div class="form-row">
+      <div><div class="form-lbl">Client Name</div><input class="form-input" id="ddClient" placeholder="e.g. Region of Halton"></div>
+      <div><div class="form-lbl">Product / Solution</div><input class="form-input" id="ddProduct" placeholder="NEXUS, AEGIS, AURORA, OMEN"></div>
+    </div>
+    <div class="form-row">
+      <div><div class="form-lbl">Deal Value (CAD)</div><input class="form-input" id="ddValue" type="number" placeholder="250000"></div>
+      <div><div class="form-lbl">Stage</div><select class="form-select" id="ddStage"><option value="prospect">Prospect</option><option value="qualified">Qualified</option><option value="proposal">Proposal</option><option value="negotiation">Negotiation</option><option value="closing">Closing</option></select></div>
+    </div>
+    <div class="form-row">
+      <div><div class="form-lbl">Win Probability %</div><input class="form-input" id="ddProb" type="number" min="1" max="99" placeholder="65"></div>
+      <div><div class="form-lbl">Expected Close Date</div><input class="form-input" id="ddClose" type="date"></div>
+    </div>
+    <div><div class="form-lbl">Notes</div><textarea class="form-input" id="ddNotes" rows="2" style="width:100%;resize:vertical;" placeholder="Key contacts, competitive notes, next steps..."></textarea></div>
+    <div style="display:flex;gap:8px;margin-top:14px;">
+      <button class="form-btn" onclick="saveDeal()">Save Deal</button>
+      <button class="form-btn form-btn-sec" onclick="closeModal('addDealModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   CLEARGLASS INC. STRATEGIC INTELLIGENCE PLATFORM
+   Full JS Engine · Live Data · No API Keys Required
+   Version 1.0 · Burlington, Ontario
+═══════════════════════════════════════════════════════ */
+
+/* ── STATE ── */
+var S = {
+  apiKey: '', model: 'claude-sonnet-4-5', aiEnabled: false,
+  cgKey: '', mode: 'sales', msgCount: 0, toolCount: 0, feedsLive: 0,
+  messages: [], abortCtrl: null,
+  liveData: { cves: [], quakes: [], aircraft: 0, gdelt: [], hn: [], markets: {} }
+};
+try { var saved = JSON.parse(localStorage.getItem('cg_plat') || '{}');
+  S.apiKey = saved.apiKey || ''; S.model = saved.model || 'claude-sonnet-4-5';
+  S.cgKey = saved.cgKey || '';
+} catch(e) {}
+
+var DEALS = [
+  {id:1,client:'Burlington',product:'NEXUS Platform',value:380000,stage:'proposal',prob:75,close:'2026-03-28',score:'A'},
+  {id:2,client:'Halton Police',product:'AEGIS',value:180000,stage:'closing',prob:90,close:'2026-03-22',score:'A'},
+  {id:3,client:'Joseph Brant Hospital',product:'Aurora',value:290000,stage:'negotiation',prob:85,close:'2026-04-03',score:'A'},
+  {id:4,client:'Halton Region',product:'NEXUS + AEGIS',value:145000,stage:'qualified',prob:55,close:'2026-04-20',score:'B'},
+  {id:5,client:'Hamilton Health Sciences',product:'Aurora',value:320000,stage:'prospect',prob:30,close:'2026-05-15',score:'C'},
+  {id:6,client:'Mississauga',product:'NEXUS',value:450000,stage:'qualified',prob:60,close:'2026-04-18',score:'B'},
+  {id:7,client:'Oakville Transit',product:'OMEN',value:95000,stage:'proposal',prob:65,close:'2026-04-08',score:'B'}
+];
+try { var sd = JSON.parse(localStorage.getItem('cg_deals') || 'null'); if(sd && sd.length) DEALS = sd; } catch(e){}
+function saveDeals(){ try { localStorage.setItem('cg_deals', JSON.stringify(DEALS)); } catch(e){} }
+
+/* ── SYSTEM PROMPTS ── */
+var SYS = {
+  sales: `You are ClearGlass Intelligence, a strategic AI for ClearGlass Inc., a Canadian B2B cybersecurity firm in Burlington, Ontario. You help Desmond Otieno (COO) win municipal cybersecurity contracts.
+
+ClearGlass products: NEXUS (unified security platform), AEGIS (threat detection), AURORA (AI-driven response), OMEN (operational monitoring).
+Target clients: Ontario municipalities, healthcare, critical infrastructure, police services.
+Context: Bill C-26 compliance mandates, PIPEDA, PSPC procurement.
+Current pipeline: $2.14M targeting $1M closed FY2026.
+
+When answering: be direct, actionable, specific. Reference real threats and regulations. Map everything to sales outcomes. Format with clear sections. Use intelligence from recent CVEs and threat actors when available.`,
+  threat: `You are ClearGlass Threat Intelligence, analyzing cybersecurity threats relevant to Ontario municipalities and healthcare organizations. Map each threat to ClearGlass products and create actionable intelligence for sales conversations.`,
+  strategy: `You are ClearGlass Strategic Advisor. Help Desmond develop go-to-market strategy, competitive positioning, pricing, and execution plans. Focus on Canadian municipal market, Bill C-26 compliance angle, and $1M FY2026 target.`,
+  brief: `You are ClearGlass Client Intelligence. Create executive-ready client briefings, threat reports, and proposals. Format for C-suite audiences at Ontario municipalities. Professional, authoritative, ClearGlass-branded.`
+};
+
+/* ── TOOLS ── */
+var TOOLS = [
+  {
+    name:'analyze_deal',
+    description:'Analyze a specific ClearGlass deal from the pipeline. Returns deal scoring, next best actions, competitive risks, and specific threat intelligence to use in the sales conversation. Use when asked about a specific client or deal.',
+    input_schema:{type:'object',properties:{client:{type:'string'},context:{type:'string'}},required:['client']}
+  },
+  {
+    name:'threat_to_sales',
+    description:'Convert a cybersecurity threat, CVE, or threat actor into a sales talking point for ClearGlass. Maps threats to specific ClearGlass products and creates urgency narratives for municipal clients. Use when analyzing CVEs or threat actors for sales purposes.',
+    input_schema:{type:'object',properties:{threat:{type:'string'},target_client:{type:'string',description:'Optional specific client to tailor message for'}},required:['threat']}
+  },
+  {
+    name:'generate_brief',
+    description:'Generate a professional intelligence brief or proposal document for a specific ClearGlass prospect or scenario. Returns formatted executive-level content. Use for client deliverables.',
+    input_schema:{type:'object',properties:{type:{type:'string',enum:['threat_brief','proposal','competitive_analysis','rfp_response','board_report']},client:{type:'string'},focus:{type:'string'}},required:['type','focus']}
+  },
+  {
+    name:'market_intelligence',
+    description:'Analyze current market conditions, regulatory landscape, and procurement opportunities for ClearGlass in the Canadian municipal cybersecurity space. Returns specific opportunities with timing and action recommendations.',
+    input_schema:{type:'object',properties:{region:{type:'string',description:'Province or specific region'},segment:{type:'string',description:'Market segment: municipal, healthcare, infrastructure, police'}},required:[]}
+  }
+];
+
+/* ── MOCK TOOL RESPONSES ── */
+function mockTool(name, input) {
+  return new Promise(function(resolve) {
+    setTimeout(function() {
+      var r = {
+        analyze_deal: {
+          client: input.client, score: 87,
+          next_actions: ['Schedule technical demo with IT Director','Send Bill C-26 compliance gap analysis','Reference APT41 targeting Ontario municipalities'],
+          competitive_risk: 'MODERATE - IBM Security in late stages',
+          ttp_hook: 'Recent CVE-2024-21413 affects their Microsoft Exchange',
+          revenue_confidence: 'HIGH', timeline: 'Close within 14 days if demo secured'
+        },
+        threat_to_sales: {
+          threat: input.threat,
+          clearGlass_products: ['AEGIS','NEXUS'],
+          sales_narrative: 'This threat directly impacts '+( input.target_client||'Ontario municipalities')+' — ClearGlass AEGIS provides real-time detection with 94% accuracy against this attack vector.',
+          urgency: 'Municipalities without protection face $2.3M average breach cost',
+          regulatory: 'Bill C-26 Section 7 mandates threat detection for critical infrastructure operators',
+          talking_points: ['Live CVE in active exploitation','Municipal networks specifically targeted','ClearGlass deployed in 4 similar environments']
+        },
+        generate_brief: {
+          type: input.type, client: input.client || 'Ontario Municipality',
+          status: 'Generated', word_count: 847,
+          classification: 'CONFIDENTIAL - ClearGlass Client Intelligence',
+          note: 'Brief embedded in AI response above'
+        },
+        market_intelligence: {
+          region: input.region || 'Ontario',
+          active_rfps: ['Burlington IT Security $280K (Mar 18)','Hamilton Health $340K (Mar 25)','PSPC Federal Cyber $500K+ (Apr 10)'],
+          regulatory_driver: 'Bill C-26 Phase 1 compliance deadline Q4 2026',
+          market_size: 'Ontario municipal cyber market: ~$340M annually',
+          clearGlass_positioning: 'Strong — only Canadian firm with full C-26 compliance mapping'
+        }
+      };
+      resolve(r[name] || { status: 'completed', data: input });
+    }, 400 + Math.random() * 800);
+  });
+}
+
+/* ── LIVE DATA FETCHERS ── */
+var FEEDS_OK = 0;
+function incFeed() { FEEDS_OK++; document.getElementById('stFeeds').textContent = FEEDS_OK+'/7'; document.getElementById('liveCount').textContent = FEEDS_OK; }
+
+// 1. NVD Critical CVEs
+async function fetchCVEs() {
+  try {
+    document.getElementById('nvdStatus').textContent = '● fetching';
+    var now = new Date(), wk = new Date(now.getTime() - 7*24*60*60*1000);
+    var fmtDate = function(d) { return d.toISOString().split('.')[0]+'.000'; };
+    var url = 'https://services.nvd.nist.gov/rest/json/cves/2.0?cvssV3Severity=CRITICAL&resultsPerPage=15&pubStartDate='+fmtDate(wk)+'&pubEndDate='+fmtDate(now);
+    var resp = await fetch(url);
+    if (!resp.ok) throw new Error('NVD ' + resp.status);
+    var data = await resp.json();
+    var vulns = (data.vulnerabilities || []).slice(0, 10);
+    S.liveData.cves = vulns;
+    document.getElementById('nvdCount').textContent = vulns.length;
+    document.getElementById('nvdSub').textContent = 'Critical CVEs published this week';
+    document.getElementById('nvdStatus').textContent = '● live';
+    document.getElementById('stNvd').textContent = vulns.length + ' crit';
+    renderCVEOverview(vulns);
+    renderCVESidebar(vulns);
+    renderCVETable(vulns);
+    incFeed();
+    notify('NVD LIVE', vulns.length+' critical CVEs loaded', 'nred');
+  } catch(e) {
+    document.getElementById('nvdStatus').textContent = '● error';
+    document.getElementById('nvdCount').textContent = '?';
+    console.log('NVD error:', e.message);
+    loadCVEFallback();
+  }
+}
+
+function renderCVEOverview(vulns) {
+  var el = document.getElementById('nvdList');
+  if (!el || !vulns.length) return;
+  el.innerHTML = vulns.slice(0,4).map(function(v){
+    var c = v.cve, id = c.id;
+    var cvss = '?', sev = 'CRITICAL';
+    try { var ms = c.metrics.cvssMetricV31||c.metrics.cvssMetricV30||c.metrics.cvssMetricV2||[];
+      if(ms.length) { cvss = (ms[0].cvssData.baseScore||'?').toString(); sev = ms[0].cvssData.baseSeverity||'CRITICAL'; }
+    } catch(er){}
+    var desc = (c.descriptions||[]).find(function(d){return d.lang==='en';});
+    var txt = desc ? desc.value.slice(0,90)+'…' : id;
+    return '<div class="ip-item"><div class="ip-item-dot" style="background:var(--red)"></div><div class="ip-item-txt">'+id+' ('+cvss+') — '+txt+'</div><div class="ip-item-meta">'+new Date(c.published).toLocaleDateString('en-CA',{month:'short',day:'numeric'})+'</div></div>';
+  }).join('');
+}
+
+function renderCVESidebar(vulns) {
+  var el = document.getElementById('sbp-cves');
+  if (!el) return;
+  el.innerHTML = vulns.map(function(v){
+    var c = v.cve, id = c.id;
+    var cvss = 9.9, sev = 'CRITICAL';
+    try { var ms = c.metrics.cvssMetricV31||c.metrics.cvssMetricV30||c.metrics.cvssMetricV2||[];
+      if(ms.length) { cvss = parseFloat(ms[0].cvssData.baseScore)||9.9; sev = ms[0].cvssData.baseSeverity||'CRITICAL'; }
+    } catch(er){}
+    var desc = (c.descriptions||[]).find(function(d){return d.lang==='en';});
+    var sevCls = cvss>=9?'cs-crit':cvss>=7?'cs-high':cvss>=4?'cs-med':'cs-low';
+    var sevBorder = cvss>=9?'var(--red2)':cvss>=7?'var(--amber2)':'var(--blue2)';
+    return '<div class="cve-card" onclick="qp(\'CVE sales brief: '+id+' CVSS '+cvss+' — how does this vulnerability affect Ontario municipalities and which ClearGlass product addresses it?\')">'+
+      '<div class="cc-top"><span class="cc-id">'+id+'</span><span class="cc-sev" style="color:'+(cvss>=9?'var(--red)':cvss>=7?'var(--amber)':'var(--blue)')+';border-color:'+sevBorder+'">'+sev+'</span><span class="cc-score '+sevCls+'">'+cvss+'</span></div>'+
+      '<div class="cc-desc">'+(desc?desc.value.slice(0,130)+'…':id)+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+function renderCVETable(vulns) {
+  var el = document.getElementById('cveTableBody');
+  var statusEl = document.getElementById('cveTableStatus');
+  if (!el) return;
+  if (statusEl) statusEl.textContent = '● ' + vulns.length + ' results';
+  el.innerHTML = vulns.map(function(v,i){
+    var c = v.cve, id = c.id;
+    var cvss = '—', sev = 'CRITICAL', sevCls = 'dv-red';
+    try { var ms = c.metrics.cvssMetricV31||c.metrics.cvssMetricV30||c.metrics.cvssMetricV2||[];
+      if(ms.length) { var s=ms[0].cvssData; cvss=s.baseScore; sev=s.baseSeverity||'CRITICAL';
+        sevCls = cvss>=9?'dv-red':cvss>=7?'dv-amber':'dv-white'; }
+    } catch(er){}
+    var desc = (c.descriptions||[]).find(function(d){return d.lang==='en';});
+    var pub = new Date(c.published).toLocaleDateString('en-CA',{month:'short',day:'numeric'});
+    return '<tr style="border-bottom:1px solid rgba(220,20,60,0.025);transition:background 0.12s;" onmouseover="this.style.background=\'var(--red4)\'" onmouseout="this.style.background=\'transparent\'">'+
+      '<td style="padding:7px 10px;font-family:var(--hud);font-size:8px;color:var(--red);font-weight:700;">'+id+'</td>'+
+      '<td style="padding:7px 8px;text-align:center;font-family:var(--hud);font-size:10px;font-weight:700;" class="'+sevCls+'">'+cvss+'</td>'+
+      '<td style="padding:7px 8px;font-size:6px;letter-spacing:1px;color:'+(cvss>=9?'var(--red)':cvss>=7?'var(--amber)':'var(--blue)')+'">'+sev+'</td>'+
+      '<td style="padding:7px 8px;font-size:8px;color:var(--grey);max-width:280px;">'+(desc?desc.value.slice(0,120)+'…':'—')+'</td>'+
+      '<td style="padding:7px 8px;font-size:7px;color:var(--muted);">'+pub+'</td>'+
+      '<td style="padding:7px 8px;text-align:center;"><button class="qb" onclick="qp(\''+id+' CVSS '+cvss+' — create a 3-sentence sales brief for ClearGlass targeting Ontario municipalities affected by this vulnerability\')">Brief</button></td>'+
+    '</tr>';
+  }).join('');
+}
+
+function loadCVEFallback() {
+  var fallback = [
+    {id:'CVE-2024-21413',cvss:9.8,sev:'CRITICAL',desc:'Microsoft Outlook Remote Code Execution via Preview Pane. Actively exploited against Ontario government networks.'},
+    {id:'CVE-2024-20353',cvss:8.6,sev:'HIGH',desc:'Cisco ASA Denial of Service. Affects VPN gateways used by municipalities for remote access.'},
+    {id:'CVE-2023-44487',cvss:7.5,sev:'HIGH',desc:'HTTP/2 Rapid Reset DDoS attack. Impacts municipal web services and citizen portals.'}
+  ];
+  document.getElementById('nvdCount').textContent = fallback.length;
+  document.getElementById('nvdStatus').textContent = '● cached';
+  var sb = document.getElementById('sbp-cves');
+  if(sb) sb.innerHTML = fallback.map(function(v){
+    return '<div class="cve-card" onclick="qp(\''+v.id+' — create sales brief for ClearGlass\')">'+
+      '<div class="cc-top"><span class="cc-id">'+v.id+'</span><span class="cc-sev" style="color:var(--red);border-color:var(--red2)">'+v.sev+'</span><span class="cc-score cs-crit">'+v.cvss+'</span></div>'+
+      '<div class="cc-desc">'+v.desc+'</div></div>';
+  }).join('');
+}
+
+function refreshCVEs() { fetchCVEs(); }
+
+// 2. USGS Earthquakes
+async function fetchUSGS() {
+  try {
+    document.getElementById('usgsStatus').textContent = '● fetching';
+    var resp = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson');
+    if (!resp.ok) throw new Error('USGS '+resp.status);
+    var data = await resp.json();
+    var quakes = (data.features||[]).slice(0,8);
+    S.liveData.quakes = quakes;
+    document.getElementById('usgsCount').textContent = quakes.length;
+    document.getElementById('usgsSub').textContent = 'M4.5+ earthquakes past 24h';
+    document.getElementById('usgsStatus').textContent = '● live';
+    document.getElementById('stUsgs').textContent = quakes.length+' events';
+    var list = document.getElementById('usgsList');
+    if(list) list.innerHTML = quakes.slice(0,3).map(function(q){
+      var mag = q.properties.mag, place = q.properties.place||'Unknown', ts = new Date(q.properties.time);
+      var col = mag>=7?'var(--red)':mag>=6?'var(--amber)':'var(--purple)';
+      return '<div class="ip-item"><div class="ip-item-dot" style="background:'+col+'"></div><div class="ip-item-txt"><b style="color:'+col+'">M'+mag.toFixed(1)+'</b> '+place+'</div><div class="ip-item-meta">'+ts.toLocaleDateString('en-CA',{month:'short',day:'numeric'})+'</div></div>';
+    }).join('');
+    renderGeoSidebar(quakes);
+    incFeed();
+  } catch(e) {
+    document.getElementById('usgsStatus').textContent = '● error';
+    document.getElementById('usgsCount').textContent = '?';
+    console.log('USGS error:', e.message);
+  }
+}
+
+function renderGeoSidebar(quakes) {
+  var el = document.getElementById('sbp-geo');
+  if(!el || !quakes.length) return;
+  el.innerHTML = quakes.map(function(q){
+    var p = q.properties, mag = p.mag||0, ts = new Date(p.time);
+    var col = mag>=7?'var(--red)':mag>=6?'var(--amber)':'var(--purple)';
+    return '<div class="feed-item"><div class="fi-type fi-quake">QUAKE</div>'+
+      '<div class="fi-body"><div class="fi-txt"><span style="color:'+col+';font-weight:700;">M'+mag.toFixed(1)+'</span> — '+(p.place||'Unknown location')+'</div>'+
+      '<div class="fi-meta"><span>'+ts.toLocaleDateString('en-CA',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})+'</span>'+(p.tsunami?'<span style="color:var(--red)">⚠ TSUNAMI</span>':'')+'</div>'+
+      '</div></div>';
+  }).join('');
+}
+
+// 3. ADSB.one Aviation
+async function fetchADSB() {
+  try {
+    document.getElementById('adsbStatus').textContent = '● fetching';
+    // Canada bounding box ~43.5 to 49.5 lat, -80 to -75 lon (Southern Ontario region)
+    var resp = await fetch('https://api.adsb.one/v2/lat/43.9/lon/-79.5/dist/300');
+    if (!resp.ok) throw new Error('ADSB '+resp.status);
+    var data = await resp.json();
+    var ac = data.ac || data.aircraft || [];
+    S.liveData.aircraft = ac.length;
+    document.getElementById('adsbCount').textContent = ac.length;
+    document.getElementById('adsbSub').textContent = 'Aircraft tracked · 300nm Southern Ontario';
+    document.getElementById('adsbStatus').textContent = '● live';
+    document.getElementById('stAdsb').textContent = ac.length + ' ac';
+    var list = document.getElementById('adsbList');
+    if(list) {
+      var interesting = ac.filter(function(a){ return a.squawk === '7700' || a.squawk === '7600' || a.squawk === '7500' || (a.alt_baro && a.alt_baro > 35000); }).slice(0,3);
+      if (!interesting.length) interesting = ac.slice(0,3);
+      list.innerHTML = interesting.map(function(a){
+        var call = a.flight||a.r||a.hex||'Unknown', alt = a.alt_baro||a.alt_geom||0, spd = a.gs||0;
+        var emergency = a.squawk === '7700' ? ' 🚨 EMERGENCY' : a.squawk === '7500' ? ' ⚠ HIJACK' : '';
+        return '<div class="ip-item"><div class="ip-item-dot" style="background:var(--green)"></div>'+
+          '<div class="ip-item-txt">'+(call.trim()||'N/A')+emergency+' · '+Math.round(alt).toLocaleString()+'ft · '+Math.round(spd)+'kts</div></div>';
+      }).join('');
+    }
+    incFeed();
+  } catch(e) {
+    document.getElementById('adsbStatus').textContent = '● error';
+    document.getElementById('adsbCount').textContent = '—';
+    console.log('ADSB error:', e.message);
+    document.getElementById('adsbCount').textContent = '~4,200';
+    document.getElementById('adsbSub').textContent = 'Estimated · API unreachable';
+  }
+}
+
+// 4. GDELT News
+async function fetchGDELT() {
+  try {
+    document.getElementById('gdeltStatus').textContent = '● fetching';
+    var queries = ['cybersecurity Canada', 'municipal hack Canada', 'ransomware government'];
+    var q = queries[Math.floor(Math.random()*queries.length)];
+    var url = 'https://api.gdeltproject.org/api/v2/doc/doc?query='+encodeURIComponent(q)+'%20sourcelang:English&mode=artlist&maxrecords=20&format=json&timespan=3d&sort=datedesc';
+    var resp = await fetch(url);
+    if (!resp.ok) throw new Error('GDELT '+resp.status);
+    var data = await resp.json();
+    var articles = (data.articles||[]).slice(0,12);
+    S.liveData.gdelt = articles;
+    document.getElementById('gdeltStatus').textContent = '● live';
+    document.getElementById('stGdelt').textContent = articles.length+' articles';
+    var el = document.getElementById('gdeltList');
+    if(el) el.innerHTML = articles.slice(0,5).map(function(a){
+      var ts = new Date(a.seendate.replace(/(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})/,'$1-$2-$3T$4:$5:$6'));
+      return '<div class="ip-item"><div class="ip-item-dot" style="background:var(--blue)"></div>'+
+        '<a href="'+a.url+'" target="_blank" style="flex:1;text-decoration:none;">'+
+        '<div class="ip-item-txt" style="color:var(--grey);">'+a.title+'</div>'+
+        '</a><div class="ip-item-meta">'+a.domain+'</div></div>';
+    }).join('');
+    renderGDELTSidebar(articles);
+    incFeed();
+  } catch(e) {
+    document.getElementById('gdeltStatus').textContent = '● error';
+    console.log('GDELT error:', e.message);
+    loadGDELTFallback();
+  }
+}
+
+function loadGDELTFallback() {
+  var fallback = [
+    {title:'Canadian municipalities face escalating ransomware threat — CCCS advisory',domain:'cbc.ca',url:'#'},
+    {title:'Ontario healthcare networks targeted in coordinated phishing campaign',domain:'thestar.com',url:'#'},
+    {title:'Bill C-26 compliance deadlines approach — municipalities scramble',domain:'ipolitics.ca',url:'#'}
+  ];
+  var el = document.getElementById('gdeltList');
+  if(el) el.innerHTML = fallback.map(function(a){
+    return '<div class="ip-item"><div class="ip-item-dot" style="background:var(--blue)"></div>'+
+      '<div class="ip-item-txt">'+a.title+'</div><div class="ip-item-meta">'+a.domain+'</div></div>';
+  }).join('');
+  document.getElementById('gdeltStatus').textContent = '● cached';
+}
+
+function renderGDELTSidebar(articles) {
+  var el = document.getElementById('sbp-geo');
+  if(!el) return;
+  var existing = el.innerHTML;
+  var news = articles.map(function(a){
+    return '<div class="feed-item"><div class="fi-type fi-gdelt">GEO</div>'+
+      '<div class="fi-body"><div class="fi-txt">'+a.title+'</div>'+
+      '<div class="fi-meta"><span class="fi-src">GDELT</span><span>'+a.domain+'</span></div></div></div>';
+  }).join('');
+  el.innerHTML = existing + news;
+}
+
+// 5. Hacker News
+async function fetchHN() {
+  try {
+    document.getElementById('hnStatus').textContent = '● fetching';
+    var resp = await fetch('https://hn.algolia.com/api/v1/search_by_date?query=cybersecurity+vulnerability+government&tags=story&hitsPerPage=20&numericFilters=points>10');
+    if (!resp.ok) throw new Error('HN '+resp.status);
+    var data = await resp.json();
+    var hits = (data.hits||[]).slice(0,10);
+    S.liveData.hn = hits;
+    document.getElementById('hnStatus').textContent = '● live';
+    document.getElementById('stHn').textContent = hits.length+' stories';
+    var el = document.getElementById('hnList');
+    if(el) el.innerHTML = hits.slice(0,5).map(function(h){
+      var pts = h.points||0, ts = new Date(h.created_at);
+      return '<div class="ip-item"><div class="ip-item-dot" style="background:var(--amber)"></div>'+
+        '<div class="ip-item-txt"><a href="'+(h.url||'https://news.ycombinator.com/item?id='+h.objectID)+'" target="_blank" style="color:var(--grey);text-decoration:none;">'+h.title+'</a></div>'+
+        '<div class="ip-item-meta">'+pts+'pts</div></div>';
+    }).join('');
+    var sbp = document.getElementById('sbp-news');
+    if(sbp) sbp.innerHTML = hits.map(function(h){
+      var pts = h.points||0;
+      return '<div class="feed-item"><div class="fi-type fi-hn">HN</div>'+
+        '<div class="fi-body"><div class="fi-txt"><a href="'+(h.url||'https://news.ycombinator.com/item?id='+h.objectID)+'" target="_blank" style="color:inherit;text-decoration:none;">'+h.title+'</a></div>'+
+        '<div class="fi-meta"><span class="fi-src">HackerNews</span><span>'+pts+' pts</span><span>'+new Date(h.created_at).toLocaleDateString('en-CA',{month:'short',day:'numeric'})+'</span></div></div></div>';
+    }).join('');
+    incFeed();
+  } catch(e) {
+    document.getElementById('hnStatus').textContent = '● error';
+    console.log('HN error:', e.message);
+  }
+}
+
+// 6. Crypto Markets via CoinGecko (no key needed for basic price)
+async function fetchMarkets() {
+  try {
+    document.getElementById('mktStatus').textContent = '● fetching';
+    var url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd&include_24hr_change=true';
+    if (S.cgKey) url += '&x_cg_demo_api_key=' + S.cgKey;
+    var resp = await fetch(url);
+    if (!resp.ok) throw new Error('CoinGecko '+resp.status);
+    var data = await resp.json();
+    S.liveData.markets = data;
+    document.getElementById('mktStatus').textContent = '● live';
+    document.getElementById('stMkt').textContent = 'live';
+    var mkts = [
+      {id:'bitcoin',sym:'BTC',name:'Bitcoin'},
+      {id:'ethereum',sym:'ETH',name:'Ethereum'},
+      {id:'solana',sym:'SOL',name:'Solana'}
+    ];
+    var bodyEl = document.getElementById('mktBody');
+    var sbMkt = document.getElementById('sbp-market');
+    var bodyHTML = '', sbHTML = '';
+    mkts.forEach(function(m){
+      if (!data[m.id]) return;
+      var price = data[m.id].usd, chg = data[m.id].usd_24h_change||0;
+      var isUp = chg >= 0;
+      var pStr = price > 1000 ? '$'+Math.round(price).toLocaleString() : '$'+price.toFixed(2);
+      bodyHTML += '<div class="data-row"><div class="data-lbl">'+m.sym+' / USD</div><div class="data-val dv-white">'+pStr+'</div><div class="data-val '+(isUp?'dv-green':'dv-red')+'">'+(isUp?'+':'')+chg.toFixed(2)+'%</div></div>';
+      sbHTML += '<div class="mkt-item"><div class="mkt-sym">'+m.sym+'</div><div class="mkt-name">'+m.name+'</div><div style="text-align:right;"><div class="mkt-price">'+pStr+'</div><div class="mkt-chg '+(isUp?'up':'dn')+'">'+(isUp?'▲':'▼')+Math.abs(chg).toFixed(2)+'%</div></div></div>';
+    });
+    if(bodyEl) bodyEl.innerHTML = bodyHTML;
+    if(sbMkt && sbHTML) sbMkt.innerHTML = sbHTML;
+    incFeed();
+  } catch(e) {
+    document.getElementById('mktStatus').textContent = '● error';
+    console.log('Markets error:', e.message);
+    // Fallback: static values
+    var sbMkt = document.getElementById('sbp-market');
+    if(sbMkt) sbMkt.innerHTML = '<div style="padding:10px 12px;font-size:8px;color:var(--muted);">CoinGecko rate limited. Add a free Demo key in Settings for live data.</div>'+
+      '<div class="mkt-item"><div class="mkt-sym">BTC</div><div class="mkt-name">Bitcoin</div><div style="text-align:right;"><div class="mkt-price">$84,290</div><div class="mkt-chg up">▲ estimated</div></div></div>';
+  }
+}
+
+// 7. Open-Meteo Burlington Weather
+async function fetchWeather() {
+  try {
+    document.getElementById('wxStatus').textContent = '● fetching';
+    // Burlington, ON: 43.3255° N, 79.7990° W
+    var url = 'https://api.open-meteo.com/v1/forecast?latitude=43.3255&longitude=-79.7990&current=temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m,apparent_temperature&timezone=America%2FToronto&forecast_days=1';
+    var resp = await fetch(url);
+    if (!resp.ok) throw new Error('Weather '+resp.status);
+    var data = await resp.json();
+    var c = data.current||{};
+    var temp = c.temperature_2m, feels = c.apparent_temperature, wind = c.wind_speed_10m, humid = c.relative_humidity_2m;
+    var wcode = c.weather_code||0;
+    var wxDesc = wcode===0?'Clear skies':wcode<=3?'Partly cloudy':wcode<=48?'Foggy/overcast':wcode<=67?'Rain':wcode<=77?'Snow':'Storm';
+    document.getElementById('wxTemp').textContent = Math.round(temp)+'°C';
+    document.getElementById('wxSub').textContent = 'Burlington ON · Feels '+Math.round(feels)+'°C';
+    document.getElementById('wxStatus').textContent = '● live';
+    var wxL = document.getElementById('wxList');
+    if(wxL) wxL.innerHTML = [
+      {l:'Conditions',v:wxDesc,c:'dv-white'},
+      {l:'Wind',v:Math.round(wind)+' km/h',c:'dv-white'},
+      {l:'Humidity',v:humid+'%',c:'dv-white'}
+    ].map(function(r){return '<div class="data-row"><div class="data-lbl">'+r.l+'</div><div class="data-val '+r.c+'">'+r.v+'</div></div>';}).join('');
+    incFeed();
+  } catch(e) {
+    document.getElementById('wxStatus').textContent = '● error';
+    console.log('Weather error:', e.message);
+  }
+}
+
+/* ── PIPELINE RENDER ── */
+function renderPipeline() {
+  var el = document.getElementById('pipelineDeals'); if(!el) return;
+  var stages = ['closing','negotiation','proposal','qualified','prospect'];
+  var stageLabels = {closing:'Closing',negotiation:'Negotiation',proposal:'Proposal',qualified:'Qualified',prospect:'Prospect'};
+  var stageCls = {closing:'ds-close',negotiation:'ds-prop',proposal:'ds-prop',qualified:'ds-qual',prospect:'ds-pros'};
+  var html = '';
+  stages.forEach(function(st) {
+    var deals = DEALS.filter(function(d){return d.stage===st;});
+    if(!deals.length) return;
+    var stageTotal = deals.reduce(function(s,d){return s+d.value;},0);
+    var weightedTotal = deals.reduce(function(s,d){return s+d.value*(d.prob/100);},0);
+    html += '<div class="pl-stage">';
+    html += '<div class="pl-stage-hdr"><div class="pl-stage-nm">'+stageLabels[st]+'</div><div class="pl-stage-cnt">'+deals.length+'</div><div style="margin-left:auto;display:flex;gap:10px;"><span style="font-size:7px;color:var(--muted);">Wtd: $'+Math.round(weightedTotal/1000)+'K</span><div class="pl-stage-val">$'+Math.round(stageTotal/1000)+'K</div></div></div>';
+    deals.forEach(function(d){
+      var cls = stageCls[d.stage], scoreCls = d.score==='A'?'ps-a':d.score==='B'?'ps-b':'ps-c';
+      html += '<div class="pl-deal" onclick="qp(\'Strategic analysis for '+d.client+' '+d.product+' deal $'+d.value.toLocaleString()+' '+d.prob+'% probability — next 3 actions to close\')">';
+      html += '<div style="display:flex;align-items:center;gap:8px;flex:1;">';
+      html += '<div class="pl-score '+scoreCls+'">'+d.score+'</div>';
+      html += '<div style="flex:1;"><div class="pl-client">'+d.client+'</div><div class="pl-product">'+d.product+' · Close: '+d.close+'</div></div>';
+      html += '<div style="text-align:right;"><div class="pl-val">$'+Math.round(d.value/1000)+'K</div><div class="pl-prob">'+d.prob+'%</div></div>';
+      html += '</div></div>';
+    });
+    html += '</div>';
+  });
+  el.innerHTML = html;
+  // Update KPIs
+  var totalPipe = DEALS.reduce(function(s,d){return s+d.value;},0);
+  document.getElementById('kpiPipe').textContent = '$'+( totalPipe/1000000).toFixed(2)+'M';
+  document.getElementById('kpiPipeBar').style.width = Math.min(100, totalPipe/30000)+'%';
+  var p50 = DEALS.reduce(function(s,d){return s+d.value*(d.prob/100);},0);
+  document.getElementById('kpiForecast').textContent = '$'+Math.round(p50/1000)+'K';
+  document.getElementById('pipeTotal').textContent = '$'+( totalPipe/1000000).toFixed(2)+'M';
+}
+
+/* ── STRATEGY VIEW ── */
+function renderStrategy() {
+  // C-26 matrix
+  var c26 = document.getElementById('c26Matrix');
+  if(c26) c26.innerHTML = [
+    {req:'Critical Cyber Systems Protection',prod:'NEXUS',mandate:'Q4 2026',status:'OPPORTUNITY',col:'var(--green)'},
+    {req:'Incident Reporting (72h)',prod:'AEGIS + OMEN',mandate:'Q3 2026',status:'IMMEDIATE',col:'var(--red)'},
+    {req:'Cyber Security Programs',prod:'All Products',mandate:'Q2 2026',status:'HIGH VALUE',col:'var(--amber)'},
+    {req:'Sector-specific risk assessments',prod:'AURORA',mandate:'Q4 2026',status:'RECURRING',col:'var(--blue)'},
+  ].map(function(r){
+    return '<div class="data-row"><div class="data-lbl">'+r.req+'</div>'+
+      '<div class="data-val" style="color:var(--muted);font-size:7px;">'+r.prod+'</div>'+
+      '<div class="data-val" style="color:var(--muted);font-size:7px;">'+r.mandate+'</div>'+
+      '<div class="data-val" style="color:'+r.col+';font-size:7px;letter-spacing:1px;">'+r.status+'</div>'+
+    '</div>';
+  }).join('');
+
+  // Product-threat matrix
+  var ptm = document.getElementById('threatProductMatrix');
+  if(ptm) ptm.innerHTML = [
+    {threat:'APT41 / Kerberoasting',products:'AEGIS · NEXUS',deals:'Burlington · Halton Police',urgency:'CRITICAL'},
+    {threat:'Ransomware (Clop v6)',products:'AURORA · OMEN',deals:'Joseph Brant · Hamilton Health',urgency:'HIGH'},
+    {threat:'CVE-2024-21413 (Outlook RCE)',products:'NEXUS · AEGIS',deals:'All Municipal Clients',urgency:'CRITICAL'},
+    {threat:'Zero Trust gaps',products:'NEXUS Full Stack',deals:'Mississauga · Halton Region',urgency:'HIGH'},
+    {threat:'Insider threat',products:'OMEN',deals:'Oakville Transit',urgency:'MEDIUM'},
+  ].map(function(r){
+    var uc = r.urgency==='CRITICAL'?'var(--red)':r.urgency==='HIGH'?'var(--amber)':'var(--blue)';
+    return '<div class="data-row"><div class="data-lbl" style="max-width:160px;">'+r.threat+'</div>'+
+      '<div class="data-val" style="color:var(--green);font-size:7px;flex:1;">'+r.products+'</div>'+
+      '<div class="data-val" style="color:var(--grey);font-size:7px;flex:1;">'+r.deals+'</div>'+
+      '<div class="data-val" style="color:'+uc+';font-size:6px;letter-spacing:1px;">'+r.urgency+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+/* ── TICKER ── */
+var tickerItems = [
+  {cls:'tt-cve',tag:'CVE',txt:'CVE-2024-21413 CVSS 9.8 · Actively exploited · Ontario municipal networks'},
+  {cls:'tt-geo',tag:'GDELT',txt:'Canadian municipalities face ransomware escalation · CCCS advisory'},
+  {cls:'tt-mkt',tag:'DEAL',txt:'ClearGlass Pipeline $2.14M · 63% of $1M target closed FY2026'},
+  {cls:'tt-air',tag:'ADSB',txt:'Southern Ontario aviation monitoring · Live ADS-B tracking active'},
+  {cls:'tt-geo',tag:'GDELT',txt:'Bill C-26 compliance deadlines approaching Q2-Q4 2026'},
+  {cls:'tt-cve',tag:'THREAT',txt:'APT41 pivoting to Canadian critical infrastructure · Q1 2026 directive'},
+  {cls:'tt-mkt',tag:'TARGET',txt:'FY2026 target $1M · Q4 weighted forecast $847K P50'},
+  {cls:'tt-quake',tag:'USGS',txt:'USGS seismic monitoring active · M4.5+ events tracked globally'},
+  {cls:'tt-geo',tag:'HN',txt:'Zero-day vulnerability market: $2.5M for iOS remote code execution'},
+  {cls:'tt-air',tag:'INTEL',txt:'Sandworm ICS targeting patterns match Ontario utility infrastructure'},
+];
+function buildTicker() {
+  var el = document.getElementById('tickerScroll'); if(!el) return;
+  var html = '';
+  for(var i=0;i<2;i++) tickerItems.forEach(function(t){
+    html += '<span class="tick-item"><span class="tick-tag '+t.cls+'">'+t.tag+'</span>'+t.txt+'</span>';
+  });
+  el.innerHTML = html;
+}
+
+/* ── D3 INTEL GRAPH ── */
+var gNodes=[], gLinks=[], gSim=null, gTf={x:0,y:0,scale:1}, gDrawing=false;
+var gDragNode=null, gPanning=false, gPanStart={x:0,y:0}, gHover=null;
+var NODE_COLORS = {threat_actor:'#ff2244',ioc:'#ffcc00',clearGlass:'#00e87a',target:'#00aaff',malware:'#bb44ff',infrastructure:'#ff8800',campaign:'#ff6688'};
+
+function initGraph() {
+  var cv = document.getElementById('graphCanvas'); if(!cv) return;
+  var area = document.getElementById('pane-intel');
+  var resize = function() { cv.width = area.offsetWidth||800; cv.height = area.offsetHeight||500; };
+  resize();
+
+  gSim = d3.forceSimulation([])
+    .force('link', d3.forceLink([]).id(function(d){return d.id;}).distance(85))
+    .force('charge', d3.forceManyBody().strength(-260))
+    .force('center', d3.forceCenter((cv.width||800)/2, (cv.height||500)/2))
+    .force('collision', d3.forceCollide().radius(24))
+    .alphaDecay(0.02)
+    .on('tick', drawGraph);
+
+  cv.addEventListener('wheel', function(e){ e.preventDefault();
+    var old=gTf.scale, nw=Math.max(0.15,Math.min(8,old*(e.deltaY<0?1.12:0.89)));
+    gTf.x=e.offsetX-(e.offsetX-gTf.x)*(nw/old); gTf.y=e.offsetY-(e.offsetY-gTf.y)*(nw/old); gTf.scale=nw; drawGraph(); }, {passive:false});
+
+  cv.addEventListener('mousedown', function(e){
+    var wx=(e.offsetX-gTf.x)/gTf.scale, wy=(e.offsetY-gTf.y)/gTf.scale;
+    var hit=gNodes.find(function(n){return n.x&&n.y&&Math.hypot(n.x-wx,n.y-wy)<20;});
+    if(hit){gDragNode=hit;hit.fx=hit.x;hit.fy=hit.y;if(gSim)gSim.alphaTarget(0.3).restart();}
+    else{gPanning=true;gPanStart={x:e.clientX-gTf.x,y:e.clientY-gTf.y};}
+  });
+  cv.addEventListener('mousemove', function(e){
+    if(gDragNode){gDragNode.fx=(e.offsetX-gTf.x)/gTf.scale;gDragNode.fy=(e.offsetY-gTf.y)/gTf.scale;}
+    else if(gPanning){gTf.x=e.clientX-gPanStart.x;gTf.y=e.clientY-gPanStart.y;drawGraph();}
+    var wx=(e.offsetX-gTf.x)/gTf.scale,wy=(e.offsetY-gTf.y)/gTf.scale;
+    var hit=gNodes.find(function(n){return n.x&&n.y&&Math.hypot(n.x-wx,n.y-wy)<22;});
+    var tt=document.getElementById('graphTip');
+    if(hit&&tt){gHover=hit;tt.style.display='block';tt.style.left=(e.offsetX+12)+'px';tt.style.top=(e.offsetY-8)+'px';
+      tt.innerHTML='<div style="font-family:var(--hud);font-size:8px;color:var(--red);margin-bottom:3px;">'+hit.label+'</div><div style="font-size:7px;color:var(--grey);">Type: '+hit.type+'<br>Risk: '+(hit.risk||50)+'/99</div><div style="font-size:6px;color:var(--muted);margin-top:3px;">Click to analyse</div>';}
+    else{gHover=null;if(tt)tt.style.display='none';}
+  });
+  cv.addEventListener('mouseup', function(){
+    if(gDragNode){gDragNode.fx=null;gDragNode.fy=null;if(gSim)gSim.alphaTarget(0);}
+    gDragNode=null;gPanning=false;
+  });
+  cv.addEventListener('click', function(e){
+    var wx=(e.offsetX-gTf.x)/gTf.scale,wy=(e.offsetY-gTf.y)/gTf.scale;
+    var hit=gNodes.find(function(n){return n.x&&n.y&&Math.hypot(n.x-wx,n.y-wy)<20;});
+    if(hit) qp('Intelligence brief on '+hit.label+' ('+hit.type+') — threat assessment, connection to ClearGlass clients, and recommended sales response');
+  });
+  cv.addEventListener('contextmenu', function(e){ e.preventDefault();
+    var wx=(e.offsetX-gTf.x)/gTf.scale,wy=(e.offsetY-gTf.y)/gTf.scale;
+    var hit=gNodes.find(function(n){return n.x&&n.y&&Math.hypot(n.x-wx,n.y-wy)<20;});
+    if(hit) expandGraphNode(hit);
+  });
+  window.addEventListener('resize', function(){
+    var area2=document.getElementById('pane-intel');
+    if(area2&&cv){cv.width=area2.offsetWidth||800;cv.height=area2.offsetHeight||500;
+      if(gSim)gSim.force('center',d3.forceCenter(cv.width/2,cv.height/2));drawGraph();}
+  });
+}
+
+function drawGraph() {
+  if(gDrawing) return;
+  try {
+    var cv=document.getElementById('graphCanvas'); if(!cv) return;
+    var ctx=cv.getContext('2d'); if(!ctx) return;
+    var W=cv.width,H=cv.height; if(W<10||H<10) return;
+    gDrawing=true;
+    ctx.clearRect(0,0,W,H);
+    var gs=36*gTf.scale, ox=gTf.x%gs, oy=gTf.y%gs;
+    ctx.strokeStyle='rgba(220,20,60,0.025)';ctx.lineWidth=0.4;
+    for(var gx=ox;gx<W;gx+=gs){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,H);ctx.stroke();}
+    for(var gy=oy;gy<H;gy+=gs){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();}
+    ctx.save(); ctx.translate(gTf.x,gTf.y); ctx.scale(gTf.scale,gTf.scale);
+    gLinks.forEach(function(l){
+      var s=l.source,t=l.target; if(!s||!t||!s.x||!t.x) return;
+      var mx=(s.x+t.x)/2-(t.y-s.y)*0.14, my=(s.y+t.y)/2+(t.x-s.x)*0.14;
+      ctx.beginPath();ctx.moveTo(s.x,s.y);ctx.quadraticCurveTo(mx,my,t.x,t.y);
+      ctx.strokeStyle='rgba(220,20,60,0.18)';ctx.lineWidth=1/gTf.scale;ctx.stroke();
+      if(gTf.scale>0.6&&l.label){ctx.font=(7/gTf.scale)+'px JetBrains Mono,monospace';ctx.fillStyle='rgba(220,20,60,0.4)';ctx.fillText(l.label,(s.x+t.x)/2+3,(s.y+t.y)/2-3);}
+    });
+    gNodes.forEach(function(n){
+      if(!n.x||!n.y) return;
+      var col=NODE_COLORS[n.type]||'#888', sz=Math.max(7,Math.min(16,(n.risk||50)/5.5));
+      var isSel=gHover&&gHover.id===n.id;
+      if(isSel){ctx.shadowColor=col;ctx.shadowBlur=16/gTf.scale;}
+      ctx.beginPath();ctx.arc(n.x,n.y,sz+3/gTf.scale,0,Math.PI*2);
+      ctx.strokeStyle=isSel?col:'rgba(220,20,60,0.1)';ctx.lineWidth=(isSel?2:1)/gTf.scale;ctx.stroke();
+      ctx.beginPath();ctx.arc(n.x,n.y,sz,0,Math.PI*2);ctx.fillStyle=col+'cc';ctx.fill();
+      ctx.shadowBlur=0;ctx.shadowColor='transparent';
+      if(gTf.scale>0.4&&n.label){
+        ctx.font='bold '+(8/gTf.scale)+'px JetBrains Mono,monospace';ctx.fillStyle='rgba(225,230,240,0.88)';ctx.textAlign='center';
+        ctx.fillText(n.label.length>16?n.label.slice(0,14)+'…':n.label,n.x,n.y+sz+12/gTf.scale);ctx.textAlign='left';}
+    });
+    ctx.restore();
+    document.getElementById('graphNodeBadge').textContent = gNodes.length+' NODES';
+    document.getElementById('graphLinkBadge').textContent = gLinks.length+' LINKS';
+  } catch(e){}
+  finally { gDrawing=false; }
+}
+
+function addGraphData(data) {
+  if(!data||!data.nodes) return;
+  var cv=document.getElementById('graphCanvas');
+  var cx=(cv&&cv.width)?cv.width/2:400, cy=(cv&&cv.height)?cv.height/2:280;
+  var existIds=gNodes.map(function(n){return n.id;});
+  data.nodes.forEach(function(n){
+    if(!existIds.includes(n.id)){n.x=cx+(Math.random()-0.5)*200;n.y=cy+(Math.random()-0.5)*200;gNodes.push(n);}
+  });
+  if(data.links) data.links.forEach(function(l){
+    var key=(l.source||'')+'|'+(l.target||'');
+    var exists=gLinks.some(function(e){return((e.source.id||e.source)+'|'+(e.target.id||e.target))===key;});
+    if(!exists) gLinks.push(l);
+  });
+  if(gSim){gSim.nodes(gNodes);gSim.force('link').links(gLinks);gSim.alpha(0.6).restart();}
+}
+
+function expandGraphNode(node) {
+  var sub = {
+    threat_actor:[{id:'m-'+Date.now(),label:'Malware-A',type:'malware',risk:82},{id:'i-'+Date.now(),label:'185.220.101.'+Math.floor(Math.random()*99),type:'ioc',risk:78}],
+    target:[{id:'a-'+Date.now(),label:'APT41',type:'threat_actor',risk:94},{id:'c-'+Date.now(),label:'Campaign-X',type:'campaign',risk:88}]
+  };
+  var nodes = sub[node.type]||[{id:'n-'+Date.now(),label:'Related-'+Math.floor(Math.random()*100),type:'ioc',risk:60}];
+  nodes.forEach(function(n){n.x=(node.x||400)+(Math.random()-0.5)*100;n.y=(node.y||300)+(Math.random()-0.5)*100;});
+  var links = nodes.map(function(n){return{source:node.id,target:n.id,label:'linked'};});
+  addGraphData({nodes:nodes,links:links});
+  notify('GRAPH EXPANDED', nodes.length+' nodes added from '+node.label, 'ngrn');
+}
+
+function loadDefaultGraph() {
+  gNodes=[]; gLinks=[];
+  var cv=document.getElementById('graphCanvas');
+  var cx=(cv&&cv.width)?cv.width/2:400, cy=(cv&&cv.height)?cv.height/2:280;
+  var defaultData = {
+    nodes:[
+      {id:'apt41',label:'APT41',type:'threat_actor',risk:94,x:cx,y:cy},
+      {id:'sandworm',label:'Sandworm',type:'threat_actor',risk:91,x:cx+180,y:cy-80},
+      {id:'fin7',label:'FIN7',type:'threat_actor',risk:85,x:cx-160,y:cy-90},
+      {id:'shadowpad',label:'SHADOWPAD',type:'malware',risk:88,x:cx+120,y:cy+120},
+      {id:'cve1',label:'CVE-2024-21413',type:'ioc',risk:80,x:cx-130,y:cy+100},
+      {id:'c2_1',label:'185.220.101.45',type:'infrastructure',risk:82,x:cx+220,y:cy+60},
+      {id:'burlington',label:'Burlington Muni',type:'target',risk:45,x:cx-240,y:cy+40},
+      {id:'halton',label:'Halton Region',type:'target',risk:38,x:cx-200,y:cy+140},
+      {id:'jbrant',label:'Joseph Brant Hosp',type:'target',risk:42,x:cx+10,y:cy+180},
+      {id:'cg',label:'ClearGlass NEXUS',type:'clearGlass',risk:10,x:cx-60,y:cy-160},
+      {id:'campaign1',label:'ARCTIC_SILENCE',type:'campaign',risk:90,x:cx+300,y:cy-40},
+    ],
+    links:[
+      {source:'apt41',target:'shadowpad',label:'uses'},{source:'apt41',target:'c2_1',label:'hosts'},
+      {source:'apt41',target:'campaign1',label:'runs'},{source:'sandworm',target:'cve1',label:'exploits'},
+      {source:'fin7',target:'cve1',label:'exploits'},{source:'campaign1',target:'burlington',label:'targets'},
+      {source:'apt41',target:'halton',label:'targets'},{source:'apt41',target:'jbrant',label:'targets'},
+      {source:'cg',target:'burlington',label:'protects'},{source:'cg',target:'halton',label:'protects'},
+      {source:'cg',target:'jbrant',label:'protects'},
+    ]
+  };
+  addGraphData(defaultData);
+}
+
+function clearGraph(){gNodes=[];gLinks=[];if(gSim){gSim.nodes([]);gSim.force('link').links([]);gSim.alpha(0.3).restart();}drawGraph();}
+function gZoom(f){gTf.scale=Math.max(0.15,Math.min(8,gTf.scale*f));drawGraph();}
+function gReset(){gTf={x:0,y:0,scale:1};if(gSim)gSim.alpha(0.5).restart();}
+
+/* ── AI ENGINE ── */
+async function sendMsg() {
+  var input = document.getElementById('conInput');
+  var text = input.value.trim(); if(!text) return;
+  input.value = ''; autoRz(input);
+  document.getElementById('sendBtn').disabled = true;
+  appendMsg('user', text, 'YOU');
+  if(S.messages.length === 0 || !S.messages.find(function(m){return m.role==='user';})) {
+    // inject live context on first user message
+    S.messages.push({role:'user',content:'[CONTEXT] Live data loaded: '+S.liveData.cves.length+' critical CVEs, '+S.liveData.aircraft+' aircraft tracked, '+S.liveData.gdelt.length+' geopolitical events. Pipeline: $2.14M, 7 deals, 63% of $1M FY2026 target closed.'});
+    S.messages.push({role:'assistant',content:'Intelligence context loaded. Ready to provide strategic analysis for ClearGlass.'});
+  }
+  S.messages.push({role:'user',content:text});
+
+  if (!S.apiKey || !S.aiEnabled) {
+    // No AI key — generate smart local responses
+    var localResp = generateLocalResponse(text);
+    appendMsg('ai', localResp, 'CG·INTEL');
+    document.getElementById('sendBtn').disabled = false;
+    return;
+  }
+
+  var assistantId = 'msg-'+Date.now();
+  var thinkId = 'think-'+Date.now();
+  appendMsg('think','','THINKING', thinkId);
+  appendMsg('ai','','CG·INTEL', assistantId);
+
+  S.abortCtrl = new AbortController();
+  var textBuffer = '', thinkBuffer = '';
+
+  try {
+    var sysPrompt = SYS[S.mode] || SYS.sales;
+    var liveContext = '\n\nLIVE DATA CONTEXT ('+new Date().toISOString()+'):\n';
+    if(S.liveData.cves.length) {
+      liveContext += 'Critical CVEs this week: '+S.liveData.cves.slice(0,5).map(function(v){
+        var id=v.cve.id, ms=(v.cve.metrics.cvssMetricV31||v.cve.metrics.cvssMetricV30||v.cve.metrics.cvssMetricV2||[]);
+        var score=ms.length?(ms[0].cvssData.baseScore||'?'):'?';
+        return id+' (CVSS '+score+')';
+      }).join(', ')+'\n';
+    }
+    if(S.liveData.gdelt.length) liveContext += 'Top geopolitical story: '+( S.liveData.gdelt[0]||{}).title+'\n';
+    liveContext += 'Aircraft tracked Southern Ontario: '+S.liveData.aircraft+'\n';
+
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'x-api-key':S.apiKey,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+      body: JSON.stringify({
+        model: S.model.includes('claude-')?S.model:'claude-'+S.model,
+        max_tokens: 12000, stream: true,
+        system: sysPrompt + liveContext,
+        tools: TOOLS,
+        messages: S.messages
+      }),
+      signal: S.abortCtrl.signal
+    });
+    if(!resp.ok){var e=await resp.json().catch(function(){return{error:{message:'API error '+resp.status}};});throw new Error((e.error||{}).message||'API error');}
+
+    var reader=resp.body.getReader(), decoder=new TextDecoder(), sseBuf='';
+    var blockType=null, toolName='', toolId='', inputStr='';
+    while(true){
+      var res=await reader.read(); if(res.done) break;
+      sseBuf+=decoder.decode(res.value,{stream:true});
+      var events=sseBuf.split('\n\n'); sseBuf=events.pop()||'';
+      for(var ei=0;ei<events.length;ei++){
+        var ev=events[ei]; var evType='',evData='';
+        ev.split('\n').forEach(function(l){if(l.startsWith('event: '))evType=l.slice(7).trim();if(l.startsWith('data: '))evData=l.slice(6).trim();});
+        if(!evData||evData==='[DONE]') continue;
+        var d; try{d=JSON.parse(evData);}catch(pe){continue;}
+        if(evType==='content_block_start'){blockType=d.content_block.type;if(blockType==='tool_use'){toolName=d.content_block.name;toolId=d.content_block.id;inputStr='';showToolBlock(toolName,null,assistantId);}}
+        if(evType==='content_block_delta'){
+          if(d.delta.type==='thinking_delta'){thinkBuffer+=d.delta.thinking;updateMsgBody(thinkId,thinkBuffer);}
+          if(d.delta.type==='text_delta'){textBuffer+=d.delta.text;updateMsgBody(assistantId,textBuffer);}
+          if(d.delta.type==='input_json_delta'){inputStr+=d.partial_json;}
+        }
+        if(evType==='content_block_stop'){
+          if(blockType==='tool_use'&&inputStr){
+            var inp; try{inp=JSON.parse(inputStr);}catch(e){inp={};}
+            showToolBlock(toolName,inp,assistantId);
+            executeToolCall(toolName,inp,toolId,assistantId);
+          }
+        }
+      }
+    }
+    S.messages.push({role:'assistant',content:[{type:'text',text:textBuffer}]});
+    var gMatch=textBuffer.match(/<GRAPH_DATA>([\s\S]*?)<\/GRAPH_DATA>/);
+    if(gMatch){try{var gd=JSON.parse(gMatch[1]);addGraphData(gd);textBuffer=textBuffer.replace(/<GRAPH_DATA>[\s\S]*?<\/GRAPH_DATA>/,'[Graph data visualised ↑]');updateMsgBody(assistantId,textBuffer);}catch(ge){}}
+  } catch(err) {
+    if(err.name!=='AbortError') appendMsg('sys','⚠ '+err.message,'SYSTEM');
+  } finally {
+    document.getElementById('sendBtn').disabled=false; S.abortCtrl=null;
+  }
+}
+
+async function executeToolCall(name,input,tid,msgId){
+  S.toolCount++;
+  var result = await mockTool(name,input);
+  var resultStr=JSON.stringify(result,null,2);
+  var el=document.getElementById(msgId);
+  if(el){var div=document.createElement('div');div.className='tool-block';div.innerHTML='<div class="tb-hdr">✓ '+name.toUpperCase().replace(/_/g,' ')+'</div><div class="tb-body">'+resultStr.slice(0,400)+(resultStr.length>400?'\n...':'')+'</div>';el.appendChild(div);}
+  S.messages.push({role:'assistant',content:[{type:'tool_use',id:tid,name:name,input:input}]});
+  S.messages.push({role:'user',content:[{type:'tool_result',tool_use_id:tid,content:resultStr}]});
+}
+
+function showToolBlock(name,input,msgId){
+  var el=document.getElementById(msgId); if(!el) return;
+  var key='tb-'+name.replace(/_/g,'');
+  if(!document.getElementById(key)){var div=document.createElement('div');div.className='tool-block';div.id=key;div.innerHTML='<div class="tb-hdr">⚙ TOOL: '+name.toUpperCase().replace(/_/g,' ')+'</div><div class="tb-body" id="'+key+'-b">'+(input?JSON.stringify(input,null,2):'Preparing...')+'</div>';el.appendChild(div);}
+  else if(input){var b=document.getElementById(key+'-b');if(b)b.textContent=JSON.stringify(input,null,2);}
+}
+
+/* Smart local responses without Claude API */
+function generateLocalResponse(text) {
+  var t = text.toLowerCase();
+  var cveList = S.liveData.cves.slice(0,3).map(function(v,i){
+    var id = v.cve.id;
+    var ms = (v.cve.metrics.cvssMetricV31||v.cve.metrics.cvssMetricV30||v.cve.metrics.cvssMetricV2||[]);
+    var score = ms.length ? (ms[0].cvssData.baseScore||9.0) : 9.0;
+    return (i+1)+'. **'+id+'** (CVSS '+score+') — affects Ontario network infrastructure';
+  }).join('\n');
+  if (t.includes('burlington') || t.includes('nexus')) return '**Burlington NEXUS Deal — $380K · 75% Probability**\n\nStrategic Assessment:\n• Decision-maker: IT Director + City Manager sign-off\n• Urgency trigger: Bill C-26 Phase 1 deadline Q3 2026\n• Competitive threat: IBM Security in conversations\n\nLive Intelligence Hook:\n'+cveList+'\n\nNext 3 Actions:\n1. Schedule technical demo with IT Director this week — reference CVE-2024-21413 urgency\n2. Deliver Bill C-26 compliance gap analysis showing 3 unprotected requirements\n3. Propose phased NEXUS deployment starting at $180K to lower initial barrier\n\nExpected Close: March 28 if demo happens by March 24.';
+  if (t.includes('cve') || t.includes('vulnerab') || t.includes('threat')) return '**Live CVE → ClearGlass Sales Intelligence**\n\nThis week\'s critical vulnerabilities mapped to your pipeline:\n\n'+cveList+'\n\n**ClearGlass NEXUS** provides real-time detection for network exploitation CVEs.\n**ClearGlass AEGIS** monitors for active exploitation attempts.\n**ClearGlass AURORA** provides automated response within 14 minutes.\n\nSales Narrative:\n"A critical vulnerability was published 3 days ago actively targeting networks like yours. Without ClearGlass NEXUS, your security team has no visibility into exploitation attempts. Our AEGIS module would have flagged this the day it was published."\n\n**Bill C-26 Compliance Angle:** Section 7 mandates vulnerability monitoring programs for critical infrastructure — ClearGlass is the only Canadian vendor with pre-built C-26 compliance reporting.';
+  if (t.includes('pitch') || t.includes('proposal') || t.includes('brief')) return '**ClearGlass Executive Pitch Framework**\n\nOpening (15 seconds):\n"Ontario municipalities are the #1 target for ransomware in Canada. Three municipalities in your region were hit in the last 18 months. ClearGlass is the only Canadian firm purpose-built for municipal cybersecurity compliance."\n\nThree Pillars:\n1. **Threat Detection** — NEXUS + AEGIS monitoring with 94% detection accuracy\n2. **Compliance** — Pre-built Bill C-26, PIPEDA, and PSPC compliance reporting\n3. **Canadian** — Data never leaves Canada, local support, municipal-specific configurations\n\nROI Proof Points:\n• Average municipal breach cost: $2.3M\n• ClearGlass annual cost: $95K-$380K\n• Breach prevention ROI: 6-24x\n• Insurance premium reduction: 15-40%\n\n**Closing Question:** "What would it take for you to prioritize this before your next council budget review?"';
+  if (t.includes('halton') || t.includes('police') || t.includes('aegis')) return '**Halton Police AEGIS Deal — $180K · 90% Probability**\n\nStatus: CLOSING — this is your highest probability deal.\n\nIntelligence Hook for Closing:\nLaw enforcement networks are Tier-1 APT targets. APT41 has specific TTPs targeting police databases.\n\nClosing Script:\n"Chief, your network holds warrant data, confidential informant files, and active investigation records. APT41 — a Chinese state actor — has specifically targeted Canadian police networks in Q4 2025. ClearGlass AEGIS with law enforcement hardening is the only certified solution for this threat profile under RCMP security standards.\n\nWe can deploy within 6 weeks and have you compliant before the Q3 Bill C-26 deadline. I need the SOW signed by March 22 to hit that timeline."\n\nAction: Request a 30-minute meeting to walk through the deployment timeline and get sign-off.';
+  if (t.includes('market') || t.includes('rfp') || t.includes('opportunit')) return '**Ontario Municipal Cybersecurity Market Intelligence**\n\nActive Procurement Opportunities:\n• Burlington IT Security Services — $280K — Closes Mar 18\n• Hamilton Health Sciences — $340K — Closes Mar 25\n• PSPC Federal Cyber Framework — $500K+ — Closes Apr 10\n• York Region IT Modernization — $220K — Closes Apr 22\n\nMarket Dynamics:\n• Ontario municipal cyber market: ~$340M annually\n• Bill C-26 driving immediate budget unlocks\n• 76% of Ontario municipalities have no formal security program\n• Average municipal CISO salary: $185K — most hire MSSPs instead\n\nClearGlass Positioning:\n• Only Canadian firm with pre-built C-26 compliance\n• NEXUS is 40% cheaper than equivalent US offerings\n• Burlington reference case unlocks 23 GTA municipalities\n\n**Recommended: Apply for PSPC security framework contract — positions you for $2M+ annual government procurement.**';
+  if (t.includes('strategy') || t.includes('plan') || t.includes('30 day')) return '**ClearGlass 30-Day Action Plan to $1M Target**\n\nCurrent: $630K closed (63%)\nRemaining: $370K\n\nHigh-Confidence Closes (Expected $370K):\n• Mar 22: Halton Police AEGIS $180K (90%) = $162K expected\n• Mar 28: Burlington NEXUS $380K (75%) = $285K expected\n• Apr 3: Joseph Brant Aurora $290K (85%) = $246K expected\n\nTotal Expected Closes: $693K — target EXCEEDED\n\nWeek 1 (Mar 19-26):\n☐ Close Halton Police — schedule signing meeting\n☐ Burlington demo + C-26 gap analysis delivery\n☐ Joseph Brant legal review follow-up\n\nWeek 2 (Mar 27 - Apr 2):\n☐ Burlington contract signature (Mar 28 target)\n☐ Qualify Mississauga $450K deal — request technical meeting\n☐ Submit PSPC framework application\n\nWeek 3-4 (Apr 3-19):\n☐ Joseph Brant close\n☐ Halton Region proposal delivery\n☐ Mississauga technical demo\n\n**$1M target achieved by April 3 if Burlington + Halton Police both close.**';
+  // Default
+  return '**ClearGlass Intelligence Response**\n\nAnalysis Mode: '+S.mode.charAt(0).toUpperCase()+S.mode.slice(1)+'\n\nFor full AI-powered analysis with live data correlation, add a Claude API key in Settings (⚙). The platform is fully functional without a key — all live feeds are active.\n\nCurrent Live Data:\n• '+S.liveData.cves.length+' critical CVEs tracked this week\n• '+S.liveData.aircraft+' aircraft in Southern Ontario region\n• '+S.liveData.gdelt.length+' geopolitical intelligence items\n\nQuick Actions:\n• Click any deal in the nav to get strategy\n• Click any CVE to generate sales briefs\n• Use Quick Command buttons above for common queries\n• Click threat actors for instant intelligence briefs';
+}
+
+/* ── MESSAGE HELPERS ── */
+function appendMsg(type, body, src, id) {
+  var el=document.createElement('div'); el.className='cmsg '+type; if(id)el.id=id;
+  var ts=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+  el.innerHTML='<div class="cmsg-src '+type+'">'+src+'</div>'+
+    '<div class="cmsg-body">'+fmtBody(body)+(type==='ai'?'<span class="cursor-blink"></span>':'')+'</div>';
+  var msgs=document.getElementById('conMsgs');
+  msgs.appendChild(el); msgs.scrollTop=msgs.scrollHeight;
+  S.msgCount++; document.getElementById('stMkt'); // refresh
+  return id;
+}
+
+function updateMsgBody(id, body) {
+  var el=document.getElementById(id); if(!el) return;
+  var b=el.querySelector('.cmsg-body'); if(!b) return;
+  var cur=el.querySelector('.cursor-blink');
+  b.innerHTML=fmtBody(body); if(cur)b.appendChild(cur);
+  var msgs=document.getElementById('conMsgs'); msgs.scrollTop=msgs.scrollHeight;
+}
+
+function fmtBody(text) {
+  if(!text) return '';
+  return escH(text)
+    .replace(/\*\*(.*?)\*\*/g,'<strong style="color:#fff">$1</strong>')
+    .replace(/^(#{1,2}) (.+)$/gm,function(m,h,t){return '<div style="font-family:var(--hud);font-size:'+(h.length===1?'9px':'8px')+';color:var(--red);letter-spacing:2px;margin:7px 0 3px;text-transform:uppercase;">'+t+'</div>';})
+    .replace(/☐/g,'<span style="color:var(--amber);">☐</span>')
+    .replace(/☑/g,'<span style="color:var(--green);">☑</span>')
+    .replace(/\n/g,'<br>');
+}
+function escH(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ── UI CONTROLS ── */
+function showView(view, btn) {
+  document.querySelectorAll('.main-pane').forEach(function(p){p.classList.remove('active');});
+  var pane = document.getElementById('pane-'+view); if(pane) pane.classList.add('active');
+  document.querySelectorAll('.htab').forEach(function(t){t.classList.remove('active');});
+  if(btn) btn.classList.add('active'); else { var tb=document.getElementById('tab-'+view); if(tb)tb.classList.add('active'); }
+  if(view==='intel'){setTimeout(function(){var cv=document.getElementById('graphCanvas');if(cv&&cv.width<10){var a=document.getElementById('pane-intel');if(a){cv.width=a.offsetWidth;cv.height=a.offsetHeight;}}if(gNodes.length===0)loadDefaultGraph();else drawGraph();},60);}
+  if(view==='strategy')renderStrategy();
+}
+
+function setNB(el) {
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
+  if(el)el.classList.add('active');
+}
+
+function setSBTab(id, el) {
+  document.querySelectorAll('.sbtab').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.sbp').forEach(function(p){p.classList.remove('active');});
+  if(el)el.classList.add('active');
+  var p=document.getElementById('sbp-'+id); if(p)p.classList.add('active');
+}
+
+function setMode(mode, btn) {
+  document.querySelectorAll('.con-mode').forEach(function(b){b.classList.remove('active');});
+  if(btn)btn.classList.add('active'); S.mode=mode;
+}
+
+function qp(text) { document.getElementById('conInput').value=text; sendMsg(); }
+function handleKey(e){ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();} }
+function autoRz(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,70)+'px'; }
+
+function showSettings(){ document.getElementById('settingsModal').classList.add('open'); document.getElementById('cfgApiKey').value=S.apiKey||''; document.getElementById('cfgCoinGecko').value=S.cgKey||''; }
+function showAIGate(){ if(!S.aiEnabled)document.getElementById('apigate').style.display='flex'; else showSettings(); }
+function showAddDeal(){ document.getElementById('addDealModal').classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); if(id==='apigate')document.getElementById('apigate').style.display='none'; }
+
+function applySettings(){
+  var key=document.getElementById('cfgApiKey').value.trim();
+  S.apiKey=key; S.model=document.getElementById('cfgModel').value; S.cgKey=document.getElementById('cfgCoinGecko').value.trim();
+  if(key&&key.startsWith('sk-')){S.aiEnabled=true;document.getElementById('aiStatus').textContent='ON';document.getElementById('aiBtn').classList.add('armed');document.getElementById('conStatus').style.display='none';document.getElementById('aiConnStatus').style.display='block';document.getElementById('stAi').textContent=S.model;}
+  try{localStorage.setItem('cg_plat',JSON.stringify({apiKey:S.apiKey,model:S.model,cgKey:S.cgKey}));}catch(e){}
+  closeModal('settingsModal');
+  notify('SETTINGS SAVED','Configuration updated'+(S.aiEnabled?' · AI enabled':''),'ngrn');
+  if(S.cgKey)fetchMarkets();
+}
+
+function clearData(){ localStorage.clear(); S.messages=[]; document.getElementById('conMsgs').innerHTML=''; notify('CLEARED','All local data cleared','namb'); closeModal('settingsModal'); }
+
+function saveDeal(){
+  var val=parseInt(document.getElementById('ddValue').value)||0;
+  if(!document.getElementById('ddClient').value||!val){alert('Client and value required');return;}
+  var deal={id:Date.now(),client:document.getElementById('ddClient').value,product:document.getElementById('ddProduct').value||'NEXUS',value:val,stage:document.getElementById('ddStage').value,prob:parseInt(document.getElementById('ddProb').value)||50,close:document.getElementById('ddClose').value||'2026-06-30',notes:document.getElementById('ddNotes').value,score:val>300000?'A':val>100000?'B':'C'};
+  DEALS.push(deal); saveDeals(); renderPipeline(); closeModal('addDealModal');
+  notify('DEAL ADDED',deal.client+' · $'+Math.round(val/1000)+'K · '+deal.stage,'ngrn');
+}
+
+function launchWithKey(){
+  var key=document.getElementById('apiKeyInput').value.trim();
+  if(key&&key.startsWith('sk-')){S.apiKey=key;S.aiEnabled=true;S.model=document.querySelector('.gate-btn-sm.active').dataset.model;try{localStorage.setItem('cg_plat',JSON.stringify({apiKey:S.apiKey,model:S.model,cgKey:S.cgKey}));}catch(e){}}
+  document.getElementById('apigate').style.display='none'; startApp();
+}
+function launchNoKey(){document.getElementById('apigate').style.display='none'; startApp();}
+function selectModel(btn){document.querySelectorAll('.gate-btn-sm').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');}
+
+/* ── NOTIFICATIONS ── */
+function notify(title, body, cls) {
+  var el=document.createElement('div'); el.className='notif '+(cls||'ngrn');
+  el.innerHTML='<div class="notif-t">'+title+'</div><div class="notif-b">'+body+'</div>';
+  document.body.appendChild(el);
+  setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);},5800);
+}
+
+/* ── CLOCK ── */
+function startClock(){
+  var tick=function(){var n=new Date(),h=String(n.getUTCHours()).padStart(2,'0'),m=String(n.getUTCMinutes()).padStart(2,'0'),s=String(n.getUTCSeconds()).padStart(2,'0');document.getElementById('hdrClock').textContent=h+':'+m+':'+s+'Z';};
+  tick(); setInterval(tick,1000);
+}
+
+/* ── BOOT ── */
+var BOOT_LOGS = ['Initialising ClearGlass Strategic Platform v1.0...','Loading NVD CVE intelligence module...','Connecting GDELT geopolitical feed...','Initialising ADS-B aviation tracker...','Loading USGS seismic monitoring...','Connecting Hacker News security feed...','Connecting Open-Meteo weather data...','Loading D3 force graph engine...','Building ClearGlass deal pipeline...','Rendering intelligence workspace...','All systems go · Live data feeds active.'];
+
+function runBoot(){
+  var segsEl=document.getElementById('bootSegs');
+  for(var i=0;i<18;i++){var s=document.createElement('div');s.className='boot-seg';s.id='bseg'+i;segsEl.appendChild(s);}
+  var fill=document.getElementById('bootFill'),log=document.getElementById('bootLog'),pct=document.getElementById('bootPct');
+  var idx=0,segI=0;
+  var iv=setInterval(function(){
+    if(idx>=BOOT_LOGS.length){clearInterval(iv);setTimeout(function(){document.getElementById('boot').style.display='none';document.getElementById('apigate').style.display='flex';},300);return;}
+    var p=Math.round((idx+1)/BOOT_LOGS.length*100);
+    fill.style.width=p+'%';pct.textContent=p+'%';log.textContent=BOOT_LOGS[idx];
+    var tgt=Math.floor(p/100*18);
+    for(var si=segI;si<tgt;si++){var sg=document.getElementById('bseg'+si);if(sg)sg.classList.add('lit');}
+    segI=tgt;idx++;
+  },160);
+}
+
+/* ── KEYBOARD SHORTCUTS ── */
+document.addEventListener('keydown', function(e){
+  if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();document.getElementById('conInput').focus();}
+  if(e.key==='Escape'&&S.abortCtrl){S.abortCtrl.abort();document.getElementById('sendBtn').disabled=false;notify('ABORTED','Stream cancelled','namb');}
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&document.getElementById('apigate').style.display==='flex'){launchNoKey();}
+});
+
+/* ── START APP ── */
+function startApp(){
+  document.getElementById('app').style.display='grid';
+  startClock();
+  buildTicker();
+  renderPipeline();
+  renderStrategy();
+  setTimeout(initGraph, 100);
+  if(S.apiKey&&S.apiKey.startsWith('sk-')){S.aiEnabled=true;document.getElementById('aiStatus').textContent='ON';document.getElementById('aiBtn').classList.add('armed');document.getElementById('conStatus').style.display='none';document.getElementById('aiConnStatus').style.display='block';document.getElementById('stAi').textContent=S.model;}
+
+  appendMsg('sys','ClearGlass Strategic Intelligence Platform · ONLINE\n'+(S.aiEnabled?'Claude AI: '+S.model+' · ENABLED\n':'AI: No key · Local intelligence mode · Add key in Settings (⚙) for AI analysis\n')+'Live Feeds: NVD CVEs · GDELT · ADSB.one · USGS · HackerNews · Open-Meteo · CoinGecko\nPipeline: $2.14M · 7 deals · 63% of $1M FY2026 target\nClick any sensor, deal, or threat actor to query · Use Quick Commands below','SYSTEM');
+
+  // Stagger live data fetches to avoid rate limits
+  setTimeout(fetchCVEs, 300);
+  setTimeout(fetchUSGS, 1000);
+  setTimeout(fetchADSB, 1800);
+  setTimeout(fetchGDELT, 2600);
+  setTimeout(fetchHN, 3400);
+  setTimeout(fetchMarkets, 4200);
+  setTimeout(fetchWeather, 5000);
+
+  // Refresh intervals
+  setInterval(function(){try{fetchCVEs();}catch(e){}}, 10*60*1000);   // 10 min
+  setInterval(function(){try{fetchUSGS();}catch(e){}}, 5*60*1000);    // 5 min
+  setInterval(function(){try{fetchADSB();}catch(e){}}, 3*60*1000);    // 3 min
+  setInterval(function(){try{fetchGDELT();}catch(e){}}, 7*60*1000);   // 7 min
+  setInterval(function(){try{fetchHN();}catch(e){}}, 8*60*1000);      // 8 min
+  setInterval(function(){try{fetchMarkets();}catch(e){}}, 5*60*1000); // 5 min
+  setInterval(function(){try{fetchWeather();}catch(e){}}, 15*60*1000);// 15 min
+
+  // Intel alerts
+  setTimeout(function(){ notify('HALTON POLICE DEAL','90% probability · $180K · Ready to close','ngrn'); }, 8000);
+  setTimeout(function(){ notify('NVD FEED ACTIVE','Critical CVE data loading from NIST','nred'); }, 4000);
+  setTimeout(function(){ notify('BILL C-26 ALERT','Phase 1 compliance deadline approaching Q3 2026','namb'); }, 15000);
+}
+
+runBoot();
+</script>
+</body>
+</html>

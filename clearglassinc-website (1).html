@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>ClearGlass Inc. — Municipal Cybersecurity Intelligence | Burlington, Ontario</title>
+  <meta name="description" content="ClearGlass Inc. delivers enterprise-grade cybersecurity intelligence, OSINT analytics, and threat detection platforms for Canadian municipalities and public sector organizations." />
+  <meta name="author" content="Desmond Otieno, Founder & COO" />
+  <meta property="og:title" content="ClearGlass Inc. — Municipal Cybersecurity Intelligence" />
+  <meta property="og:description" content="Enterprise-grade cybersecurity intelligence for Canadian municipalities. OSINT. Threat Detection. Real-Time Command." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --void: #030712;
+      --void-2: #0a1120;
+      --void-3: #111827;
+      --glass: rgba(14, 25, 50, 0.55);
+      --glass-border: rgba(56, 189, 248, 0.12);
+      --glass-hover: rgba(56, 189, 248, 0.08);
+      --text: #e8edf5;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --cyan: #38bdf8;
+      --cyan-glow: rgba(56, 189, 248, 0.35);
+      --gold: #fbbf24;
+      --gold-glow: rgba(251, 191, 36, 0.25);
+      --crimson: #f43f5e;
+      --lime: #4ade80;
+      --gradient-hero: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(251, 191, 36, 0.04) 50%, rgba(56, 189, 248, 0.06) 100%);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'Outfit', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--text);
+      background: var(--void);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── AMBIENT BACKGROUND ─── */
+    .ambient {
+      position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 10%, rgba(56, 189, 248, 0.06), transparent),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(251, 191, 36, 0.04), transparent),
+        radial-gradient(ellipse 100% 80% at 50% 50%, rgba(14, 25, 50, 0.3), transparent);
+    }
+
+    .grid-overlay {
+      position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black, transparent);
+    }
+
+    .scanline {
+      position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(56, 189, 248, 0.008) 2px,
+        rgba(56, 189, 248, 0.008) 4px
+      );
+    }
+
+    /* ─── CANVAS ─── */
+    #particles { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+
+    /* ─── NAVIGATION ─── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 0 clamp(1.5rem, 4vw, 3rem);
+      height: 72px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(3, 7, 18, 0.7);
+      backdrop-filter: blur(20px) saturate(1.4);
+      border-bottom: 1px solid var(--glass-border);
+      transition: background 0.3s;
+    }
+    .nav.scrolled { background: rgba(3, 7, 18, 0.92); }
+
+    .nav-brand {
+      display: flex; align-items: center; gap: 12px;
+      text-decoration: none; color: var(--text);
+    }
+    .nav-logo {
+      width: 38px; height: 38px;
+      border: 2px solid var(--cyan);
+      border-radius: 10px;
+      display: grid; place-items: center;
+      font-family: var(--font-display);
+      font-weight: 800; font-size: 16px;
+      color: var(--cyan);
+      background: rgba(56, 189, 248, 0.08);
+      box-shadow: 0 0 20px var(--cyan-glow);
+    }
+    .nav-wordmark {
+      font-family: var(--font-display);
+      font-weight: 800; font-size: 18px;
+      letter-spacing: 0.02em;
+    }
+    .nav-wordmark span { color: var(--cyan); }
+
+    .nav-links { display: flex; align-items: center; gap: 8px; }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px; font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 999px;
+      transition: all 0.25s;
+    }
+    .nav-links a:hover { color: var(--text); background: var(--glass-hover); }
+    .nav-links .nav-cta {
+      color: var(--void);
+      background: var(--cyan);
+      font-weight: 600;
+      margin-left: 8px;
+    }
+    .nav-links .nav-cta:hover {
+      background: #7dd3fc;
+      box-shadow: 0 0 25px var(--cyan-glow);
+    }
+
+    .nav-toggle {
+      display: none; background: none; border: none; color: var(--text);
+      cursor: pointer; padding: 8px;
+    }
+    .nav-toggle svg { width: 24px; height: 24px; }
+
+    /* ─── MOBILE NAV ─── */
+    .mobile-menu {
+      display: none; position: fixed; inset: 0; z-index: 99;
+      background: rgba(3, 7, 18, 0.96);
+      backdrop-filter: blur(30px);
+      flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      color: var(--text); text-decoration: none;
+      font-family: var(--font-display);
+      font-size: 24px; font-weight: 600;
+      padding: 12px 32px; border-radius: 12px;
+      transition: background 0.2s;
+    }
+    .mobile-menu a:hover { background: var(--glass-hover); }
+
+    /* ─── SECTIONS ─── */
+    section { position: relative; }
+
+    .container {
+      width: min(1200px, 92vw);
+      margin: 0 auto;
+      padding: 0 clamp(1rem, 3vw, 2rem);
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding: 120px 0 80px;
+    }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(2rem, 5vw, 5rem);
+      align-items: center;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px 6px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      background: rgba(56, 189, 248, 0.06);
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--cyan);
+      margin-bottom: 24px;
+      animation: fadeSlideUp 0.8s ease both;
+    }
+    .hero-badge .pulse {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--lime);
+      box-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
+      animation: pulse 2s ease infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.3); }
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      animation: fadeSlideUp 0.8s ease 0.1s both;
+    }
+    .hero h1 .accent { color: var(--cyan); }
+    .hero h1 .accent-gold { color: var(--gold); }
+
+    .hero-sub {
+      font-size: clamp(1rem, 1.8vw, 1.2rem);
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-top: 20px;
+      max-width: 520px;
+      animation: fadeSlideUp 0.8s ease 0.2s both;
+    }
+
+    .hero-actions {
+      display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap;
+      animation: fadeSlideUp 0.8s ease 0.3s both;
+    }
+
+    .hero-visual {
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      animation: fadeSlideUp 1s ease 0.4s both;
+    }
+    .hero-orb {
+      width: clamp(280px, 30vw, 420px);
+      height: clamp(280px, 30vw, 420px);
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, rgba(56, 189, 248, 0.15), rgba(56, 189, 248, 0.03) 60%, transparent);
+      border: 1px solid rgba(56, 189, 248, 0.1);
+      box-shadow: 0 0 80px var(--cyan-glow), inset 0 0 60px rgba(56, 189, 248, 0.05);
+      display: grid; place-items: center;
+      animation: orbFloat 8s ease-in-out infinite;
+    }
+    .hero-orb::before {
+      content: '';
+      position: absolute;
+      width: 110%; height: 110%;
+      border-radius: 50%;
+      border: 1px dashed rgba(56, 189, 248, 0.08);
+      animation: orbSpin 30s linear infinite;
+    }
+    .hero-orb-inner {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 5vw, 60px);
+      font-weight: 900;
+      color: var(--cyan);
+      text-shadow: 0 0 40px var(--cyan-glow);
+      letter-spacing: 0.02em;
+    }
+    @keyframes orbFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-18px); }
+    }
+    @keyframes orbSpin { to { transform: rotate(360deg); } }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── BUTTONS ─── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px;
+      border-radius: 999px;
+      font-family: var(--font-body);
+      font-size: 15px; font-weight: 600;
+      text-decoration: none;
+      cursor: pointer; border: none;
+      transition: all 0.3s;
+    }
+    .btn-primary {
+      color: var(--void);
+      background: linear-gradient(135deg, var(--cyan), #7dd3fc);
+      box-shadow: 0 4px 20px var(--cyan-glow);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px var(--cyan-glow);
+    }
+    .btn-ghost {
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.15);
+      background: transparent;
+    }
+    .btn-ghost:hover {
+      border-color: var(--cyan);
+      background: rgba(56, 189, 248, 0.06);
+    }
+
+    /* ─── TRUST BAR ─── */
+    .trust-bar {
+      padding: 48px 0;
+      border-top: 1px solid var(--glass-border);
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .trust-label {
+      text-align: center;
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--text-dim);
+      margin-bottom: 28px;
+      text-transform: uppercase;
+    }
+    .trust-items {
+      display: flex; align-items: center; justify-content: center;
+      gap: clamp(24px, 5vw, 56px);
+      flex-wrap: wrap;
+    }
+    .trust-item {
+      font-family: var(--font-mono);
+      font-size: 13px; font-weight: 500;
+      color: var(--text-muted);
+      display: flex; align-items: center; gap: 8px;
+      white-space: nowrap;
+    }
+    .trust-item .ti-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: rgba(56, 189, 248, 0.06);
+      border: 1px solid var(--glass-border);
+      display: grid; place-items: center;
+      font-size: 14px;
+    }
+
+    /* ─── SECTION HEADERS ─── */
+    .section-header {
+      text-align: center;
+      margin-bottom: clamp(2.5rem, 5vw, 4rem);
+    }
+    .section-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--cyan);
+      margin-bottom: 16px;
+    }
+    .section-tag::before, .section-tag::after {
+      content: '';
+      width: 24px; height: 1px;
+      background: var(--cyan);
+      opacity: 0.4;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+    }
+    .section-sub {
+      color: var(--text-muted);
+      font-size: clamp(1rem, 1.5vw, 1.1rem);
+      max-width: 600px;
+      margin: 16px auto 0;
+      line-height: 1.7;
+    }
+
+    /* ─── ABOUT ─── */
+    .about { padding: 100px 0; }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(2rem, 5vw, 5rem);
+      align-items: center;
+    }
+    .about-visual {
+      position: relative;
+      aspect-ratio: 1;
+      max-width: 440px;
+      border-radius: var(--radius);
+      border: 1px solid var(--glass-border);
+      background: var(--glass);
+      overflow: hidden;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 32px;
+    }
+    .about-visual::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 40%, rgba(3, 7, 18, 0.85));
+    }
+    .about-visual .av-bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(251, 191, 36, 0.04));
+    }
+    .about-visual .av-pattern {
+      position: absolute; inset: 0; opacity: 0.08;
+      background-image:
+        radial-gradient(circle at 25% 25%, var(--cyan) 1px, transparent 1px),
+        radial-gradient(circle at 75% 75%, var(--gold) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .about-visual .av-text {
+      position: relative; z-index: 1;
+    }
+    .about-visual .av-name {
+      font-family: var(--font-display);
+      font-size: 28px; font-weight: 800;
+    }
+    .about-visual .av-role {
+      color: var(--cyan); font-size: 14px; font-weight: 600;
+      margin-top: 4px;
+    }
+    .about-visual .av-loc {
+      color: var(--text-dim); font-size: 13px;
+      margin-top: 8px;
+      font-family: var(--font-mono);
+    }
+
+    .about-content h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+    .about-content p {
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+    .about-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 16px; margin-top: 32px;
+    }
+    .about-stat {
+      padding: 20px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--glass-border);
+      background: var(--glass);
+    }
+    .about-stat .as-num {
+      font-family: var(--font-display);
+      font-size: 28px; font-weight: 800;
+      color: var(--cyan);
+    }
+    .about-stat .as-label {
+      font-size: 12px; font-weight: 500;
+      color: var(--text-dim);
+      margin-top: 4px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ─── SERVICES ─── */
+    .services { padding: 100px 0; }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .service-card {
+      padding: clamp(28px, 3vw, 40px);
+      border-radius: var(--radius);
+      border: 1px solid var(--glass-border);
+      background: var(--glass);
+      transition: all 0.35s;
+      position: relative;
+      overflow: hidden;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      opacity: 0;
+      transition: opacity 0.35s;
+    }
+    .service-card:hover {
+      border-color: rgba(56, 189, 248, 0.25);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 40px rgba(56, 189, 248, 0.08);
+    }
+    .service-card:hover::before { opacity: 1; }
+
+    .sc-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.15);
+      display: grid; place-items: center;
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+    .service-card h3 {
+      font-family: var(--font-display);
+      font-size: 20px; font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .service-card p {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .sc-tags {
+      display: flex; gap: 6px; flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .sc-tags span {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px; font-weight: 600;
+      background: rgba(56, 189, 248, 0.06);
+      border: 1px solid rgba(56, 189, 248, 0.1);
+      color: var(--cyan);
+      letter-spacing: 0.02em;
+    }
+
+    /* ─── PRODUCTS ─── */
+    .products { padding: 100px 0; }
+    .product-showcase {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .product-card {
+      padding: clamp(32px, 4vw, 48px);
+      border-radius: var(--radius);
+      border: 1px solid var(--glass-border);
+      background: var(--glass);
+      position: relative;
+      overflow: hidden;
+    }
+    .product-card.featured {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+      border-color: rgba(251, 191, 36, 0.15);
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.04), var(--glass));
+    }
+    .pc-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.06em;
+      margin-bottom: 16px;
+    }
+    .pc-badge.flagship {
+      color: var(--gold);
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.2);
+    }
+    .pc-badge.active {
+      color: var(--lime);
+      background: rgba(74, 222, 128, 0.08);
+      border: 1px solid rgba(74, 222, 128, 0.15);
+    }
+    .product-card h3 {
+      font-family: var(--font-display);
+      font-size: clamp(20px, 2.5vw, 28px);
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    .product-card .pc-desc {
+      color: var(--text-muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+    .pc-features {
+      display: grid; gap: 8px;
+      margin-top: 20px;
+    }
+    .pc-feature {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; color: var(--text-muted);
+    }
+    .pc-feature .check {
+      color: var(--cyan);
+      font-weight: 700; font-size: 14px;
+    }
+    .pc-visual {
+      aspect-ratio: 16 / 10;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--glass-border);
+      background: linear-gradient(145deg, rgba(56, 189, 248, 0.06), rgba(3, 7, 18, 0.5));
+      display: flex; flex-direction: column;
+      padding: 20px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-dim);
+      overflow: hidden;
+    }
+    .pc-visual-header {
+      display: flex; gap: 6px; margin-bottom: 14px;
+    }
+    .pc-visual-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+    }
+
+    /* ─── CAPABILITIES ─── */
+    .capabilities { padding: 100px 0; }
+    .cap-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .cap-item {
+      padding: 28px 20px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--glass-border);
+      background: var(--glass);
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .cap-item:hover {
+      border-color: rgba(56, 189, 248, 0.2);
+      background: rgba(56, 189, 248, 0.04);
+    }
+    .cap-icon {
+      font-size: 28px;
+      margin-bottom: 14px;
+    }
+    .cap-item h4 {
+      font-family: var(--font-display);
+      font-size: 15px; font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .cap-item p {
+      color: var(--text-dim);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* ─── COMPLIANCE ─── */
+    .compliance { padding: 80px 0; }
+    .comp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .comp-item {
+      display: flex; align-items: center; gap: 16px;
+      padding: 24px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--glass-border);
+      background: var(--glass);
+    }
+    .comp-icon {
+      width: 44px; height: 44px; min-width: 44px;
+      border-radius: 10px;
+      background: rgba(74, 222, 128, 0.08);
+      border: 1px solid rgba(74, 222, 128, 0.15);
+      display: grid; place-items: center;
+      font-size: 18px;
+    }
+    .comp-item h4 {
+      font-family: var(--font-display);
+      font-size: 14px; font-weight: 700;
+    }
+    .comp-item p {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    /* ─── CTA SECTION ─── */
+    .cta-section {
+      padding: 100px 0;
+    }
+    .cta-box {
+      padding: clamp(40px, 6vw, 80px);
+      border-radius: 24px;
+      border: 1px solid rgba(56, 189, 248, 0.15);
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.06), rgba(251, 191, 36, 0.03));
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-box::before {
+      content: '';
+      position: absolute; inset: -50%;
+      background: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.08), transparent 60%);
+      animation: ctaPulse 6s ease-in-out infinite;
+    }
+    @keyframes ctaPulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+    .cta-box > * { position: relative; }
+    .cta-box h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+    .cta-box p {
+      color: var(--text-muted);
+      max-width: 500px;
+      margin: 0 auto 32px;
+      line-height: 1.7;
+    }
+    .cta-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    /* ─── CONTACT ─── */
+    .contact { padding: 100px 0; }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(2rem, 5vw, 4rem);
+    }
+    .contact-info h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+    .contact-info > p {
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .ci-item {
+      display: flex; gap: 14px; margin-bottom: 20px;
+    }
+    .ci-icon {
+      width: 40px; height: 40px; min-width: 40px;
+      border-radius: 10px;
+      background: rgba(56, 189, 248, 0.06);
+      border: 1px solid var(--glass-border);
+      display: grid; place-items: center;
+      font-size: 16px;
+    }
+    .ci-label {
+      font-size: 12px; font-weight: 600;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+    .ci-value {
+      font-size: 15px; color: var(--text);
+    }
+
+    .contact-form {
+      padding: clamp(28px, 4vw, 40px);
+      border-radius: var(--radius);
+      border: 1px solid var(--glass-border);
+      background: var(--glass);
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-size: 13px; font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--glass-border);
+      background: rgba(3, 7, 18, 0.5);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 14px;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+    }
+    .form-group textarea { min-height: 120px; resize: vertical; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-submit {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--cyan), #7dd3fc);
+      color: var(--void);
+      font-family: var(--font-body);
+      font-size: 15px; font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .form-submit:hover {
+      box-shadow: 0 4px 25px var(--cyan-glow);
+      transform: translateY(-1px);
+    }
+
+    /* ─── FOOTER ─── */
+    .footer {
+      padding: 48px 0 32px;
+      border-top: 1px solid var(--glass-border);
+    }
+    .footer-inner {
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 20px;
+    }
+    .footer-brand {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .footer-logo {
+      width: 32px; height: 32px;
+      border: 1.5px solid var(--cyan);
+      border-radius: 8px;
+      display: grid; place-items: center;
+      font-family: var(--font-display);
+      font-weight: 800; font-size: 13px;
+      color: var(--cyan);
+    }
+    .footer-copy {
+      font-size: 13px; color: var(--text-dim);
+    }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--cyan); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; text-align: center; }
+      .hero-sub { margin-left: auto; margin-right: auto; }
+      .hero-actions { justify-content: center; }
+      .hero-visual { order: -1; }
+      .hero-orb { width: 240px; height: 240px; }
+      .about-grid { grid-template-columns: 1fr; }
+      .about-visual { max-width: 100%; aspect-ratio: 16/9; }
+      .product-showcase { grid-template-columns: 1fr; }
+      .product-card.featured { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .about-stats { grid-template-columns: repeat(3, 1fr); }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-toggle { display: block; }
+    }
+
+    /* ─── SCROLL REVEAL ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient"></div>
+  <div class="grid-overlay"></div>
+  <div class="scanline"></div>
+  <canvas id="particles"></canvas>
+
+  <!-- ─── NAVIGATION ─── -->
+  <nav class="nav" id="navbar">
+    <a href="#" class="nav-brand">
+      <div class="nav-logo">CG</div>
+      <div class="nav-wordmark">Clear<span>Glass</span></div>
+    </a>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#services">Services</a>
+      <a href="#products">Products</a>
+      <a href="#capabilities">Capabilities</a>
+      <a href="#contact">Contact</a>
+      <a href="#contact" class="nav-cta">Get a Briefing</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+  </nav>
+
+  <!-- ─── MOBILE MENU ─── -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#about" onclick="closeMobile()">About</a>
+    <a href="#services" onclick="closeMobile()">Services</a>
+    <a href="#products" onclick="closeMobile()">Products</a>
+    <a href="#capabilities" onclick="closeMobile()">Capabilities</a>
+    <a href="#contact" onclick="closeMobile()">Contact</a>
+  </div>
+
+  <!-- ─── HERO ─── -->
+  <section class="hero" id="hero">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="hero-text">
+          <div class="hero-badge">
+            <span class="pulse"></span>
+            SYSTEMS OPERATIONAL
+          </div>
+          <h1>
+            Cybersecurity<br/>
+            <span class="accent">Intelligence</span><br/>
+            for the <span class="accent-gold">Public Sector</span>
+          </h1>
+          <p class="hero-sub">
+            ClearGlass Inc. builds enterprise-grade OSINT platforms, threat intelligence dashboards, and real-time command systems for Canadian municipalities and public sector organizations.
+          </p>
+          <div class="hero-actions">
+            <a href="#contact" class="btn btn-primary">Request a Demo</a>
+            <a href="#products" class="btn btn-ghost">View Platforms &#8594;</a>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-orb">
+            <div class="hero-orb-inner">CG</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── TRUST BAR ─── -->
+  <section class="trust-bar">
+    <div class="container">
+      <div class="trust-label">Compliance &amp; Frameworks</div>
+      <div class="trust-items">
+        <div class="trust-item"><span class="ti-icon">&#x1F6E1;</span> NIST CSF</div>
+        <div class="trust-item"><span class="ti-icon">&#x1F512;</span> PIPEDA</div>
+        <div class="trust-item"><span class="ti-icon">&#x2705;</span> SOC 2</div>
+        <div class="trust-item"><span class="ti-icon">&#x1F30D;</span> ISO 27001</div>
+        <div class="trust-item"><span class="ti-icon">&#x2696;</span> CC s.342.1</div>
+        <div class="trust-item"><span class="ti-icon">&#x1F1E8;&#x1F1E6;</span> CANADIAN-BUILT</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── ABOUT ─── -->
+  <section class="about" id="about">
+    <div class="container">
+      <div class="about-grid reveal">
+        <div class="about-visual">
+          <div class="av-bg"></div>
+          <div class="av-pattern"></div>
+          <div class="av-text">
+            <div class="av-name">Desmond Otieno</div>
+            <div class="av-role">Founder &amp; COO</div>
+            <div class="av-loc">&#x1F4CD; Burlington, Ontario, Canada</div>
+          </div>
+        </div>
+        <div class="about-content">
+          <h2>Building the intelligence infrastructure municipalities need.</h2>
+          <p>
+            ClearGlass Inc. was founded by Desmond Otieno with a singular mission: deliver military-grade cybersecurity intelligence to Canadian municipalities and public sector organizations that need it most.
+          </p>
+          <p>
+            Based in Burlington, Ontario, ClearGlass combines deep expertise in OSINT, threat intelligence, social media analytics, and real-time command systems to create unified platforms that give defenders a decisive edge.
+          </p>
+          <div class="about-stats">
+            <div class="about-stat">
+              <div class="as-num">7+</div>
+              <div class="as-label">Live Open APIs</div>
+            </div>
+            <div class="about-stat">
+              <div class="as-num">31</div>
+              <div class="as-label">Intel Modules</div>
+            </div>
+            <div class="about-stat">
+              <div class="as-num">24/7</div>
+              <div class="as-label">Real-Time Feeds</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SERVICES ─── -->
+  <section class="services" id="services">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag">SERVICES</div>
+        <h2 class="section-title">Full-Spectrum Cyber Intelligence</h2>
+        <p class="section-sub">End-to-end cybersecurity intelligence services designed for the unique challenges of Canadian public sector infrastructure.</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card reveal">
+          <div class="sc-icon">&#x1F50D;</div>
+          <h3>OSINT Intelligence</h3>
+          <p>Deep open-source intelligence collection and analysis across surface, deep, and dark web sources. Real-time threat detection with automated correlation.</p>
+          <div class="sc-tags"><span>GDELT</span><span>NVD</span><span>DARK WEB</span><span>REAL-TIME</span></div>
+        </div>
+        <div class="service-card reveal">
+          <div class="sc-icon">&#x1F4CA;</div>
+          <h3>Social Media Analytics</h3>
+          <p>Multi-platform social intelligence with AI/ML sentiment analysis, location intelligence, and trend detection for operational awareness and public safety.</p>
+          <div class="sc-tags"><span>AI/ML ENGINE</span><span>MULTI-PLATFORM</span><span>BURLINGTON</span></div>
+        </div>
+        <div class="service-card reveal">
+          <div class="sc-icon">&#x1F6E1;</div>
+          <h3>Cybersecurity Assessment</h3>
+          <p>Comprehensive vulnerability assessment, compliance auditing, and risk quantification against NIST, PIPEDA, SOC 2, and ISO 27001 frameworks.</p>
+          <div class="sc-tags"><span>NIST CSF</span><span>PIPEDA</span><span>SOC 2</span><span>ISO 27001</span></div>
+        </div>
+        <div class="service-card reveal">
+          <div class="sc-icon">&#x2694;</div>
+          <h3>Threat Intelligence</h3>
+          <p>Nation-state APT tracking, CVE monitoring, and predictive threat modeling. Integrated feeds from NVD, HackerNews, and proprietary dark-web sensors.</p>
+          <div class="sc-tags"><span>APT TRACKING</span><span>CVE</span><span>PREDICTIVE</span></div>
+        </div>
+        <div class="service-card reveal">
+          <div class="sc-icon">&#x1F4BB;</div>
+          <h3>Command Dashboards</h3>
+          <p>Unified single-file HTML intelligence dashboards combining 30+ modules with real-time data feeds, D3.js visualizations, and executive reporting.</p>
+          <div class="sc-tags"><span>SINGLE-FILE</span><span>D3.JS</span><span>REAL-TIME</span></div>
+        </div>
+        <div class="service-card reveal">
+          <div class="sc-icon">&#x2699;</div>
+          <h3>Automation &amp; Integration</h3>
+          <p>PowerShell automation pipelines, API integration engineering, and deployment packaging for Netlify, on-prem, and hybrid cloud environments.</p>
+          <div class="sc-tags"><span>POWERSHELL</span><span>API</span><span>NETLIFY</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PRODUCTS ─── -->
+  <section class="products" id="products">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag">PRODUCTS</div>
+        <h2 class="section-title">Intelligence Platforms</h2>
+        <p class="section-sub">Production-grade platforms built for real-world deployment. Self-contained. Keyless. Mission-ready.</p>
+      </div>
+      <div class="product-showcase">
+        <!-- ARTEMIS IV Featured -->
+        <div class="product-card featured reveal">
+          <div>
+            <span class="pc-badge flagship">&#x2B50; FLAGSHIP PLATFORM</span>
+            <h3>CLEARGLASSINC<br/>ARTEMIS IV</h3>
+            <p class="pc-desc">
+              The unified command dashboard. 31 intelligence and productivity modules, three advanced visualization engines (OMEGA, OMEN, CHIMERA), and seven keyless open-data API feeds — in a single self-contained HTML file.
+            </p>
+            <div class="pc-features">
+              <div class="pc-feature"><span class="check">&#x2713;</span> 31 Intelligence Tabs</div>
+              <div class="pc-feature"><span class="check">&#x2713;</span> 7 Open APIs (NVD, GDELT, ADS-B, USGS, HackerNews, CoinGecko, Open-Meteo)</div>
+              <div class="pc-feature"><span class="check">&#x2713;</span> OMEGA / OMEN / CHIMERA Visualization Engines</div>
+              <div class="pc-feature"><span class="check">&#x2713;</span> iOS Safari WebView Compatible (ES5)</div>
+              <div class="pc-feature"><span class="check">&#x2713;</span> Emergency Watchdog Boot Recovery</div>
+              <div class="pc-feature"><span class="check">&#x2713;</span> Zero API Keys Required ("LAUNCH KEYLESS")</div>
+            </div>
+          </div>
+          <div class="pc-visual">
+            <div class="pc-visual-header">
+              <span class="pc-visual-dot" style="background:#f43f5e"></span>
+              <span class="pc-visual-dot" style="background:#fbbf24"></span>
+              <span class="pc-visual-dot" style="background:#4ade80"></span>
+            </div>
+            <div style="flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:8px;">
+              <span style="font-family:var(--font-display); font-size:24px; font-weight:800; color:var(--gold);">ARTEMIS IV</span>
+              <span style="color:var(--text-dim); font-size:11px;">UNIFIED COMMAND DASHBOARD</span>
+              <span style="color:var(--cyan); font-size:10px; margin-top:8px;">&#9608;&#9608;&#9608;&#9608;&#9608;&#9608; SYSTEMS NOMINAL &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEXUS -->
+        <div class="product-card reveal">
+          <span class="pc-badge active">&#x1F7E2; ACTIVE</span>
+          <h3>ClearGlass NEXUS</h3>
+          <p class="pc-desc">OSINT intelligence dashboard with 15 live feeds, 45 Ontario MTO COMPASS traffic cameras, and a full DARPA-inspired module suite. Currently at v12-FINAL.</p>
+          <div class="pc-features">
+            <div class="pc-feature"><span class="check">&#x2713;</span> 15 Live OSINT Feeds</div>
+            <div class="pc-feature"><span class="check">&#x2713;</span> 45 MTO COMPASS Cameras</div>
+            <div class="pc-feature"><span class="check">&#x2713;</span> DARPA-Inspired Modules</div>
+          </div>
+        </div>
+
+        <!-- Social Media Analytics -->
+        <div class="product-card reveal">
+          <span class="pc-badge active">&#x1F7E2; v3.0.0</span>
+          <h3>Social Media Analytics Platform</h3>
+          <p class="pc-desc">PowerShell-based multi-platform social intelligence with AI/ML analysis engine, Burlington location intelligence, and Chart.js executive dashboards.</p>
+          <div class="pc-features">
+            <div class="pc-feature"><span class="check">&#x2713;</span> Multi-Platform Collectors</div>
+            <div class="pc-feature"><span class="check">&#x2713;</span> AI/ML Sentiment Engine</div>
+            <div class="pc-feature"><span class="check">&#x2713;</span> Executive Dashboard</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CAPABILITIES ─── -->
+  <section class="capabilities" id="capabilities">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag">CAPABILITIES</div>
+        <h2 class="section-title">Technical Arsenal</h2>
+        <p class="section-sub">The technology stack powering ClearGlass intelligence operations.</p>
+      </div>
+      <div class="cap-grid">
+        <div class="cap-item reveal"><div class="cap-icon">&#x1F310;</div><h4>OSINT Collection</h4><p>GDELT, NVD, ADS-B, USGS, dark web monitoring</p></div>
+        <div class="cap-item reveal"><div class="cap-icon">&#x1F4C8;</div><h4>D3.js Visualization</h4><p>Force graphs, geospatial, real-time data rendering</p></div>
+        <div class="cap-item reveal"><div class="cap-icon">&#x1F916;</div><h4>AI/ML Analysis</h4><p>Sentiment analysis, anomaly detection, predictive models</p></div>
+        <div class="cap-item reveal"><div class="cap-icon">&#x26A1;</div><h4>PowerShell Automation</h4><p>Data pipelines, collectors, deployment scripts</p></div>
+        <div class="cap-item reveal"><div class="cap-icon">&#x1F512;</div><h4>Zero-Trust Architecture</h4><p>Keyless operation, encrypted comms, minimal attack surface</p></div>
+        <div class="cap-item reveal"><div class="cap-icon">&#x1F4F1;</div><h4>iOS Compatible</h4><p>ES5 syntax, polyfills, WebView-safe deployment</p></div>
+        <div class="cap-item reveal"><div class="cap-icon">&#x1F680;</div><h4>Netlify Deploy</h4><p>One-click deployment, CDN distribution, instant updates</p></div>
+        <div class="cap-item reveal"><div class="cap-icon">&#x1F3AF;</div><h4>Single-File HTML</h4><p>Self-contained dashboards, zero external dependencies</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── COMPLIANCE ─── -->
+  <section class="compliance" id="compliance">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag">COMPLIANCE</div>
+        <h2 class="section-title">Built for Canadian Standards</h2>
+      </div>
+      <div class="comp-grid">
+        <div class="comp-item reveal">
+          <div class="comp-icon">&#x1F6E1;</div>
+          <div><h4>NIST Cybersecurity Framework</h4><p>Identify, Protect, Detect, Respond, Recover</p></div>
+        </div>
+        <div class="comp-item reveal">
+          <div class="comp-icon">&#x1F1E8;&#x1F1E6;</div>
+          <div><h4>PIPEDA Compliant</h4><p>Canadian privacy law alignment</p></div>
+        </div>
+        <div class="comp-item reveal">
+          <div class="comp-icon">&#x2705;</div>
+          <div><h4>SOC 2 Type II</h4><p>Trust services criteria adherence</p></div>
+        </div>
+        <div class="comp-item reveal">
+          <div class="comp-icon">&#x1F30D;</div>
+          <div><h4>ISO 27001</h4><p>Information security management</p></div>
+        </div>
+        <div class="comp-item reveal">
+          <div class="comp-icon">&#x2696;</div>
+          <div><h4>Criminal Code s.342.1</h4><p>Canadian cybercrime statute compliance</p></div>
+        </div>
+        <div class="comp-item reveal">
+          <div class="comp-icon">&#x1F527;</div>
+          <div><h4>Ontario Public Sector</h4><p>Municipal procurement ready</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CTA ─── -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-box reveal">
+        <h2>Ready to See ClearGlass<br/>in Action?</h2>
+        <p>Schedule a classified briefing to see ARTEMIS IV, NEXUS, and our full intelligence platform suite deployed live.</p>
+        <div class="cta-actions">
+          <a href="#contact" class="btn btn-primary">Schedule Briefing</a>
+          <a href="#products" class="btn btn-ghost">Explore Platforms</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CONTACT ─── -->
+  <section class="contact" id="contact">
+    <div class="container">
+      <div class="contact-grid">
+        <div class="contact-info reveal">
+          <h2>Get in Touch</h2>
+          <p>Whether you're a municipality looking to strengthen cyber defenses or a public sector organization needing OSINT capabilities — we're ready to talk.</p>
+          <div class="ci-item">
+            <div class="ci-icon">&#x1F4CD;</div>
+            <div>
+              <div class="ci-label">HEADQUARTERS</div>
+              <div class="ci-value">Burlington, Ontario, Canada</div>
+            </div>
+          </div>
+          <div class="ci-item">
+            <div class="ci-icon">&#x1F4E7;</div>
+            <div>
+              <div class="ci-label">EMAIL</div>
+              <div class="ci-value">contact@clearglassinc.com</div>
+            </div>
+          </div>
+          <div class="ci-item">
+            <div class="ci-icon">&#x1F30E;</div>
+            <div>
+              <div class="ci-label">COORDINATES</div>
+              <div class="ci-value" style="font-family:var(--font-mono); font-size:13px;">43.3255&deg;N, 79.7990&deg;W</div>
+            </div>
+          </div>
+          <div class="ci-item">
+            <div class="ci-icon">&#x23F0;</div>
+            <div>
+              <div class="ci-label">TIMEZONE</div>
+              <div class="ci-value">Eastern Time (ET) &mdash; UTC-5</div>
+            </div>
+          </div>
+        </div>
+        <div class="contact-form reveal">
+          <form id="contactForm" onsubmit="handleSubmit(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="fname">First Name</label>
+                <input type="text" id="fname" placeholder="Jane" required />
+              </div>
+              <div class="form-group">
+                <label for="lname">Last Name</label>
+                <input type="text" id="lname" placeholder="Smith" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" placeholder="jane@municipality.ca" required />
+            </div>
+            <div class="form-group">
+              <label for="org">Organization</label>
+              <input type="text" id="org" placeholder="City of Burlington" />
+            </div>
+            <div class="form-group">
+              <label for="interest">Area of Interest</label>
+              <select id="interest">
+                <option value="">Select an area...</option>
+                <option>OSINT Intelligence</option>
+                <option>Threat Intelligence</option>
+                <option>Cybersecurity Assessment</option>
+                <option>ARTEMIS IV Platform</option>
+                <option>ClearGlass NEXUS</option>
+                <option>Social Media Analytics</option>
+                <option>Custom Engagement</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea id="message" placeholder="Tell us about your cybersecurity needs..."></textarea>
+            </div>
+            <button type="submit" class="form-submit" id="submitBtn">Send Secure Message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="footer-logo">CG</div>
+          <span class="footer-copy">&copy; <span id="year"></span> ClearGlass Inc. All rights reserved. Burlington, Ontario.</span>
+        </div>
+        <div class="footer-links">
+          <a href="#about">About</a>
+          <a href="#services">Services</a>
+          <a href="#products">Products</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ─── Year ─── */
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* ─── Navbar Scroll ─── */
+    var navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 40) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    /* ─── Mobile Menu ─── */
+    var navToggle = document.getElementById('navToggle');
+    var mobileMenu = document.getElementById('mobileMenu');
+    navToggle.addEventListener('click', function() {
+      mobileMenu.classList.toggle('open');
+    });
+    function closeMobile() {
+      mobileMenu.classList.remove('open');
+    }
+
+    /* ─── Scroll Reveal ─── */
+    var reveals = document.querySelectorAll('.reveal');
+    var revealObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    reveals.forEach(function(el) { revealObserver.observe(el); });
+
+    /* ─── Particles ─── */
+    var canvas = document.getElementById('particles');
+    var ctx = canvas.getContext('2d');
+    var particles = [];
+    var particleCount = 60;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    function initParticles() {
+      particles = [];
+      for (var i = 0; i < particleCount; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.2 + 0.3,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          alpha: Math.random() * 0.4 + 0.1
+        });
+      }
+    }
+
+    function drawParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (var i = 0; i < particles.length; i++) {
+        var p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(56, 189, 248, ' + p.alpha + ')';
+        ctx.fill();
+      }
+      /* Draw connections */
+      for (var i = 0; i < particles.length; i++) {
+        for (var j = i + 1; j < particles.length; j++) {
+          var dx = particles[i].x - particles[j].x;
+          var dy = particles[i].y - particles[j].y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 140) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = 'rgba(56, 189, 248, ' + (0.06 * (1 - dist / 140)) + ')';
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(drawParticles);
+    }
+
+    window.addEventListener('resize', function() {
+      resizeCanvas();
+      initParticles();
+    });
+    resizeCanvas();
+    initParticles();
+    drawParticles();
+
+    /* ─── Contact Form ─── */
+    function handleSubmit(e) {
+      e.preventDefault();
+      var btn = document.getElementById('submitBtn');
+      btn.textContent = 'Message Sent ✓';
+      btn.style.background = 'linear-gradient(135deg, #4ade80, #22c55e)';
+      setTimeout(function() {
+        btn.textContent = 'Send Secure Message';
+        btn.style.background = '';
+        document.getElementById('contactForm').reset();
+      }, 3000);
+    }
+
+    /* ─── Smooth Scroll for Anchors ─── */
+    document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+      anchor.addEventListener('click', function(e) {
+        var target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

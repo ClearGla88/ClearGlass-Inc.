@@ -1,0 +1,2028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClearGlass Inc. — Executive Revenue Agent | Desmond Otieno</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0c;
+    --surface: #111116;
+    --panel: #16161d;
+    --border: #1f1f2e;
+    --accent: #00d4aa;
+    --accent2: #ff4d6d;
+    --accent3: #ffd60a;
+    --text: #e8e8f0;
+    --muted: #5a5a7a;
+    --gold: #c9a84c;
+    --success: #00d4aa;
+    --warning: #ffd60a;
+    --danger: #ff4d6d;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 32px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo-block {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .logo-mark {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--accent), #006eff);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 18px;
+    color: var(--black);
+    animation: pulse-mark 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-mark {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,212,170,0); }
+    50% { box-shadow: 0 0 20px 4px rgba(0,212,170,0.3); }
+  }
+
+  .logo-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .logo-name {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .logo-sub {
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .header-center {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 13px;
+    letter-spacing: 4px;
+    color: var(--muted);
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .agent-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: blink 1.5s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+
+  .exec-badge {
+    padding: 6px 14px;
+    background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.05));
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* Main layout */
+  .main {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: calc(100vh - 65px);
+  }
+
+  /* Sidebar */
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 24px 0;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 65px;
+    height: calc(100vh - 65px);
+    overflow-y: auto;
+  }
+
+  .exec-profile {
+    padding: 0 20px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+
+  .exec-avatar {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, var(--gold), #ff8c42);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 22px;
+    color: var(--black);
+    margin-bottom: 12px;
+    box-shadow: 0 0 20px rgba(201,168,76,0.3);
+  }
+
+  .exec-name {
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .exec-title {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .exec-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .exec-stat {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    border-radius: 4px;
+  }
+
+  .exec-stat-val {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 18px;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .exec-stat-lbl {
+    font-size: 8px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .nav-section {
+    padding: 0 12px;
+    margin-bottom: 8px;
+  }
+
+  .nav-label {
+    font-size: 8px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 0 8px;
+    margin-bottom: 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--muted);
+    transition: all 0.2s;
+    border: 1px solid transparent;
+    margin-bottom: 2px;
+  }
+
+  .nav-item:hover, .nav-item.active {
+    background: rgba(0,212,170,0.06);
+    border-color: rgba(0,212,170,0.2);
+    color: var(--accent);
+  }
+
+  .nav-item .nav-icon {
+    font-size: 14px;
+    width: 20px;
+    text-align: center;
+  }
+
+  .nav-badge {
+    margin-left: auto;
+    background: var(--accent2);
+    color: white;
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-family: monospace;
+  }
+
+  .sidebar-revenue {
+    margin: auto 20px 0;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .revenue-label {
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .revenue-target {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 32px;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .revenue-sub {
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .revenue-bar-wrap {
+    background: var(--border);
+    height: 4px;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 4px;
+  }
+
+  .revenue-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--accent));
+    border-radius: 2px;
+    transition: width 1s ease;
+  }
+
+  .revenue-pct {
+    font-size: 10px;
+    color: var(--accent);
+    text-align: right;
+  }
+
+  /* Content area */
+  .content {
+    padding: 24px;
+    overflow-y: auto;
+  }
+
+  /* Tabs */
+  .tab-views > div {
+    display: none;
+  }
+
+  .tab-views > div.active {
+    display: block;
+  }
+
+  /* Section headers */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: var(--text);
+  }
+
+  .section-subtitle {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* KPI Grid */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+  }
+
+  .kpi-card.green::before { background: var(--accent); }
+  .kpi-card.red::before { background: var(--danger); }
+  .kpi-card.yellow::before { background: var(--warning); }
+  .kpi-card.gold::before { background: var(--gold); }
+
+  .kpi-card:hover {
+    border-color: rgba(0,212,170,0.3);
+    transform: translateY(-2px);
+  }
+
+  .kpi-label {
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .kpi-value {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 36px;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .kpi-card.green .kpi-value { color: var(--accent); }
+  .kpi-card.red .kpi-value { color: var(--danger); }
+  .kpi-card.yellow .kpi-value { color: var(--warning); }
+  .kpi-card.gold .kpi-value { color: var(--gold); }
+
+  .kpi-change {
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .kpi-change.up { color: var(--accent); }
+  .kpi-change.down { color: var(--danger); }
+
+  /* Panels */
+  .panel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px;
+  }
+
+  .panel-full {
+    grid-column: 1 / -1;
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .panel-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 16px;
+    letter-spacing: 2px;
+    color: var(--text);
+  }
+
+  .panel-action {
+    font-size: 10px;
+    color: var(--accent);
+    cursor: pointer;
+    letter-spacing: 1px;
+    border: none;
+    background: none;
+    text-transform: uppercase;
+    transition: opacity 0.2s;
+  }
+
+  .panel-action:hover { opacity: 0.7; }
+
+  /* Opportunity Table */
+  .opp-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .opp-table th {
+    text-align: left;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    padding: 0 10px 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .opp-table td {
+    padding: 12px 10px 12px 0;
+    font-size: 11px;
+    border-bottom: 1px solid rgba(31,31,46,0.5);
+    vertical-align: middle;
+  }
+
+  .opp-table tr:hover td {
+    background: rgba(0,212,170,0.03);
+  }
+
+  .stage-badge {
+    padding: 3px 10px;
+    border-radius: 2px;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .stage-prospect { background: rgba(90,90,122,0.3); color: var(--muted); }
+  .stage-qualified { background: rgba(0,110,255,0.2); color: #6ea8ff; }
+  .stage-proposal { background: rgba(255,214,10,0.2); color: var(--warning); }
+  .stage-negotiation { background: rgba(255,140,66,0.2); color: #ff8c42; }
+  .stage-closing { background: rgba(0,212,170,0.2); color: var(--accent); }
+  .stage-won { background: rgba(0,212,170,0.3); color: var(--accent); border: 1px solid var(--accent); }
+  .stage-lost { background: rgba(255,77,109,0.2); color: var(--danger); }
+
+  .prob-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .prob-track {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    min-width: 60px;
+  }
+
+  .prob-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), #006eff);
+  }
+
+  .prob-fill.high { background: linear-gradient(90deg, var(--accent), #006eff); }
+  .prob-fill.med { background: linear-gradient(90deg, var(--warning), #ff8c42); }
+  .prob-fill.low { background: var(--danger); }
+
+  .prob-label { font-size: 10px; color: var(--muted); min-width: 28px; text-align: right; }
+
+  /* Activity feed */
+  .activity-feed { display: flex; flex-direction: column; gap: 10px; }
+
+  .activity-item {
+    display: flex;
+    gap: 12px;
+    padding: 10px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--accent);
+    transition: all 0.2s;
+  }
+
+  .activity-item.warning { border-left-color: var(--warning); }
+  .activity-item.danger { border-left-color: var(--danger); }
+  .activity-item.gold { border-left-color: var(--gold); }
+
+  .activity-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  .activity-body { flex: 1; min-width: 0; }
+
+  .activity-title {
+    font-size: 11px;
+    color: var(--text);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .activity-meta { font-size: 9px; color: var(--muted); letter-spacing: 1px; }
+
+  .activity-time { font-size: 9px; color: var(--muted); flex-shrink: 0; }
+
+  /* Revenue chart */
+  .rev-chart {
+    height: 120px;
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    padding-top: 10px;
+  }
+
+  .rev-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+
+  .rev-bar-inner {
+    width: 100%;
+    background: linear-gradient(to top, var(--accent), rgba(0,212,170,0.3));
+    border-radius: 2px 2px 0 0;
+    position: relative;
+    transition: height 1s ease;
+    cursor: pointer;
+  }
+
+  .rev-bar-inner.projected {
+    background: repeating-linear-gradient(45deg, rgba(0,212,170,0.2), rgba(0,212,170,0.2) 4px, rgba(0,212,170,0.1) 4px, rgba(0,212,170,0.1) 8px);
+    border: 1px dashed rgba(0,212,170,0.4);
+    border-bottom: none;
+  }
+
+  .rev-bar-inner:hover::before {
+    content: attr(data-val);
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    font-size: 9px;
+    white-space: nowrap;
+    color: var(--accent);
+  }
+
+  .rev-bar-lbl { font-size: 8px; color: var(--muted); letter-spacing: 1px; }
+
+  /* AI Assistant */
+  .ai-wrap {
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+  }
+
+  .ai-messages {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-right: 4px;
+    margin-bottom: 12px;
+  }
+
+  .ai-messages::-webkit-scrollbar { width: 4px; }
+  .ai-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .ai-msg {
+    display: flex;
+    gap: 10px;
+    animation: msg-in 0.3s ease;
+  }
+
+  @keyframes msg-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .ai-msg.user { flex-direction: row-reverse; }
+
+  .ai-msg-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  .ai-msg.agent .ai-msg-avatar { background: linear-gradient(135deg, var(--accent), #006eff); color: var(--black); }
+  .ai-msg.user .ai-msg-avatar { background: linear-gradient(135deg, var(--gold), #ff8c42); color: var(--black); font-family: 'Bebas Neue'; font-size: 13px; }
+
+  .ai-msg-bubble {
+    max-width: 80%;
+    padding: 10px 14px;
+    font-size: 11px;
+    line-height: 1.6;
+    border-radius: 2px;
+  }
+
+  .ai-msg.agent .ai-msg-bubble {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  .ai-msg.user .ai-msg-bubble {
+    background: rgba(0,212,170,0.1);
+    border: 1px solid rgba(0,212,170,0.3);
+    color: var(--accent);
+    text-align: right;
+  }
+
+  .ai-input-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .ai-input {
+    flex: 1;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .ai-input:focus { border-color: var(--accent); }
+  .ai-input::placeholder { color: var(--muted); }
+
+  .ai-send {
+    background: var(--accent);
+    border: none;
+    color: var(--black);
+    padding: 10px 18px;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 14px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .ai-send:hover { opacity: 0.85; }
+  .ai-send:disabled { opacity: 0.4; cursor: default; }
+
+  .typing-dots {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    padding: 4px 0;
+  }
+
+  .typing-dots span {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: typing 1.2s ease-in-out infinite;
+  }
+
+  .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes typing { 0%, 60%, 100% { opacity: 0.2; transform: scale(0.8); } 30% { opacity: 1; transform: scale(1); } }
+
+  /* Forms */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  .form-label { font-size: 9px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+
+  .form-input, .form-select, .form-textarea {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    outline: none;
+    transition: border-color 0.2s;
+    border-radius: 2px;
+  }
+
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
+  .form-select { cursor: pointer; }
+  .form-textarea { resize: vertical; min-height: 80px; }
+
+  .btn {
+    padding: 10px 20px;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 14px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+
+  .btn-primary { background: var(--accent); color: var(--black); }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-danger { background: var(--danger); color: white; }
+  .btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); }
+  .btn-gold { background: var(--gold); color: var(--black); }
+
+  /* Contract monitor */
+  .contract-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .contract-item {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .contract-item:hover { border-color: rgba(0,212,170,0.4); }
+
+  .contract-flag {
+    font-size: 22px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .contract-body { flex: 1; min-width: 0; }
+
+  .contract-title {
+    font-size: 12px;
+    color: var(--text);
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+
+  .contract-meta {
+    font-size: 10px;
+    color: var(--muted);
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+
+  .contract-value {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 20px;
+    color: var(--gold);
+  }
+
+  .contract-deadline {
+    font-size: 10px;
+    margin-top: 4px;
+    color: var(--muted);
+  }
+
+  .contract-deadline.urgent { color: var(--danger); }
+
+  .contract-action { display: flex; gap: 6px; flex-shrink: 0; align-items: flex-start; }
+
+  /* Timeline */
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+
+  .timeline-item {
+    display: flex;
+    gap: 16px;
+    padding-bottom: 20px;
+    position: relative;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 28px;
+    bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+
+  .timeline-item:last-child::before { display: none; }
+
+  .timeline-dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    border: 2px solid var(--border);
+    background: var(--panel);
+    position: relative;
+    z-index: 1;
+  }
+
+  .timeline-dot.done { border-color: var(--accent); background: rgba(0,212,170,0.15); }
+  .timeline-dot.active { border-color: var(--warning); background: rgba(255,214,10,0.1); animation: pulse-tl 2s ease-in-out infinite; }
+
+  @keyframes pulse-tl { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,214,10,0); } 50% { box-shadow: 0 0 10px 3px rgba(255,214,10,0.2); } }
+
+  .timeline-content { flex: 1; padding-top: 4px; }
+
+  .timeline-title { font-size: 12px; color: var(--text); margin-bottom: 2px; }
+  .timeline-date { font-size: 9px; color: var(--muted); letter-spacing: 1px; margin-bottom: 6px; }
+  .timeline-body { font-size: 10px; color: var(--muted); line-height: 1.6; }
+
+  /* Ticker */
+  .ticker-wrap {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--accent);
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .ticker-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+    white-space: nowrap;
+    border-right: 1px solid var(--border);
+    padding-right: 16px;
+  }
+
+  .ticker-scroll {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .ticker-track {
+    display: flex;
+    gap: 40px;
+    animation: scroll 30s linear infinite;
+    white-space: nowrap;
+  }
+
+  @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+  .ticker-item {
+    font-size: 10px;
+    color: var(--muted);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .ticker-item .ticker-val { color: var(--accent); }
+  .ticker-item .ticker-up { color: var(--accent); }
+  .ticker-item .ticker-down { color: var(--danger); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* Notification */
+  .notification {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    background: var(--panel);
+    border: 1px solid var(--accent);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    max-width: 320px;
+    z-index: 1000;
+    animation: notif-in 0.3s ease, notif-out 0.3s ease 3.7s;
+    animation-fill-mode: forwards;
+  }
+
+  .notification.warning { border-color: var(--warning); }
+  .notification.danger { border-color: var(--danger); }
+  .notification.gold { border-color: var(--gold); }
+
+  @keyframes notif-in { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  @keyframes notif-out { to { transform: translateX(120%); opacity: 0; } }
+
+  .notif-title { font-size: 11px; color: var(--text); margin-bottom: 2px; font-weight: 500; }
+  .notif-body { font-size: 10px; color: var(--muted); }
+
+  /* Responsive */
+  @media (max-width: 1100px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .panel-grid { grid-template-columns: 1fr; }
+    .main { grid-template-columns: 220px 1fr; }
+  }
+
+  @media (max-width: 768px) {
+    .main { grid-template-columns: 1fr; }
+    .sidebar { position: static; height: auto; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="logo-block">
+    <div class="logo-mark">CG</div>
+    <div class="logo-text">
+      <div class="logo-name">ClearGlass Inc.</div>
+      <div class="logo-sub">Executive Revenue Intelligence Agent</div>
+    </div>
+  </div>
+  <div class="header-center">AGENT: ALPHA-1 &nbsp;|&nbsp; LIVE</div>
+  <div class="header-right">
+    <div class="agent-status">
+      <div class="status-dot"></div>
+      <span style="color: var(--accent); font-size:10px; letter-spacing:1px;">AGENT ACTIVE</span>
+    </div>
+    <div class="exec-badge">Desmond Otieno · COO</div>
+  </div>
+</header>
+
+<!-- Ticker -->
+<div style="padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border);">
+  <div class="ticker-wrap">
+    <div class="ticker-label">⚡ Live Feed</div>
+    <div class="ticker-scroll">
+      <div class="ticker-track" id="tickerTrack">
+        <span class="ticker-item">🏛️ City of Burlington RFP — Cybersecurity Assessment <span class="ticker-val">$280K</span></span>
+        <span class="ticker-item">📋 PHSA BC — Network Security Monitoring <span class="ticker-val">$450K</span></span>
+        <span class="ticker-item">🇨🇦 PSPC Standing Offer — Cyber Services <span class="ticker-up">↑ OPEN</span></span>
+        <span class="ticker-item">⚠️ Bill C-26 Compliance Deadline <span class="ticker-val">Q3 2026</span></span>
+        <span class="ticker-item">📊 Pipeline Value <span class="ticker-val">$2.14M</span></span>
+        <span class="ticker-item">🏆 Target: $1M Revenue <span class="ticker-up">63% Progress</span></span>
+        <span class="ticker-item">🔔 New RFP Alert — Hamilton Health Sciences <span class="ticker-val">$320K</span></span>
+        <span class="ticker-item">📈 Close Rate This Quarter <span class="ticker-val">38%</span></span>
+        <!-- Duplicate for infinite scroll -->
+        <span class="ticker-item">🏛️ City of Burlington RFP — Cybersecurity Assessment <span class="ticker-val">$280K</span></span>
+        <span class="ticker-item">📋 PHSA BC — Network Security Monitoring <span class="ticker-val">$450K</span></span>
+        <span class="ticker-item">🇨🇦 PSPC Standing Offer — Cyber Services <span class="ticker-up">↑ OPEN</span></span>
+        <span class="ticker-item">⚠️ Bill C-26 Compliance Deadline <span class="ticker-val">Q3 2026</span></span>
+        <span class="ticker-item">📊 Pipeline Value <span class="ticker-val">$2.14M</span></span>
+        <span class="ticker-item">🏆 Target: $1M Revenue <span class="ticker-up">63% Progress</span></span>
+        <span class="ticker-item">🔔 New RFP Alert — Hamilton Health Sciences <span class="ticker-val">$320K</span></span>
+        <span class="ticker-item">📈 Close Rate This Quarter <span class="ticker-val">38%</span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Layout -->
+<div class="main">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="exec-profile">
+      <div class="exec-avatar">DO</div>
+      <div class="exec-name">Desmond Otieno</div>
+      <div class="exec-title">Chief Operating Officer</div>
+      <div class="exec-stats">
+        <div class="exec-stat">
+          <div class="exec-stat-val" id="sidebarDeals">7</div>
+          <div class="exec-stat-lbl">Active Deals</div>
+        </div>
+        <div class="exec-stat">
+          <div class="exec-stat-val" id="sidebarTasks">12</div>
+          <div class="exec-stat-lbl">Open Tasks</div>
+        </div>
+        <div class="exec-stat">
+          <div class="exec-stat-val" id="sidebarRFPs">4</div>
+          <div class="exec-stat-lbl">New RFPs</div>
+        </div>
+        <div class="exec-stat">
+          <div class="exec-stat-val" id="sidebarAlerts">3</div>
+          <div class="exec-stat-lbl">Alerts</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Navigation</div>
+      <div class="nav-item active" onclick="showTab('dashboard', this)">
+        <span class="nav-icon">📊</span> Dashboard
+      </div>
+      <div class="nav-item" onclick="showTab('pipeline', this)">
+        <span class="nav-icon">💼</span> Revenue Pipeline
+        <span class="nav-badge" id="pipelineBadge">7</span>
+      </div>
+      <div class="nav-item" onclick="showTab('contracts', this)">
+        <span class="nav-icon">📋</span> Gov't Contracts
+        <span class="nav-badge" id="rfpBadge">4</span>
+      </div>
+      <div class="nav-item" onclick="showTab('tasks', this)">
+        <span class="nav-icon">✅</span> Task Engine
+      </div>
+      <div class="nav-item" onclick="showTab('agent', this)">
+        <span class="nav-icon">🤖</span> AI Agent
+      </div>
+      <div class="nav-item" onclick="showTab('intel', this)">
+        <span class="nav-icon">🛰️</span> Market Intel
+      </div>
+    </div>
+
+    <div class="sidebar-revenue">
+      <div class="revenue-label">Revenue Target</div>
+      <div class="revenue-target">$1,000,000</div>
+      <div class="revenue-sub">Fiscal 2026 Goal</div>
+      <div class="revenue-bar-wrap">
+        <div class="revenue-bar" id="revenueBar" style="width: 63%"></div>
+      </div>
+      <div class="revenue-pct" id="revenuePct">63% · $630,000</div>
+    </div>
+  </aside>
+
+  <!-- Content -->
+  <main class="content">
+    <div class="tab-views">
+
+      <!-- ===== DASHBOARD ===== -->
+      <div id="tab-dashboard" class="active">
+        <div class="section-header">
+          <div class="section-title">Executive Dashboard</div>
+          <div class="section-subtitle">Real-time · ClearGlass Inc.</div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card gold">
+            <div class="kpi-label">Total Pipeline Value</div>
+            <div class="kpi-value">$2.14M</div>
+            <div class="kpi-change up">↑ +$340K this week</div>
+          </div>
+          <div class="kpi-card green">
+            <div class="kpi-label">Revenue Closed (YTD)</div>
+            <div class="kpi-value">$630K</div>
+            <div class="kpi-change up">↑ 63% of annual target</div>
+          </div>
+          <div class="kpi-card yellow">
+            <div class="kpi-label">Active Opportunities</div>
+            <div class="kpi-value" id="kpiOpps">7</div>
+            <div class="kpi-change">3 in final stages</div>
+          </div>
+          <div class="kpi-card red">
+            <div class="kpi-label">RFPs Open Right Now</div>
+            <div class="kpi-value" id="kpiRFPs">4</div>
+            <div class="kpi-change down">↓ 2 expiring &lt;30 days</div>
+          </div>
+        </div>
+
+        <!-- Revenue Chart + Activity -->
+        <div class="panel-grid">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Monthly Revenue</div>
+              <button class="panel-action">View All</button>
+            </div>
+            <div class="rev-chart" id="revChart"></div>
+            <div style="display:flex;gap:16px;margin-top:8px;">
+              <div style="display:flex;align-items:center;gap:6px;font-size:9px;color:var(--muted);">
+                <div style="width:10px;height:3px;background:var(--accent);border-radius:2px;"></div> Actual
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;font-size:9px;color:var(--muted);">
+                <div style="width:10px;height:3px;border:1px dashed rgba(0,212,170,0.5);border-radius:2px;"></div> Projected
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Agent Activity</div>
+              <button class="panel-action" onclick="clearActivity()">Clear</button>
+            </div>
+            <div class="activity-feed" id="activityFeed" style="max-height:200px;overflow-y:auto;"></div>
+          </div>
+        </div>
+
+        <!-- Top Opportunities snapshot -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Top Opportunities</div>
+            <button class="panel-action" onclick="showTab('pipeline', document.querySelector('.nav-item:nth-child(2))'))">Full Pipeline →</button>
+          </div>
+          <table class="opp-table" id="topOppTable"></table>
+        </div>
+      </div>
+
+      <!-- ===== PIPELINE ===== -->
+      <div id="tab-pipeline">
+        <div class="section-header">
+          <div class="section-title">Revenue Pipeline</div>
+          <div class="section-subtitle">Live · Weighted by Probability</div>
+        </div>
+
+        <!-- Add Deal Form -->
+        <div class="panel" style="margin-bottom:16px;">
+          <div class="panel-header">
+            <div class="panel-title">+ Add Opportunity</div>
+            <button class="panel-action" onclick="toggleAddDeal()">Toggle Form</button>
+          </div>
+          <div id="addDealForm" style="display:none;">
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Client Name</label>
+                <input class="form-input" id="dealClient" placeholder="e.g. City of Hamilton">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Opportunity Name</label>
+                <input class="form-input" id="dealName" placeholder="e.g. Network Security Assessment">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Value (CAD $)</label>
+                <input class="form-input" id="dealValue" type="number" placeholder="250000">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Stage</label>
+                <select class="form-select" id="dealStage">
+                  <option value="prospect">Prospect</option>
+                  <option value="qualified">Qualified</option>
+                  <option value="proposal">Proposal Sent</option>
+                  <option value="negotiation">Negotiation</option>
+                  <option value="closing">Closing</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Win Probability (%)</label>
+                <input class="form-input" id="dealProb" type="number" min="0" max="100" placeholder="65">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Close Date</label>
+                <input class="form-input" id="dealClose" type="date">
+              </div>
+              <div class="form-group full">
+                <label class="form-label">Notes</label>
+                <textarea class="form-textarea" id="dealNotes" placeholder="Key contacts, requirements, next steps..."></textarea>
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="addDeal()">ADD TO PIPELINE</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">All Opportunities</div>
+            <span style="font-size:10px;color:var(--muted);" id="pipelineSummary">Loading...</span>
+          </div>
+          <table class="opp-table" id="fullPipelineTable">
+            <thead>
+              <tr>
+                <th>Client</th>
+                <th>Opportunity</th>
+                <th>Value</th>
+                <th>Stage</th>
+                <th>Probability</th>
+                <th>Close Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="pipelineTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== CONTRACTS ===== -->
+      <div id="tab-contracts">
+        <div class="section-header">
+          <div class="section-title">Government Contracts Monitor</div>
+          <div class="section-subtitle">Canada · Ontario · Municipal</div>
+        </div>
+
+        <!-- Add RFP -->
+        <div class="panel" style="margin-bottom:16px;">
+          <div class="panel-header">
+            <div class="panel-title">+ Track New RFP</div>
+            <button class="panel-action" onclick="toggleAddRFP()">Toggle</button>
+          </div>
+          <div id="addRFPForm" style="display:none;">
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Organization</label>
+                <input class="form-input" id="rfpOrg" placeholder="e.g. City of Burlington">
+              </div>
+              <div class="form-group">
+                <label class="form-label">RFP Title</label>
+                <input class="form-input" id="rfpTitle" placeholder="e.g. Cybersecurity Assessment 2026">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Estimated Value</label>
+                <input class="form-input" id="rfpValue" placeholder="$250,000">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Deadline</label>
+                <input class="form-input" id="rfpDeadline" type="date">
+              </div>
+              <div class="form-group full">
+                <label class="form-label">Source URL / Notes</label>
+                <input class="form-input" id="rfpUrl" placeholder="https://merx.com/...">
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="addRFP()">TRACK RFP</button>
+          </div>
+        </div>
+
+        <div class="contract-list" id="contractList"></div>
+      </div>
+
+      <!-- ===== TASKS ===== -->
+      <div id="tab-tasks">
+        <div class="section-header">
+          <div class="section-title">Task Engine</div>
+          <div class="section-subtitle">Your Revenue-Driving Actions</div>
+        </div>
+
+        <div class="panel" style="margin-bottom:16px;">
+          <div class="panel-header">
+            <div class="panel-title">+ Add Task</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <input class="form-input" id="taskInput" placeholder="Task description..." style="flex:1;min-width:200px;">
+            <select class="form-select" id="taskPriority" style="width:140px;">
+              <option value="high">🔴 High</option>
+              <option value="medium" selected>🟡 Medium</option>
+              <option value="low">🟢 Low</option>
+            </select>
+            <select class="form-select" id="taskCategory" style="width:160px;">
+              <option value="proposal">Proposal</option>
+              <option value="followup">Follow-up</option>
+              <option value="admin">Admin</option>
+              <option value="business-dev">Business Dev</option>
+              <option value="compliance">Compliance</option>
+            </select>
+            <button class="btn btn-primary" onclick="addTask()">ADD</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Active Tasks</div>
+            <span style="font-size:10px;color:var(--muted);" id="taskCount">0 tasks</span>
+          </div>
+          <div id="taskList" style="display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
+      </div>
+
+      <!-- ===== AI AGENT ===== -->
+      <div id="tab-agent">
+        <div class="section-header">
+          <div class="section-title">AI Revenue Agent</div>
+          <div class="section-subtitle">Powered by Claude · ClearGlass Intelligence</div>
+        </div>
+
+        <div class="panel-grid">
+          <div class="panel" style="grid-column: 1 / -1;">
+            <div class="panel-header">
+              <div class="panel-title">🤖 Agent Console</div>
+              <span style="font-size:10px;color:var(--accent);">Context-aware · Knows your pipeline</span>
+            </div>
+            <div class="ai-wrap">
+              <div class="ai-messages" id="aiMessages">
+                <div class="ai-msg agent">
+                  <div class="ai-msg-avatar">CG</div>
+                  <div class="ai-msg-bubble">
+                    Good day, Desmond. I'm your ClearGlass Revenue Intelligence Agent.<br><br>
+                    I have full awareness of your pipeline ($2.14M), active RFPs, and the $1M target. Ask me anything:<br><br>
+                    • <em>Which deals should I prioritize today?</em><br>
+                    • <em>Help me draft a proposal for [client]</em><br>
+                    • <em>What's our highest ROI action this week?</em><br>
+                    • <em>Summarize the government contracts landscape</em>
+                  </div>
+                </div>
+              </div>
+              <div class="ai-input-row">
+                <input class="ai-input" id="aiInput" placeholder="Ask your agent anything about revenue, deals, strategy..." onkeydown="if(event.key==='Enter') sendAIMessage()">
+                <button class="ai-send" id="aiSendBtn" onclick="sendAIMessage()">SEND</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick prompts -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Quick Actions</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <button class="btn btn-outline" style="text-align:left;padding:10px 14px;font-size:11px;font-family:'DM Mono',monospace;letter-spacing:0;" onclick="quickPrompt('Which deals in my pipeline have the highest probability of closing this month?')">🎯 Top closing deals this month</button>
+              <button class="btn btn-outline" style="text-align:left;padding:10px 14px;font-size:11px;font-family:'DM Mono',monospace;letter-spacing:0;" onclick="quickPrompt('Draft a cold outreach email to a municipal IT director about ClearGlass cybersecurity services')">📧 Draft municipal outreach email</button>
+              <button class="btn btn-outline" style="text-align:left;padding:10px 14px;font-size:11px;font-family:'DM Mono',monospace;letter-spacing:0;" onclick="quickPrompt('What are the top 3 strategies to reach $1M revenue at ClearGlass Inc this fiscal year?')">💰 Path to $1M strategy</button>
+              <button class="btn btn-outline" style="text-align:left;padding:10px 14px;font-size:11px;font-family:'DM Mono',monospace;letter-spacing:0;" onclick="quickPrompt('What government compliance requirements (Bill C-26, PIPEDA) can ClearGlass use as a sales trigger in Canada?')">🏛️ Canadian compliance angles</button>
+              <button class="btn btn-outline" style="text-align:left;padding:10px 14px;font-size:11px;font-family:'DM Mono',monospace;letter-spacing:0;" onclick="quickPrompt('Give me a competitor analysis: what are ClearGlass strengths vs Bell/Rogers/Telus for municipal cybersecurity?')">🔍 Competitive positioning</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Agent Context</div>
+            </div>
+            <div style="font-size:10px;color:var(--muted);line-height:1.8;">
+              <div>🏢 <span style="color:var(--text);">Company:</span> ClearGlass Inc.</div>
+              <div>👤 <span style="color:var(--text);">Executive:</span> Desmond Otieno, COO</div>
+              <div>🎯 <span style="color:var(--text);">Focus:</span> Municipal cybersecurity governance</div>
+              <div>📍 <span style="color:var(--text);">Market:</span> Canada — Ontario primary</div>
+              <div>💼 <span style="color:var(--text);">Pipeline:</span> $2.14M active</div>
+              <div>🏆 <span style="color:var(--text);">Target:</span> $1M revenue FY2026</div>
+              <div>📊 <span style="color:var(--text);">Products:</span> NEXUS, OMEN, AEGIS platforms</div>
+              <div>⚖️ <span style="color:var(--text);">Compliance:</span> Bill C-26, PIPEDA, CIS</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== INTEL ===== -->
+      <div id="tab-intel">
+        <div class="section-header">
+          <div class="section-title">Market Intelligence</div>
+          <div class="section-subtitle">Canadian Cybersecurity Landscape · 2026</div>
+        </div>
+
+        <div class="panel-grid">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Revenue Opportunities by Sector</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;" id="sectorList"></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Key Revenue Timeline</div>
+            </div>
+            <div class="timeline" id="intelTimeline"></div>
+          </div>
+
+          <div class="panel panel-full">
+            <div class="panel-header">
+              <div class="panel-title">Canadian Market Pricing Intelligence</div>
+              <span style="font-size:9px;color:var(--muted);">Industry benchmarks · 2026</span>
+            </div>
+            <table class="opp-table">
+              <thead>
+                <tr>
+                  <th>Service</th>
+                  <th>Market Low</th>
+                  <th>Market Mid</th>
+                  <th>Market High</th>
+                  <th>ClearGlass Position</th>
+                  <th>Opportunity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Municipal Cybersecurity Assessment</td><td>$45K</td><td>$120K</td><td>$280K</td><td><span class="stage-badge stage-proposal">MID-HIGH</span></td><td style="color:var(--accent)">↑ HIGH</td></tr>
+                <tr><td>Network Monitoring (Annual)</td><td>$80K</td><td>$200K</td><td>$450K</td><td><span class="stage-badge stage-proposal">MID</span></td><td style="color:var(--accent)">↑ HIGH</td></tr>
+                <tr><td>Incident Response Retainer</td><td>$30K</td><td>$90K</td><td>$180K</td><td><span class="stage-badge stage-won">MID-HIGH</span></td><td style="color:var(--warning)">→ MED</td></tr>
+                <tr><td>Penetration Testing</td><td>$15K</td><td>$50K</td><td>$120K</td><td><span class="stage-badge stage-qualified">LOW-MID</span></td><td style="color:var(--accent)">↑ HIGH</td></tr>
+                <tr><td>Compliance Advisory (Bill C-26)</td><td>$25K</td><td>$75K</td><td>$150K</td><td><span class="stage-badge stage-proposal">EMERGING</span></td><td style="color:var(--accent)">⚡ URGENT</td></tr>
+                <tr><td>Security Platform License (NEXUS)</td><td>$60K</td><td>$150K</td><td>$400K</td><td><span class="stage-badge stage-closing">DIFFERENTIATOR</span></td><td style="color:var(--gold)">★ STRATEGIC</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /tab-views -->
+  </main>
+</div>
+
+<script>
+// ============================================================
+// DATA STORE (persistent via localStorage)
+// ============================================================
+const STORE_KEY = 'cg_agent_v1';
+
+function loadStore() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return getDefaultStore();
+}
+
+function saveStore() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch(e) {}
+}
+
+function getDefaultStore() {
+  return {
+    deals: [
+      { id: 1, client: 'City of Burlington', name: 'Municipal NEXUS Platform', value: 380000, stage: 'proposal', prob: 75, close: '2026-04-15', notes: 'Met with IT Director. RFP submitted. Strong fit with NEXUS.' },
+      { id: 2, client: 'Joseph Brant Hospital', name: 'Aurora Health Intelligence System', value: 290000, stage: 'negotiation', prob: 85, close: '2026-03-28', notes: 'Epic integration module. Legal reviewing contract now.' },
+      { id: 3, client: 'Region of Halton', name: 'Network Security Assessment', value: 145000, stage: 'qualified', prob: 55, close: '2026-05-10', notes: 'Competing against Bell. Strong compliance angle.' },
+      { id: 4, client: 'Hamilton Health Sciences', name: 'AEGIS Endpoint Monitoring', value: 320000, stage: 'prospect', prob: 30, close: '2026-06-30', notes: 'Initial discovery call booked for March 5.' },
+      { id: 5, client: 'Halton Regional Police', name: 'Threat Intelligence Retainer', value: 180000, stage: 'closing', prob: 90, close: '2026-03-15', notes: 'Final contract review. Signing expected this week.' },
+      { id: 6, client: 'City of Mississauga', name: 'Cybersecurity Governance Program', value: 450000, stage: 'proposal', prob: 60, close: '2026-05-20', notes: 'RFP response due March 10. Strong Bill C-26 angle.' },
+      { id: 7, client: 'Oakville Transit', name: 'OT/ICS Security Assessment', value: 95000, stage: 'qualified', prob: 65, close: '2026-04-01', notes: 'Referral from Burlington contact. Budget confirmed.' },
+    ],
+    rfps: [
+      { id: 1, org: 'City of Burlington', title: 'Cybersecurity Assessment & Managed SOC 2026', value: '$280K', deadline: '2026-03-18', url: 'https://merx.com', flag: '🏛️', status: 'open' },
+      { id: 2, org: 'PHSA British Columbia', title: 'Network Security Monitoring Platform', value: '$450K', deadline: '2026-03-25', url: 'https://bc.merx.com', flag: '🏥', status: 'open' },
+      { id: 3, org: 'PSPC Canada', title: 'Cybersecurity Standing Offer — SOR/2026', value: '$500K+', deadline: '2026-04-10', url: 'https://buyandsell.gc.ca', flag: '🇨🇦', status: 'open' },
+      { id: 4, org: 'Halton Region', title: 'IT Security Services & Incident Response', value: '$160K', deadline: '2026-03-12', url: 'https://halton.ca/rfp', flag: '🏢', status: 'urgent' },
+    ],
+    tasks: [
+      { id: 1, text: 'Submit RFP response — City of Mississauga', priority: 'high', category: 'proposal', done: false, created: Date.now() },
+      { id: 2, text: 'Follow up with Joseph Brant legal team on contract', priority: 'high', category: 'followup', done: false, created: Date.now() },
+      { id: 3, text: 'Schedule demo — Hamilton Health Sciences March 5', priority: 'medium', category: 'business-dev', done: false, created: Date.now() },
+      { id: 4, text: 'Prepare Halton Region RFP — deadline March 12', priority: 'high', category: 'proposal', done: false, created: Date.now() },
+      { id: 5, text: 'Get Halton Police contract signed', priority: 'high', category: 'closing', done: false, created: Date.now() },
+    ],
+    activities: [],
+    nextId: 100
+  };
+}
+
+let store = loadStore();
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showTab(tabId, el) {
+  document.querySelectorAll('.tab-views > div').forEach(d => d.classList.remove('active'));
+  document.getElementById('tab-' + tabId).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (el) el.classList.add('active');
+  renderTab(tabId);
+}
+
+function renderTab(tabId) {
+  if (tabId === 'dashboard') renderDashboard();
+  if (tabId === 'pipeline') renderPipeline();
+  if (tabId === 'contracts') renderContracts();
+  if (tabId === 'tasks') renderTasks();
+  if (tabId === 'agent') {} // no render needed
+  if (tabId === 'intel') renderIntel();
+}
+
+// ============================================================
+// DEALS / PIPELINE
+// ============================================================
+function stageLabel(stage) {
+  const map = {
+    prospect: 'Prospect', qualified: 'Qualified', proposal: 'Proposal Sent',
+    negotiation: 'Negotiation', closing: 'Closing', won: 'Won', lost: 'Lost'
+  };
+  return map[stage] || stage;
+}
+
+function probClass(p) {
+  if (p >= 70) return 'high';
+  if (p >= 40) return 'med';
+  return 'low';
+}
+
+function fmtVal(v) {
+  if (v >= 1000000) return '$' + (v/1000000).toFixed(1) + 'M';
+  if (v >= 1000) return '$' + Math.round(v/1000) + 'K';
+  return '$' + v;
+}
+
+function renderDealRow(d, actions = false) {
+  const closeFmt = d.close ? new Date(d.close).toLocaleDateString('en-CA', {month:'short', day:'numeric', year:'numeric'}) : '-';
+  return `<tr>
+    <td style="color:var(--text);font-weight:500;">${d.client}</td>
+    <td style="color:var(--muted);">${d.name}</td>
+    <td style="font-family:'Bebas Neue',cursive;font-size:18px;color:var(--gold);">${fmtVal(d.value)}</td>
+    <td><span class="stage-badge stage-${d.stage}">${stageLabel(d.stage)}</span></td>
+    <td>
+      <div class="prob-bar">
+        <div class="prob-track"><div class="prob-fill ${probClass(d.prob)}" style="width:${d.prob}%"></div></div>
+        <div class="prob-label">${d.prob}%</div>
+      </div>
+    </td>
+    <td style="color:var(--muted);font-size:10px;">${closeFmt}</td>
+    ${actions ? `<td><button class="btn btn-danger" style="padding:4px 10px;font-size:11px;" onclick="removeDeal(${d.id})">✕</button></td>` : '<td></td>'}
+  </tr>`;
+}
+
+function renderDashboard() {
+  // Top 4 deals
+  const top = [...store.deals].sort((a,b) => b.value*b.prob/100 - a.value*a.prob/100).slice(0,4);
+  const tbl = document.getElementById('topOppTable');
+  if (tbl) {
+    tbl.innerHTML = `<thead><tr><th>Client</th><th>Opportunity</th><th>Value</th><th>Stage</th><th>Probability</th><th>Close Date</th><th></th></tr></thead>
+    <tbody>${top.map(d => renderDealRow(d)).join('')}</tbody>`;
+  }
+  renderRevenueChart();
+  renderActivityFeed();
+  updateSidebarStats();
+}
+
+function renderPipeline() {
+  const tbody = document.getElementById('pipelineTbody');
+  if (tbody) {
+    tbody.innerHTML = store.deals.map(d => renderDealRow(d, true)).join('');
+  }
+  // Summary
+  const total = store.deals.reduce((s,d) => s + d.value, 0);
+  const weighted = store.deals.reduce((s,d) => s + d.value*d.prob/100, 0);
+  const summary = document.getElementById('pipelineSummary');
+  if (summary) summary.textContent = `Total: ${fmtVal(total)} | Weighted: ${fmtVal(weighted)} | ${store.deals.length} deals`;
+
+  document.getElementById('pipelineBadge').textContent = store.deals.length;
+  document.getElementById('kpiOpps').textContent = store.deals.length;
+}
+
+function toggleAddDeal() {
+  const f = document.getElementById('addDealForm');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+
+function addDeal() {
+  const client = document.getElementById('dealClient').value.trim();
+  const name = document.getElementById('dealName').value.trim();
+  const value = parseInt(document.getElementById('dealValue').value) || 0;
+  const stage = document.getElementById('dealStage').value;
+  const prob = parseInt(document.getElementById('dealProb').value) || 50;
+  const close = document.getElementById('dealClose').value;
+  const notes = document.getElementById('dealNotes').value.trim();
+
+  if (!client || !name || !value) { alert('Client, Name, and Value are required.'); return; }
+
+  const deal = { id: store.nextId++, client, name, value, stage, prob, close, notes };
+  store.deals.push(deal);
+  saveStore();
+  logActivity('💼', `New deal added: ${client} — ${fmtVal(value)}`, 'success');
+  notify('Deal Added', `${name} — ${fmtVal(value)}`, 'success');
+  renderPipeline();
+  updateSidebarStats();
+  document.getElementById('addDealForm').style.display = 'none';
+}
+
+function removeDeal(id) {
+  store.deals = store.deals.filter(d => d.id !== id);
+  saveStore();
+  renderPipeline();
+  updateSidebarStats();
+}
+
+// ============================================================
+// REVENUE CHART
+// ============================================================
+function renderRevenueChart() {
+  const container = document.getElementById('revChart');
+  if (!container) return;
+  const months = ['Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul'];
+  const actuals = [48000, 62000, 85000, 71000, 55000, 90000, 120000, 0, 0, 0, 0, 0];
+  const projected = [0, 0, 0, 0, 0, 0, 0, 145000, 180000, 130000, 95000, 80000];
+  const max = Math.max(...actuals, ...projected);
+
+  container.innerHTML = months.map((m,i) => {
+    const h = actuals[i] ? Math.round((actuals[i]/max)*100) : 0;
+    const hp = projected[i] ? Math.round((projected[i]/max)*100) : 0;
+    const isProjected = projected[i] > 0;
+    const height = h || hp;
+    const cls = isProjected ? 'projected' : '';
+    const dataVal = fmtVal(actuals[i] || projected[i]);
+    return `<div class="rev-bar-wrap">
+      <div class="rev-bar-inner ${cls}" style="height:${height}px;" data-val="${dataVal}"></div>
+      <div class="rev-bar-lbl">${m}</div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// ACTIVITY FEED
+// ============================================================
+function logActivity(icon, title, type = 'success') {
+  const now = new Date().toLocaleTimeString('en-CA', {hour:'2-digit', minute:'2-digit'});
+  store.activities.unshift({ icon, title, type, time: now });
+  if (store.activities.length > 50) store.activities.pop();
+  saveStore();
+  renderActivityFeed();
+}
+
+function renderActivityFeed() {
+  const feed = document.getElementById('activityFeed');
+  if (!feed) return;
+  if (store.activities.length === 0) {
+    feed.innerHTML = '<div style="font-size:10px;color:var(--muted);text-align:center;padding:20px;">Agent monitoring active...</div>';
+    return;
+  }
+  feed.innerHTML = store.activities.slice(0, 10).map(a => `
+    <div class="activity-item ${a.type === 'warning' ? 'warning' : a.type === 'danger' ? 'danger' : ''}">
+      <div class="activity-icon">${a.icon}</div>
+      <div class="activity-body">
+        <div class="activity-title">${a.title}</div>
+        <div class="activity-meta">${a.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+function clearActivity() {
+  store.activities = [];
+  saveStore();
+  renderActivityFeed();
+}
+
+// ============================================================
+// CONTRACTS / RFPs
+// ============================================================
+function renderContracts() {
+  const list = document.getElementById('contractList');
+  if (!list) return;
+
+  list.innerHTML = store.rfps.map(r => {
+    const deadlineDate = new Date(r.deadline);
+    const daysLeft = Math.round((deadlineDate - Date.now()) / 86400000);
+    const urgent = daysLeft <= 14;
+    return `<div class="contract-item">
+      <div class="contract-flag">${r.flag}</div>
+      <div class="contract-body">
+        <div class="contract-title">${r.title}</div>
+        <div class="contract-meta">
+          <span>📍 ${r.org}</span>
+          <span class="${urgent ? 'stage-badge stage-negotiation' : 'stage-badge stage-qualified'}">${urgent ? '⚡ URGENT' : 'OPEN'}</span>
+        </div>
+        <div class="contract-value">${r.value}</div>
+        <div class="contract-deadline ${urgent ? 'urgent' : ''}">
+          🗓️ Deadline: ${deadlineDate.toLocaleDateString('en-CA', {month:'long', day:'numeric', year:'numeric'})} · ${daysLeft} days remaining
+        </div>
+      </div>
+      <div class="contract-action">
+        <button class="btn btn-primary" style="font-size:11px;padding:6px 14px;" onclick="addDealFromRFP(${r.id})">+ Pipeline</button>
+        <button class="btn btn-danger" style="font-size:11px;padding:6px 10px;" onclick="removeRFP(${r.id})">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('rfpBadge').textContent = store.rfps.length;
+  document.getElementById('kpiRFPs').textContent = store.rfps.length;
+}
+
+function toggleAddRFP() {
+  const f = document.getElementById('addRFPForm');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+
+function addRFP() {
+  const org = document.getElementById('rfpOrg').value.trim();
+  const title = document.getElementById('rfpTitle').value.trim();
+  const value = document.getElementById('rfpValue').value.trim();
+  const deadline = document.getElementById('rfpDeadline').value;
+  const url = document.getElementById('rfpUrl').value.trim();
+
+  if (!org || !title) { alert('Organization and Title required.'); return; }
+  store.rfps.push({ id: store.nextId++, org, title, value, deadline, url, flag: '📋', status: 'open' });
+  saveStore();
+  logActivity('📋', `RFP tracked: ${org} — ${title}`, 'warning');
+  notify('RFP Tracked', org, 'warning');
+  renderContracts();
+  document.getElementById('addRFPForm').style.display = 'none';
+}
+
+function removeRFP(id) {
+  store.rfps = store.rfps.filter(r => r.id !== id);
+  saveStore();
+  renderContracts();
+}
+
+function addDealFromRFP(rfpId) {
+  const r = store.rfps.find(x => x.id === rfpId);
+  if (!r) return;
+  store.deals.push({
+    id: store.nextId++, client: r.org, name: r.title,
+    value: parseInt((r.value || '$0').replace(/\D/g,'')) || 0,
+    stage: 'prospect', prob: 25, close: r.deadline, notes: `Source: RFP — ${r.url}`
+  });
+  saveStore();
+  logActivity('💼', `Deal created from RFP: ${r.org}`, 'success');
+  notify('Deal Created', r.org + ' moved to pipeline', 'success');
+  updateSidebarStats();
+}
+
+// ============================================================
+// TASKS
+// ============================================================
+function renderTasks() {
+  const list = document.getElementById('taskList');
+  if (!list) return;
+  const active = store.tasks.filter(t => !t.done);
+  const done = store.tasks.filter(t => t.done);
+  const all = [...active, ...done];
+
+  document.getElementById('taskCount').textContent = `${active.length} active · ${done.length} done`;
+  document.getElementById('sidebarTasks').textContent = active.length;
+
+  const priorityIcon = { high: '🔴', medium: '🟡', low: '🟢' };
+  const catColors = { proposal: 'var(--warning)', followup: 'var(--accent)', admin: 'var(--muted)', 'business-dev': '#6ea8ff', compliance: '#ff8c42', closing: 'var(--gold)' };
+
+  list.innerHTML = all.map(t => `
+    <div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--panel);border:1px solid ${t.done ? 'rgba(31,31,46,0.5)' : 'var(--border)'};opacity:${t.done ? 0.5 : 1};">
+      <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${t.id})" style="accent-color:var(--accent);width:16px;height:16px;cursor:pointer;">
+      <span style="flex:1;font-size:11px;color:var(--text);${t.done ? 'text-decoration:line-through;' : ''}">${t.text}</span>
+      <span style="font-size:9px;padding:2px 8px;border:1px solid ${catColors[t.category]||'var(--border)'};color:${catColors[t.category]||'var(--muted)'};text-transform:uppercase;letter-spacing:1px;">${t.category}</span>
+      <span>${priorityIcon[t.priority]||'🟡'}</span>
+      <button onclick="removeTask(${t.id})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;">✕</button>
+    </div>`).join('');
+}
+
+function addTask() {
+  const text = document.getElementById('taskInput').value.trim();
+  const priority = document.getElementById('taskPriority').value;
+  const category = document.getElementById('taskCategory').value;
+  if (!text) return;
+  store.tasks.unshift({ id: store.nextId++, text, priority, category, done: false, created: Date.now() });
+  saveStore();
+  document.getElementById('taskInput').value = '';
+  logActivity('✅', `Task added: ${text}`, 'success');
+  renderTasks();
+}
+
+function toggleTask(id) {
+  const t = store.tasks.find(x => x.id === id);
+  if (t) { t.done = !t.done; saveStore(); renderTasks(); }
+}
+
+function removeTask(id) {
+  store.tasks = store.tasks.filter(t => t.id !== id);
+  saveStore();
+  renderTasks();
+}
+
+// ============================================================
+// INTEL
+// ============================================================
+function renderIntel() {
+  const sectors = [
+    { name: 'Municipal Government', value: '$800K–1.2M', icon: '🏛️', color: 'var(--accent)', note: 'Bill C-26 compliance driving demand' },
+    { name: 'Healthcare', value: '$600K–900K', icon: '🏥', color: '#6ea8ff', note: 'Epic + cybersecurity integration gap' },
+    { name: 'Critical Infrastructure', value: '$400K–700K', icon: '⚡', color: 'var(--warning)', note: 'OT/ICS security mandates 2026' },
+    { name: 'Regional Police / Public Safety', value: '$300K–500K', icon: '🚔', color: '#ff8c42', note: 'Federal compliance requirements' },
+    { name: 'Transit / Utilities', value: '$150K–350K', icon: '🚇', color: 'var(--gold)', note: 'Expanding digital attack surface' },
+  ];
+
+  const sectorEl = document.getElementById('sectorList');
+  if (sectorEl) {
+    sectorEl.innerHTML = sectors.map(s => `
+      <div style="background:var(--panel);border:1px solid var(--border);border-left:2px solid ${s.color};padding:12px 14px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+          <span style="font-size:18px;">${s.icon}</span>
+          <span style="font-size:12px;color:var(--text);">${s.name}</span>
+          <span style="margin-left:auto;font-family:'Bebas Neue',cursive;font-size:16px;color:${s.color};">${s.value}</span>
+        </div>
+        <div style="font-size:10px;color:var(--muted);padding-left:28px;">${s.note}</div>
+      </div>`).join('');
+  }
+
+  const timeline = document.getElementById('intelTimeline');
+  if (timeline) {
+    const events = [
+      { done: true, active: false, icon: '✓', title: 'NEXUS Platform v3.0 Launch', date: 'Feb 2026', body: 'Unified intelligence platform ready for enterprise sales.' },
+      { done: false, active: true, icon: '⚡', title: 'Burlington + Halton Police Close', date: 'March 2026', body: 'Two deals in final stage. Combined value $560K.' },
+      { done: false, active: false, icon: '📋', title: 'PSPC Standing Offer Submission', date: 'April 2026', body: 'Federal standing offer — could unlock $500K+ pipeline.' },
+      { done: false, active: false, icon: '🏆', title: '$1M Revenue Target', date: 'Q2 2026', body: 'Based on current pipeline close rates, achievable by June.' },
+    ];
+    timeline.innerHTML = events.map(e => `
+      <div class="timeline-item">
+        <div class="timeline-dot ${e.done ? 'done' : e.active ? 'active' : ''}">${e.icon}</div>
+        <div class="timeline-content">
+          <div class="timeline-title">${e.title}</div>
+          <div class="timeline-date">${e.date}</div>
+          <div class="timeline-body">${e.body}</div>
+        </div>
+      </div>`).join('');
+  }
+}
+
+// ============================================================
+// AI AGENT (Anthropic API)
+// ============================================================
+const AI_MESSAGES = [];
+
+function buildSystemPrompt() {
+  const deals = store.deals.map(d => `${d.client}: ${d.name} — ${fmtVal(d.value)} — ${d.stage} (${d.prob}% prob) — Close: ${d.close}`).join('\n');
+  const rfps = store.rfps.map(r => `${r.org}: ${r.title} — ${r.value} — Deadline: ${r.deadline}`).join('\n');
+  const tasks = store.tasks.filter(t=>!t.done).map(t => `[${t.priority.toUpperCase()}] ${t.text}`).join('\n');
+  const totalPipeline = fmtVal(store.deals.reduce((s,d)=>s+d.value,0));
+  const weighted = fmtVal(store.deals.reduce((s,d)=>s+d.value*d.prob/100,0));
+
+  return `You are the ClearGlass Revenue Intelligence Agent — an elite business development AI working exclusively for Desmond Otieno, COO of ClearGlass Inc., a Canadian cybersecurity firm specializing in municipal cybersecurity governance and enterprise security solutions.
+
+## YOUR MISSION
+Help Desmond Otieno close deals, win contracts, and reach $1,000,000 in revenue for fiscal year 2026. Every answer must be strategic, specific, and actionable — no fluff, no speculation, facts only.
+
+## CLEARGLASS INC. CONTEXT
+- Products: NEXUS Platform (unified intelligence), AEGIS (endpoint/threat), OMEN (geopolitical intelligence), Aurora (healthcare)
+- Primary market: Canadian municipalities, healthcare, critical infrastructure — Ontario focus
+- Key differentiators: Bill C-26 compliance expertise, proprietary AI platforms, municipal governance specialization
+- Location: Burlington, Ontario area
+
+## LIVE PIPELINE DATA
+Total Pipeline: ${totalPipeline} | Weighted: ${weighted}
+Active Deals:
+${deals}
+
+## OPEN RFPs
+${rfps}
+
+## OPEN TASKS
+${tasks}
+
+## INSTRUCTIONS
+- Be concise and direct. Desmond is a busy COO — give the answer, not the preamble
+- Prioritize revenue impact in all recommendations
+- Reference specific deals, clients, and values from the pipeline above
+- If asked to draft emails/proposals, write them professionally and completely
+- Always flag urgency when deadlines are within 30 days
+- Canadian market context: reference Bill C-26, PIPEDA, CRTC, PSPC, MERX where relevant`;
+}
+
+async function sendAIMessage() {
+  const input = document.getElementById('aiInput');
+  const btn = document.getElementById('aiSendBtn');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  input.value = '';
+  btn.disabled = true;
+
+  // User message
+  appendAIMsg('user', msg);
+  AI_MESSAGES.push({ role: 'user', content: msg });
+
+  // Typing indicator
+  const typingId = 'typing_' + Date.now();
+  const messagesEl = document.getElementById('aiMessages');
+  const typingEl = document.createElement('div');
+  typingEl.className = 'ai-msg agent';
+  typingEl.id = typingId;
+  typingEl.innerHTML = `<div class="ai-msg-avatar">CG</div><div class="ai-msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
+  messagesEl.appendChild(typingEl);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: buildSystemPrompt(),
+        messages: AI_MESSAGES.slice(-10)
+      })
+    });
+
+    const data = await response.json();
+    const reply = data.content?.find(b => b.type === 'text')?.text || 'I was unable to process that. Please try again.';
+
+    document.getElementById(typingId)?.remove();
+    appendAIMsg('agent', reply);
+    AI_MESSAGES.push({ role: 'assistant', content: reply });
+    logActivity('🤖', `Agent responded: ${msg.slice(0,50)}...`, 'success');
+  } catch (err) {
+    document.getElementById(typingId)?.remove();
+    appendAIMsg('agent', `⚠️ Connection error. Ensure you are using Claude.ai with API access enabled. Error: ${err.message}`);
+  }
+
+  btn.disabled = false;
+  const messagesEl2 = document.getElementById('aiMessages');
+  if (messagesEl2) messagesEl2.scrollTop = messagesEl2.scrollHeight;
+}
+
+function appendAIMsg(role, text) {
+  const messagesEl = document.getElementById('aiMessages');
+  if (!messagesEl) return;
+  const div = document.createElement('div');
+  div.className = `ai-msg ${role}`;
+  const avatarText = role === 'user' ? 'DO' : 'CG';
+  // Convert markdown-ish formatting
+  const formatted = text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>');
+  div.innerHTML = `<div class="ai-msg-avatar">${avatarText}</div><div class="ai-msg-bubble">${formatted}</div>`;
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function quickPrompt(text) {
+  document.getElementById('aiInput').value = text;
+  sendAIMessage();
+}
+
+// ============================================================
+// NOTIFICATIONS
+// ============================================================
+function notify(title, body, type = 'success') {
+  const notif = document.createElement('div');
+  notif.className = `notification ${type}`;
+  notif.innerHTML = `<div class="notif-title">${title}</div><div class="notif-body">${body}</div>`;
+  document.body.appendChild(notif);
+  setTimeout(() => notif.remove(), 4200);
+}
+
+// ============================================================
+// SIDEBAR STATS
+// ============================================================
+function updateSidebarStats() {
+  document.getElementById('sidebarDeals').textContent = store.deals.length;
+  document.getElementById('sidebarRFPs').textContent = store.rfps.length;
+  document.getElementById('sidebarAlerts').textContent = store.rfps.filter(r => {
+    const d = new Date(r.deadline);
+    return Math.round((d - Date.now()) / 86400000) <= 14;
+  }).length;
+
+  const closed = 630000;
+  const target = 1000000;
+  const pct = Math.round((closed/target)*100);
+  document.getElementById('revenueBar').style.width = pct + '%';
+  document.getElementById('revenuePct').textContent = `${pct}% · $${(closed/1000).toFixed(0)}K`;
+}
+
+// ============================================================
+// AUTO-AGENT: periodic intel notifications
+// ============================================================
+const autoAlerts = [
+  { msg: '🔔 New MERX posting: Municipality of Halton Hills — IT Security Services $195K', type: 'warning', icon: '📋', delay: 25000 },
+  { msg: '⚡ Halton RFP deadline in 12 days — action required', type: 'danger', icon: '⚠️', delay: 55000 },
+  { msg: '📈 PSPC Standing Offer — Q&A period closes March 3', type: 'warning', icon: '🏛️', delay: 85000 },
+  { msg: '✅ Agent recommendation: Follow up with Joseph Brant legal today', type: 'success', icon: '🤖', delay: 120000 },
+];
+
+autoAlerts.forEach(a => {
+  setTimeout(() => {
+    notify('Agent Alert', a.msg, a.type);
+    logActivity(a.icon, a.msg, a.type);
+  }, a.delay);
+});
+
+// ============================================================
+// INIT
+// ============================================================
+(function init() {
+  renderDashboard();
+  updateSidebarStats();
+
+  // Set today's date as default for date inputs
+  const today = new Date().toISOString().split('T')[0];
+  const dateInputs = document.querySelectorAll('input[type="date"]');
+  dateInputs.forEach(i => { if (!i.value) i.value = today; });
+
+  logActivity('⚡', 'ClearGlass Revenue Agent initialized — Desmond Otieno', 'success');
+  logActivity('🎯', 'Pipeline loaded: $2.14M across 7 active deals', 'success');
+  logActivity('📋', '4 open RFPs being monitored', 'warning');
+
+  setTimeout(() => notify('Agent Online', 'ClearGlass Revenue Intelligence Active — Good day, Desmond', 'success'), 800);
+})();
+</script>
+</body>
+</html>

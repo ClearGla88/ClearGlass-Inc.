@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Burlington Nexus · Sentinel Edition v3.0 — AI Intelligence Hub</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#060a12; --surface:#090e1a; --card:#0c1220; --card2:#0f1628;
+  --border:rgba(0,212,170,0.13); --border2:rgba(0,212,170,0.06);
+  --accent:#00d4aa; --purple:#7b5fff; --red:#ff4757; --gold:#ffd93d;
+  --blue:#3d9aff; --text:#c8d6f0; --muted:#6b7a96;
+  --mono:'JetBrains Mono',monospace; --display:'Rajdhani',sans-serif;
+  --chat-w:420px; --glow:0 0 20px rgba(0,212,170,0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:13px;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:9999;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px);pointer-events:none;}
+::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+/* ── ONBOARDING OVERLAY */
+#onboard{position:fixed;inset:0;z-index:8000;background:rgba(6,10,18,0.96);display:flex;align-items:center;justify-content:center;animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.onboard-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:40px 48px;max-width:560px;width:90%;text-align:center;position:relative;}
+.onboard-box::before{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);}
+.ob-logo{font-family:var(--display);font-size:2.4rem;font-weight:700;letter-spacing:8px;color:var(--accent);text-shadow:var(--glow);margin-bottom:6px;}
+.ob-sub{font-size:.7rem;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:28px;}
+.ob-step{display:none;}
+.ob-step.active{display:block;}
+.ob-title{font-family:var(--display);font-size:1.3rem;font-weight:700;color:var(--text);letter-spacing:2px;margin-bottom:12px;}
+.ob-body{font-size:.82rem;color:var(--muted);line-height:1.8;margin-bottom:24px;}
+.ob-key-wrap{position:relative;margin-bottom:12px;}
+.ob-key-input{width:100%;background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:6px;padding:12px 16px;color:var(--text);font-family:var(--mono);font-size:.8rem;outline:none;transition:border-color .2s;}
+.ob-key-input:focus{border-color:var(--accent);}
+.ob-key-input::placeholder{color:var(--muted);}
+.ob-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:linear-gradient(135deg,var(--purple),var(--accent));border:none;border-radius:6px;color:#fff;font-family:var(--mono);font-size:.78rem;font-weight:600;letter-spacing:2px;cursor:pointer;transition:all .2s;text-transform:uppercase;}
+.ob-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(123,95,255,.4);}
+.ob-btn.secondary{background:none;border:1px solid var(--border);color:var(--muted);margin-left:12px;}
+.ob-btn.secondary:hover{border-color:var(--accent);color:var(--accent);box-shadow:none;transform:none;}
+.ob-skip{display:block;margin-top:14px;font-size:.65rem;color:var(--muted);cursor:pointer;letter-spacing:1px;}
+.ob-skip:hover{color:var(--accent);}
+.ob-progress{display:flex;gap:8px;justify-content:center;margin-bottom:28px;}
+.ob-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:background .3s;}
+.ob-dot.active{background:var(--accent);box-shadow:0 0 8px var(--accent);}
+.ob-status{padding:8px 14px;border-radius:4px;font-size:.72rem;margin-bottom:16px;display:none;}
+.ob-status.ok{display:block;background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.3);color:var(--accent);}
+.ob-status.err{display:block;background:rgba(255,71,87,.1);border:1px solid rgba(255,71,87,.3);color:var(--red);}
+
+/* ── HEADER */
+.nexus-header{background:linear-gradient(180deg,#020612,var(--surface));border-bottom:1px solid var(--border);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:relative;z-index:100;}
+.nexus-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.4;}
+.header-left{display:flex;align-items:center;gap:18px;}
+.nexus-wordmark{font-family:var(--display);font-size:1.5rem;font-weight:700;letter-spacing:8px;color:var(--accent);text-shadow:var(--glow);}
+.nexus-edition{font-size:.64rem;color:var(--muted);letter-spacing:2.5px;border-left:1px solid var(--border);padding-left:18px;line-height:1.6;}
+.header-badges{display:flex;gap:8px;align-items:center;}
+.hbadge{padding:4px 11px;border:1px solid var(--border);border-radius:3px;font-size:.66rem;color:var(--muted);letter-spacing:1px;}
+.hbadge.live{border-color:var(--accent);color:var(--accent);animation:pulseBorder 2s infinite;}
+.hbadge.live::before{content:'● ';animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes pulseBorder{0%,100%{box-shadow:0 0 4px rgba(0,212,170,.2)}50%{box-shadow:0 0 12px rgba(0,212,170,.5)}}
+.ai-toggle-btn{display:flex;align-items:center;gap:8px;padding:7px 16px;background:linear-gradient(135deg,rgba(123,95,255,.15),rgba(0,212,170,.08));border:1px solid rgba(123,95,255,.4);border-radius:4px;color:var(--purple);cursor:pointer;font-family:var(--mono);font-size:.72rem;letter-spacing:2px;text-transform:uppercase;transition:all .2s;}
+.ai-toggle-btn:hover{background:linear-gradient(135deg,rgba(123,95,255,.3),rgba(0,212,170,.15));box-shadow:0 0 16px rgba(123,95,255,.3);}
+.ai-toggle-btn.active{border-color:var(--accent);color:var(--accent);}
+
+/* ── TICKER */
+.ticker-bar{background:rgba(0,0,0,.4);border-bottom:1px solid var(--border2);padding:5px 0;overflow:hidden;flex-shrink:0;}
+.ticker-track{display:flex;gap:40px;white-space:nowrap;animation:ticker 45s linear infinite;width:max-content;}
+.ticker-track:hover{animation-play-state:paused;}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{font-size:.66rem;letter-spacing:1.5px;color:var(--muted);}
+.ticker-item .tl{color:var(--accent);font-weight:600;}
+.tsep{color:var(--border);}
+
+/* ── APP BODY */
+.app-body{display:flex;flex:1;overflow:hidden;}
+.dashboard-main{flex:1;overflow-y:auto;overflow-x:hidden;transition:margin-right .3s ease;}
+.dashboard-main.chat-open{margin-right:var(--chat-w);}
+
+/* ── METRICS */
+.metrics-strip{display:flex;border-bottom:1px solid var(--border2);background:var(--surface);overflow-x:auto;flex-shrink:0;}
+.metric-cell{flex:1;min-width:110px;padding:16px 14px;text-align:center;border-right:1px solid var(--border2);cursor:pointer;transition:background .2s;position:relative;}
+.metric-cell:hover{background:rgba(0,212,170,.04);}
+.metric-cell:last-child{border-right:none;}
+.metric-cell.highlighted::after{content:'';position:absolute;inset:0;border:2px solid var(--accent);border-radius:2px;animation:flashBorder .6s ease 3;pointer-events:none;}
+@keyframes flashBorder{0%,100%{opacity:0}50%{opacity:1}}
+.metric-val{font-family:var(--display);font-size:1.8rem;font-weight:700;color:var(--accent);text-shadow:0 0 8px rgba(0,212,170,.3);line-height:1;}
+.metric-val.purple{color:var(--purple)}.metric-val.red{color:var(--red)}.metric-val.gold{color:var(--gold)}.metric-val.blue{color:var(--blue)}
+.metric-lbl{font-size:.58rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-top:5px;}
+
+/* ── GRID */
+.main-grid{padding:18px 22px;display:grid;gap:14px;grid-template-columns:1fr 1fr;}
+.main-grid .full{grid-column:1/-1;}
+
+/* ── CARDS */
+.card{background:var(--card);border:1px solid var(--border2);border-radius:6px;overflow:hidden;position:relative;transition:box-shadow .3s;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 10%,var(--accent) 50%,transparent 90%);opacity:.15;}
+.card.ai-focus{box-shadow:0 0 0 2px var(--accent),0 0 30px rgba(0,212,170,.2);}
+.card-head{padding:11px 16px;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:9px;background:rgba(0,0,0,.2);}
+.card-title{font-family:var(--display);font-size:.76rem;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--text);}
+.card-body{padding:14px 16px;}
+.chart-box{height:200px;position:relative;}
+
+/* ── TOPICS */
+.topics-grid{display:flex;flex-wrap:wrap;gap:7px;}
+.topic-tag{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;background:rgba(0,212,170,.05);border:1px solid rgba(0,212,170,.13);border-radius:3px;cursor:default;transition:all .2s;}
+.topic-tag:hover{background:rgba(0,212,170,.12);border-color:rgba(0,212,170,.4);transform:translateY(-1px);}
+.topic-name{color:var(--accent);font-weight:600;font-size:.78rem;}
+.topic-count{font-size:.62rem;color:var(--muted);background:rgba(0,0,0,.3);padding:1px 5px;border-radius:2px;}
+
+/* ── TABLES */
+.nx-table{width:100%;border-collapse:collapse;}
+.nx-table thead tr{background:rgba(0,212,170,.04);}
+.nx-table th{padding:7px 11px;text-align:left;font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);border-bottom:1px solid var(--border2);}
+.nx-table td{padding:8px 11px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--text);font-size:.78rem;}
+.nx-table tr:last-child td{border-bottom:none;}
+.nx-table tr:hover td{background:rgba(0,212,170,.025);}
+
+/* ═══════════════════════════════════════════════
+   AI PANEL
+═══════════════════════════════════════════════ */
+.ai-panel{position:fixed;top:58px;right:0;bottom:0;width:var(--chat-w);background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease;z-index:500;}
+.ai-panel.open{transform:translateX(0);}
+
+/* Panel header */
+.ai-panel-header{padding:14px 18px 12px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(123,95,255,.08),transparent);flex-shrink:0;}
+.ai-title-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.ai-glow-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--purple),var(--accent));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;box-shadow:0 0 16px rgba(123,95,255,.4);flex-shrink:0;}
+.ai-title-info{flex:1;}
+.ai-title-info h3{font-family:var(--display);font-size:.95rem;font-weight:700;letter-spacing:3px;color:var(--purple);}
+.ai-title-info p{font-size:.62rem;color:var(--muted);margin-top:2px;letter-spacing:1px;}
+.ai-header-actions{display:flex;align-items:center;gap:10px;}
+.api-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0;}
+.api-dot.connected{background:var(--accent);box-shadow:0 0 6px var(--accent);animation:blink 2s infinite;}
+.api-dot.error{background:var(--red);}
+.hdr-clear-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-family:var(--mono);font-size:.62rem;letter-spacing:1px;text-transform:uppercase;transition:color .2s;padding:0;}
+.hdr-clear-btn:hover{color:var(--red);}
+
+/* Key input inline */
+.key-row{display:flex;gap:7px;align-items:center;}
+.key-input{flex:1;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:4px;padding:7px 11px;color:var(--text);font-family:var(--mono);font-size:.72rem;letter-spacing:.5px;outline:none;transition:border-color .2s;}
+.key-input:focus{border-color:var(--purple);}
+.key-input::placeholder{color:var(--muted);font-size:.68rem;}
+.key-test-btn{padding:6px 12px;background:rgba(123,95,255,.15);border:1px solid rgba(123,95,255,.3);border-radius:4px;color:var(--purple);font-family:var(--mono);font-size:.68rem;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.key-test-btn:hover{background:rgba(123,95,255,.3);}
+.key-hint{font-size:.6rem;color:var(--muted);margin-top:5px;letter-spacing:.5px;}
+
+/* AI Status bar */
+.ai-status-bar{padding:8px 18px;background:rgba(0,0,0,.2);border-bottom:1px solid var(--border2);flex-shrink:0;font-size:.66rem;color:var(--muted);letter-spacing:1px;min-height:32px;display:flex;align-items:center;gap:8px;}
+.ai-status-bar .ai-state-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);}
+.ai-status-bar.thinking .ai-state-dot{background:var(--purple);box-shadow:0 0 6px var(--purple);animation:blink .8s infinite;}
+.ai-status-bar.ready .ai-state-dot{background:var(--accent);}
+
+/* Quick suggestions */
+.suggestions-area{padding:10px 14px;border-bottom:1px solid var(--border2);background:rgba(0,0,0,.1);flex-shrink:0;}
+.sug-label{font-size:.58rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:7px;}
+.sug-grid{display:flex;flex-wrap:wrap;gap:5px;}
+.sug-btn{padding:5px 10px;background:rgba(0,212,170,.05);border:1px solid rgba(0,212,170,.13);border-radius:3px;color:var(--accent);font-family:var(--mono);font-size:.64rem;cursor:pointer;transition:all .15s;text-align:left;letter-spacing:.3px;}
+.sug-btn:hover{background:rgba(0,212,170,.15);border-color:var(--accent);}
+.sug-btn.ai-suggested{border-color:rgba(123,95,255,.4);color:var(--purple);background:rgba(123,95,255,.06);animation:suggestPulse 2s ease-in-out 2;}
+@keyframes suggestPulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 10px rgba(123,95,255,.4)}}
+
+/* Messages */
+.chat-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;}
+.msg{display:flex;flex-direction:column;gap:5px;animation:fadeUp .2s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.msg-role{font-size:.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:5px;}
+.msg-role::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;}
+.msg.user .msg-role{color:var(--blue);}
+.msg.user .msg-role::before{background:var(--blue);}
+.msg.assistant .msg-role{color:var(--accent);}
+.msg.assistant .msg-role::before{background:var(--accent);}
+.msg.system .msg-role{color:var(--muted);}
+.msg.system .msg-role::before{background:var(--muted);}
+.msg.guide .msg-role{color:var(--purple);}
+.msg.guide .msg-role::before{background:var(--purple);}
+.msg-bubble{padding:11px 13px;border-radius:4px;line-height:1.75;font-size:.79rem;white-space:pre-wrap;word-break:break-word;}
+.msg.user .msg-bubble{background:rgba(61,154,255,.07);border:1px solid rgba(61,154,255,.18);border-left:3px solid var(--blue);}
+.msg.assistant .msg-bubble{background:rgba(0,212,170,.04);border:1px solid rgba(0,212,170,.13);border-left:3px solid var(--accent);}
+.msg.system .msg-bubble{background:rgba(0,0,0,.25);border:1px dashed var(--border);color:var(--muted);font-size:.72rem;}
+.msg.guide .msg-bubble{background:rgba(123,95,255,.06);border:1px solid rgba(123,95,255,.2);border-left:3px solid var(--purple);color:var(--text);}
+
+/* AI action buttons inside messages */
+.ai-action-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.ai-action-btn{padding:5px 11px;background:rgba(123,95,255,.12);border:1px solid rgba(123,95,255,.25);border-radius:3px;color:var(--purple);font-family:var(--mono);font-size:.66rem;cursor:pointer;transition:all .15s;}
+.ai-action-btn:hover{background:rgba(123,95,255,.25);border-color:var(--purple);}
+
+/* Typing */
+.typing-indicator{display:flex;gap:4px;align-items:center;padding:4px 0;}
+.typing-dot{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:typing 1.2s infinite;}
+.typing-dot:nth-child(2){animation-delay:.2s;}
+.typing-dot:nth-child(3){animation-delay:.4s;}
+@keyframes typing{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1.2)}}
+
+/* Input area */
+.chat-input-area{padding:12px 14px;border-top:1px solid var(--border);background:rgba(0,0,0,.2);flex-shrink:0;}
+.input-row{display:flex;gap:7px;align-items:flex-end;}
+.chat-textarea{flex:1;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:4px;padding:9px 12px;color:var(--text);font-family:var(--mono);font-size:.78rem;line-height:1.5;resize:none;outline:none;transition:border-color .2s;min-height:38px;max-height:110px;overflow-y:auto;}
+.chat-textarea:focus{border-color:var(--accent);}
+.chat-textarea::placeholder{color:var(--muted);}
+.send-btn{width:38px;height:38px;background:linear-gradient(135deg,var(--purple),var(--accent));border:none;border-radius:4px;color:#fff;cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;}
+.send-btn:hover{transform:scale(1.05);box-shadow:0 0 14px rgba(123,95,255,.5);}
+.send-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+.input-hint{font-size:.58rem;color:var(--muted);text-align:right;margin-top:5px;letter-spacing:.5px;}
+
+/* Footer */
+.nexus-footer{background:var(--surface);border-top:1px solid var(--border2);padding:8px 22px;display:flex;justify-content:space-between;align-items:center;font-size:.6rem;color:var(--muted);letter-spacing:.8px;flex-shrink:0;}
+
+@media(max-width:900px){.main-grid{grid-template-columns:1fr;}.main-grid .full{grid-column:1;}:root{--chat-w:100vw;}}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════
+     ONBOARDING OVERLAY
+══════════════════════════════════════════════════ -->
+<div id="onboard">
+  <div class="onboard-box">
+    <div class="ob-logo">NEXUS</div>
+    <div class="ob-sub">Burlington · Sentinel Edition v3.0 · Clear Glass Inc</div>
+
+    <div class="ob-progress">
+      <div class="ob-dot active" id="od0"></div>
+      <div class="ob-dot" id="od1"></div>
+      <div class="ob-dot" id="od2"></div>
+    </div>
+
+    <!-- Step 0: Welcome -->
+    <div class="ob-step active" id="ob-step-0">
+      <div class="ob-title">Welcome to Burlington Nexus</div>
+      <div class="ob-body">
+        Your real-time social intelligence platform is ready.<br><br>
+        The <strong style="color:var(--accent)">AI Analyst</strong> — powered by Claude — is built directly into this dashboard. It knows everything in your scan and will guide you through the intelligence, answer your questions, and highlight what matters most.<br><br>
+        Let's get your AI connected in 2 quick steps.
+      </div>
+      <button class="ob-btn" onclick="obNext(1)">Get Started →</button>
+      <span class="ob-skip" onclick="skipOnboard()">Skip setup and go straight to dashboard</span>
+    </div>
+
+    <!-- Step 1: API Key -->
+    <div class="ob-step" id="ob-step-1">
+      <div class="ob-title">Connect Your AI Analyst</div>
+      <div class="ob-body">
+        Paste your <strong style="color:var(--accent)">Anthropic API key</strong> below to activate the AI Analyst.<br><br>
+        Don't have a key? Go to <strong style="color:var(--purple)">console.anthropic.com</strong> → API Keys → Create Key.<br>
+        Your key starts with <code style="color:var(--accent)">sk-ant-</code> and is never stored anywhere.
+      </div>
+      <div class="ob-key-wrap">
+        <input type="password" class="ob-key-input" id="ob-key" placeholder="sk-ant-api03-..." oninput="obKeyInput()">
+      </div>
+      <div class="ob-status" id="obStatus"></div>
+      <button class="ob-btn" id="obVerifyBtn" onclick="obVerifyKey()" disabled>Verify & Connect →</button>
+      <button class="ob-btn secondary" onclick="obNext(2)">Skip for now</button>
+    </div>
+
+    <!-- Step 2: Ready -->
+    <div class="ob-step" id="ob-step-2">
+      <div class="ob-title" id="ob2title">AI Analyst Connected ✓</div>
+      <div class="ob-body" id="ob2body">
+        Your AI Analyst is live and ready.<br><br>
+        The panel on the right side of your dashboard is your direct line to the AI. It already knows all your Burlington scan data — just ask it anything.<br><br>
+        <strong style="color:var(--accent)">It will greet you automatically</strong> and suggest where to start.
+      </div>
+      <button class="ob-btn" onclick="launchDashboard()">Launch Dashboard →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════════════ -->
+<header class="nexus-header">
+  <div class="header-left">
+    <div class="nexus-wordmark">NEXUS</div>
+    <div class="nexus-edition">Burlington · Sentinel v3.0<br><span style="opacity:.6;font-size:.58rem">Clear Glass Inc — Market Intelligence</span></div>
+  </div>
+  <div class="header-badges">
+    <span class="hbadge live">LIVE SCAN</span>
+    <span class="hbadge">📍 Burlington, ON · 10km</span>
+    <span class="hbadge" id="clockBadge">--:--:--</span>
+    <button class="ai-toggle-btn" id="aiToggle" onclick="toggleAI()">◈ AI ANALYST</button>
+  </div>
+</header>
+
+<!-- TICKER -->
+<div class="ticker-bar">
+  <div class="ticker-track" id="tickerTrack"></div>
+</div>
+
+<!-- APP BODY -->
+<div class="app-body">
+  <div class="dashboard-main" id="dashMain">
+    <div class="metrics-strip" id="metricsStrip"></div>
+    <div class="main-grid">
+      <div class="card" id="card-hashtag">
+        <div class="card-head"><span>📊</span><span class="card-title">Hashtag Intelligence</span></div>
+        <div class="card-body"><div class="chart-box"><canvas id="hashChart"></canvas></div></div>
+      </div>
+      <div class="card" id="card-sentiment">
+        <div class="card-head"><span>💬</span><span class="card-title">Sentiment Time Series</span></div>
+        <div class="card-body"><div class="chart-box"><canvas id="sentChart"></canvas></div></div>
+      </div>
+      <div class="card" id="card-peak">
+        <div class="card-head"><span>⏰</span><span class="card-title">Peak Engagement Radar</span></div>
+        <div class="card-body"><div class="chart-box"><canvas id="peakChart"></canvas></div></div>
+      </div>
+      <div class="card" id="card-forecast">
+        <div class="card-head"><span>🔮</span><span class="card-title">7-Day Predictive Forecast</span></div>
+        <div class="card-body"><div class="chart-box"><canvas id="predChart"></canvas></div></div>
+      </div>
+      <div class="card full" id="card-topics">
+        <div class="card-head"><span>🔥</span><span class="card-title">Trending Topics · Burlington Community Signals</span></div>
+        <div class="card-body"><div class="topics-grid" id="topicsGrid"></div></div>
+      </div>
+      <div class="card" id="card-influencers">
+        <div class="card-head"><span>👥</span><span class="card-title">Influencer Velocity</span></div>
+        <div class="card-body" style="overflow-x:auto"><table class="nx-table" id="influTable"></table></div>
+      </div>
+      <div class="card" id="card-crisis">
+        <div class="card-head"><span>🚨</span><span class="card-title">Crisis Detection · Anomaly Engine</span></div>
+        <div class="card-body" id="crisisPanel"></div>
+      </div>
+      <div class="card full" id="card-business">
+        <div class="card-head"><span>🏪</span><span class="card-title">Business Intelligence Map</span></div>
+        <div class="card-body" style="overflow-x:auto"><table class="nx-table" id="bizTable"></table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       AI PANEL
+  ══════════════════════════════════════════════════ -->
+  <aside class="ai-panel" id="aiPanel">
+
+    <!-- Panel Header -->
+    <div class="ai-panel-header">
+      <div class="ai-title-row">
+        <div class="ai-glow-icon">◈</div>
+        <div class="ai-title-info">
+          <h3>NEXUS AI ANALYST</h3>
+          <p>Powered by Claude · Burlington Intelligence</p>
+        </div>
+        <div class="ai-header-actions">
+          <div class="api-dot" id="apiDot"></div>
+          <span id="apiStatusText" style="font-size:.62rem;color:var(--muted)">No key</span>
+          <button class="hdr-clear-btn" onclick="clearChat()">✕ Clear</button>
+        </div>
+      </div>
+      <div class="key-row">
+        <input type="password" class="key-input" id="apiKeyInput" placeholder="sk-ant-... paste key here" oninput="onKeyInput()">
+        <button class="key-test-btn" onclick="testKey()">Test ✓</button>
+      </div>
+      <div class="key-hint">Key sent directly to Anthropic · not stored · not shared</div>
+    </div>
+
+    <!-- AI Status bar -->
+    <div class="ai-status-bar ready" id="aiStatusBar">
+      <div class="ai-state-dot"></div>
+      <span id="aiStatusMsg">AI Analyst ready — ask anything about your Burlington scan</span>
+    </div>
+
+    <!-- Quick Suggestions -->
+    <div class="suggestions-area">
+      <div class="sug-label">Quick Intelligence Queries</div>
+      <div class="sug-grid" id="sugGrid">
+        <button class="sug-btn" onclick="qs('Give me a full executive intelligence summary of the Burlington scan — highlight the top 3 things I should act on today.')">📋 Full Summary</button>
+        <button class="sug-btn" onclick="qs('Analyse the top hashtags driving the most engagement and explain why. What should I do with this?')">🏷 Hashtags</button>
+        <button class="sug-btn" onclick="qs('Review the sentiment trend and tell me if there are any concerns I should flag to stakeholders.')">💬 Sentiment</button>
+        <button class="sug-btn" onclick="qs('Profile the top influencers and give me a specific engagement plan for each one.')">👥 Influencers</button>
+        <button class="sug-btn" onclick="qs('What does the 7-day forecast suggest and what actions should I take now to get ahead of the trend?')">🔮 Forecast</button>
+        <button class="sug-btn" onclick="qs('Are there any crisis signals or statistical anomalies that need my immediate attention?')">🚨 Crisis Check</button>
+        <button class="sug-btn" onclick="qs('Which local businesses should Clear Glass Inc consider partnering with based on social performance?')">🏪 Biz Intel</button>
+        <button class="sug-btn" onclick="qs('Draft a one-page stakeholder briefing email I can send to leadership based on this week\'s scan data.')">✉ Draft Email</button>
+        <button class="sug-btn ai-suggested" id="aiSugBtn" onclick="qs('Walk me through each section of the dashboard and explain what the data means for Burlington right now.')">◈ Guide Me Through the Dashboard</button>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <!-- Input -->
+    <div class="chat-input-area">
+      <div class="input-row">
+        <textarea class="chat-textarea" id="chatInput" placeholder="Ask the AI about your Burlington intelligence..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>➤</button>
+      </div>
+      <div class="input-hint">Enter to send · Shift+Enter for new line</div>
+    </div>
+  </aside>
+</div>
+
+<footer class="nexus-footer">
+  <span>© 2024 Clear Glass Inc · All Rights Reserved · Confidential &amp; Proprietary</span>
+  <span id="footerStats">Loading...</span>
+</footer>
+
+<script>
+'use strict';
+
+/* ══════════════════════════════════════════════════
+   SCAN DATA (replace with PS1 JSON output)
+══════════════════════════════════════════════════ */
+const D = {
+  runtime:{ totalPosts:2847,totalEngagement:48320,uniqueAuthors:634,sentimentBaseline:.68,anomaliesDetected:2,alertsFired:1 },
+  hashtags:[
+    {tag:'#BurlON',count:412,avgEngagement:38,totalEngagement:15656},
+    {tag:'#BurlingtonOntario',count:298,avgEngagement:29,totalEngagement:8642},
+    {tag:'#DowntownBurlington',count:201,avgEngagement:52,totalEngagement:10452},
+    {tag:'#BurlingtonEats',count:187,avgEngagement:61,totalEngagement:11407},
+    {tag:'#ExploreBurlington',count:156,avgEngagement:44,totalEngagement:6864},
+    {tag:'#BurlingtonEvents',count:143,avgEngagement:33,totalEngagement:4719},
+    {tag:'#BurlingtonBusiness',count:128,avgEngagement:27,totalEngagement:3456},
+    {tag:'#BurlingtonLife',count:112,avgEngagement:22,totalEngagement:2464},
+    {tag:'#HaltonRegion',count:98,avgEngagement:19,totalEngagement:1862},
+    {tag:'#BurlingtonCanada',count:87,avgEngagement:17,totalEngagement:1479},
+  ],
+  sentiment:[
+    {date:'Jan 13',positive:.62,negative:.18,neutral:.20,posts:312},
+    {date:'Jan 14',positive:.58,negative:.22,neutral:.20,posts:298},
+    {date:'Jan 15',positive:.71,negative:.14,neutral:.15,posts:445},
+    {date:'Jan 16',positive:.65,negative:.20,neutral:.15,posts:387},
+    {date:'Jan 17',positive:.74,negative:.12,neutral:.14,posts:512},
+    {date:'Jan 18',positive:.69,negative:.16,neutral:.15,posts:478},
+    {date:'Jan 19',positive:.72,negative:.14,neutral:.14,posts:415},
+  ],
+  peakHours:[
+    {label:'7 AM',posts:89,engagement:1820},{label:'9 AM',posts:142,engagement:3240},
+    {label:'12 PM',posts:198,engagement:5100},{label:'5 PM',posts:312,engagement:8900},
+    {label:'7 PM',posts:287,engagement:7650},{label:'9 PM',posts:234,engagement:6200},
+    {label:'11 PM',posts:156,engagement:3800},
+  ],
+  predictions:[
+    {date:'Jan 20',posts:428,confidence:.91},{date:'Jan 21',posts:445,confidence:.88},
+    {date:'Jan 22',posts:398,confidence:.84},{date:'Jan 23',posts:467,confidence:.81},
+    {date:'Jan 24',posts:489,confidence:.77},{date:'Jan 25',posts:512,confidence:.73},
+    {date:'Jan 26',posts:534,confidence:.69},
+  ],
+  topics:[
+    {topic:'waterfront',count:312,totalEngagement:8420},{topic:'restaurant',count:287,totalEngagement:7640},
+    {topic:'festival',count:234,totalEngagement:9100},{topic:'shopping',count:198,totalEngagement:4320},
+    {topic:'cycling',count:178,totalEngagement:5670},{topic:'community',count:165,totalEngagement:3980},
+    {topic:'realestate',count:156,totalEngagement:4210},{topic:'arts',count:143,totalEngagement:3760},
+    {topic:'fitness',count:132,totalEngagement:2980},{topic:'foodtruck',count:121,totalEngagement:4890},
+    {topic:'market',count:118,totalEngagement:3120},{topic:'sunset',count:112,totalEngagement:5440},
+  ],
+  influencers:[
+    {author:'BurlingtonFoodie',platform:'Twitter',posts:28,engagement:4820,score:312},
+    {author:'DowntownBurlNews',platform:'Twitter',posts:41,engagement:3640,score:289},
+    {author:'HaltonLifestyle',platform:'Reddit',posts:19,engagement:5120,score:276},
+    {author:'BurlON_Events',platform:'Twitter',posts:33,engagement:2980,score:241},
+    {author:'LakeOntarioViews',platform:'Twitter',posts:22,engagement:3200,score:218},
+    {author:'BurlingtonBiz',platform:'Reddit',posts:15,engagement:2640,score:196},
+  ],
+  businesses:[
+    {name:'Spencer Smith Park Café',category:'café',rating:4.7,reviews:892,mentions:48},
+    {name:'The Pearle Hotel & Spa',category:'hotel',rating:4.8,reviews:1243,mentions:67},
+    {name:'Burlington Farmers Market',category:'market',rating:4.9,reviews:756,mentions:112},
+    {name:'Mapleview Shopping Centre',category:'mall',rating:4.2,reviews:2100,mentions:89},
+    {name:'Tansley Woods Recreation',category:'rec',rating:4.6,reviews:445,mentions:22},
+    {name:'The Stocking Bar',category:'restaurant',rating:4.4,reviews:387,mentions:28},
+  ],
+  crisisEvents:[{source:'Twitter',text:'Road closure on Brant St affecting downtown businesses',score:.42,alert:false}],
+  anomalies:[
+    {date:'Jan 15',volume:445,zScore:2.71,mean:298},
+    {date:'Jan 17',volume:512,zScore:3.14,mean:298},
+  ]
+};
+
+/* ══════════════════════════════════════════════════
+   ONBOARDING
+══════════════════════════════════════════════════ */
+let obKey = '';
+let obKeyValid = false;
+
+function obNext(step) {
+  [0,1,2].forEach(i => {
+    document.getElementById('ob-step-'+i).classList.remove('active');
+    document.getElementById('od'+i).classList.remove('active');
+  });
+  document.getElementById('ob-step-'+step).classList.add('active');
+  document.getElementById('od'+step).classList.add('active');
+}
+
+function obKeyInput() {
+  const val = document.getElementById('ob-key').value.trim();
+  obKey = val;
+  document.getElementById('obVerifyBtn').disabled = !val.startsWith('sk-ant-') || val.length < 20;
+  document.getElementById('obStatus').className = 'ob-status';
+}
+
+async function obVerifyKey() {
+  const key = document.getElementById('ob-key').value.trim();
+  const st = document.getElementById('obStatus');
+  st.className = 'ob-status';
+  st.textContent = 'Verifying...';
+  st.className = 'ob-status ok';
+  document.getElementById('obVerifyBtn').disabled = true;
+
+  try {
+    const res = await callAnthropicRaw(key, 'Reply with exactly: CONNECTED', 'You verify API keys.');
+    if (res.ok) {
+      obKey = key;
+      obKeyValid = true;
+      document.getElementById('apiKeyInput').value = key;
+      onKeyInput();
+      obNext(2);
+    } else {
+      st.textContent = '✕ Key invalid or insufficient credits. Check your Anthropic account.';
+      st.className = 'ob-status err';
+      document.getElementById('obVerifyBtn').disabled = false;
+    }
+  } catch(e) {
+    st.textContent = '✕ Network error — check your connection and try again.';
+    st.className = 'ob-status err';
+    document.getElementById('obVerifyBtn').disabled = false;
+  }
+}
+
+function skipOnboard() {
+  document.getElementById('ob2title').textContent = 'Dashboard Ready';
+  document.getElementById('ob2body').textContent = 'You can add your Anthropic API key at any time using the field in the AI Analyst panel. Click "◈ AI ANALYST" in the top right to open it.';
+  obNext(2);
+}
+
+function launchDashboard() {
+  document.getElementById('onboard').style.display = 'none';
+  openAIPanel();
+  setTimeout(() => {
+    if (obKeyValid || document.getElementById('apiKeyInput').value.startsWith('sk-ant-')) {
+      aiGreet();
+    } else {
+      addMsg('guide', '◈ AI ANALYST', 'Welcome to Burlington Nexus. To activate your AI Analyst, enter your Anthropic API key in the field above, then click Test ✓.\n\nOnce connected, I\'ll brief you on your Burlington intelligence data and guide you through the key insights.', true);
+    }
+  }, 600);
+}
+
+/* ══════════════════════════════════════════════════
+   AI PANEL TOGGLE
+══════════════════════════════════════════════════ */
+let aiOpen = false;
+
+function toggleAI() {
+  if (aiOpen) closeAIPanel(); else openAIPanel();
+}
+
+function openAIPanel() {
+  aiOpen = true;
+  document.getElementById('aiPanel').classList.add('open');
+  document.getElementById('dashMain').classList.add('chat-open');
+  const btn = document.getElementById('aiToggle');
+  btn.classList.add('active');
+  btn.textContent = '◈ AI ANALYST ✕';
+}
+
+function closeAIPanel() {
+  aiOpen = false;
+  document.getElementById('aiPanel').classList.remove('open');
+  document.getElementById('dashMain').classList.remove('chat-open');
+  const btn = document.getElementById('aiToggle');
+  btn.classList.remove('active');
+  btn.textContent = '◈ AI ANALYST';
+}
+
+/* ══════════════════════════════════════════════════
+   KEY MANAGEMENT
+══════════════════════════════════════════════════ */
+function getKey() { return document.getElementById('apiKeyInput').value.trim(); }
+
+function onKeyInput() {
+  const key = getKey();
+  const dot = document.getElementById('apiDot');
+  const txt = document.getElementById('apiStatusText');
+  const btn = document.getElementById('sendBtn');
+  if (key.startsWith('sk-ant-') && key.length > 20) {
+    dot.className = 'api-dot connected';
+    txt.textContent = 'Connected';
+    txt.style.color = 'var(--accent)';
+    btn.disabled = false;
+    setStatus('ready', 'AI Analyst ready — ask anything about your Burlington scan');
+  } else if (key.length > 0) {
+    dot.className = 'api-dot error';
+    txt.textContent = 'Invalid';
+    txt.style.color = 'var(--red)';
+    btn.disabled = true;
+  } else {
+    dot.className = 'api-dot';
+    txt.textContent = 'No key';
+    txt.style.color = 'var(--muted)';
+    btn.disabled = true;
+  }
+}
+
+async function testKey() {
+  const key = getKey();
+  if (!key) { addMsg('system', 'SYSTEM', 'Enter your API key first.'); return; }
+  setStatus('thinking', 'Testing API connection...');
+  try {
+    const res = await callAnthropicRaw(key, 'Reply: KEY_VALID', 'You test API keys.');
+    if (res.ok) {
+      setStatus('ready', 'API key verified and connected ✓');
+      addMsg('system', 'SYSTEM', '✓ API key verified. AI Analyst is now connected to your Burlington intelligence data.');
+    } else {
+      setStatus('ready', 'Key test failed — check your key');
+      addMsg('system', 'SYSTEM', '✕ Key verification failed. Check your Anthropic account has credits available.');
+    }
+  } catch(e) {
+    setStatus('ready', 'Network error during test');
+    addMsg('system', 'SYSTEM', '✕ Network error: '+e.message);
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   AI CONTEXT
+══════════════════════════════════════════════════ */
+function buildContext() {
+  const topTags = D.hashtags.slice(0,5).map(h=>`${h.tag}(${h.count} uses, ${h.totalEngagement} eng)`).join(', ');
+  const topTopics = D.topics.slice(0,6).map(t=>`${t.topic}(${t.count})`).join(', ');
+  const topInflu = D.influencers.slice(0,3).map(i=>`@${i.author} score:${i.score}`).join(', ');
+  const ls = D.sentiment[D.sentiment.length-1];
+  const fcast = D.predictions.slice(0,3).map(p=>`${p.date}:${p.posts}posts(${Math.round(p.confidence*100)}%conf)`).join(', ');
+  const topBiz = D.businesses.sort((a,b)=>b.mentions-a.mentions).slice(0,3).map(b=>`${b.name}(${b.mentions}mentions,★${b.rating})`).join(', ');
+
+  return `You are the Burlington Nexus AI Analyst — a senior intelligence advisor embedded in the Burlington Nexus platform by Clear Glass Inc. You have full context of the current real-time Burlington, Ontario social media intelligence scan.
+
+SCAN DATA SUMMARY:
+• Total posts: ${D.runtime.totalPosts.toLocaleString()} | Engagement: ${D.runtime.totalEngagement.toLocaleString()} | Authors: ${D.runtime.uniqueAuthors}
+• Sentiment baseline: ${Math.round(D.runtime.sentimentBaseline*100)}% positive | Anomalies: ${D.runtime.anomaliesDetected} | Alerts: ${D.runtime.alertsFired}
+• Top hashtags: ${topTags}
+• Trending topics: ${topTopics}
+• Latest sentiment (${ls.date}): Positive ${Math.round(ls.positive*100)}%, Negative ${Math.round(ls.negative*100)}%, Neutral ${Math.round(ls.neutral*100)}%
+• Top influencers: ${topInflu}
+• Top businesses by mention: ${topBiz}
+• 7-day forecast (next 3 days): ${fcast} — Trend: RISING
+• Crisis events: ${D.crisisEvents.length} — "${D.crisisEvents[0].text}" (score: ${D.crisisEvents[0].score})
+• Anomalies: ${D.anomalies.map(a=>`${a.date} Z=${a.zScore}(${a.volume}posts vs mean ${a.mean})`).join('; ')}
+
+DASHBOARD SECTIONS (you can reference these by name to direct the user's attention):
+- Hashtag Intelligence chart (top left)
+- Sentiment Time Series chart (top right)
+- Peak Engagement Radar (middle left)
+- 7-Day Predictive Forecast (middle right)
+- Trending Topics panel (full width)
+- Influencer Velocity table
+- Crisis Detection & Anomaly Engine
+- Business Intelligence Map
+
+BEHAVIOUR GUIDELINES:
+• Respond as a professional intelligence analyst — specific, data-driven, and actionable
+• Reference actual numbers from the scan data above
+• When relevant, direct the user to specific dashboard sections by name
+• Offer follow-up questions or next steps at the end of each response
+• Keep responses clear and scannable — use short paragraphs
+• You may suggest what the user should look at next on the dashboard`;
+}
+
+/* ══════════════════════════════════════════════════
+   AI GREETING (auto-runs on launch)
+══════════════════════════════════════════════════ */
+async function aiGreet() {
+  const greetPrompt = `Generate a brief, professional AI analyst greeting for the Burlington Nexus dashboard. 
+Include:
+1. A one-sentence intro confirming you have their Burlington scan data loaded
+2. The single most important insight from the data (reference a specific number)
+3. Two specific suggested next actions for the user
+Keep it under 120 words. Be direct and professional.`;
+
+  await streamToChat(greetPrompt, true);
+}
+
+/* ══════════════════════════════════════════════════
+   DASHBOARD SECTION HIGHLIGHTING
+══════════════════════════════════════════════════ */
+function highlightCard(cardId) {
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('ai-focus'));
+  const card = document.getElementById('card-'+cardId);
+  if (card) {
+    card.classList.add('ai-focus');
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    setTimeout(() => card.classList.remove('ai-focus'), 4000);
+  }
+}
+
+function highlightMetric(idx) {
+  document.querySelectorAll('.metric-cell').forEach(m => m.classList.remove('highlighted'));
+  const cells = document.querySelectorAll('.metric-cell');
+  if (cells[idx]) {
+    cells[idx].classList.add('highlighted');
+    setTimeout(() => cells[idx].classList.remove('highlighted'), 3000);
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   CHAT ENGINE
+══════════════════════════════════════════════════ */
+const chatHistory = [];
+let isStreaming = false;
+
+function setStatus(state, msg) {
+  const bar = document.getElementById('aiStatusBar');
+  bar.className = 'ai-status-bar ' + state;
+  document.getElementById('aiStatusMsg').textContent = msg;
+}
+
+function qs(text) {
+  document.getElementById('chatInput').value = text;
+  sendMessage();
+}
+
+function handleKey(e) {
+  if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+function autoResize(el) {
+  el.style.height='auto';
+  el.style.height=Math.min(el.scrollHeight,110)+'px';
+}
+
+function clearChat() {
+  chatHistory.length=0;
+  document.getElementById('chatMessages').innerHTML='';
+  addMsg('system','SYSTEM','Chat cleared. AI Analyst is ready for new questions.');
+}
+
+function addMsg(type, roleLabel, content, withActions = false) {
+  const msgs = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'msg '+type;
+  const actionsHTML = withActions && type==='guide' ? `
+    <div class="ai-action-row">
+      <button class="ai-action-btn" onclick="qs('Give me a full executive summary of the Burlington scan.')">📋 Full Briefing</button>
+      <button class="ai-action-btn" onclick="qs('Walk me through each dashboard section and explain what it means.')">◈ Guide Me</button>
+      <button class="ai-action-btn" onclick="qs('What are the top 3 actions I should take today?')">⚡ Top Actions</button>
+    </div>` : '';
+  div.innerHTML = `<div class="msg-role">${escHtml(roleLabel)}</div><div class="msg-bubble">${escHtml(content)}${actionsHTML}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div.querySelector('.msg-bubble');
+}
+
+function addStreamMsg(roleLabel) {
+  const msgs = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'msg assistant';
+  div.innerHTML = `<div class="msg-role">${escHtml(roleLabel)}</div><div class="msg-bubble" id="streamBubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div.querySelector('#streamBubble');
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text || isStreaming) return;
+  const key = getKey();
+  if (!key) { addMsg('system','SYSTEM','Please enter your Anthropic API key above to use the AI Analyst.'); return; }
+  input.value=''; input.style.height='auto';
+  addMsg('user','YOU',text);
+  chatHistory.push({role:'user',content:text});
+  await streamToChat(text, false);
+}
+
+async function streamToChat(userText, isGreeting) {
+  const key = getKey();
+  if (!key) return;
+  isStreaming = true;
+  document.getElementById('sendBtn').disabled = true;
+  setStatus('thinking', isGreeting ? 'AI Analyst initialising your intelligence briefing...' : 'AI Analyst processing...');
+
+  const bubble = addStreamMsg('NEXUS AI');
+  let fullText = '';
+
+  const msgs = isGreeting
+    ? [{role:'user',content:userText}]
+    : chatHistory.slice(-12).map((m,i,arr) => {
+        if (i===0 && m.role==='user') {
+          return {role:'user',content:m.content};
+        }
+        return m;
+      });
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':key,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1200,
+        stream:true,
+        system:buildContext(),
+        messages:msgs
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(()=>({error:{message:res.statusText}}));
+      bubble.textContent = '⚠ API Error: '+(err?.error?.message||'Unknown error')+'\n\nCheck your API key has credits.';
+      bubble.style.color='var(--red)';
+      setStatus('ready','API error — check key');
+    } else {
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      bubble.innerHTML = '';
+      let buffer = '';
+
+      while (true) {
+        const {done, value} = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, {stream:true});
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6).trim();
+            if (data==='[DONE]') continue;
+            try {
+              const json = JSON.parse(data);
+              if (json.type==='content_block_delta' && json.delta?.type==='text_delta') {
+                fullText += json.delta.text;
+                bubble.textContent = fullText;
+                document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+              }
+            } catch(_) {}
+          }
+        }
+      }
+
+      if (!isGreeting) chatHistory.push({role:'assistant',content:fullText});
+      setStatus('ready','AI Analyst ready — ask a follow-up or choose a new query');
+
+      // Auto-highlight relevant cards based on content
+      autoHighlight(fullText);
+    }
+  } catch(err) {
+    bubble.textContent = '⚠ Network error: '+err.message;
+    bubble.style.color='var(--red)';
+    setStatus('ready','Connection error');
+  }
+
+  isStreaming = false;
+  const keyOk = getKey().startsWith('sk-ant-') && getKey().length>20;
+  document.getElementById('sendBtn').disabled = !keyOk;
+}
+
+function autoHighlight(text) {
+  const tl = text.toLowerCase();
+  if (tl.includes('hashtag')) highlightCard('hashtag');
+  else if (tl.includes('sentiment')) highlightCard('sentiment');
+  else if (tl.includes('forecast') || tl.includes('predict')) highlightCard('forecast');
+  else if (tl.includes('peak') || tl.includes('hour')) highlightCard('peak');
+  else if (tl.includes('influencer')) highlightCard('influencers');
+  else if (tl.includes('crisis') || tl.includes('anomal')) highlightCard('crisis');
+  else if (tl.includes('business') || tl.includes('partner')) highlightCard('business');
+  else if (tl.includes('topic') || tl.includes('trending')) highlightCard('topics');
+}
+
+async function callAnthropicRaw(key, userMsg, sysMsg) {
+  return fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:50,system:sysMsg,messages:[{role:'user',content:userMsg}]})
+  });
+}
+
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
+
+/* ══════════════════════════════════════════════════
+   DASHBOARD BUILDERS
+══════════════════════════════════════════════════ */
+function buildMetrics() {
+  const r = D.runtime;
+  const cells = [
+    {val:r.totalPosts.toLocaleString(),lbl:'Total Posts',cls:''},
+    {val:r.totalEngagement.toLocaleString(),lbl:'Engagement',cls:''},
+    {val:r.uniqueAuthors,lbl:'Unique Authors',cls:''},
+    {val:Math.round(r.sentimentBaseline*100)+'%',lbl:'Sentiment',cls:'blue'},
+    {val:D.businesses.length,lbl:'Businesses',cls:''},
+    {val:D.influencers.length,lbl:'Influencers',cls:'purple'},
+    {val:D.topics.length,lbl:'Trending Topics',cls:''},
+    {val:r.anomaliesDetected,lbl:'Anomalies',cls:r.anomaliesDetected>0?'gold':''},
+    {val:D.crisisEvents.length,lbl:'Crisis Events',cls:D.crisisEvents.length>0?'red':''},
+    {val:r.alertsFired,lbl:'Alerts Fired',cls:r.alertsFired>0?'red':''},
+  ];
+  document.getElementById('metricsStrip').innerHTML = cells.map(c=>
+    `<div class="metric-cell" onclick="metricClick('${c.lbl}')">
+      <div class="metric-val ${c.cls}">${c.val}</div>
+      <div class="metric-lbl">${c.lbl}</div>
+    </div>`
+  ).join('');
+}
+
+function metricClick(label) {
+  if (!aiOpen) openAIPanel();
+  qs(`Explain what "${label}" means in my Burlington scan and what I should do about it.`);
+}
+
+function buildTopics() {
+  document.getElementById('topicsGrid').innerHTML = D.topics.map(t=>
+    `<div class="topic-tag" onclick="topicClick('${t.topic}')">
+      <span class="topic-name">${t.topic}</span>
+      <span class="topic-count">${t.count}</span>
+    </div>`
+  ).join('');
+}
+
+function topicClick(topic) {
+  if (!aiOpen) openAIPanel();
+  qs(`Analyse the topic "${topic}" in my Burlington scan. What's driving it and what should I do?`);
+}
+
+function buildInfluencers() {
+  const hd='<thead><tr><th>Author</th><th>Platform</th><th>Posts</th><th>Engagement</th><th>Score</th></tr></thead>';
+  const bd='<tbody>'+D.influencers.map(i=>
+    `<tr style="cursor:pointer" onclick="influClick('@${i.author}')">
+      <td style="color:var(--accent)">@${i.author}</td>
+      <td>${i.platform}</td><td>${i.posts}</td>
+      <td>${i.engagement.toLocaleString()}</td>
+      <td style="color:var(--accent);font-weight:700">${i.score}</td>
+    </tr>`
+  ).join('')+'</tbody>';
+  document.getElementById('influTable').innerHTML=hd+bd;
+}
+
+function influClick(handle) {
+  if (!aiOpen) openAIPanel();
+  qs(`Tell me about the influencer ${handle} from my Burlington scan. How should I engage them?`);
+}
+
+function buildBiz() {
+  const hd='<thead><tr><th>Business</th><th>Category</th><th>Rating</th><th>Reviews</th><th>Mentions</th></tr></thead>';
+  const bd='<tbody>'+D.businesses.map(b=>
+    `<tr style="cursor:pointer" onclick="bizClick('${b.name}')">
+      <td><strong>${b.name}</strong></td>
+      <td>${b.category}</td>
+      <td style="color:var(--gold)">★${b.rating}</td>
+      <td>${b.reviews.toLocaleString()}</td>
+      <td style="color:var(--accent)">${b.mentions}</td>
+    </tr>`
+  ).join('')+'</tbody>';
+  document.getElementById('bizTable').innerHTML=hd+bd;
+}
+
+function bizClick(name) {
+  if (!aiOpen) openAIPanel();
+  qs(`Tell me about "${name}" in my Burlington business intelligence. Should I partner with them?`);
+}
+
+function buildCrisis() {
+  const p = document.getElementById('crisisPanel');
+  let html = '';
+  if (D.crisisEvents.length>0) {
+    html+=`<table class="nx-table"><thead><tr><th>Source</th><th>Signal</th><th>Score</th></tr></thead><tbody>`;
+    html+=D.crisisEvents.map(e=>`<tr style="cursor:pointer" onclick="crisisClick('${e.text}')">
+      <td>${e.source}</td><td>${e.text}</td>
+      <td style="color:var(--gold)">${e.score.toFixed(2)}</td>
+    </tr>`).join('');
+    html+=`</tbody></table>`;
+  } else {
+    html=`<div style="padding:12px;background:rgba(0,212,170,.04);border:1px solid rgba(0,212,170,.15);border-radius:4px;color:var(--accent);font-size:.78rem">✓ No active crisis events detected.</div>`;
+  }
+  if (D.anomalies.length>0) {
+    html+=`<div style="margin-top:12px;font-size:.6rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:7px">ANOMALIES (Z ≥ 2.5)</div>`;
+    html+=`<table class="nx-table"><thead><tr><th>Date</th><th>Volume</th><th>Mean</th><th>Z-Score</th></tr></thead><tbody>`;
+    html+=D.anomalies.map(a=>`<tr style="cursor:pointer" onclick="anomalyClick('${a.date}')">
+      <td>${a.date}</td><td style="color:var(--gold)">${a.volume}</td>
+      <td>${a.mean}</td><td style="color:var(--red)">${a.zScore}</td>
+    </tr>`).join('');
+    html+=`</tbody></table>`;
+  }
+  p.innerHTML=html;
+}
+
+function crisisClick(text) {
+  if (!aiOpen) openAIPanel();
+  qs(`Analyse this crisis signal in my Burlington scan: "${text}". How serious is it and what should I do?`);
+}
+
+function anomalyClick(date) {
+  if (!aiOpen) openAIPanel();
+  qs(`Explain the statistical anomaly detected on ${date} in my Burlington scan. What caused the spike?`);
+}
+
+function buildTicker() {
+  const items=[
+    `<span class="tl">BURLINGTON</span> Social Intelligence Platform`,
+    `<span class="tl">POSTS</span> ${D.runtime.totalPosts.toLocaleString()} scanned · Last 7 days`,
+    `<span class="tl">SENTIMENT</span> ${Math.round(D.runtime.sentimentBaseline*100)}% positive baseline`,
+    `<span class="tl">TOP TAG</span> ${D.hashtags[0].tag} · ${D.hashtags[0].count} uses`,
+    `<span class="tl">TRENDING</span> ${D.topics[0].topic} · ${D.topics[0].count} mentions`,
+    `<span class="tl">ANOMALIES</span> ${D.runtime.anomaliesDetected} statistical spikes detected`,
+    `<span class="tl">FORECAST</span> ${D.predictions[0].posts} posts predicted tomorrow (${Math.round(D.predictions[0].confidence*100)}% confidence)`,
+    `<span class="tl">CLEAR GLASS INC</span> Market Intelligence Division`,
+  ];
+  const dbl=[...items,...items];
+  document.getElementById('tickerTrack').innerHTML=dbl.map(i=>`<span class="ticker-item">${i}</span><span class="tsep"> ◆ </span>`).join('');
+}
+
+function buildCharts() {
+  const cd = { responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ labels:{ color:'#6b7a96',font:{size:9,family:"'JetBrains Mono',monospace"} } } } };
+
+  // Hashtag
+  new Chart(document.getElementById('hashChart'),{
+    type:'bar',
+    data:{ labels:D.hashtags.map(h=>h.tag.replace('#','')),
+      datasets:[
+        {label:'Volume',data:D.hashtags.map(h=>h.count),backgroundColor:'rgba(0,212,170,.45)',borderColor:'#00d4aa',borderWidth:1,borderRadius:2,yAxisID:'y'},
+        {label:'Engagement',data:D.hashtags.map(h=>h.totalEngagement),type:'line',borderColor:'#7b5fff',backgroundColor:'rgba(123,95,255,.07)',fill:true,tension:.4,pointRadius:3,borderWidth:2,yAxisID:'y1'}
+      ]},
+    options:{...cd,onClick:(_,els)=>{ if(els.length && !aiOpen){openAIPanel();qs(`Tell me about the hashtag ${D.hashtags[els[0].index].tag} in my Burlington scan.`);} },
+      scales:{x:{ticks:{color:'#6b7a96',font:{size:8},maxRotation:45},grid:{color:'rgba(0,212,170,.04)'}},
+        y:{ticks:{color:'#6b7a96'},grid:{color:'rgba(0,212,170,.04)'}},
+        y1:{position:'right',ticks:{color:'#7b5fff'},grid:{drawOnChartArea:false}}}}
+  });
+
+  // Sentiment
+  new Chart(document.getElementById('sentChart'),{
+    type:'line',
+    data:{ labels:D.sentiment.map(s=>s.date),
+      datasets:[
+        {label:'Positive',data:D.sentiment.map(s=>s.positive),borderColor:'#00d4aa',backgroundColor:'rgba(0,212,170,.07)',fill:true,tension:.4,pointRadius:3,borderWidth:2},
+        {label:'Negative',data:D.sentiment.map(s=>s.negative),borderColor:'#ff4757',backgroundColor:'rgba(255,71,87,.06)',fill:true,tension:.4,pointRadius:3,borderWidth:2},
+        {label:'Neutral', data:D.sentiment.map(s=>s.neutral), borderColor:'#6b7a96',backgroundColor:'rgba(107,122,150,.03)',fill:true,tension:.4,pointRadius:2,borderWidth:1,borderDash:[4,4]}
+      ]},
+    options:{...cd,onClick:()=>{if(!aiOpen){openAIPanel();qs('What does the sentiment trend tell me about the Burlington community this week?');}},
+      scales:{x:{ticks:{color:'#6b7a96',font:{size:8}},grid:{color:'rgba(0,212,170,.04)'}},
+        y:{min:0,max:1,ticks:{color:'#6b7a96'},grid:{color:'rgba(0,212,170,.04)'}}}}
+  });
+
+  // Radar
+  new Chart(document.getElementById('peakChart'),{
+    type:'radar',
+    data:{ labels:D.peakHours.map(p=>p.label),
+      datasets:[
+        {label:'Posts',data:D.peakHours.map(p=>p.posts),borderColor:'#00d4aa',backgroundColor:'rgba(0,212,170,.12)',pointBackgroundColor:'#00d4aa',borderWidth:2},
+        {label:'Engagement',data:D.peakHours.map(p=>p.engagement),borderColor:'#7b5fff',backgroundColor:'rgba(123,95,255,.12)',pointBackgroundColor:'#7b5fff',borderWidth:2}
+      ]},
+    options:{...cd,onClick:()=>{if(!aiOpen){openAIPanel();qs('What are the best times to post in Burlington based on the peak engagement radar?');}},
+      scales:{r:{ticks:{color:'#6b7a96',backdropColor:'transparent',font:{size:8}},grid:{color:'rgba(0,212,170,.09)'},pointLabels:{color:'#8892b0',font:{size:8}},angleLines:{color:'rgba(0,212,170,.06)'}}}}
+  });
+
+  // Forecast
+  new Chart(document.getElementById('predChart'),{
+    type:'line',
+    data:{ labels:D.predictions.map(p=>p.date),
+      datasets:[
+        {label:'Predicted Posts',data:D.predictions.map(p=>p.posts),borderColor:'#ffd93d',backgroundColor:'rgba(255,217,61,.06)',fill:true,tension:.4,borderWidth:2,borderDash:[6,3],pointRadius:4,pointBackgroundColor:'#ffd93d',yAxisID:'y'},
+        {label:'Confidence %',data:D.predictions.map(p=>Math.round(p.confidence*100)),borderColor:'rgba(123,95,255,.5)',tension:.4,borderWidth:1,pointRadius:0,yAxisID:'y1',borderDash:[3,3]}
+      ]},
+    options:{...cd,onClick:()=>{if(!aiOpen){openAIPanel();qs('What does the 7-day forecast mean for Burlington and what should I do now?');}},
+      scales:{x:{ticks:{color:'#6b7a96',font:{size:8}},grid:{color:'rgba(0,212,170,.04)'}},
+        y:{ticks:{color:'#6b7a96'},grid:{color:'rgba(0,212,170,.04)'}},
+        y1:{position:'right',min:0,max:100,ticks:{color:'rgba(123,95,255,.7)',callback:v=>v+'%',font:{size:8}},grid:{drawOnChartArea:false}}}}
+  });
+}
+
+/* Clock */
+function updateClock(){
+  document.getElementById('clockBadge').textContent='🕐 ET '+new Date().toLocaleTimeString('en-CA',{timeZone:'America/Toronto',hour12:false});
+}
+setInterval(updateClock,1000); updateClock();
+
+document.getElementById('footerStats').textContent=
+  `Session loaded · ${D.runtime.totalPosts.toLocaleString()} posts · ${D.runtime.uniqueAuthors} authors · Burlington, ON 10km`;
+
+/* Init */
+document.addEventListener('DOMContentLoaded', ()=>{
+  buildMetrics(); buildTopics(); buildInfluencers(); buildBiz(); buildCrisis(); buildTicker(); buildCharts();
+});
+</script>
+</body>
+</html>

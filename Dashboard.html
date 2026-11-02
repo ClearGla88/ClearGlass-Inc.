@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Clear Glass Inc. — Social Analytics v3.0.0</title>
+<style>
+  /* ═══════════════════════════════════════════════════
+     CLEAR GLASS INC. — ANALYTICS PLATFORM DESIGN SYSTEM
+     Aesthetic: Tactical Cyber / Industrial Precision
+  ═══════════════════════════════════════════════════ */
+
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap');
+
+  :root {
+    --bg-void:     #050508;
+    --bg-surface:  #0a0d14;
+    --bg-panel:    #0d1117;
+    --bg-glass:    rgba(0, 210, 255, 0.04);
+    --accent-cyan:  #00d2ff;
+    --accent-blue:  #0084ff;
+    --accent-green: #00ff9f;
+    --accent-amber: #ffb800;
+    --accent-red:   #ff3d5a;
+    --accent-purple:#c084fc;
+    --text-primary: #e2e8f0;
+    --text-dim:     #64748b;
+    --text-muted:   #334155;
+    --border:       rgba(0, 210, 255, 0.12);
+    --border-bright: rgba(0, 210, 255, 0.35);
+    --glow-cyan:    0 0 20px rgba(0, 210, 255, 0.25);
+    --glow-strong:  0 0 40px rgba(0, 210, 255, 0.4);
+    --font-mono:    'Share Tech Mono', monospace;
+    --font-display: 'Orbitron', sans-serif;
+    --font-body:    'Rajdhani', sans-serif;
+    --radius:       4px;
+    --transition:   0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { font-size: 14px; scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-void);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0,210,255,0.08) 0%, transparent 60%),
+      linear-gradient(rgba(0,210,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,210,255,0.03) 1px, transparent 1px);
+    background-size: auto, 40px 40px, 40px 40px;
+  }
+
+  /* ─── Scrollbar ─────────────────────────────────── */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg-void); }
+  ::-webkit-scrollbar-thumb { background: var(--accent-cyan); border-radius: 2px; }
+
+  /* ─── Layout Shell ──────────────────────────────── */
+  #app { display: flex; flex-direction: column; min-height: 100vh; }
+
+  /* ─── Top Nav ───────────────────────────────────── */
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 2rem;
+    background: rgba(5,5,8,0.95);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--accent-cyan);
+    text-transform: uppercase;
+  }
+  .nav-brand .logo-mark {
+    width: 32px; height: 32px;
+    border: 2px solid var(--accent-cyan);
+    border-radius: var(--radius);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem;
+    box-shadow: var(--glow-cyan);
+    animation: pulse-border 3s infinite;
+  }
+  @keyframes pulse-border {
+    0%, 100% { box-shadow: var(--glow-cyan); }
+    50% { box-shadow: var(--glow-strong); }
+  }
+  .nav-meta {
+    display: flex; gap: 1.5rem; align-items: center;
+    font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim);
+  }
+  .nav-meta .badge {
+    background: rgba(0,210,255,0.1); color: var(--accent-cyan);
+    padding: 2px 8px; border: 1px solid var(--border-bright);
+    border-radius: var(--radius); font-size: 0.65rem; letter-spacing: 0.1em;
+  }
+  .btn-ai {
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+    color: #000; border: none; cursor: pointer;
+    padding: 0.4rem 1rem; border-radius: var(--radius);
+    font-family: var(--font-display); font-size: 0.65rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    transition: var(--transition); white-space: nowrap;
+  }
+  .btn-ai:hover { opacity: 0.85; transform: translateY(-1px); box-shadow: var(--glow-cyan); }
+
+  /* ─── Main Grid ─────────────────────────────────── */
+  .main { display: flex; flex: 1; }
+
+  .sidebar {
+    width: 220px; flex-shrink: 0;
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border);
+    padding: 1.5rem 0;
+    display: flex; flex-direction: column; gap: 0.25rem;
+  }
+  .sidebar-label {
+    font-family: var(--font-mono); font-size: 0.6rem;
+    color: var(--text-muted); letter-spacing: 0.2em;
+    text-transform: uppercase; padding: 0 1.25rem 0.5rem;
+    margin-top: 0.5rem;
+  }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.6rem 1.25rem; cursor: pointer;
+    font-size: 0.85rem; color: var(--text-dim);
+    transition: var(--transition); border-left: 3px solid transparent;
+    text-transform: uppercase; font-family: var(--font-body);
+    font-weight: 600; letter-spacing: 0.05em;
+  }
+  .sidebar-item:hover { color: var(--text-primary); background: var(--bg-glass); }
+  .sidebar-item.active {
+    color: var(--accent-cyan); background: var(--bg-glass);
+    border-left-color: var(--accent-cyan);
+  }
+  .sidebar-icon { font-size: 1rem; width: 20px; text-align: center; }
+
+  .content { flex: 1; padding: 2rem; overflow: auto; }
+
+  /* ─── Section Headers ───────────────────────────── */
+  .section-header {
+    display: flex; align-items: center; gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 0.9rem; font-weight: 700;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--text-primary);
+  }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+  .section-badge {
+    font-family: var(--font-mono); font-size: 0.65rem;
+    color: var(--text-dim);
+  }
+
+  /* ─── KPI Cards ─────────────────────────────────── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem; margin-bottom: 2rem;
+  }
+  .kpi-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    position: relative; overflow: hidden;
+    transition: var(--transition);
+  }
+  .kpi-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--accent-cyan); opacity: 0.6;
+  }
+  .kpi-card:hover { border-color: var(--border-bright); transform: translateY(-2px); box-shadow: var(--glow-cyan); }
+  .kpi-label {
+    font-family: var(--font-mono); font-size: 0.65rem;
+    color: var(--text-dim); letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 0.5rem;
+  }
+  .kpi-value {
+    font-family: var(--font-display); font-size: 1.6rem; font-weight: 900;
+    color: var(--accent-cyan); line-height: 1;
+  }
+  .kpi-sub { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem; }
+  .kpi-card.green::before { background: var(--accent-green); }
+  .kpi-card.green .kpi-value { color: var(--accent-green); }
+  .kpi-card.amber::before { background: var(--accent-amber); }
+  .kpi-card.amber .kpi-value { color: var(--accent-amber); }
+  .kpi-card.purple::before { background: var(--accent-purple); }
+  .kpi-card.purple .kpi-value { color: var(--accent-purple); }
+
+  /* ─── Chart Container ───────────────────────────── */
+  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+  .chart-panel {
+    background: var(--bg-panel); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.25rem;
+  }
+  .chart-title {
+    font-family: var(--font-mono); font-size: 0.7rem;
+    color: var(--accent-cyan); letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 1rem;
+  }
+  .chart-canvas { width: 100%; height: 180px; }
+
+  /* ─── Data Table ────────────────────────────────── */
+  .data-table-wrap {
+    background: var(--bg-panel); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden; margin-bottom: 2rem;
+  }
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th {
+    padding: 0.6rem 1rem; text-align: left;
+    font-family: var(--font-mono); font-size: 0.65rem;
+    color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    background: rgba(0,210,255,0.03);
+  }
+  .data-table td {
+    padding: 0.6rem 1rem; font-size: 0.8rem;
+    border-bottom: 1px solid rgba(0,210,255,0.05);
+    color: var(--text-primary); vertical-align: middle;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--bg-glass); }
+  .eng-badge {
+    display: inline-block; padding: 2px 6px;
+    border-radius: 2px; font-family: var(--font-mono); font-size: 0.65rem;
+    background: rgba(0,255,159,0.1); color: var(--accent-green);
+    border: 1px solid rgba(0,255,159,0.25);
+  }
+  .eng-badge.mid { background: rgba(255,184,0,0.1); color: var(--accent-amber); border-color: rgba(255,184,0,0.25); }
+  .eng-badge.low { background: rgba(255,61,90,0.1); color: var(--accent-red); border-color: rgba(255,61,90,0.25); }
+
+  /* ─── Recommendations ───────────────────────────── */
+  .rec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+  .rec-card {
+    background: var(--bg-panel); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1rem;
+    display: flex; gap: 1rem; align-items: flex-start;
+    transition: var(--transition);
+  }
+  .rec-card:hover { border-color: var(--border-bright); }
+  .rec-icon {
+    width: 36px; height: 36px; flex-shrink: 0;
+    background: rgba(0,210,255,0.1); border: 1px solid var(--border-bright);
+    border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+  }
+  .rec-category {
+    font-family: var(--font-mono); font-size: 0.6rem;
+    color: var(--accent-cyan); letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+  .rec-insight { font-size: 0.82rem; color: var(--text-primary); line-height: 1.4; }
+  .rec-conf {
+    margin-top: 0.35rem;
+    font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-dim);
+  }
+  .conf-bar {
+    display: inline-block; width: 60px; height: 3px;
+    background: var(--text-muted); border-radius: 2px; margin-right: 0.35rem; vertical-align: middle;
+    position: relative; overflow: hidden;
+  }
+  .conf-fill { height: 100%; background: var(--accent-cyan); border-radius: 2px; }
+
+  /* ─── Platform Tabs ─────────────────────────────── */
+  .platform-tabs { display: flex; gap: 0; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+  .ptab {
+    padding: 0.5rem 1.25rem; cursor: pointer;
+    font-family: var(--font-body); font-size: 0.8rem; font-weight: 600;
+    color: var(--text-dim); letter-spacing: 0.05em;
+    border-bottom: 2px solid transparent;
+    transition: var(--transition); text-transform: uppercase;
+  }
+  .ptab:hover { color: var(--text-primary); }
+  .ptab.active { color: var(--accent-cyan); border-bottom-color: var(--accent-cyan); }
+
+  /* ─── AI Chat Panel ─────────────────────────────── */
+  .ai-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(5,5,8,0.7); backdrop-filter: blur(4px);
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  }
+  .ai-overlay.open { opacity: 1; pointer-events: all; }
+
+  .ai-panel {
+    position: fixed; right: 0; top: 0; bottom: 0; width: 440px; z-index: 300;
+    background: var(--bg-panel);
+    border-left: 1px solid var(--border-bright);
+    display: flex; flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: -20px 0 60px rgba(0,210,255,0.08);
+  }
+  .ai-panel.open { transform: translateX(0); }
+
+  .ai-panel-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .ai-status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent-green);
+    box-shadow: 0 0 8px var(--accent-green);
+    animation: blink 2s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+  .ai-panel-title {
+    font-family: var(--font-display); font-size: 0.75rem;
+    font-weight: 700; letter-spacing: 0.15em; color: var(--accent-cyan);
+    text-transform: uppercase; flex: 1;
+  }
+  .ai-close {
+    background: none; border: 1px solid var(--border); color: var(--text-dim);
+    width: 28px; height: 28px; border-radius: var(--radius);
+    cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center;
+    transition: var(--transition);
+  }
+  .ai-close:hover { border-color: var(--accent-red); color: var(--accent-red); }
+
+  .ai-chat-area {
+    flex: 1; overflow-y: auto; padding: 1rem;
+    display: flex; flex-direction: column; gap: 1rem;
+  }
+
+  .msg { display: flex; gap: 0.75rem; animation: msgIn 0.2s ease; }
+  @keyframes msgIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+  .msg.user { flex-direction: row-reverse; }
+
+  .msg-avatar {
+    width: 32px; height: 32px; flex-shrink: 0; border-radius: var(--radius);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 700;
+    background: rgba(0,210,255,0.15); color: var(--accent-cyan);
+    border: 1px solid var(--border-bright);
+    font-family: var(--font-display);
+  }
+  .msg.user .msg-avatar {
+    background: rgba(192,132,252,0.15); color: var(--accent-purple);
+    border-color: rgba(192,132,252,0.35);
+  }
+
+  .msg-bubble {
+    max-width: 75%; padding: 0.75rem 1rem;
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: var(--radius); font-size: 0.82rem; line-height: 1.5;
+    color: var(--text-primary);
+  }
+  .msg.user .msg-bubble {
+    background: rgba(192,132,252,0.08);
+    border-color: rgba(192,132,252,0.25);
+    text-align: right;
+  }
+  .msg-bubble code {
+    font-family: var(--font-mono); font-size: 0.75rem;
+    background: rgba(0,210,255,0.08); padding: 1px 4px;
+    border-radius: 2px; color: var(--accent-cyan);
+  }
+  .msg-bubble strong { color: var(--accent-cyan); }
+
+  .typing-indicator { display: flex; align-items: center; gap: 4px; padding: 4px 0; }
+  .typing-indicator span {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent-cyan); opacity: 0.4;
+    animation: typing 1.2s infinite;
+  }
+  .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typing { 0%,60%,100%{opacity:0.4;transform:none;} 30%{opacity:1;transform:translateY(-4px);} }
+
+  .ai-input-area {
+    padding: 1rem; border-top: 1px solid var(--border);
+    display: flex; flex-direction: column; gap: 0.75rem;
+  }
+  .ai-api-row {
+    display: flex; gap: 0.5rem; align-items: center;
+  }
+  .ai-api-input {
+    flex: 1; background: var(--bg-surface); border: 1px solid var(--border);
+    color: var(--text-primary); padding: 0.4rem 0.75rem;
+    border-radius: var(--radius); font-family: var(--font-mono); font-size: 0.7rem;
+    outline: none; transition: var(--transition);
+  }
+  .ai-api-input:focus { border-color: var(--accent-cyan); box-shadow: 0 0 0 2px rgba(0,210,255,0.1); }
+  .ai-api-input::placeholder { color: var(--text-muted); }
+  .btn-save-key {
+    background: rgba(0,210,255,0.1); color: var(--accent-cyan);
+    border: 1px solid var(--border-bright); cursor: pointer;
+    padding: 0.4rem 0.75rem; border-radius: var(--radius);
+    font-family: var(--font-mono); font-size: 0.65rem;
+    transition: var(--transition); white-space: nowrap;
+  }
+  .btn-save-key:hover { background: rgba(0,210,255,0.2); }
+
+  .ai-chat-input-row { display: flex; gap: 0.5rem; }
+  .ai-input {
+    flex: 1; background: var(--bg-surface); border: 1px solid var(--border);
+    color: var(--text-primary); padding: 0.6rem 1rem;
+    border-radius: var(--radius); font-family: var(--font-body);
+    font-size: 0.85rem; outline: none; resize: none;
+    transition: var(--transition); max-height: 100px;
+  }
+  .ai-input:focus { border-color: var(--accent-cyan); box-shadow: 0 0 0 2px rgba(0,210,255,0.1); }
+  .ai-input::placeholder { color: var(--text-muted); }
+  .btn-send {
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+    color: #000; border: none; cursor: pointer;
+    width: 40px; border-radius: var(--radius);
+    font-size: 1rem; display: flex; align-items: center; justify-content: center;
+    transition: var(--transition); flex-shrink: 0;
+  }
+  .btn-send:hover { opacity: 0.85; }
+  .btn-send:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .ai-quick-cmds {
+    display: flex; flex-wrap: wrap; gap: 0.4rem;
+  }
+  .qcmd {
+    background: var(--bg-surface); color: var(--text-dim);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 0.25rem 0.6rem; font-size: 0.7rem; cursor: pointer;
+    font-family: var(--font-mono); transition: var(--transition);
+  }
+  .qcmd:hover { color: var(--accent-cyan); border-color: var(--border-bright); }
+
+  /* ─── Sections ──────────────────────────────────── */
+  .view-section { display: none; }
+  .view-section.active { display: block; }
+
+  /* ─── Footer ────────────────────────────────────── */
+  .footer {
+    padding: 0.75rem 2rem; border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted);
+    background: var(--bg-panel);
+  }
+
+  /* ─── Demo Banner ───────────────────────────────── */
+  .demo-banner {
+    background: rgba(255,184,0,0.08); border: 1px solid rgba(255,184,0,0.25);
+    border-radius: var(--radius); padding: 0.6rem 1rem; margin-bottom: 1.5rem;
+    font-size: 0.8rem; color: var(--accent-amber);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+
+  /* ─── Responsive ────────────────────────────────── */
+  @media (max-width: 900px) {
+    .chart-grid { grid-template-columns: 1fr; }
+    .rec-grid { grid-template-columns: 1fr; }
+    .ai-panel { width: 100%; }
+    .sidebar { display: none; }
+  }
+
+  /* ─── Loading ───────────────────────────────────── */
+  #loader {
+    position: fixed; inset: 0; z-index: 999;
+    background: var(--bg-void); display: flex;
+    flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem;
+  }
+  .loader-logo {
+    font-family: var(--font-display); font-size: 1.2rem; letter-spacing: 0.2em;
+    color: var(--accent-cyan); text-transform: uppercase;
+  }
+  .loader-bar { width: 200px; height: 2px; background: var(--text-muted); border-radius: 2px; overflow: hidden; }
+  .loader-fill { height: 100%; background: var(--accent-cyan); animation: load 1.5s cubic-bezier(0.4,0,0.2,1) forwards; }
+  @keyframes load { from{width:0} to{width:100%} }
+  .loader-text { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<!-- ─── Loader ─────────────────────────────────────── -->
+<div id="loader">
+  <div class="loader-logo">◈ Clear Glass Inc.</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+  <div class="loader-text" id="loader-msg">INITIALIZING ANALYTICS ENGINE...</div>
+</div>
+
+<!-- ─── App Shell ──────────────────────────────────── -->
+<div id="app" style="display:none;">
+
+  <!-- Nav -->
+  <nav class="nav">
+    <div class="nav-brand">
+      <div class="logo-mark">CG</div>
+      Social Analytics
+    </div>
+    <div class="nav-meta">
+      <span>RUN: <span class="badge">A1B2C3D4</span></span>
+      <span id="clock" class="badge"></span>
+      <button class="btn-ai" onclick="openAI()">⚡ AI Assistant</button>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-label">Navigation</div>
+      <div class="sidebar-item active" onclick="showView('overview', this)"><span class="sidebar-icon">◈</span> Overview</div>
+      <div class="sidebar-item" onclick="showView('twitter', this)"><span class="sidebar-icon">𝕏</span> Twitter / X</div>
+      <div class="sidebar-item" onclick="showView('instagram', this)"><span class="sidebar-icon">◎</span> Instagram</div>
+      <div class="sidebar-item" onclick="showView('youtube', this)"><span class="sidebar-icon">▶</span> YouTube</div>
+      <div class="sidebar-label">Intelligence</div>
+      <div class="sidebar-item" onclick="showView('ai-insights', this)"><span class="sidebar-icon">⬡</span> AI Insights</div>
+      <div class="sidebar-item" onclick="showView('raw', this)"><span class="sidebar-icon">⌥</span> Raw Data</div>
+    </aside>
+
+    <!-- Content -->
+    <main class="content">
+
+      <!-- OVERVIEW ─────────────────────────────────── -->
+      <div class="view-section active" id="view-overview">
+
+        <div class="section-header">
+          <div class="section-title">Command Overview</div>
+          <div class="section-line"></div>
+          <div class="section-badge" id="overview-period">LAST 30 DAYS</div>
+        </div>
+
+        <div id="demo-banner" class="demo-banner" style="display:none;">
+          ⚠ DEMO MODE — Sample data displayed. Configure API credentials to load live data.
+        </div>
+
+        <!-- KPIs -->
+        <div class="kpi-grid" id="kpi-grid"></div>
+
+        <!-- Charts -->
+        <div class="chart-grid">
+          <div class="chart-panel">
+            <div class="chart-title">■ Engagement Rate by Platform</div>
+            <canvas class="chart-canvas" id="chart-engagement"></canvas>
+          </div>
+          <div class="chart-panel">
+            <div class="chart-title">■ Posts Over Time (All Platforms)</div>
+            <canvas class="chart-canvas" id="chart-posts-time"></canvas>
+          </div>
+        </div>
+
+        <!-- Top Posts Table -->
+        <div class="section-header">
+          <div class="section-title">Top Performing Content</div>
+          <div class="section-line"></div>
+        </div>
+        <div class="data-table-wrap">
+          <table class="data-table" id="top-posts-table">
+            <thead><tr>
+              <th>Platform</th>
+              <th>Content</th>
+              <th>Date</th>
+              <th>Impressions</th>
+              <th>Engagement</th>
+              <th>Eng. Rate</th>
+            </tr></thead>
+            <tbody id="top-posts-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TWITTER ──────────────────────────────────── -->
+      <div class="view-section" id="view-twitter">
+        <div class="section-header">
+          <div class="section-title">𝕏 Twitter / X Analytics</div>
+          <div class="section-line"></div>
+        </div>
+        <div class="kpi-grid" id="twitter-kpis"></div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Tweet</th><th>Date</th><th>Impressions</th><th>Likes</th><th>RT</th><th>Replies</th><th>Eng Rate</th></tr></thead>
+            <tbody id="twitter-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- INSTAGRAM ────────────────────────────────── -->
+      <div class="view-section" id="view-instagram">
+        <div class="section-header">
+          <div class="section-title">◎ Instagram Analytics</div>
+          <div class="section-line"></div>
+        </div>
+        <div class="kpi-grid" id="instagram-kpis"></div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Caption</th><th>Type</th><th>Date</th><th>Reach</th><th>Likes</th><th>Comments</th><th>Eng Rate</th></tr></thead>
+            <tbody id="instagram-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- YOUTUBE ──────────────────────────────────── -->
+      <div class="view-section" id="view-youtube">
+        <div class="section-header">
+          <div class="section-title">▶ YouTube Analytics</div>
+          <div class="section-line"></div>
+        </div>
+        <div class="kpi-grid" id="youtube-kpis"></div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Title</th><th>Date</th><th>Views</th><th>Likes</th><th>Comments</th><th>Eng Rate</th></tr></thead>
+            <tbody id="youtube-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- AI INSIGHTS ──────────────────────────────── -->
+      <div class="view-section" id="view-ai-insights">
+        <div class="section-header">
+          <div class="section-title">⬡ AI Strategic Insights</div>
+          <div class="section-line"></div>
+          <div class="section-badge">ML ENGINE</div>
+        </div>
+        <div class="rec-grid" id="rec-grid"></div>
+      </div>
+
+      <!-- RAW DATA ─────────────────────────────────── -->
+      <div class="view-section" id="view-raw">
+        <div class="section-header">
+          <div class="section-title">⌥ Raw Data Export</div>
+          <div class="section-line"></div>
+        </div>
+        <div class="chart-panel">
+          <div class="chart-title">■ JSON Payload</div>
+          <pre id="raw-json" style="font-family:var(--font-mono);font-size:0.65rem;color:var(--text-dim);overflow:auto;max-height:600px;white-space:pre-wrap;word-break:break-all;"></pre>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <span>Clear Glass Inc. — Social Analytics Platform v3.0.0 — Desmond Otieno Odhiambo</span>
+    <span>Generated: 2026-02-21 15:35:41 EST</span>
+    <span>PIPEDA · SOC 2 · CC §342.1</span>
+  </footer>
+</div>
+
+<!-- ─── AI Overlay & Panel ─────────────────────────── -->
+<div class="ai-overlay" id="ai-overlay" onclick="closeAI()"></div>
+<div class="ai-panel" id="ai-panel">
+  <div class="ai-panel-header">
+    <div class="ai-status-dot"></div>
+    <div class="ai-panel-title">AI Analytics Assistant</div>
+    <button class="ai-close" onclick="closeAI()">✕</button>
+  </div>
+  <div class="ai-chat-area" id="ai-chat"></div>
+  <div class="ai-input-area">
+    <div class="ai-api-row">
+      <input class="ai-api-input" id="api-key-input" type="password" placeholder="sk-ant-... Anthropic API Key (optional)"/>
+      <button class="btn-save-key" onclick="saveApiKey()">SAVE</button>
+    </div>
+    <div class="ai-quick-cmds">
+      <div class="qcmd" onclick="quickCmd('Summarize my analytics performance')">Summary</div>
+      <div class="qcmd" onclick="quickCmd('What is my best performing platform?')">Best Platform</div>
+      <div class="qcmd" onclick="quickCmd('Give me 5 actionable content recommendations')">Recommendations</div>
+      <div class="qcmd" onclick="quickCmd('Analyze my engagement rate trends')">Engagement Trends</div>
+      <div class="qcmd" onclick="quickCmd('What are my top 3 posts and why?')">Top Posts</div>
+      <div class="qcmd" onclick="quickCmd('Create a 30-day content strategy')">Content Strategy</div>
+    </div>
+    <div class="ai-chat-input-row">
+      <textarea class="ai-input" id="ai-input" placeholder="Ask about your analytics, request strategies, or run commands..." rows="2" onkeydown="handleKey(event)"></textarea>
+      <button class="btn-send" id="send-btn" onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Scripts ────────────────────────────────────── -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════════
+//  CLEAR GLASS INC. — ANALYTICS DASHBOARD ENGINE
+// ═══════════════════════════════════════════════════
+
+// ── Data from PowerShell ─────────────────────────────
+const RAW = JSON.parse({"GeneratedAt":"2026-02-21T15:35:30.079902Z","Company":"Clear Glass Inc.","Product":"Social Analytics Platform","Version":"3.0.0","RunId":"A1B2C3D4","DaysBack":30,"Platforms":[{"Platform":"Twitter","Posts":[{"Id":"demo_0_tw","CreatedAt":"2026-01-31T08:01:30.079902Z","Impressions":9812,"Engagement":276,"EngRate":2.82,"Likes":179,"Text":"Cybersecurity alert: Zero-day vulnerability detected in municipal networks. Patch immediately. #CyberSecurity #ClearGlass","Length":121,"Retweets":53,"Replies":44,"Quotes":4},{"Id":"demo_1_tw","CreatedAt":"2026-01-28T08:43:30.079902Z","Impressions":3648,"Engagement":186,"EngRate":5.1,"Likes":120,"Text":"Our AEGIS platform stopped 147 intrusion attempts last week alone. Data-driven protection. #Infosec","Length":99,"Retweets":36,"Replies":30,"Quotes":1},{"Id":"demo_2_tw","CreatedAt":"2026-02-20T08:13:30.079902Z","Impressions":8423,"Engagement":382,"EngRate":4.54,"Likes":248,"Text":"New blog: Why legacy firewall rules fail modern threat actors \\u2014 and what to do instead. Link in bio.","Length":100,"Retweets":73,"Replies":61,"Quotes":0},{"Id":"demo_3_tw","CreatedAt":"2026-02-03T12:45:30.079902Z","Impressions":14546,"Engagement":385,"EngRate":2.65,"Likes":250,"Text":"Reminder: Social engineering remains the #1 attack vector. Train your staff quarterly. #SecurityAwareness","Length":105,"Retweets":74,"Replies":61,"Quotes":18},{"Id":"demo_4_tw","CreatedAt":"2026-02-12T07:48:30.079902Z","Impressions":6031,"Engagement":350,"EngRate":5.81,"Likes":227,"Text":"Case study: How Burlington reduced incident response time by 62% with our NEXUS platform.","Length":89,"Retweets":67,"Replies":56,"Quotes":10},{"Id":"demo_5_tw","CreatedAt":"2026-02-12T09:13:30.079902Z","Impressions":11829,"Engagement":221,"EngRate":1.87,"Likes":143,"Text":"AI-powered threat detection isn't the future \\u2014 it's what your adversaries already use. Are you ready?","Length":101,"Retweets":42,"Replies":36,"Quotes":12},{"Id":"demo_6_tw","CreatedAt":"2026-02-17T17:54:30.079902Z","Impressions":12070,"Engagement":625,"EngRate":5.18,"Likes":406,"Text":"PIPEDA compliance checklist for municipal IT teams \\u2014 free download. DM us.","Length":74,"Retweets":120,"Replies":99,"Quotes":25},{"Id":"demo_7_tw","CreatedAt":"2026-02-19T19:34:30.079902Z","Impressions":4890,"Engagement":372,"EngRate":7.62,"Likes":241,"Text":"Phishing simulations reveal 34% of staff still click suspicious links. Training saves networks.","Length":95,"Retweets":72,"Replies":59,"Quotes":12},{"Id":"demo_8_tw","CreatedAt":"2026-02-18T20:18:30.079902Z","Impressions":12650,"Engagement":633,"EngRate":5.01,"Likes":411,"Text":"Cybersecurity alert: Zero-day vulnerability detected in municipal networks. Patch immediately. #CyberSecurity #ClearGlass","Length":121,"Retweets":122,"Replies":100,"Quotes":22},{"Id":"demo_9_tw","CreatedAt":"2026-02-18T07:42:30.079902Z","Impressions":8267,"Engagement":520,"EngRate":6.3,"Likes":338,"Text":"Our AEGIS platform stopped 147 intrusion attempts last week alone. Data-driven protection. #Infosec","Length":99,"Retweets":100,"Replies":82,"Quotes":2},{"Id":"demo_10_tw","CreatedAt":"2026-01-24T12:55:30.079902Z","Impressions":4109,"Engagement":152,"EngRate":3.71,"Likes":98,"Text":"New blog: Why legacy firewall rules fail modern threat actors \\u2014 and what to do instead. Link in bio.","Length":100,"Retweets":29,"Replies":25,"Quotes":14},{"Id":"demo_11_tw","CreatedAt":"2026-01-31T17:10:30.079902Z","Impressions":12930,"Engagement":457,"EngRate":3.54,"Likes":297,"Text":"Reminder: Social engineering remains the #1 attack vector. Train your staff quarterly. #SecurityAwareness","Length":105,"Retweets":88,"Replies":72,"Quotes":21},{"Id":"demo_12_tw","CreatedAt":"2026-02-12T08:38:30.079902Z","Impressions":6407,"Engagement":303,"EngRate":4.73,"Likes":196,"Text":"Case study: How Burlington reduced incident response time by 62% with our NEXUS platform.","Length":89,"Retweets":58,"Replies":49,"Quotes":7},{"Id":"demo_13_tw","CreatedAt":"2026-02-15T19:24:30.079902Z","Impressions":9645,"Engagement":745,"EngRate":7.73,"Likes":484,"Text":"AI-powered threat detection isn't the future \\u2014 it's what your adversaries already use. Are you ready?","Length":101,"Retweets":143,"Replies":118,"Quotes":20},{"Id":"demo_14_tw","CreatedAt":"2026-01-29T20:14:30.079902Z","Impressions":11426,"Engagement":772,"EngRate":6.76,"Likes":501,"Text":"PIPEDA compliance checklist for municipal IT teams \\u2014 free download. DM us.","Length":74,"Retweets":149,"Replies":122,"Quotes":24},{"Id":"demo_15_tw","CreatedAt":"2026-02-19T12:52:30.079902Z","Impressions":1851,"Engagement":120,"EngRate":6.51,"Likes":78,"Text":"Phishing simulations reveal 34% of staff still click suspicious links. Training saves networks.","Length":95,"Retweets":23,"Replies":19,"Quotes":12},{"Id":"demo_16_tw","CreatedAt":"2026-02-12T08:13:30.079902Z","Impressions":11111,"Engagement":288,"EngRate":2.6,"Likes":187,"Text":"Cybersecurity alert: Zero-day vulnerability detected in municipal networks. Patch immediately. #CyberSecurity #ClearGlass","Length":121,"Retweets":55,"Replies":46,"Quotes":15},{"Id":"demo_17_tw","CreatedAt":"2026-02-08T19:09:30.079902Z","Impressions":9479,"Engagement":200,"EngRate":2.12,"Likes":130,"Text":"Our AEGIS platform stopped 147 intrusion attempts last week alone. Data-driven protection. #Infosec","Length":99,"Retweets":38,"Replies":32,"Quotes":23},{"Id":"demo_18_tw","CreatedAt":"2026-02-03T20:16:30.079902Z","Impressions":14838,"Engagement":1057,"EngRate":7.13,"Likes":687,"Text":"New blog: Why legacy firewall rules fail modern threat actors \\u2014 and what to do instead. Link in bio.","Length":100,"Retweets":203,"Replies":167,"Quotes":12},{"Id":"demo_19_tw","CreatedAt":"2026-02-09T12:08:30.079902Z","Impressions":17496,"Engagement":780,"EngRate":4.46,"Likes":507,"Text":"Reminder: Social engineering remains the #1 attack vector. Train your staff quarterly. #SecurityAwareness","Length":105,"Retweets":150,"Replies":123,"Quotes":24},{"Id":"demo_20_tw","CreatedAt":"2026-02-19T08:09:30.079902Z","Impressions":6042,"Engagement":388,"EngRate":6.43,"Likes":252,"Text":"Case study: How Burlington reduced incident response time by 62% with our NEXUS platform.","Length":89,"Retweets":74,"Replies":62,"Quotes":13},{"Id":"demo_21_tw","CreatedAt":"2026-02-01T08:24:30.079902Z","Impressions":13304,"Engagement":682,"EngRate":5.13,"Likes":443,"Text":"AI-powered threat detection isn't the future \\u2014 it's what your adversaries already use. Are you ready?","Length":101,"Retweets":131,"Replies":108,"Quotes":14},{"Id":"demo_22_tw","CreatedAt":"2026-02-04T13:35:30.079902Z","Impressions":1176,"Engagement":66,"EngRate":5.69,"Likes":42,"Text":"PIPEDA compliance checklist for municipal IT teams \\u2014 free download. DM us.","Length":74,"Retweets":13,"Replies":11,"Quotes":3},{"Id":"demo_23_tw","CreatedAt":"2026-01-30T20:48:30.079902Z","Impressions":9543,"Engagement":598,"EngRate":6.27,"Likes":388,"Text":"Phishing simulations reveal 34% of staff still click suspicious links. Training saves networks.","Length":95,"Retweets":115,"Replies":95,"Quotes":10},{"Id":"demo_24_tw","CreatedAt":"2026-02-17T13:27:30.079902Z","Impressions":5982,"Engagement":250,"EngRate":4.19,"Likes":162,"Text":"Cybersecurity alert: Zero-day vulnerability detected in municipal networks. Patch immediately. #CyberSecurity #ClearGlass","Length":121,"Retweets":48,"Replies":40,"Quotes":23},{"Id":"demo_25_tw","CreatedAt":"2026-01-23T13:32:30.079902Z","Impressions":6654,"Engagement":302,"EngRate":4.55,"Likes":196,"Text":"Our AEGIS platform stopped 147 intrusion attempts last week alone. Data-driven protection. #Infosec","Length":99,"Retweets":58,"Replies":48,"Quotes":3},{"Id":"demo_26_tw","CreatedAt":"2026-01-24T13:53:30.079902Z","Impressions":17435,"Engagement":910,"EngRate":5.22,"Likes":591,"Text":"New blog: Why legacy firewall rules fail modern threat actors \\u2014 and what to do instead. Link in bio.","Length":100,"Retweets":175,"Replies":144,"Quotes":4},{"Id":"demo_27_tw","CreatedAt":"2026-02-09T09:34:30.079902Z","Impressions":818,"Engagement":42,"EngRate":5.15,"Likes":27,"Text":"Reminder: Social engineering remains the #1 attack vector. Train your staff quarterly. #SecurityAwareness","Length":105,"Retweets":8,"Replies":7,"Quotes":15},{"Id":"demo_28_tw","CreatedAt":"2026-02-20T08:59:30.079902Z","Impressions":12694,"Engagement":888,"EngRate":7.0,"Likes":577,"Text":"Case study: How Burlington reduced incident response time by 62% with our NEXUS platform.","Length":89,"Retweets":171,"Replies":140,"Quotes":25},{"Id":"demo_29_tw","CreatedAt":"2026-02-11T12:03:30.079902Z","Impressions":8692,"Engagement":607,"EngRate":6.99,"Likes":394,"Text":"AI-powered threat detection isn't the future \\u2014 it's what your adversaries already use. Are you ready?","Length":101,"Retweets":117,"Replies":96,"Quotes":2}],"Metrics":{"TotalPosts":30,"TotalImpressions":273798,"TotalEngagement":13557,"TotalLikes":8800,"AvgEngRate":5.0937,"TopPost":{"Id":"demo_18_tw","CreatedAt":"2026-02-03T20:16:30.079902Z","Impressions":14838,"Engagement":1057,"EngRate":7.13,"Likes":687,"Text":"New blog: Why legacy firewall rules fail modern threat actors \\u2014 and what to do instead. Link in bio.","Length":100,"Retweets":203,"Replies":167,"Quotes":12},"TotalRetweets":2605,"TotalReplies":2152},"Demo":true},{"Platform":"Instagram","Posts":[{"Id":"demo_0_in","CreatedAt":"2026-02-18T19:52:30.079902Z","Impressions":3067,"Engagement":234,"EngRate":7.65,"Likes":152,"Caption":"Inside our SOC: 24/7 monitoring so your city sleeps soundly. \\ud83d\\udee1\\ufe0f","MediaType":"CAROUSEL_ALBUM","Comments":36,"Saved":46,"Reach":2514},{"Id":"demo_1_in","CreatedAt":"2026-01-27T09:08:30.079902Z","Impressions":16374,"Engagement":1219,"EngRate":7.45,"Likes":792,"Caption":"Network topology mapped in 60 seconds. NEXUS intelligence at work.","MediaType":"IMAGE","Comments":192,"Saved":235,"Reach":13426},{"Id":"demo_2_in","CreatedAt":"2026-02-12T20:55:30.079902Z","Impressions":14665,"Engagement":1108,"EngRate":7.56,"Likes":720,"Caption":"Team spotlight: Meet the analysts protecting critical infrastructure daily.","MediaType":"CAROUSEL_ALBUM","Comments":174,"Saved":214,"Reach":12025},{"Id":"demo_3_in","CreatedAt":"2026-01-27T12:45:30.079902Z","Impressions":11014,"Engagement":421,"EngRate":3.83,"Likes":273,"Caption":"Dashboard deep dive \\u2014 what enterprise threat visibility actually looks like.","MediaType":"CAROUSEL_ALBUM","Comments":66,"Saved":82,"Reach":9031},{"Id":"demo_4_in","CreatedAt":"2026-01-31T17:28:30.079902Z","Impressions":17759,"Engagement":742,"EngRate":4.18,"Likes":482,"Caption":"Before & after: Client network health score improved from 43 to 91 in 90 days.","MediaType":"IMAGE","Comments":117,"Saved":143,"Reach":14562},{"Id":"demo_5_in","CreatedAt":"2026-02-13T08:21:30.079902Z","Impressions":1489,"Engagement":75,"EngRate":5.08,"Likes":48,"Caption":"Inside our SOC: 24/7 monitoring so your city sleeps soundly. \\ud83d\\udee1\\ufe0f","MediaType":"IMAGE","Comments":12,"Saved":15,"Reach":1220},{"Id":"demo_6_in","CreatedAt":"2026-02-02T12:00:30.079902Z","Impressions":3126,"Engagement":183,"EngRate":5.87,"Likes":118,"Caption":"Network topology mapped in 60 seconds. NEXUS intelligence at work.","MediaType":"IMAGE","Comments":29,"Saved":36,"Reach":2563},{"Id":"demo_7_in","CreatedAt":"2026-02-13T08:57:30.079902Z","Impressions":1829,"Engagement":125,"EngRate":6.87,"Likes":81,"Caption":"Team spotlight: Meet the analysts protecting critical infrastructure daily.","MediaType":"IMAGE","Comments":19,"Saved":25,"Reach":1499},{"Id":"demo_8_in","CreatedAt":"2026-02-04T12:17:30.079902Z","Impressions":16706,"Engagement":436,"EngRate":2.61,"Likes":283,"Caption":"Dashboard deep dive \\u2014 what enterprise threat visibility actually looks like.","MediaType":"IMAGE","Comments":68,"Saved":85,"Reach":13698},{"Id":"demo_9_in","CreatedAt":"2026-01-28T19:15:30.079902Z","Impressions":16298,"Engagement":1064,"EngRate":6.53,"Likes":691,"Caption":"Before & after: Client network health score improved from 43 to 91 in 90 days.","MediaType":"IMAGE","Comments":167,"Saved":206,"Reach":13364},{"Id":"demo_10_in","CreatedAt":"2026-02-17T08:42:30.079902Z","Impressions":14924,"Engagement":528,"EngRate":3.54,"Likes":343,"Caption":"Inside our SOC: 24/7 monitoring so your city sleeps soundly. \\ud83d\\udee1\\ufe0f","MediaType":"VIDEO","Comments":83,"Saved":102,"Reach":12237},{"Id":"demo_11_in","CreatedAt":"2026-02-06T07:43:30.079902Z","Impressions":4024,"Engagement":64,"EngRate":1.6,"Likes":41,"Caption":"Network topology mapped in 60 seconds. NEXUS intelligence at work.","MediaType":"CAROUSEL_ALBUM","Comments":10,"Saved":13,"Reach":3299},{"Id":"demo_12_in","CreatedAt":"2026-02-10T08:15:30.079902Z","Impressions":7078,"Engagement":174,"EngRate":2.46,"Likes":113,"Caption":"Team spotlight: Meet the analysts protecting critical infrastructure daily.","MediaType":"VIDEO","Comments":27,"Saved":34,"Reach":5803},{"Id":"demo_13_in","CreatedAt":"2026-02-16T18:11:30.079902Z","Impressions":9927,"Engagement":421,"EngRate":4.25,"Likes":273,"Caption":"Dashboard deep dive \\u2014 what enterprise threat visibility actually looks like.","MediaType":"IMAGE","Comments":66,"Saved":82,"Reach":8140},{"Id":"demo_14_in","CreatedAt":"2026-02-06T20:06:30.079902Z","Impressions":2457,"Engagement":135,"EngRate":5.5,"Likes":87,"Caption":"Before & after: Client network health score improved from 43 to 91 in 90 days.","MediaType":"CAROUSEL_ALBUM","Comments":21,"Saved":27,"Reach":2014},{"Id":"demo_15_in","CreatedAt":"2026-01-25T07:05:30.079902Z","Impressions":8545,"Engagement":196,"EngRate":2.3,"Likes":127,"Caption":"Inside our SOC: 24/7 monitoring so your city sleeps soundly. \\ud83d\\udee1\\ufe0f","MediaType":"VIDEO","Comments":31,"Saved":38,"Reach":7006},{"Id":"demo_16_in","CreatedAt":"2026-02-05T12:55:30.079902Z","Impressions":13941,"Engagement":998,"EngRate":7.16,"Likes":648,"Caption":"Network topology mapped in 60 seconds. NEXUS intelligence at work.","MediaType":"IMAGE","Comments":157,"Saved":193,"Reach":11431},{"Id":"demo_17_in","CreatedAt":"2026-02-08T07:24:30.079902Z","Impressions":9490,"Engagement":694,"EngRate":7.32,"Likes":451,"Caption":"Team spotlight: Meet the analysts protecting critical infrastructure daily.","MediaType":"VIDEO","Comments":109,"Saved":134,"Reach":7781},{"Id":"demo_18_in","CreatedAt":"2026-02-11T18:44:30.079902Z","Impressions":16747,"Engagement":371,"EngRate":2.22,"Likes":241,"Caption":"Dashboard deep dive \\u2014 what enterprise threat visibility actually looks like.","MediaType":"VIDEO","Comments":58,"Saved":72,"Reach":13732},{"Id":"demo_19_in","CreatedAt":"2026-02-14T07:37:30.079902Z","Impressions":2797,"Engagement":171,"EngRate":6.14,"Likes":111,"Caption":"Before & after: Client network health score improved from 43 to 91 in 90 days.","MediaType":"IMAGE","Comments":27,"Saved":33,"Reach":2293},{"Id":"demo_20_in","CreatedAt":"2026-02-19T19:32:30.079902Z","Impressions":5958,"Engagement":94,"EngRate":1.58,"Likes":61,"Caption":"Inside our SOC: 24/7 monitoring so your city sleeps soundly. \\ud83d\\udee1\\ufe0f","MediaType":"CAROUSEL_ALBUM","Comments":14,"Saved":19,"Reach":4885},{"Id":"demo_21_in","CreatedAt":"2026-02-18T09:04:30.079902Z","Impressions":3026,"Engagement":171,"EngRate":5.66,"Likes":111,"Caption":"Network topology mapped in 60 seconds. NEXUS intelligence at work.","MediaType":"IMAGE","Comments":27,"Saved":33,"Reach":2481},{"Id":"demo_22_in","CreatedAt":"2026-02-08T08:56:30.079902Z","Impressions":8867,"Engagement":445,"EngRate":5.02,"Likes":289,"Caption":"Team spotlight: Meet the analysts protecting critical infrastructure daily.","MediaType":"IMAGE","Comments":70,"Saved":86,"Reach":7270},{"Id":"demo_23_in","CreatedAt":"2026-02-01T08:26:30.079902Z","Impressions":17930,"Engagement":589,"EngRate":3.29,"Likes":382,"Caption":"Dashboard deep dive \\u2014 what enterprise threat visibility actually looks like.","MediaType":"VIDEO","Comments":93,"Saved":114,"Reach":14702},{"Id":"demo_24_in","CreatedAt":"2026-02-14T17:15:30.079902Z","Impressions":9503,"Engagement":362,"EngRate":3.81,"Likes":235,"Caption":"Before & after: Client network health score improved from 43 to 91 in 90 days.","MediaType":"CAROUSEL_ALBUM","Comments":57,"Saved":70,"Reach":7792},{"Id":"demo_25_in","CreatedAt":"2026-01-31T13:29:30.079902Z","Impressions":11160,"Engagement":818,"EngRate":7.33,"Likes":531,"Caption":"Inside our SOC: 24/7 monitoring so your city sleeps soundly. \\ud83d\\udee1\\ufe0f","MediaType":"IMAGE","Comments":129,"Saved":158,"Reach":9151},{"Id":"demo_26_in","CreatedAt":"2026-02-20T19:39:30.079902Z","Impressions":4076,"Engagement":68,"EngRate":1.68,"Likes":44,"Caption":"Network topology mapped in 60 seconds. NEXUS intelligence at work.","MediaType":"IMAGE","Comments":10,"Saved":14,"Reach":3342},{"Id":"demo_27_in","CreatedAt":"2026-02-04T13:08:30.079902Z","Impressions":12236,"Engagement":857,"EngRate":7.01,"Likes":557,"Caption":"Team spotlight: Meet the analysts protecting critical infrastructure daily.","MediaType":"IMAGE","Comments":135,"Saved":165,"Reach":10033},{"Id":"demo_28_in","CreatedAt":"2026-02-09T13:10:30.079902Z","Impressions":15158,"Engagement":1015,"EngRate":6.7,"Likes":659,"Caption":"Dashboard deep dive \\u2014 what enterprise threat visibility actually looks like.","MediaType":"CAROUSEL_ALBUM","Comments":160,"Saved":196,"Reach":12429},{"Id":"demo_29_in","CreatedAt":"2026-02-11T20:00:30.079902Z","Impressions":10610,"Engagement":779,"EngRate":7.35,"Likes":506,"Caption":"Before & after: Client network health score improved from 43 to 91 in 90 days.","MediaType":"IMAGE","Comments":122,"Saved":151,"Reach":8700}],"Metrics":{"TotalPosts":30,"TotalImpressions":290781,"TotalEngagement":14557,"TotalLikes":9450,"AvgEngRate":4.985,"TopPost":{"Id":"demo_1_in","CreatedAt":"2026-01-27T09:08:30.079902Z","Impressions":16374,"Engagement":1219,"EngRate":7.45,"Likes":792,"Caption":"Network topology mapped in 60 seconds. NEXUS intelligence at work.","MediaType":"IMAGE","Comments":192,"Saved":235,"Reach":13426},"TotalReach":238440,"TotalComments":2286,"TotalSaved":2821,"Followers":4821},"Demo":true},{"Platform":"YouTube","Posts":[{"Id":"demo_0_yo","CreatedAt":"2026-01-23T09:16:30.079902Z","Impressions":4582,"Engagement":323,"EngRate":7.07,"Likes":209,"Title":"How We Detected a Supply Chain Attack Before It Spread | Clear Glass Inc.","Views":4582,"Comments":34},{"Id":"demo_1_yo","CreatedAt":"2026-01-28T20:09:30.079902Z","Impressions":9724,"Engagement":297,"EngRate":3.06,"Likes":193,"Title":"Municipal Cybersecurity 101 \\u2014 What Every IT Director Needs to Know","Views":9724,"Comments":31},{"Id":"demo_2_yo","CreatedAt":"2026-02-14T17:13:30.079902Z","Impressions":9450,"Engagement":429,"EngRate":4.54,"Likes":278,"Title":"Live Demo: AEGIS Threat Detection in Real-Time","Views":9450,"Comments":45},{"Id":"demo_3_yo","CreatedAt":"2026-02-12T07:05:30.079902Z","Impressions":14679,"Engagement":979,"EngRate":6.67,"Likes":636,"Title":"Top 5 PowerShell Security Scripts for Enterprise Environments","Views":14679,"Comments":102},{"Id":"demo_4_yo","CreatedAt":"2026-02-19T07:21:30.079902Z","Impressions":5086,"Engagement":274,"EngRate":5.4,"Likes":178,"Title":"Inside a Phishing Attack: Full Breakdown & Defense Strategies","Views":5086,"Comments":28},{"Id":"demo_5_yo","CreatedAt":"2026-02-12T09:47:30.079902Z","Impressions":15278,"Engagement":739,"EngRate":4.84,"Likes":480,"Title":"How We Detected a Supply Chain Attack Before It Spread | Clear Glass Inc.","Views":15278,"Comments":77},{"Id":"demo_6_yo","CreatedAt":"2026-02-07T20:00:30.079902Z","Impressions":4465,"Engagement":75,"EngRate":1.7,"Likes":48,"Title":"Municipal Cybersecurity 101 \\u2014 What Every IT Director Needs to Know","Views":4465,"Comments":8},{"Id":"demo_7_yo","CreatedAt":"2026-01-23T09:34:30.079902Z","Impressions":1980,"Engagement":132,"EngRate":6.71,"Likes":85,"Title":"Live Demo: AEGIS Threat Detection in Real-Time","Views":1980,"Comments":14},{"Id":"demo_8_yo","CreatedAt":"2026-02-02T20:09:30.079902Z","Impressions":14883,"Engagement":303,"EngRate":2.04,"Likes":196,"Title":"Top 5 PowerShell Security Scripts for Enterprise Environments","Views":14883,"Comments":32},{"Id":"demo_9_yo","CreatedAt":"2026-02-11T17:57:30.079902Z","Impressions":2107,"Engagement":150,"EngRate":7.13,"Likes":97,"Title":"Inside a Phishing Attack: Full Breakdown & Defense Strategies","Views":2107,"Comments":15},{"Id":"demo_10_yo","CreatedAt":"2026-02-14T12:42:30.079902Z","Impressions":4168,"Engagement":147,"EngRate":3.53,"Likes":95,"Title":"How We Detected a Supply Chain Attack Before It Spread | Clear Glass Inc.","Views":4168,"Comments":15},{"Id":"demo_11_yo","CreatedAt":"2026-02-03T18:39:30.079902Z","Impressions":5864,"Engagement":428,"EngRate":7.31,"Likes":278,"Title":"Municipal Cybersecurity 101 \\u2014 What Every IT Director Needs to Know","Views":5864,"Comments":45},{"Id":"demo_12_yo","CreatedAt":"2026-02-13T09:51:30.079902Z","Impressions":6601,"Engagement":463,"EngRate":7.02,"Likes":300,"Title":"Live Demo: AEGIS Threat Detection in Real-Time","Views":6601,"Comments":48},{"Id":"demo_13_yo","CreatedAt":"2026-02-20T09:47:30.079902Z","Impressions":11685,"Engagement":743,"EngRate":6.36,"Likes":482,"Title":"Top 5 PowerShell Security Scripts for Enterprise Environments","Views":11685,"Comments":78},{"Id":"demo_14_yo","CreatedAt":"2026-02-07T12:17:30.079902Z","Impressions":6016,"Engagement":385,"EngRate":6.4,"Likes":250,"Title":"Inside a Phishing Attack: Full Breakdown & Defense Strategies","Views":6016,"Comments":40},{"Id":"demo_15_yo","CreatedAt":"2026-02-17T18:55:30.079902Z","Impressions":2068,"Engagement":142,"EngRate":6.87,"Likes":92,"Title":"How We Detected a Supply Chain Attack Before It Spread | Clear Glass Inc.","Views":2068,"Comments":15},{"Id":"demo_16_yo","CreatedAt":"2026-02-13T12:52:30.079902Z","Impressions":15883,"Engagement":557,"EngRate":3.51,"Likes":362,"Title":"Municipal Cybersecurity 101 \\u2014 What Every IT Director Needs to Know","Views":15883,"Comments":58},{"Id":"demo_17_yo","CreatedAt":"2026-01-25T12:14:30.079902Z","Impressions":1575,"Engagement":87,"EngRate":5.56,"Likes":56,"Title":"Live Demo: AEGIS Threat Detection in Real-Time","Views":1575,"Comments":9},{"Id":"demo_18_yo","CreatedAt":"2026-02-08T17:17:30.079902Z","Impressions":3074,"Engagement":233,"EngRate":7.58,"Likes":151,"Title":"Top 5 PowerShell Security Scripts for Enterprise Environments","Views":3074,"Comments":24},{"Id":"demo_19_yo","CreatedAt":"2026-02-12T17:41:30.079902Z","Impressions":17492,"Engagement":671,"EngRate":3.84,"Likes":436,"Title":"Inside a Phishing Attack: Full Breakdown & Defense Strategies","Views":17492,"Comments":70},{"Id":"demo_20_yo","CreatedAt":"2026-01-25T20:21:30.079902Z","Impressions":1704,"Engagement":33,"EngRate":1.96,"Likes":21,"Title":"How We Detected a Supply Chain Attack Before It Spread | Clear Glass Inc.","Views":1704,"Comments":3},{"Id":"demo_21_yo","CreatedAt":"2026-02-12T09:37:30.079902Z","Impressions":9498,"Engagement":137,"EngRate":1.45,"Likes":89,"Title":"Municipal Cybersecurity 101 \\u2014 What Every IT Director Needs to Know","Views":9498,"Comments":14},{"Id":"demo_22_yo","CreatedAt":"2026-02-01T18:22:30.079902Z","Impressions":11078,"Engagement":451,"EngRate":4.08,"Likes":293,"Title":"Live Demo: AEGIS Threat Detection in Real-Time","Views":11078,"Comments":47},{"Id":"demo_23_yo","CreatedAt":"2026-02-04T08:24:30.079902Z","Impressions":7028,"Engagement":202,"EngRate":2.88,"Likes":131,"Title":"Top 5 PowerShell Security Scripts for Enterprise Environments","Views":7028,"Comments":21},{"Id":"demo_24_yo","CreatedAt":"2026-01-29T18:00:30.079902Z","Impressions":17836,"Engagement":1303,"EngRate":7.31,"Likes":846,"Title":"Inside a Phishing Attack: Full Breakdown & Defense Strategies","Views":17836,"Comments":137},{"Id":"demo_25_yo","CreatedAt":"2026-02-03T12:23:30.079902Z","Impressions":14932,"Engagement":247,"EngRate":1.66,"Likes":160,"Title":"How We Detected a Supply Chain Attack Before It Spread | Clear Glass Inc.","Views":14932,"Comments":26},{"Id":"demo_26_yo","CreatedAt":"2026-01-30T17:39:30.079902Z","Impressions":11086,"Engagement":618,"EngRate":5.58,"Likes":401,"Title":"Municipal Cybersecurity 101 \\u2014 What Every IT Director Needs to Know","Views":11086,"Comments":65},{"Id":"demo_27_yo","CreatedAt":"2026-02-17T13:32:30.079902Z","Impressions":10934,"Engagement":612,"EngRate":5.6,"Likes":397,"Title":"Live Demo: AEGIS Threat Detection in Real-Time","Views":10934,"Comments":64},{"Id":"demo_28_yo","CreatedAt":"2026-02-10T18:44:30.079902Z","Impressions":10488,"Engagement":509,"EngRate":4.86,"Likes":330,"Title":"Top 5 PowerShell Security Scripts for Enterprise Environments","Views":10488,"Comments":53},{"Id":"demo_29_yo","CreatedAt":"2026-02-14T18:42:30.079902Z","Impressions":13223,"Engagement":749,"EngRate":5.67,"Likes":486,"Title":"Inside a Phishing Attack: Full Breakdown & Defense Strategies","Views":13223,"Comments":78}],"Metrics":{"TotalPosts":30,"TotalImpressions":264467,"TotalEngagement":12418,"TotalLikes":8056,"AvgEngRate":4.9397,"TopPost":{"Id":"demo_24_yo","CreatedAt":"2026-01-29T18:00:30.079902Z","Impressions":17836,"Engagement":1303,"EngRate":7.31,"Likes":846,"Title":"Inside a Phishing Attack: Full Breakdown & Defense Strategies","Views":17836,"Comments":137},"TotalVideos":30,"TotalViews":264467,"TotalComments":1296,"Subscribers":3240},"Demo":true}],"ML":{"Recommendations":[{"Category":"Content Length","Insight":"Optimal post length: 160 characters \\u2014 Predicted engagement: 5.8%","Confidence":78,"Priority":"High"},{"Category":"Posting Time","Insight":"Best posting hours: 8:00, 13:00, 19:00 \\u2014 Based on 30 posts","Confidence":85,"Priority":"High"},{"Category":"Content Format","Insight":"VIDEO posts outperform others with avg 6.4% engagement","Confidence":72,"Priority":"Medium"},{"Category":"Hashtags","Insight":"3-4 hashtags per post yields 2.1x more impressions than 0 or 10+","Confidence":68,"Priority":"Medium"}],"AllPlatforms":[]},"AnthropicKey":""});
+
+// ── Helpers ─────────────────────────────────────────
+const fmt = n => n ? n.toLocaleString() : '0';
+const fmtDate = s => { try { return new Date(s).toLocaleDateString('en-CA'); } catch { return s; } };
+const fmtEng = (r) => {
+  const cls = r >= 3 ? '' : r >= 1.5 ? ' mid' : ' low';
+  return `<span class="eng-badge${cls}">${r.toFixed(2)}%</span>`;
+};
+const trunc = (s, n=50) => s && s.length > n ? s.substring(0, n) + '…' : (s || '—');
+
+// ── Chart.js Global Defaults ─────────────────────────
+Chart.defaults.color = '#64748b';
+Chart.defaults.borderColor = 'rgba(0,210,255,0.1)';
+Chart.defaults.font.family = "'Share Tech Mono', monospace";
+Chart.defaults.font.size = 11;
+
+// ── Clock ─────────────────────────────────────────────
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toTimeString().substring(0, 8);
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ── Navigation ────────────────────────────────────────
+function showView(id, el) {
+  document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+  document.getElementById('view-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+}
+
+// ── KPI Builder ───────────────────────────────────────
+function mkKPI(label, value, sub, variant='') {
+  return `<div class="kpi-card ${variant}">
+    <div class="kpi-label">${label}</div>
+    <div class="kpi-value">${value}</div>
+    ${sub ? `<div class="kpi-sub">${sub}</div>` : ''}
+  </div>`;
+}
+
+// ── Overview Population ───────────────────────────────
+function buildOverview() {
+  const platforms = RAW.Platforms || [];
+  const isDemo = platforms.some(p => p.Demo);
+  if (isDemo) document.getElementById('demo-banner').style.display = 'flex';
+
+  let totalPosts = 0, totalImpressions = 0, totalEng = 0, totalLikes = 0, allEngRates = [];
+
+  platforms.forEach(p => {
+    const m = p.Metrics || {};
+    totalPosts       += m.TotalPosts       || 0;
+    totalImpressions += (m.TotalImpressions || m.TotalViews || 0);
+    totalEng         += m.TotalEngagement  || 0;
+    totalLikes       += m.TotalLikes       || 0;
+    if (m.AvgEngRate) allEngRates.push(m.AvgEngRate);
+  });
+
+  const avgEng = allEngRates.length ? (allEngRates.reduce((a,b)=>a+b,0)/allEngRates.length).toFixed(2) : '0.00';
+
+  const kpiGrid = document.getElementById('kpi-grid');
+  kpiGrid.innerHTML =
+    mkKPI('Total Posts', fmt(totalPosts), `Last ${RAW.DaysBack} days`) +
+    mkKPI('Total Impressions', totalImpressions > 1000 ? (totalImpressions/1000).toFixed(1)+'K' : fmt(totalImpressions), 'Across all platforms', 'green') +
+    mkKPI('Total Engagement', fmt(totalEng), 'Likes, replies, shares', 'amber') +
+    mkKPI('Avg Eng. Rate', avgEng + '%', 'All platforms', 'purple') +
+    mkKPI('Platforms Active', platforms.length, 'Connected sources');
+
+  // Engagement Chart
+  buildEngChart(platforms);
+  buildPostsChart(platforms);
+  buildTopPostsTable(platforms);
+}
+
+function buildEngChart(platforms) {
+  const ctx = document.getElementById('chart-engagement');
+  if (!ctx) return;
+  const labels = platforms.map(p => p.Platform);
+  const data   = platforms.map(p => (p.Metrics?.AvgEngRate || 0));
+  const colors = ['rgba(0,210,255,0.8)', 'rgba(0,255,159,0.8)', 'rgba(255,184,0,0.8)'];
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Avg Engagement Rate (%)',
+        data,
+        backgroundColor: labels.map((_, i) => colors[i % colors.length]),
+        borderRadius: 2,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: { grid: { color: 'rgba(0,210,255,0.06)' }, ticks: { callback: v => v + '%' } }
+      }
+    }
+  });
+}
+
+function buildPostsChart(platforms) {
+  const ctx = document.getElementById('chart-posts-time');
+  if (!ctx) return;
+
+  // Build date-bucketed data
+  const buckets = {};
+  const now = new Date();
+  for (let i = RAW.DaysBack; i >= 0; i--) {
+    const d = new Date(now); d.setDate(d.getDate() - i);
+    buckets[d.toLocaleDateString('en-CA')] = 0;
+  }
+
+  platforms.forEach(p => {
+    (p.Posts || []).forEach(post => {
+      try {
+        const d = new Date(post.CreatedAt).toLocaleDateString('en-CA');
+        if (buckets.hasOwnProperty(d)) buckets[d]++;
+      } catch {}
+    });
+  });
+
+  const labels = Object.keys(buckets).slice(-14); // Last 14 days
+  const data   = labels.map(l => buckets[l]);
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels.map(l => l.substring(5)),
+      datasets: [{
+        label: 'Posts',
+        data,
+        borderColor: 'rgba(0,210,255,0.8)',
+        backgroundColor: 'rgba(0,210,255,0.06)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 3,
+        pointBackgroundColor: 'rgba(0,210,255,0.8)',
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: { grid: { color: 'rgba(0,210,255,0.06)' }, ticks: { stepSize: 1 } }
+      }
+    }
+  });
+}
+
+function buildTopPostsTable(platforms) {
+  const allPosts = [];
+  platforms.forEach(p => {
+    (p.Posts || []).forEach(post => {
+      allPosts.push({ ...post, _Platform: p.Platform });
+    });
+  });
+
+  const top = allPosts.sort((a, b) => (b.Engagement || 0) - (a.Engagement || 0)).slice(0, 10);
+  const tbody = document.getElementById('top-posts-tbody');
+  tbody.innerHTML = top.map(p => `<tr>
+    <td><span class="eng-badge">${p._Platform}</span></td>
+    <td>${trunc(p.Text || p.Caption || p.Title)}</td>
+    <td>${fmtDate(p.CreatedAt)}</td>
+    <td>${fmt(p.Impressions || p.Views || p.Reach || 0)}</td>
+    <td>${fmt(p.Engagement)}</td>
+    <td>${fmtEng(p.EngRate || 0)}</td>
+  </tr>`).join('');
+}
+
+// ── Platform Sections ─────────────────────────────────
+function buildTwitter() {
+  const tw = RAW.Platforms?.find(p => p.Platform === 'Twitter');
+  if (!tw) { document.getElementById('twitter-kpis').innerHTML = '<p style="color:var(--text-dim);font-size:0.8rem;">No Twitter data configured.</p>'; return; }
+  const m = tw.Metrics || {};
+  document.getElementById('twitter-kpis').innerHTML =
+    mkKPI('Tweets', fmt(m.TotalPosts), `Last ${RAW.DaysBack} days`) +
+    mkKPI('Impressions', fmt(m.TotalImpressions), '', 'green') +
+    mkKPI('Likes', fmt(m.TotalLikes), '', 'amber') +
+    mkKPI('Retweets', fmt(m.TotalRetweets), '') +
+    mkKPI('Avg Eng Rate', (m.AvgEngRate||0).toFixed(2)+'%', '', 'purple');
+
+  const tbody = document.getElementById('twitter-tbody');
+  tbody.innerHTML = (tw.Posts||[]).slice(0,50).map(p => `<tr>
+    <td>${trunc(p.Text, 60)}</td>
+    <td>${fmtDate(p.CreatedAt)}</td>
+    <td>${fmt(p.Impressions)}</td>
+    <td>${fmt(p.Likes)}</td>
+    <td>${fmt(p.Retweets)}</td>
+    <td>${fmt(p.Replies)}</td>
+    <td>${fmtEng(p.EngRate||0)}</td>
+  </tr>`).join('');
+}
+
+function buildInstagram() {
+  const ig = RAW.Platforms?.find(p => p.Platform === 'Instagram');
+  if (!ig) { document.getElementById('instagram-kpis').innerHTML = '<p style="color:var(--text-dim);font-size:0.8rem;">No Instagram data configured.</p>'; return; }
+  const m = ig.Metrics || {};
+  document.getElementById('instagram-kpis').innerHTML =
+    mkKPI('Posts', fmt(m.TotalPosts), `Last ${RAW.DaysBack} days`) +
+    mkKPI('Impressions', fmt(m.TotalImpressions), '', 'green') +
+    mkKPI('Reach', fmt(m.TotalReach), '', 'amber') +
+    mkKPI('Likes', fmt(m.TotalLikes), '') +
+    mkKPI('Saved', fmt(m.TotalSaved), '', 'purple') +
+    mkKPI('Avg Eng Rate', (m.AvgEngRate||0).toFixed(2)+'%', '');
+
+  const tbody = document.getElementById('instagram-tbody');
+  tbody.innerHTML = (ig.Posts||[]).slice(0,50).map(p => `<tr>
+    <td>${trunc(p.Caption)}</td>
+    <td><span class="eng-badge">${p.MediaType||'—'}</span></td>
+    <td>${fmtDate(p.CreatedAt)}</td>
+    <td>${fmt(p.Reach)}</td>
+    <td>${fmt(p.Likes)}</td>
+    <td>${fmt(p.Comments)}</td>
+    <td>${fmtEng(p.EngRate||0)}</td>
+  </tr>`).join('');
+}
+
+function buildYouTube() {
+  const yt = RAW.Platforms?.find(p => p.Platform === 'YouTube');
+  if (!yt) { document.getElementById('youtube-kpis').innerHTML = '<p style="color:var(--text-dim);font-size:0.8rem;">No YouTube data configured.</p>'; return; }
+  const m = yt.Metrics || {};
+  document.getElementById('youtube-kpis').innerHTML =
+    mkKPI('Videos', fmt(m.TotalVideos||m.TotalPosts), `Last ${RAW.DaysBack} days`) +
+    mkKPI('Total Views', fmt(m.TotalViews), '', 'green') +
+    mkKPI('Likes', fmt(m.TotalLikes), '', 'amber') +
+    mkKPI('Comments', fmt(m.TotalComments), '') +
+    mkKPI('Avg Eng Rate', (m.AvgEngRate||0).toFixed(2)+'%', '', 'purple');
+
+  const tbody = document.getElementById('youtube-tbody');
+  tbody.innerHTML = (yt.Posts||[]).slice(0,50).map(p => `<tr>
+    <td>${trunc(p.Title, 60)}</td>
+    <td>${fmtDate(p.CreatedAt)}</td>
+    <td>${fmt(p.Views)}</td>
+    <td>${fmt(p.Likes)}</td>
+    <td>${fmt(p.Comments)}</td>
+    <td>${fmtEng(p.EngRate||0)}</td>
+  </tr>`).join('');
+}
+
+function buildAIInsights() {
+  const ml = RAW.ML || {};
+  const recs = ml.Recommendations || [];
+  const icons = { 'Content Length':'📐','Posting Time':'⏱','Content Format':'🎬','Hashtags':'#️⃣' };
+  const grid = document.getElementById('rec-grid');
+
+  if (!recs.length) {
+    grid.innerHTML = '<p style="color:var(--text-dim);font-size:0.8rem;grid-column:1/-1;">No AI insights generated. Run with -EnableAILearning flag and sufficient data (5+ posts).</p>';
+    return;
+  }
+
+  grid.innerHTML = recs.map(r => `
+    <div class="rec-card">
+      <div class="rec-icon">${icons[r.Category] || '⬡'}</div>
+      <div>
+        <div class="rec-category">${r.Category}</div>
+        <div class="rec-insight">${r.Insight}</div>
+        <div class="rec-conf">
+          <span class="conf-bar"><span class="conf-fill" style="width:${r.Confidence||50}%"></span></span>
+          ${r.Confidence||50}% confidence
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function buildRaw() {
+  document.getElementById('raw-json').textContent =
+    JSON.stringify({ ...RAW, AnthropicKey: '[REDACTED]' }, null, 2);
+}
+
+// ── AI Panel ──────────────────────────────────────────
+let aiHistory = [];
+let apiKey = RAW.AnthropicKey || localStorage.getItem('cg_api_key') || '';
+
+function openAI() {
+  document.getElementById('ai-overlay').classList.add('open');
+  document.getElementById('ai-panel').classList.add('open');
+  if (aiHistory.length === 0) aiGreet();
+  if (apiKey) document.getElementById('api-key-input').value = '••••••••••••••••••••';
+}
+function closeAI() {
+  document.getElementById('ai-overlay').classList.remove('open');
+  document.getElementById('ai-panel').classList.remove('open');
+}
+function saveApiKey() {
+  const v = document.getElementById('api-key-input').value.trim();
+  if (v && !v.startsWith('•')) {
+    apiKey = v;
+    try { localStorage.setItem('cg_api_key', v); } catch {}
+    document.getElementById('api-key-input').value = '••••••••••••••••••••';
+    addMsg('system', '✓ API key saved. AI Assistant is now powered by Claude.');
+  }
+}
+
+function aiGreet() {
+  const platformNames = (RAW.Platforms || []).map(p => p.Platform).join(', ') || 'no connected platforms';
+  const totalPosts = (RAW.Platforms || []).reduce((a, p) => a + (p.Metrics?.TotalPosts || 0), 0);
+  addMsg('ai', `**Analytics loaded.** I have visibility into <strong>${totalPosts}</strong> posts across <strong>${platformNames}</strong>.\n\nI can analyze your performance, surface insights, build content strategies, and answer any questions about your data. Use the quick commands below or ask me anything.`);
+}
+
+function addMsg(role, text) {
+  const chat = document.getElementById('ai-chat');
+  const div = document.createElement('div');
+  div.className = 'msg ' + (role === 'user' ? 'user' : '');
+  const avatar = role === 'user' ? 'YOU' : 'AI';
+  div.innerHTML = `
+    <div class="msg-avatar">${avatar}</div>
+    <div class="msg-bubble">${formatMsgText(text)}</div>`;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function formatMsgText(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`(.*?)`/g, '<code>$1</code>')
+    .replace(/\n/g, '<br>');
+}
+
+function addTyping() {
+  const chat = document.getElementById('ai-chat');
+  const div = document.createElement('div');
+  div.className = 'msg'; div.id = 'typing';
+  div.innerHTML = `<div class="msg-avatar">AI</div>
+    <div class="msg-bubble"><div class="typing-indicator"><span></span><span></span><span></span></div></div>`;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing');
+  if (t) t.remove();
+}
+
+function quickCmd(cmd) {
+  document.getElementById('ai-input').value = cmd;
+  sendMessage();
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+async function sendMessage() {
+  const input = document.getElementById('ai-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+
+  addMsg('user', msg);
+  aiHistory.push({ role: 'user', content: msg });
+
+  const btn = document.getElementById('send-btn');
+  btn.disabled = true;
+  addTyping();
+
+  try {
+    let reply;
+    if (apiKey && apiKey.startsWith('sk-ant-')) {
+      reply = await callClaude(msg);
+    } else {
+      reply = localAI(msg);
+    }
+    removeTyping();
+    addMsg('ai', reply);
+    aiHistory.push({ role: 'assistant', content: reply });
+  } catch (err) {
+    removeTyping();
+    const errMsg = `⚠ Error: ${err.message}. Check your API key or network.`;
+    addMsg('ai', errMsg);
+  } finally {
+    btn.disabled = false;
+    input.focus();
+  }
+}
+
+async function callClaude(userMsg) {
+  const systemPrompt = buildSystemPrompt();
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1000,
+      system: systemPrompt,
+      messages: aiHistory.slice(-10)
+    })
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.error?.message || `HTTP ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data.content?.[0]?.text || 'No response received.';
+}
+
+function buildSystemPrompt() {
+  const platforms = RAW.Platforms || [];
+  const summary = platforms.map(p => {
+    const m = p.Metrics || {};
+    return `${p.Platform}: ${m.TotalPosts||0} posts, avg eng ${(m.AvgEngRate||0).toFixed(2)}%, ${fmt(m.TotalImpressions||m.TotalViews||0)} impressions`;
+  }).join(' | ');
+
+  const topPosts = platforms.flatMap(p => (p.Posts||[]).map(post => ({...post, platform:p.Platform})))
+    .sort((a,b) => (b.Engagement||0)-(a.Engagement||0)).slice(0,5)
+    .map(p => `${p.platform}: "${(p.Text||p.Title||p.Caption||'').substring(0,60)}" — ${p.Engagement} engagement, ${(p.EngRate||0).toFixed(2)}% rate`)
+    .join('\n');
+
+  const recs = (RAW.ML?.Recommendations||[]).map(r => `${r.Category}: ${r.Insight}`).join('\n') || 'None generated.';
+
+  return `You are an expert social media analytics AI assistant embedded in the Clear Glass Inc. Social Analytics Platform. You have full visibility into the user's analytics data.
+
+ANALYTICS SUMMARY (Last ${RAW.DaysBack} days):
+${summary}
+
+TOP PERFORMING POSTS:
+${topPosts || 'No posts loaded.'}
+
+AI INSIGHTS GENERATED:
+${recs}
+
+Your role: Analyze performance, provide actionable recommendations, answer questions about the data, build content strategies, and help the user grow their social media presence. Be direct, specific, and data-driven. Reference actual numbers from the data when relevant. Format responses clearly with bold for key points.`;
+}
+
+// ── Local AI fallback (no API key needed) ─────────────
+function localAI(msg) {
+  const platforms = RAW.Platforms || [];
+  const lc = msg.toLowerCase();
+
+  if (lc.includes('summary') || lc.includes('overview') || lc.includes('how am i doing')) {
+    const lines = platforms.map(p => {
+      const m = p.Metrics || {};
+      return `**${p.Platform}**: ${m.TotalPosts||0} posts · ${fmt(m.TotalImpressions||0)} impressions · ${(m.AvgEngRate||0).toFixed(2)}% avg engagement`;
+    });
+    return `**Performance Summary — Last ${RAW.DaysBack} days**\n\n${lines.join('\n\n')}\n\n*Add your Anthropic API key for deeper analysis and strategic recommendations.*`;
+  }
+
+  if (lc.includes('best platform') || lc.includes('top platform')) {
+    const best = platforms.sort((a,b) => (b.Metrics?.AvgEngRate||0) - (a.Metrics?.AvgEngRate||0))[0];
+    return best
+      ? `**${best.Platform}** is your top platform with **${(best.Metrics?.AvgEngRate||0).toFixed(2)}% average engagement rate** across ${best.Metrics?.TotalPosts||0} posts.`
+      : 'No platform data available yet.';
+  }
+
+  if (lc.includes('top post') || lc.includes('best post')) {
+    const allPosts = platforms.flatMap(p => (p.Posts||[]).map(post => ({...post, _p:p.Platform})));
+    const top = allPosts.sort((a,b) => (b.Engagement||0)-(a.Engagement||0)).slice(0,3);
+    if (!top.length) return 'No post data available.';
+    return '**Top 3 Posts by Engagement:**\n\n' + top.map((p,i) =>
+      `${i+1}. **${p._p}** — "${(p.Text||p.Title||p.Caption||'').substring(0,60)}" · ${fmt(p.Engagement)} engagement · ${(p.EngRate||0).toFixed(2)}%`
+    ).join('\n\n');
+  }
+
+  if (lc.includes('recommend') || lc.includes('strategy') || lc.includes('improve')) {
+    const recs = RAW.ML?.Recommendations || [];
+    if (recs.length) {
+      return '**AI-Generated Recommendations:**\n\n' + recs.map(r =>
+        `**${r.Category}** (${r.Confidence||50}% confidence)\n${r.Insight}`
+      ).join('\n\n');
+    }
+    return 'Run the script with `-EnableAILearning` to generate ML-based recommendations. Add your Anthropic API key for real-time strategic analysis.';
+  }
+
+  if (lc.includes('engagement')) {
+    const rates = platforms.map(p => `${p.Platform}: ${(p.Metrics?.AvgEngRate||0).toFixed(2)}%`);
+    return `**Engagement Rates by Platform:**\n\n${rates.join('\n')}\n\nIndustry benchmark: 1-3% is average, 3-6% is strong, 6%+ is exceptional.`;
+  }
+
+  return `I can help you analyze your social media data. Try asking:\n\n- "Give me a performance summary"\n- "What's my best platform?"\n- "What are my top posts?"\n- "Give me content recommendations"\n\nOr add your Anthropic API key above for full AI-powered analysis.`;
+}
+
+// ── Init ───────────────────────────────────────────────
+function init() {
+  const msgs = ['PARSING PLATFORM DATA...', 'TRAINING ML MODELS...', 'RENDERING DASHBOARD...', 'READY'];
+  let i = 0;
+  const loaderMsg = document.getElementById('loader-msg');
+
+  const interval = setInterval(() => {
+    if (i < msgs.length - 1) { loaderMsg.textContent = msgs[++i]; }
+    else {
+      clearInterval(interval);
+      setTimeout(() => {
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('app').style.display = 'flex';
+        buildOverview();
+        buildTwitter();
+        buildInstagram();
+        buildYouTube();
+        buildAIInsights();
+        buildRaw();
+        if (apiKey) document.getElementById('api-key-input').value = '••••••••••••••••••••';
+      }, 200);
+    }
+  }, 400);
+}
+
+init();
+</script>
+</body>
+</html>
+"@
+
+    $html | Set-Content -Path $Script:ReportFile -Encoding UTF8
+    Write-Log "Dashboard saved: $($Script:ReportFile)" -Level SUCCESS
+    return $Script:ReportFile
+}
+
+#endregion
+
+#region ─── Main Execution ───────────────────────────────────────────────────────
+
+function Main {
+    $banner = @"
+╔══════════════════════════════════════════════════════════════╗
+║  CLEAR GLASS INC. — SOCIAL ANALYTICS PLATFORM v3.0.0      ║
+║  Author: Desmond Otieno Odhiambo               ║
+║  Run ID: A1B2C3D4                                      ║
+╚══════════════════════════════════════════════════════════════╝
