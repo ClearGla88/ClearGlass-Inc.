@@ -1,0 +1,199 @@
+/* ClearGlass mission alignment layer.
+   Theme-only: preserves page content, structure, navigation behavior, interactions, and generated related blocks. */
+:root{
+  color-scheme:dark;
+  --cg-bg:#040206;
+  --cg-surface:rgba(17,7,9,.78);
+  --cg-surface-strong:rgba(26,10,12,.9);
+  --cg-ink:#f5e8dd;
+  --cg-muted:rgba(245,232,221,.62);
+  --cg-faint:rgba(245,232,221,.38);
+  --cg-line:rgba(255,27,61,.18);
+  --cg-blue:#ff1b3d;
+  --cg-violet:#b30e2a;
+  --cg-green:#56e3a6;
+  --cg-dark:#080307;
+  --cg-radius:24px;
+  --cg-shadow:0 18px 60px rgba(0,0,0,.42);
+  --cg-serif:'Playfair Display','Cormorant Garamond',Georgia,serif;
+  --cg-sans:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --cg-mono:'IBM Plex Mono','SFMono-Regular',Consolas,monospace;
+
+  /* Shared aliases: force the estate back to the original mission palette without changing layout. */
+  --bg:#040206;--bg0:#040206;--bg-0:#040206;--bg-1:#08050a;--bg2:#0e0810;--bg-2:#0e0810;--bg3:#150b14;--bg-3:#150b14;--bg4:#1c1019;--bg-4:#1c1019;--bg-soft:#080307;
+  --void:#040206;--abyss:#040206;--deep:#08050a;--black:#040206;--off:#0e0810;--pearl:#150b14;--bone:#f5e8dd;
+  --card:rgba(17,7,9,.82);--card2:rgba(26,10,12,.82);--cards:rgba(17,7,9,.82);--panel:rgba(17,7,9,.82);--panel-2:rgba(26,10,12,.82);--panel2:rgba(26,10,12,.82);--surface:rgba(17,7,9,.82);--inset:#080307;
+  --glass:rgba(14,5,8,.78);--glass-strong:rgba(17,7,9,.92);--glass-2:rgba(26,10,12,.68);--glass-hi:rgba(255,255,255,.035);--glass-border:rgba(255,27,61,.18);--glass-brd:rgba(255,27,61,.18);--glass-brd-strong:rgba(255,64,96,.34);
+  --text:#f5e8dd;--text-2:rgba(245,232,221,.76);--text-3:rgba(245,232,221,.62);--text-4:rgba(245,232,221,.38);--txt:#f5e8dd;--txt-0:#f5e8dd;--txt-1:#f5e8dd;--txt-2:rgba(245,232,221,.76);--txt-3:rgba(245,232,221,.62);--txt-dim:rgba(245,232,221,.48);--txt-mute:rgba(245,232,221,.38);--wt:#f5e8dd;--wt2:rgba(245,232,221,.76);--wt3:rgba(245,232,221,.62);--wt4:rgba(245,232,221,.38);--fg:#f5e8dd;
+  --dim:rgba(245,232,221,.48);--dim-2:rgba(245,232,221,.36);--dim2:rgba(245,232,221,.36);--dimmer:rgba(245,232,221,.28);--muted:rgba(245,232,221,.62);--muted2:rgba(245,232,221,.42);--soft:rgba(245,232,221,.32);--ash:rgba(245,232,221,.55);--ash-d:rgba(245,232,221,.32);--neutral:rgba(245,232,221,.42);
+  --border:rgba(255,27,61,.18);--border-hi:rgba(255,64,96,.34);--bdr:rgba(255,27,61,.18);--bdr2:rgba(255,27,61,.10);--bdr3:rgba(255,27,61,.06);--line:rgba(255,27,61,.18);--line-2:rgba(255,27,61,.10);--line-strong:rgba(255,64,96,.34);--line2:rgba(255,27,61,.12);--edge:rgba(255,27,61,.18);--edge-2:rgba(255,27,61,.10);--edge-soft:rgba(255,27,61,.06);--faint:rgba(255,27,61,.05);--ghost:rgba(255,27,61,.035);
+  --dark:#040206;--dark-2:#08050a;--dark-3:#150b14;--acc:#ff1b3d;--acc2:#ff4060;--ink:#f5e8dd;--ink-2:rgba(245,232,221,.62);--navy:#040206;--navy-2:#08050a;--navy-3:#150b14;
+  --prism-1:#ff1b3d;--prism-2:#ff4060;--prism-3:#b30e2a;--prism-4:#8f0f1a;--prism-5:#f5e8dd;--prism-6:#ff7088;--crystal:linear-gradient(135deg,#ff4060 0%,#ff1b3d 52%,#b30e2a 100%);--crystal-soft:linear-gradient(135deg,rgba(255,64,96,.16),rgba(179,14,42,.08));--cg-crystal:linear-gradient(135deg,#ff4060,#ff1b3d 52%,#b30e2a);
+  --blue:#ff1b3d;--blue-2:#ff4060;--blue-light:rgba(255,27,61,.10);--blue-border:rgba(255,27,61,.20);--violet:#b30e2a;--purple:#b30e2a;--purple-light:rgba(179,14,42,.10);--purple-border:rgba(179,14,42,.20);--indigo:#8f0f1a;--cg-blue:#ff1b3d;--cg-violet:#b30e2a;--cg-prism-1:#ff1b3d;
+  --cy:#ff4060;--cy2:#ff7088;--cy3:#f5e8dd;--azure:#ff4060;--ice:#f5e8dd;--sky:#ff7088;--teal:#ff4060;--mint:#ff7088;--spring:#ff7088;--surf:rgba(255,27,61,.06);--surf2:rgba(255,27,61,.035);--glow:rgba(255,27,61,.08);--glow-cyan:rgba(255,27,61,.08);--glow-soft:rgba(255,27,61,.04);
+  --pink:#ff7088;--magenta:#ff4060;--red:#ff1b3d;--red-2:#ff4060;--red-light:rgba(255,27,61,.10);--red-border:rgba(255,27,61,.22);--crimson:#ff1b3d;--crimson-2:#ff4060;--crimson-deep:#b30e2a;--crimson-dim:rgba(255,27,61,.06);--crimson-glow:rgba(255,27,61,.12);--crimson-line:rgba(255,27,61,.22);--crimson-soft:rgba(255,27,61,.10);
+  --sh:0 18px 60px rgba(0,0,0,.42);--shadow:0 18px 60px rgba(0,0,0,.42);--drop:0 24px 70px rgba(0,0,0,.52);--lift:0 22px 64px rgba(0,0,0,.48);--lift2:0 30px 80px rgba(0,0,0,.54);
+}
+
+html{scroll-behavior:smooth;background:#040206!important;color-scheme:dark}
+body{
+  background:linear-gradient(180deg,#040206 0%,#080307 48%,#040206 100%)!important;
+  color:#f5e8dd!important;
+  font-family:var(--sans,var(--cg-sans));
+  letter-spacing:-.01em;
+}
+body::before{
+  content:""!important;
+  display:block!important;
+  position:fixed!important;
+  inset:0!important;
+  z-index:-1!important;
+  pointer-events:none!important;
+  background-image:linear-gradient(rgba(255,27,61,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,27,61,.014) 1px,transparent 1px)!important;
+  background-size:72px 72px!important;
+  mask-image:none!important;
+  -webkit-mask-image:none!important;
+  opacity:.7!important;
+}
+body::after{display:none!important}
+
+/* Remove the oversized ambient/neon layers that produced pale glowing blobs. */
+#aurora,.aurora,.cursor-glow,.hero-prism,.hero-orb,.ambient-orb,.neon-orb,.manifesto-bg,.particles,.beam,[class*="glow-orb"],[class*="neon-orb"],[class*="aurora-orb"]{display:none!important}
+
+main,body>section,body>article{position:relative}
+main{padding-top:clamp(86px,10vw,132px)}
+section,.section{scroll-margin-top:110px}
+h1,h2,.section-title{font-family:var(--serif,var(--cg-serif));letter-spacing:-.045em;font-weight:500;color:#f5e8dd!important}
+h1{font-size:clamp(3rem,8vw,7.5rem);line-height:.91}
+h2,.section-title{font-size:clamp(2rem,5vw,4.6rem);line-height:.98}
+h3{letter-spacing:-.025em;color:#f5e8dd!important}
+h4,h5,h6{color:#f5e8dd!important}
+.eyebrow,.kicker,.label,.tag,.pill{font-family:var(--mono,var(--cg-mono));letter-spacing:.14em;text-transform:uppercase}
+.lead,.sub,.subtitle,p{line-height:1.7}
+p,li{color:var(--text-3,var(--cg-muted))!important}
+a{color:#f5e8dd}
+
+:is(.card,.panel,.tile,.product-card,.service-card,.feature-card,.glass,.console,.module,.box,.pricing-card,.offer-card,.cgr-box){
+  border:1px solid var(--glass-border,var(--cg-line))!important;
+  border-radius:var(--cg-radius);
+  background:linear-gradient(145deg,rgba(20,7,11,.88),rgba(7,3,6,.84))!important;
+  backdrop-filter:blur(16px) saturate(105%);
+  -webkit-backdrop-filter:blur(16px) saturate(105%);
+  box-shadow:var(--cg-shadow)!important;
+  color:#f5e8dd!important;
+}
+:is(.card,.panel,.tile,.product-card,.service-card,.feature-card,.glass,.console,.module,.box,.pricing-card,.offer-card){transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease}
+@media(hover:hover){
+  :is(.card,.panel,.tile,.product-card,.service-card,.feature-card,.glass,.console,.module,.box,.pricing-card,.offer-card):hover{
+    transform:translateY(-3px);
+    border-color:rgba(255,64,96,.32)!important;
+    box-shadow:0 24px 64px rgba(0,0,0,.5)!important;
+  }
+}
+
+a.btn,a.cta,.btn,.cta,button[type=submit],input[type=submit]{border-radius:999px;font-weight:750;letter-spacing:.01em}
+.btn.primary,.cta.primary,a.primary,.nav-cta,.btn-primary,[class*="btn-primary"],[class*="btn-cta"]{
+  background:linear-gradient(135deg,#ff1b3d,#b30e2a)!important;
+  color:#fff!important;
+  border-color:rgba(255,64,96,.38)!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.42)!important;
+}
+.btn.secondary,.cta.secondary,a.secondary,.btn-glass,[class*="btn-glass"]{
+  background:rgba(18,7,10,.76)!important;
+  color:#f5e8dd!important;
+  border:1px solid rgba(255,27,61,.2)!important;
+  box-shadow:none!important;
+}
+
+nav,header.nav,.nav,.site-nav,#hdr,#nav,header{
+  background:rgba(8,3,7,.9)!important;
+  color:#f5e8dd!important;
+  border-color:rgba(255,27,61,.18)!important;
+  box-shadow:0 12px 44px rgba(0,0,0,.48)!important;
+}
+nav a,header.nav a,.nav a,.site-nav a,#hdr a,.nav-links a,.links a{color:rgba(245,232,221,.82)!important}
+nav a:hover,.nav a:hover,.site-nav a:hover,.nav-links a:hover,.links a:hover{color:#fff!important;background:rgba(255,27,61,.06)!important}
+.nav-links,.links,.mobile-menu{background:rgba(8,3,7,.94)!important;border-color:rgba(255,27,61,.18)!important}
+.nav-toggle,.mobile-menu a{color:#f5e8dd!important}
+.nav-toggle svg{stroke:#f5e8dd!important}
+
+/* The shared injected top bar ships its own inline blue/violet CSS. Repaint it only; behavior and dimensions remain untouched. */
+.cg-topnav{
+  background:linear-gradient(90deg,rgba(20,7,11,.95),rgba(8,3,7,.97) 42%,rgba(14,5,8,.96) 72%,rgba(45,6,14,.9))!important;
+  border-color:rgba(255,27,61,.28)!important;
+  box-shadow:0 18px 54px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,64,96,.07)!important;
+  backdrop-filter:blur(22px) saturate(1.05)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(1.05)!important;
+}
+.cg-brand,.cg-links a,.cg-dropbtn,.cg-dropcaret{color:#f5e8dd!important}
+.cg-name em{color:#ff7088!important}
+.cg-links a:hover,.cg-dropbtn:hover,.cg-dropcaret:hover,.cg-dropcaret[aria-expanded='true']{background:rgba(255,27,61,.07)!important;color:#fff!important}
+.cg-cta{background:linear-gradient(135deg,#ff1b3d,#b30e2a)!important;color:#fff!important;border-color:rgba(255,64,96,.42)!important;box-shadow:none!important}
+.cg-menu,.cg-mobile{background:rgba(8,3,7,.98)!important;border-color:rgba(255,27,61,.24)!important;box-shadow:0 24px 70px rgba(0,0,0,.54)!important}
+.cg-prod,.cg-mobile a{color:#f5e8dd!important}
+.cg-prod:hover,.cg-mobile a:hover{background:rgba(255,27,61,.07)!important}
+.cg-ic{background:rgba(255,27,61,.08)!important;color:#ff7088!important}
+.cg-toggle{background:rgba(8,3,7,.9)!important;border-color:rgba(255,27,61,.28)!important;color:#fff!important}
+.cg-label{color:rgba(245,232,221,.48)!important}
+
+input,select,textarea{
+  background:rgba(8,3,7,.88)!important;
+  color:#f5e8dd!important;
+  border-color:rgba(255,27,61,.18)!important;
+  box-shadow:none!important;
+}
+input::placeholder,textarea::placeholder{color:rgba(245,232,221,.34)!important}
+table{color:#f5e8dd!important}
+th,td{border-color:rgba(255,27,61,.14)!important}
+pre,code{background:#080307!important;color:#f5e8dd!important;border-color:rgba(255,27,61,.14)!important;box-shadow:none!important}
+hr{border-color:rgba(255,27,61,.14)!important}
+::selection{background:rgba(255,27,61,.26);color:#fff}
+
+.cgr-box{max-width:min(1120px,calc(100% - 32px));margin:56px auto 32px!important;padding:clamp(22px,3vw,34px)!important}
+.cgr-box .cgr-crumb{font-family:var(--cg-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--cg-faint)}
+.cgr-box h2{font-family:var(--cg-serif);font-size:clamp(1.7rem,3vw,2.7rem);margin:.35rem 0 1rem}
+.cgr-box ul{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;padding:0;margin:0;list-style:none}
+.cgr-box li a{display:block;height:100%;padding:14px 15px;border:1px solid rgba(255,27,61,.14);border-radius:16px;background:rgba(17,7,9,.68);color:#f5e8dd;text-decoration:none}
+.cgr-box li a b{display:block;margin-bottom:4px}
+.cgr-cta{margin-top:18px;font-weight:650}
+.cgr-cta a{display:inline-flex;margin:4px 4px 0 0;padding:9px 13px;border-radius:999px;background:linear-gradient(135deg,#ff1b3d,#b30e2a);color:#fff!important;text-decoration:none}
+
+@media(max-width:760px){main{padding-top:96px}h1{font-size:clamp(2.55rem,15vw,4.2rem)}body::before{background-size:52px 52px!important}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+
+/* Global nav owns wayfinding; retain generated related nav blocks and page-local in-content nav. */
+body:has(#cg-global-nav) > nav.nav,
+body:has(#cg-global-nav) > header.nav,
+body:has(#cg-global-nav) > .nav,
+body:has(#cg-global-nav) > .mobile-menu,
+body:has(#cg-global-nav) > header:has(.nav-links),
+body:has(#cg-global-nav) > header:has(.nav-toggle){display:none!important}
+
+/* Counter-UAS: remove the redundant page-local ClearGlass/ARTEMIS header while preserving the injected global navigation bar. Collapse the duplicate header clearance so the hero sits directly beneath the global bar. */
+body:has(#cockpit):has(> header.topbar) > header.topbar{display:none!important}
+body:has(#cockpit):has(> header.topbar) > main{padding-top:0!important}
+body:has(#cockpit):has(> header.topbar) > main > .hero{padding-top:clamp(88px,10vw,120px)!important}
+
+/* Insights containment: preserve its article-first ordering and responsive behavior, but use the same restrained mission palette. */
+body[data-ix-page="hub"][data-ix-theme="dark"]{
+  background:linear-gradient(180deg,#040206 0%,#080307 48%,#040206 100%)!important;
+  color:var(--text,#f5e8dd)!important;
+}
+body[data-ix-page="hub"][data-ix-theme="dark"]::before{
+  z-index:1;
+  opacity:.5!important;
+  background-image:linear-gradient(rgba(255,27,61,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,27,61,.014) 1px,transparent 1px)!important;
+  background-size:56px 56px!important;
+  mask-image:none!important;
+}
+body[data-ix-page="hub"][data-ix-theme="dark"] main{display:flex;flex-direction:column;padding-top:0!important}
+body[data-ix-page="hub"][data-ix-theme="dark"] main>#latest{order:-100;padding-top:clamp(28px,5vw,58px)}
+body[data-ix-page="hub"][data-ix-theme="dark"] #latest .section-head,
+body[data-ix-page="hub"][data-ix-theme="dark"] #latest .feature,
+body[data-ix-page="hub"][data-ix-theme="dark"] #latest .feature>*{opacity:1!important;transform:none!important}
+body[data-ix-page="hub"][data-ix-theme="dark"] #latest .feature{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+body[data-ix-page="hub"][data-ix-theme="dark"] p{color:var(--muted,rgba(245,232,221,.62))!important}
+body[data-ix-page="hub"][data-ix-theme="dark"] .panel{border-color:rgba(255,27,61,.18)!important;background:linear-gradient(145deg,rgba(20,7,11,.88),rgba(7,3,6,.84))!important;box-shadow:0 24px 64px rgba(0,0,0,.5)!important}
+body[data-ix-page="hub"][data-ix-theme="dark"] .btn.primary,
+body[data-ix-page="hub"][data-ix-theme="dark"] .nav-cta{background:linear-gradient(135deg,#ff1b3d,#b30e2a)!important;color:#fff!important;border-color:rgba(255,64,96,.38)!important}
+@media(max-width:760px){body[data-ix-page="hub"][data-ix-theme="dark"] #latest .feature{grid-template-columns:1fr}body[data-ix-page="hub"][data-ix-theme="dark"] main{padding-top:0!important}}
