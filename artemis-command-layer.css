@@ -1,0 +1,365 @@
+/* ClearGlass Inc. homepage-only mission black/red presentation.
+   This stylesheet is referenced by index.html only. Keep the homepage restrained,
+   readable, and dark; preserve layout, content, controls, and behavior. */
+
+:root{
+  --artemis-cyan:#d11f2f;
+  --artemis-violet:#8f1722;
+  --artemis-ink:#070707;
+  --artemis-line:rgba(209,31,47,.12);
+  --mission-red:#d11f2f;
+  --mission-red-strong:#ff3347;
+  --mission-red-soft:rgba(209,31,47,.16);
+  --mission-black:#070707;
+  --mission-panel:#0d0d0f;
+  --mission-panel-2:#121214;
+  --mission-border:rgba(209,31,47,.24);
+  --mission-text:#f4f4f5;
+  --mission-muted:#a1a1aa;
+}
+
+/* Base homepage palette */
+html body{
+  --white:#f5f5f5!important;
+  --off:#0b0b0c!important;
+  --glass:rgba(14,14,16,.84)!important;
+  --glass-strong:rgba(18,18,20,.94)!important;
+  --glass-border:rgba(209,31,47,.18)!important;
+  --dark:#070707!important;
+  --dark-2:#101012!important;
+  --dark-3:#18181b!important;
+  --text:#f4f4f5!important;
+  --text-2:#d4d4d8!important;
+  --text-3:#a1a1aa!important;
+  --text-4:#71717a!important;
+  --prism-1:#d11f2f!important;
+  --prism-2:#a51c2a!important;
+  --prism-3:#7a101a!important;
+  --prism-4:#d11f2f!important;
+  --prism-5:#8f1722!important;
+  --prism-6:#b91c2c!important;
+  --crystal:linear-gradient(135deg,#f5f5f5 0%,#d11f2f 52%,#8f1722 100%)!important;
+  background:#070707!important;
+  color:var(--mission-text)!important;
+}
+
+html body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-2;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 50% -10%,rgba(209,31,47,.12),transparent 34%),
+    linear-gradient(180deg,#09090a 0%,#070707 56%,#09090a 100%);
+}
+
+/* Remove the bright neon wash. */
+html body .cursor-glow{display:none!important}
+html body .hero-prism{
+  width:min(680px,86vw)!important;
+  height:min(680px,86vw)!important;
+  background:radial-gradient(circle,rgba(209,31,47,.10) 0%,rgba(112,12,22,.045) 38%,transparent 70%)!important;
+  animation:none!important;
+  opacity:.6!important;
+}
+html body .hero-lines{opacity:.22!important}
+html body .hero-line{
+  background:linear-gradient(90deg,transparent,rgba(209,31,47,.20),transparent)!important;
+  animation-duration:22s!important;
+}
+
+/* Navigation */
+html body .nav,
+html body .nav.scrolled{
+  background:rgba(8,8,9,.92)!important;
+  border:1px solid rgba(209,31,47,.20)!important;
+  box-shadow:0 12px 34px rgba(0,0,0,.34)!important;
+  backdrop-filter:blur(16px) saturate(1.05)!important;
+  -webkit-backdrop-filter:blur(16px) saturate(1.05)!important;
+}
+html body .nav-brand,
+html body .nav-name,
+html body .nav-name em{color:#f4f4f5!important}
+html body .nav-name em{opacity:.62!important}
+html body .nav-mark{
+  background:#0d0d0f!important;
+  border:1px solid rgba(209,31,47,.18)!important;
+  box-shadow:0 6px 18px rgba(0,0,0,.32)!important;
+}
+html body .nav-links{
+  background:rgba(16,16,18,.78)!important;
+  border-color:rgba(255,255,255,.06)!important;
+}
+html body .nav-links a{color:#a1a1aa!important}
+html body .nav-links a::after{background:#d11f2f!important;opacity:.72!important}
+html body .nav-links a:hover,
+html body .nav-links a:focus-visible,
+html body .nav-links a.is-active{
+  color:#fff!important;
+  background:rgba(209,31,47,.10)!important;
+}
+html body .nav-cta{
+  color:#fff!important;
+  background:#a71928!important;
+  box-shadow:none!important;
+}
+html body .nav-cta:hover,
+html body .nav-cta:focus-visible{background:#c51f31!important}
+html body .nav-toggle{color:#f4f4f5!important}
+html body .mobile-menu{
+  background:rgba(8,8,9,.97)!important;
+  border-color:rgba(209,31,47,.20)!important;
+  box-shadow:0 18px 42px rgba(0,0,0,.44)!important;
+}
+html body .mobile-menu a{color:#d4d4d8!important}
+html body .mobile-menu a:hover,
+html body .mobile-menu a:focus-visible{background:rgba(209,31,47,.10)!important;color:#fff!important}
+
+/* Hero: clean mission presentation */
+html body .hero{
+  background:
+    radial-gradient(circle at 50% 24%,rgba(209,31,47,.10),transparent 30%),
+    linear-gradient(180deg,#080809 0%,#070707 72%,#0a0a0b 100%)!important;
+}
+html body .hero-year{color:#9b8084!important}
+html body .hero h1{color:#f7f7f7!important;text-shadow:none!important}
+html body .hero h1 strong{color:#fff!important}
+html body .hero h1 .crystal-text{
+  background:linear-gradient(90deg,#f4f4f5 0%,#d11f2f 58%,#9f1a27 100%)!important;
+  -webkit-background-clip:text!important;
+  background-clip:text!important;
+  -webkit-text-fill-color:transparent!important;
+  filter:none!important;
+}
+html body .hero-sub{color:#aaaab1!important}
+html body .hero-domain-line{
+  color:#b8b8bf!important;
+  background:rgba(15,15,17,.86)!important;
+  border-color:rgba(209,31,47,.16)!important;
+  box-shadow:none!important;
+  backdrop-filter:blur(10px)!important;
+}
+html body .hero-domain-line a{color:#f4f4f5!important}
+html body .hero-profile{
+  border-color:rgba(209,31,47,.18)!important;
+  box-shadow:0 18px 44px rgba(0,0,0,.42)!important;
+}
+html body .hero-scroll span{color:#71717a!important}
+html body .scroll-line{background:linear-gradient(180deg,rgba(209,31,47,.62),transparent)!important}
+
+/* Buttons: red accent, no neon aura. */
+html body .btn{
+  transition:transform .2s ease,background .2s ease,border-color .2s ease!important;
+}
+html body .btn::before{display:none!important}
+html body .btn-dark{
+  color:#fff!important;
+  background:#a71928!important;
+  box-shadow:none!important;
+}
+html body .btn-dark:hover{background:#c51f31!important}
+html body .btn-glass{
+  color:#e4e4e7!important;
+  background:rgba(17,17,19,.88)!important;
+  border-color:rgba(209,31,47,.18)!important;
+  box-shadow:none!important;
+}
+html body .btn-glass:hover{background:rgba(209,31,47,.10)!important;border-color:rgba(209,31,47,.32)!important}
+html body .btn-crystal{
+  color:#fff!important;
+  background:linear-gradient(135deg,#b51d2c,#83131e)!important;
+  animation:none!important;
+  box-shadow:none!important;
+}
+html body .btn:focus-visible{outline:2px solid #d11f2f!important;outline-offset:3px!important}
+
+/* Sections and content surfaces */
+html body .sect,
+html body section{color:#e4e4e7}
+html body .sect-dark{background:#09090a!important;color:#f4f4f5!important}
+html body .sect-light,
+html body .sect-off{background:#0b0b0c!important;color:#e4e4e7!important}
+html body .section-label,
+html body .eyebrow,
+html body .kicker{color:#cf5661!important}
+html body .section-title,
+html body .sect h2,
+html body .sect h3{color:#f4f4f5!important}
+html body .section-sub,
+html body .sect p{color:#a1a1aa!important}
+
+html body .tech-card,
+html body .product-card,
+html body .command-panel,
+html body .ops-card,
+html body .value-card,
+html body .glass-card,
+html body .card{
+  background:linear-gradient(180deg,rgba(17,17,19,.94),rgba(11,11,12,.96))!important;
+  border-color:rgba(209,31,47,.16)!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.22)!important;
+  color:#e4e4e7!important;
+}
+html body .tech-card::before,
+html body .product-card::before,
+html body .command-panel::before,
+html body .ops-card::before,
+html body .value-card::before{display:none!important}
+
+/* Artemis instrumentation: retain structure, heavily reduce visual noise. */
+.artemis-grid{
+  position:absolute;
+  inset:88px 0 0;
+  pointer-events:none;
+  opacity:.16!important;
+  background-image:linear-gradient(var(--artemis-line) 1px,transparent 1px),linear-gradient(90deg,var(--artemis-line) 1px,transparent 1px);
+  background-size:84px 84px;
+  mask-image:linear-gradient(to bottom,transparent 0,#000 20%,transparent 78%);
+}
+.artemis-grid::after{display:none!important}
+.artemis-grid span{display:none!important}
+.artemis-reticle{display:none!important}
+.artemis-controls{position:relative;z-index:3;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:18px;font-family:var(--mono)}
+.artemis-toggle,.artemis-chip,.artemis-meta{
+  min-height:34px;
+  border-radius:999px;
+  border:1px solid rgba(209,31,47,.18)!important;
+  background:rgba(16,16,18,.88)!important;
+  box-shadow:none!important;
+  backdrop-filter:blur(10px)!important;
+  color:#b8b8bf!important;
+}
+.artemis-toggle,.artemis-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 13px;font:600 9px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:background .2s ease,border-color .2s ease,color .2s ease}
+.artemis-toggle:hover,.artemis-chip:hover{transform:none!important;border-color:rgba(209,31,47,.34)!important;background:rgba(209,31,47,.09)!important;color:#fff!important}
+.artemis-toggle:focus-visible,.artemis-chip:focus-visible{outline:2px solid #d11f2f!important;outline-offset:3px;box-shadow:none!important}
+.artemis-toggle__signal{width:7px;height:7px;border-radius:50%;background:#d11f2f!important;box-shadow:none!important;animation:none!important}
+.artemis-toggle:not(.is-active) .artemis-toggle__signal{background:#5b5b61!important}
+.artemis-meta{display:grid;grid-template-columns:auto auto;align-items:center;gap:10px;padding:6px 12px;text-align:left}
+.artemis-meta b{font-size:8px;letter-spacing:.1em;color:#d4d4d8!important}
+.artemis-meta span{font-size:7px;letter-spacing:.12em;color:#b84b55!important}
+.artemis-instrumented{position:relative}
+.artemis-instrumented>.artemis-corner{display:none!important}
+
+/* Classification/header strips: replace magenta and bright green with mission tones. */
+html body .class-banner{
+  background:#5d0b14!important;
+  color:#e8d8da!important;
+  border-bottom-color:#8f1722!important;
+}
+html body .unclass-banner{
+  background:#0b0b0c!important;
+  color:#9f7378!important;
+  border-top-color:rgba(209,31,47,.18)!important;
+}
+
+/* Sentinel homepage panel: black/red, restrained, readable. */
+html body #hero .sentinel-hero{
+  color:#f4f4f5!important;
+  background:linear-gradient(145deg,rgba(16,16,18,.97),rgba(8,8,9,.99))!important;
+  border-color:rgba(209,31,47,.22)!important;
+  box-shadow:0 24px 60px rgba(0,0,0,.34)!important;
+  backdrop-filter:blur(16px)!important;
+  -webkit-backdrop-filter:blur(16px)!important;
+}
+html body #hero .sentinel-command-header,
+html body #hero .sentinel-command-rail,
+html body #hero .sentinel-command-rail[aria-label]{background:transparent!important;color:#e4e4e7!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html body #hero .sentinel-command-header{border-color:rgba(209,31,47,.12)!important}
+html body #hero .sentinel-status,
+html body #hero .sentinel-status b,
+html body #hero .sentinel-hero h2,
+html body #hero .sentinel-hero h2#sentinel-hero-title{color:#f4f4f5!important;text-shadow:none!important}
+html body #hero .sentinel-status small,
+html body #hero .sentinel-session,
+html body #hero .sentinel-hero>p:not(.sentinel-command-label):not(.sentinel-zone-label):not(.sentinel-assurance){color:#9f9fa7!important}
+html body #hero .sentinel-session b{color:#d7a1a6!important}
+html body #hero .sentinel-command-label,
+html body #hero .sentinel-zone-label{color:#a35b63!important}
+html body #hero .sentinel-vector{opacity:.28!important}
+html body #hero .sentinel-vector svg,
+html body #hero .sentinel-vector svg path,
+html body #hero .sentinel-vector svg circle{fill:none!important;background:transparent!important;stroke:#7a2029!important;filter:none!important}
+html body #hero .sentinel-vector .sentinel-vector-node{fill:#d11f2f!important;stroke:none!important;filter:none!important}
+html body #hero .sentinel-quick-grid button,
+html body #hero .sentinel-replies button{
+  background:#111113!important;
+  color:#d4d4d8!important;
+  border-color:rgba(209,31,47,.16)!important;
+  box-shadow:none!important;
+}
+html body #hero .sentinel-quick-grid button:hover,
+html body #hero .sentinel-quick-grid button:focus-visible,
+html body #hero .sentinel-quick-grid button[aria-pressed=true]{background:rgba(209,31,47,.10)!important;color:#fff!important;border-color:rgba(209,31,47,.36)!important;box-shadow:none!important}
+html body #hero .sentinel-recommendation{
+  background:#101012!important;
+  border-color:rgba(209,31,47,.18)!important;
+  color:#e4e4e7!important;
+  box-shadow:none!important;
+}
+html body #hero .sentinel-recommendation strong{color:#fff!important}
+html body #hero .sentinel-recommendation p{color:#9f9fa7!important}
+html body #hero .sentinel-hero-open{
+  background:#a71928!important;
+  color:#fff!important;
+  border-color:#b82030!important;
+  box-shadow:none!important;
+}
+html body #hero .sentinel-command-rail button{background:transparent!important;color:#9f9fa7!important;box-shadow:none!important;border-color:transparent!important}
+html body #hero .sentinel-command-rail button:hover,
+html body #hero .sentinel-command-rail button:focus-visible,
+html body #hero .sentinel-command-rail button[aria-expanded=true]{background:rgba(209,31,47,.08)!important;color:#f4f4f5!important}
+
+/* Sentinel drawer */
+html body .sentinel-shell .sentinel-panel{
+  background:#080809!important;
+  border-color:rgba(209,31,47,.22)!important;
+  color:#f4f4f5!important;
+  box-shadow:-24px 0 70px rgba(0,0,0,.58)!important;
+}
+html body .sentinel-shell .sentinel-panel-header,
+html body .sentinel-shell .sentinel-modebar{background:#0b0b0c!important;border-color:rgba(209,31,47,.14)!important;color:#f4f4f5!important;box-shadow:none!important}
+html body .sentinel-shell .sentinel-panel h1,
+html body .sentinel-shell .sentinel-panel h2,
+html body .sentinel-shell .sentinel-panel h3,
+html body .sentinel-shell .sentinel-panel h4,
+html body .sentinel-shell .sentinel-brand strong{color:#f4f4f5!important}
+html body .sentinel-shell .sentinel-brand small{color:#8d8d95!important}
+html body .sentinel-shell .sentinel-icon-button,
+html body .sentinel-shell .sentinel-modebar button{background:#121214!important;color:#d4d4d8!important;border-color:rgba(209,31,47,.14)!important;box-shadow:none!important}
+html body .sentinel-shell .sentinel-message-body{background:#111113!important;color:#e4e4e7!important;border-color:rgba(255,255,255,.06)!important;box-shadow:none!important}
+html body .sentinel-shell .sentinel-message--user .sentinel-message-body{background:rgba(209,31,47,.10)!important;border-color:rgba(209,31,47,.22)!important}
+
+/* Mobile brand positioning preserved; glow removed. */
+@media(max-width:620px){
+  html body .nav{padding-left:68px!important;padding-right:10px!important}
+  html body .nav .nav-brand{display:flex!important;align-items:center!important;justify-content:flex-start!important;flex:1 1 auto!important;min-width:0!important;max-width:calc(100% - 58px)!important;overflow:visible!important;gap:8px!important}
+  html body .nav .nav-mark{left:11px!important;top:50%!important;width:42px!important;height:42px!important;transform:translate(0,-50%)!important;flex:0 0 42px!important;box-shadow:0 6px 18px rgba(0,0,0,.34)!important}
+  html body .nav .nav-mark img{width:100%!important;height:100%!important;object-fit:contain!important;transform:scale(.90)!important}
+  html body .nav .nav-name{position:relative!important;z-index:4!important;display:block!important;flex:0 1 auto!important;min-width:0!important;max-width:none!important;margin:0!important;overflow:visible!important;text-overflow:clip!important;white-space:nowrap!important;font-size:clamp(16px,4.7vw,19px)!important;letter-spacing:-.025em!important;line-height:1!important}
+  html body .nav .nav-name em{display:inline!important;white-space:nowrap!important}
+  html body #hero .sentinel-hero{width:calc(100% - 20px)!important;margin:28px auto 0!important;padding:20px 16px 22px!important;border-radius:20px!important;overflow:hidden!important}
+  html body #hero .sentinel-command-header{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:12px!important;padding-bottom:14px!important}
+  html body #hero .sentinel-session{width:100%!important;display:flex!important;flex-wrap:wrap!important;justify-content:flex-start!important;gap:6px 10px!important;padding:0!important;background:transparent!important}
+  html body #hero .sentinel-vector{right:-48px!important;top:72px!important;width:190px!important;opacity:.18!important}
+  html body #hero .sentinel-quick-grid{display:grid!important;grid-template-columns:1fr!important;gap:10px!important}
+  html body #hero .sentinel-quick-grid button{width:100%!important;min-height:52px!important;padding:13px 16px!important;text-align:left!important;border-radius:14px!important;font-size:14px!important;line-height:1.28!important}
+  html body #hero .sentinel-recommendation{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;padding:14px!important;border-radius:14px!important}
+  html body #hero .sentinel-recommendation[hidden]{display:none!important}
+  html body #hero .sentinel-hero-open{width:100%!important;min-height:54px!important;border-radius:14px!important;padding:13px 15px!important}
+  html body #hero .sentinel-command-rail{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;padding-top:13px!important}
+  html body #hero .sentinel-command-rail button{min-height:42px!important;border:1px solid rgba(209,31,47,.10)!important;border-radius:10px!important;background:#0e0e10!important}
+  html body .sentinel-shell .sentinel-panel{width:100%!important;border-left:0!important}
+}
+
+@media(max-width:760px){.artemis-meta{display:none}.artemis-grid{background-size:56px 56px}}
+@media(prefers-reduced-motion:reduce){
+  html body .hero-prism,
+  html body .hero-line,
+  html body .scroll-line,
+  .artemis-grid::after,
+  .artemis-grid span,
+  .artemis-reticle,
+  .artemis-toggle__signal{animation:none!important}
+  .artemis-toggle,.artemis-chip,.btn{transition:none!important}
+}
