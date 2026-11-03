@@ -1,4 +1,4 @@
-# ClearGlass Auto-Heal
+# ClearGlass
 
 This directory contains the repository-local self-healing control plane for GitHub Actions.
 
