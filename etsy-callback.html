@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Etsy connection callback — ClearGlass Inc.</title>
+<meta name="description" content="Utility landing page for the ClearGlass Etsy OAuth redirect. Not a public page.">
+<style>
+  :root {
+    --bg: #0b0f14; --panel: #131a23; --line: #243040;
+    --ink: #e8eef6; --muted: #93a4b8; --accent: #4fd1c5; --warn: #f6ad55; --bad: #fc8181;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem; background: var(--bg); color: var(--ink);
+    font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 46rem; margin: 0 auto; }
+  h1 { font-size: 1.4rem; margin: 0 0 .25rem; letter-spacing: -.01em; }
+  .sub { color: var(--muted); margin: 0 0 1.75rem; font-size: .95rem; }
+  .card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+    padding: 1.25rem; margin-bottom: 1rem;
+  }
+  .label { font-size: .72rem; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); margin-bottom: .4rem; }
+  code, pre {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .86rem;
+  }
+  pre {
+    background: #0a0e13; border: 1px solid var(--line); border-radius: 8px;
+    padding: .85rem; overflow-x: auto; margin: 0; color: var(--accent);
+    white-space: pre-wrap; word-break: break-all;
+  }
+  button {
+    margin-top: .7rem; background: var(--accent); color: #06231f; border: 0;
+    border-radius: 7px; padding: .5rem .9rem; font-weight: 650; cursor: pointer;
+    font-size: .85rem;
+  }
+  button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  .note { color: var(--muted); font-size: .85rem; }
+  .bad { color: var(--bad); }
+  .warn { color: var(--warn); }
+  .hidden { display: none; }
+  ol { padding-left: 1.15rem; }
+  li { margin: .35rem 0; }
+</style>
+<link rel="stylesheet" href="/assets/css/cg-design-system.css"/>
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+</head>
+<body>
+<main>
+  <h1>Etsy connection callback</h1>
+  <p class="sub">Etsy redirected here after the shop-owner consent step. Nothing is sent anywhere from this page — the values below are read from your address bar and stay in this browser.</p>
+
+  <div id="error-box" class="card hidden">
+    <div class="label">Etsy returned an error</div>
+    <pre id="error-text" class="bad"></pre>
+    <p class="note">Nothing was connected. Re-run <code>python -m app.etsy_connect</code> and approve the request as the shop owner.</p>
+  </div>
+
+  <div id="ok-box" class="card hidden">
+    <div class="label">Paste this whole URL back into the CLI prompt</div>
+    <pre id="full-url"></pre>
+    <button id="copy-btn" type="button">Copy URL</button>
+    <p class="note" style="margin-bottom:0">The CLI checks the <code>state</code> value itself and aborts if it does not match the one it generated, so paste the entire URL rather than just the code.</p>
+  </div>
+
+  <div id="empty-box" class="card hidden">
+    <div class="label">No authorization response found</div>
+    <p class="note" style="margin:0">This page was opened directly rather than by an Etsy redirect. Start the flow with <code>python -m app.etsy_connect</code>.</p>
+  </div>
+
+  <div class="card">
+    <div class="label">Reminders</div>
+    <ol class="note" style="margin:0">
+      <li>The authorization code is <strong>single-use and short-lived</strong> — exchange it promptly.</li>
+      <li>It grants access to the connected Etsy shop. Treat it like a password and do not paste it into chat, tickets, or commits.</li>
+      <li>Clear this URL from your browser history once the exchange succeeds.</li>
+      <li>Connecting unlocks nothing on its own: every Etsy write stays behind the approval gate.</li>
+    </ol>
+  </div>
+</main>
+
+<script src="/logo-badge.js" defer></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+<script>
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var err = params.get("error");
+    var code = params.get("code");
+
+    if (err) {
+      document.getElementById("error-text").textContent =
+        err + (params.get("error_description") ? "\n" + params.get("error_description") : "");
+      document.getElementById("error-box").classList.remove("hidden");
+      return;
+    }
+
+    if (!code) {
+      document.getElementById("empty-box").classList.remove("hidden");
+      return;
+    }
+
+    var url = window.location.href;
+    document.getElementById("full-url").textContent = url;
+    document.getElementById("ok-box").classList.remove("hidden");
+
+    document.getElementById("copy-btn").addEventListener("click", function () {
+      var btn = this;
+      navigator.clipboard.writeText(url).then(
+        function () { btn.textContent = "Copied"; },
+        function () { btn.textContent = "Copy failed — select the text above"; }
+      );
+    });
+  })();
+</script>
+<script defer src="/nav.js"></script>
+<script defer src="/cg-a11y.js"></script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+  <link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+  <link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+  <link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+  <link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#07111f">
+  <meta name="msapplication-TileColor" content="#07111f">
+  <meta name="msapplication-TileImage" content="/icon-192.png">
+  <meta name="msapplication-config" content="/browserconfig.xml">
+  <link rel="stylesheet" href="/assets/css/future-buttons.css">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ClearGlass Data Fabric</title>
+  <meta name="description" content="Live read-only diagnostics for the ClearGlass governed data fabric.">
+  <link rel="canonical" href="https://www.clearglassinc.com/data-fabric.html">
+  <meta name="robots" content="noindex,follow">
+  <style>
+    :root{color-scheme:dark;--bg:#05080d;--panel:#0b111a;--line:#213043;--text:#e8f0fb;--muted:#91a4bb;--ok:#52e6a5;--bad:#ff7373;--accent:#74b9ff}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0,#101a2b 0,transparent 35%),var(--bg);color:var(--text);font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    main{max-width:1100px;margin:auto;padding:40px 20px 72px}h1{font-size:clamp(25px,4vw,42px);margin:0 0 8px;letter-spacing:.04em}.sub{color:var(--muted);margin:0 0 28px}.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:20px}.pill{border:1px solid var(--line);background:var(--panel);padding:7px 11px;border-radius:999px}.ok{color:var(--ok)}.bad{color:var(--bad)}button{border:1px solid var(--accent);background:transparent;color:var(--text);padding:8px 12px;border-radius:8px;cursor:pointer}button:hover{background:#101e31}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}.card{border:1px solid var(--line);background:linear-gradient(145deg,rgba(11,17,26,.96),rgba(7,11,17,.96));border-radius:12px;padding:15px;min-height:130px}.card h2{font-size:14px;margin:0 0 8px;color:var(--accent)}.card p{margin:4px 0;color:var(--muted)}.mono{word-break:break-word}section{margin-top:28px}section>h2{font-size:16px;margin-bottom:10px}pre{white-space:pre-wrap;word-break:break-word;border:1px solid var(--line);background:#060a10;padding:14px;border-radius:10px;color:var(--muted);min-height:70px}.loading{opacity:.7}
+  </style>
+  <script defer src="/assets/js/clearglass-data-fabric.js"></script>
+<link rel="stylesheet" href="/assets/css/cg-design-system.css"/>
+</head>
+<body>
+<main>
+  <h1>ClearGlass Data Fabric</h1>
+  <p class="sub">Governed discovery, same-origin loading and integrity diagnostics for repository-backed data assets.</p>
+  <div class="bar">
+    <span id="overall" class="pill loading">Checking data fabric…</span>
+    <span id="counts" class="pill">Catalog pending</span>
+    <button id="refresh" type="button">Re-run health check</button>
+  </div>
+
+  <section aria-labelledby="modules-title">
+    <h2 id="modules-title">Registered modules</h2>
+    <div id="modules" class="grid"></div>
+  </section>
+
+  <section aria-labelledby="root-title">
+    <h2 id="root-title">Root datasets</h2>
+    <div id="roots" class="grid"></div>
+  </section>
+
+  <section aria-labelledby="diag-title">
+    <h2 id="diag-title">Diagnostics</h2>
+    <pre id="diagnostics">Waiting for runtime…</pre>
+  </section>
+</main>
+<script>
+(function () {
+  'use strict';
+  var overall = document.getElementById('overall');
+  var counts = document.getElementById('counts');
+  var modules = document.getElementById('modules');
+  var roots = document.getElementById('roots');
+  var diagnostics = document.getElementById('diagnostics');
+  var refresh = document.getElementById('refresh');
+
+  function esc(value) {
+    return String(value).replace(/[&<>"']/g, function (char) {
+      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[char];
+    });
+  }
+
+  function card(title, rows) {
+    return '<article class="card"><h2>' + esc(title) + '</h2>' + rows.map(function (row) {
+      return '<p>' + esc(row) + '</p>';
+    }).join('') + '</article>';
+  }
+
+  function renderCatalog(catalog) {
+    counts.textContent = catalog.modules.length + ' modules · ' + catalog.rootDatasets.length + ' root datasets';
+    modules.innerHTML = catalog.modules.map(function (item) {
+      return card(item.id, [
+        'root: data/' + item.root,
+        'browser: ' + (item.browserLoad === false ? 'restricted' : 'on-demand'),
+        item.purpose
+      ]);
+    }).join('');
+    roots.innerHTML = catalog.rootDatasets.map(function (item) {
+      return card(item.id, ['path: data/' + item.path, 'format: ' + item.format, item.purpose]);
+    }).join('');
+  }
+
+  function run() {
+    if (!window.ClearGlassDataFabric) {
+      overall.className = 'pill bad';
+      overall.textContent = 'Runtime unavailable';
+      diagnostics.textContent = 'clearglass-data-fabric.js did not initialize.';
+      return;
+    }
+    overall.className = 'pill loading';
+    overall.textContent = 'Checking data fabric…';
+    Promise.all([
+      window.ClearGlassDataFabric.catalog(),
+      window.ClearGlassDataFabric.health()
+    ]).then(function (results) {
+      var catalog = results[0];
+      var health = results[1];
+      renderCatalog(catalog);
+      overall.className = 'pill ' + (health.ok ? 'ok' : 'bad');
+      overall.textContent = health.ok ? 'Data fabric online' : 'Data fabric degraded';
+      diagnostics.textContent = JSON.stringify(health, null, 2);
+    }).catch(function (error) {
+      overall.className = 'pill bad';
+      overall.textContent = 'Data fabric error';
+      diagnostics.textContent = String(error && error.stack || error);
+    });
+  }
+
+  refresh.addEventListener('click', run);
+  if (window.ClearGlassDataFabric) run();
+  else window.addEventListener('clearglass:data-fabric-ready', run, { once: true });
+})();
+</script>
+<script src="/assets/js/future-buttons.js" defer></script>
+<script defer src="/logo-badge.js"></script>
+<script defer src="/nav.js"></script>
+<script defer src="/cg-a11y.js"></script>
+</body>
+</html>

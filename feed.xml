@@ -1,0 +1,168 @@
+<?xml version='1.0' encoding='utf-8'?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>https://www.clearglassinc.com/feed.xml</id>
+  <title>ClearGlass Inc. Insights</title>
+  <link href="https://www.clearglassinc.com/feed.xml" rel="self" />
+  <link href="https://www.clearglassinc.com/blog/" />
+  <updated>2026-08-14T00:00:00Z</updated>
+  <entry>
+    <id>https://www.clearglassinc.com/offers/security-quick-audit-methodology.html#methodology</id>
+    <title>Security Quick-Audit Methodology</title>
+    <link href="https://www.clearglassinc.com/offers/security-quick-audit-methodology.html" />
+    <published>2026-08-14T00:00:00Z</published>
+    <updated>2026-08-14T00:00:00Z</updated>
+    <summary>The scope, evidence standards, scoring model, safeguards and limitations used for the ClearGlass Ontario Security Quick-Audit.</summary>
+  </entry>
+  <entry>
+    <id>https://www.clearglassinc.com/blog/graph-topology-multi-agent-research-workflow.html#article</id>
+    <title>Graph Topology Beats One Giant Context</title>
+    <link href="https://www.clearglassinc.com/blog/graph-topology-multi-agent-research-workflow.html" />
+    <published>2026-08-14T00:00:00Z</published>
+    <updated>2026-08-14T00:00:00Z</updated>
+    <summary>A practical planner-worker-verifier workflow for multi-agent research: isolated contexts, evidence boundaries, benchmark caveats, and copy-ready prompts.</summary>
+  </entry>
+  <entry>
+    <id>https://www.clearglassinc.com/blog/blue-brain-project-digital-brain-simulation.html#article</id>
+    <title>Blue Brain Project: Reconstructing the Brain in Silico</title>
+    <link href="https://www.clearglassinc.com/blog/blue-brain-project-digital-brain-simulation.html" />
+    <published>2026-08-11T00:00:00Z</published>
+    <updated>2026-08-11T00:00:00Z</updated>
+    <summary>A deep technical ClearGlass long read on the Blue Brain Project, biologically detailed neuron models, connectome assembly, supercomputing, whole-brain atlases, validation, controversies, ethics, and its EBRAINS legacy.</summary>
+  </entry>
+  <entry>
+    <id>https://www.clearglassinc.com/blog/agentic-ai-business-operating-model.html#article</id>
+    <title>Agentic AI as a Business Operating Model</title>
+    <link href="https://www.clearglassinc.com/blog/agentic-ai-business-operating-model.html" />
+    <published>2026-08-11T00:00:00Z</published>
+    <updated>2026-08-11T00:00:00Z</updated>
+    <summary>A ClearGlass analysis of agentic AI as an operating model for bounded delegation, measurable outcomes, authority limits, observability, and human-approved execution.</summary>
+  </entry>
+  <entry>
+    <id>https://www.clearglassinc.com/blog/ai-agents-digital-workforce-small-business.html#article</id>
+    <title>AI Agents as a Digital Workforce for Small Business</title>
+    <link href="https://www.clearglassinc.com/blog/ai-agents-digital-workforce-small-business.html" />
+    <published>2026-08-10T00:00:00Z</published>
+    <updated>2026-08-10T00:00:00Z</updated>
+    <summary>A ClearGlass strategic long read on the shift from automation to delegation: how AI agents can become a governed digital workforce for small businesses, with permissions, auditability, and human approval.</summary>
+  </entry>
+  <entry>
+    <id>https://www.clearglassinc.com/blog/us-army-hades-me-11b-osint-dossier.html#article</id>
+    <title>U.S. Army HADES / ME-11B — Public-Record OSINT Dossier</title>
+    <link href="https://www.clearglassinc.com/blog/us-army-hades-me-11b-osint-dossier.html" />
+    <published>2026-08-09T00:00:00Z</published>
+    <updated>2026-08-09T00:00:00Z</updated>
+    <summary>A verification-aware public-record compilation on the U.S. Army High Accuracy Detection and Exploitation System.</summary>
+  </entry>
+  <entry>
+    <id>https://www.clearglassinc.com/blog/ai-safety-black-box-activation-analysis-gavel.html#article</id>
+    <title>AI Safety Beyond the Black Box: Activation Analysis &amp; GAVEL</title>
+    <link href="https://www.clearglassinc.com/blog/ai-safety-black-box-activation-analysis-gavel.html" />
+    <published>2026-08-09T00:00:00Z</published>
+    <updated>2026-08-09T00:00:00Z</updated>
+    <summary>A ClearGlass technical long read on activation analysis, cognitive elements, GAVEL, model-agnostic AI safety, layered guardrails, and governed autonomous systems.</summary>
+  </entry>
+  <entry>
+    <id>https://www.clearglassinc.com/blog/shadow-ai-incident-response-logs-gone.html#article</id>
+    <title>Shadow AI Incident Response: When the Logs Are Already Gone</title>
+    <link href="https://www.clearglassinc.com/blog/shadow-ai-incident-response-logs-gone.html" />
+    <published>2026-08-07T00:00:00Z</published>
+    <updated>2026-08-07T00:00:00Z</updated>
+    <summary>A ClearGlass long-read on Shadow AI incident response, forensic readiness, log retention, endpoint preservation, regulator expectations, and defensible AI governance.</summary>
+  </entry>
+  <entry>
+    <id>https://www.clearglassinc.com/blog/ontario-influence-environment-august-2026.html#article</id>
+    <title>Ontario Influence Environment, August 2026: Government Advertising, Foreign Interference and the Evidence Line</title>
+    <link href="https://www.clearglassinc.com/blog/ontario-influence-environment-august-2026.html" />
+    <published>2026-08-07T00:00:00Z</published>
+    <updated>2026-08-07T00:00:00Z</updated>
+    <summary>A source-led Ontario OSINT brief with cryptographic evidence verification, explicit confidence scoring, provenance controls and local-only analyst tooling.</summary>
+  </entry>
+  <entry>
+    <id>https://www.clearglassinc.com/blog/shadow-ai-enterprise-security-blind-spot.html#article</id>
+    <title>Shadow AI: Enterprise Security’s Biggest Blind Spot</title>
+    <link href="https://www.clearglassinc.com/blog/shadow-ai-enterprise-security-blind-spot.html" />
+    <published>2026-08-06T00:00:00Z</published>
+    <updated>2026-08-06T00:00:00Z</updated>
+    <summary>A ClearGlass strategic briefing on shadow AI, unauthorized data movement, AI discovery, identity governance, and enterprise control design.</summary>
+  </entry>
+  <entry>
+    <id>https://www.clearglassinc.com/blog/rethinking-security-age-of-ai-cyber-stack.html#article</id>
+    <title>Rethinking Security for the Age of AI</title>
+    <link href="https://www.clearglassinc.com/blog/rethinking-security-age-of-ai-cyber-stack.html" />
+    <published>2026-08-05T00:00:00Z</published>
+    <updated>2026-08-05T00:00:00Z</updated>
+    <summary>A ClearGlass strategic brief on Microsoft's AI-native Cyber Stack, Project Perception, multi-model security reasoning, agentic defense, and human-controlled action.</summary>
+  </entry>
+  <entry>
+    <id>https://www.clearglassinc.com/blog/network-orchestration-ai-automation-cybersecurity.html#article</id>
+    <title>AI-Driven Network Orchestration: What Serious Automation Requires</title>
+    <link href="https://www.clearglassinc.com/blog/network-orchestration-ai-automation-cybersecurity.html" />
+    <published>2026-08-03T00:00:00Z</published>
+    <updated>2026-08-03T00:00:00Z</updated>
+    <summary>A ClearGlass long-read briefing on AI-driven network orchestration, human-in-the-loop control, cybersecurity, staged autonomy, and production-grade automation architecture.</summary>
+  </entry>
+  <entry>
+    <id>https://www.clearglassinc.com/blog/clearglass-workplace-surveillance-intelligence-defense-system.html#article</id>
+    <title>ClearGlass Workplace Surveillance Intelligence &amp; Defense System (WSIDS)</title>
+    <link href="https://www.clearglassinc.com/blog/clearglass-workplace-surveillance-intelligence-defense-system.html" />
+    <published>2026-08-03T00:00:00Z</published>
+    <updated>2026-08-03T00:00:00Z</updated>
+    <summary>A defensive, investigative, educational, and compliance-focused framework for workplace surveillance transparency and worker protection.</summary>
+  </entry>
+  <entry>
+    <id>https://www.clearglassinc.com/blog/canada-digital-control-architecture-charter.html</id>
+    <title>Canada’s New Digital-Control Architecture: Safety, Surveillance and the Charter</title>
+    <link href="https://www.clearglassinc.com/blog/canada-digital-control-architecture-charter.html" />
+    <published>2026-07-31T00:00:00Z</published>
+    <updated>2026-07-31T00:00:00Z</updated>
+    <summary>A source-led analysis of Canada’s proposed digital-safety and lawful-access architecture.</summary>
+  </entry>
+  <entry>
+    <id>https://www.clearglassinc.com/blog/telecommunications-legal-briefing-30-july-2026.html</id>
+    <title>Telecommunications Legal Briefing — 30 July 2026</title>
+    <link href="https://www.clearglassinc.com/blog/telecommunications-legal-briefing-30-july-2026.html" />
+    <published>2026-07-30T00:00:00Z</published>
+    <updated>2026-07-30T00:00:00Z</updated>
+    <summary>Executive legal assessment of three material telecom regulatory developments affecting Canadian and UK carriers: CRTC switching-fee deadline suspension, area code 851 overlay, and Ofcom Openreach wholesale offer consultation.</summary>
+  </entry>
+  <entry>
+    <id>https://www.clearglassinc.com/blog/ontario-accountability-sealed-evidence.html</id>
+    <title>They Sealed the Evidence: Ontario Accountability in the Public Record</title>
+    <link href="https://www.clearglassinc.com/blog/ontario-accountability-sealed-evidence.html" />
+    <published>2026-07-29T00:00:00Z</published>
+    <updated>2026-07-29T00:00:00Z</updated>
+    <summary>A source-led guide to challenging Ontario FIPPA section 14 law-enforcement denials through the Information and Privacy Commissioner of Ontario.</summary>
+  </entry>
+  <entry>
+    <id>https://www.clearglassinc.com/blog/coffee-and-technology-digital-revolution.html</id>
+    <title>Coffee &amp; Technology: The Fuel Behind the Digital Revolution</title>
+    <link href="https://www.clearglassinc.com/blog/coffee-and-technology-digital-revolution.html" />
+    <published>2026-07-29T00:00:00Z</published>
+    <updated>2026-07-29T00:00:00Z</updated>
+    <summary>How coffee culture and technology evolved together, from intellectual coffeehouses to AI-assisted farming and connected brewing.</summary>
+  </entry>
+  <entry>
+    <id>https://www.clearglassinc.com/blog/chatgpt-prompt-shortcuts-supercharge-ai-results.html</id>
+    <title>Mastering the Machine: A Comprehensive Guide to Advanced Prompt Engineering</title>
+    <link href="https://www.clearglassinc.com/blog/chatgpt-prompt-shortcuts-supercharge-ai-results.html" />
+    <published>2026-07-29T00:00:00Z</published>
+    <updated>2026-07-29T00:00:00Z</updated>
+    <summary>A practical guide to advanced prompt modules, quality control, repeatable workflows, and an interactive prompt composer.</summary>
+  </entry>
+  <entry>
+    <id>https://www.clearglassinc.com/blog/ai-generated-phishing-54-percent-click-rate.html#article</id>
+    <title>This Week's Long Read: AI-Generated Phishing Achieves a 54% Click Rate</title>
+    <link href="https://www.clearglassinc.com/blog/ai-generated-phishing-54-percent-click-rate.html" />
+    <published>2026-07-29T00:00:00Z</published>
+    <updated>2026-07-29T00:00:00Z</updated>
+    <summary>A curated long-read brief on WatchGuard's report that AI-generated phishing reaches a 54% click rate, and why identity-centric security now outperforms detection-first spending.</summary>
+  </entry>
+  <entry>
+    <id>https://www.clearglassinc.com/blog/greenbelt-92-percent-access-beats-process.html</id>
+    <title>92%: When Access Beats Process</title>
+    <link href="https://www.clearglassinc.com/blog/greenbelt-92-percent-access-beats-process.html" />
+    <published>2026-07-26T00:00:00Z</published>
+    <updated>2026-07-26T00:00:00Z</updated>
+    <summary>A source-led Ontario Greenbelt OSINT brief: the 92% finding, the estimated $8.3 billion land-value increase, the housing-need evidence and the FOI restriction.</summary>
+  </entry>
+</feed>
