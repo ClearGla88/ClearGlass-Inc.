@@ -1,0 +1,114 @@
+/* ClearGlass · global mission theme layer.
+   Theme-only: preserves page content, HTML structure, navigation behavior,
+   interactions, product data, and layouts. Linked last on content pages so the
+   final cascade stays aligned with the original ClearGlass mission palette. */
+
+:root,
+:root[data-theme],
+html {
+  color-scheme: dark;
+
+  /* Core ClearGlass mission palette */
+  --accent: #ff1b3d !important;
+  --accent-2: #ff4060 !important;
+  --accent2: #ff4060 !important;
+  --acc: #ff1b3d !important;
+  --acc-2: #ff4060 !important;
+  --primary: #ff1b3d !important;
+  --secondary: #ff4060 !important;
+  --brand: #ff1b3d !important;
+  --brand-2: #ff4060 !important;
+  --main: #ff1b3d !important;
+  --c1: #ff1b3d !important;
+  --c2: #ff4060 !important;
+
+  /* Legacy warm accent aliases are intentionally normalized to crimson. */
+  --amber: #ff1b3d !important;
+  --amber-2: #ff4060 !important;
+  --am: #ff1b3d !important;
+  --am2: #ff4060 !important;
+  --am3: #b30e2a !important;
+  --am4: #8f0f1a !important;
+  --orange: #ff4060 !important;
+  --orange-2: #ff1b3d !important;
+  --gold: #ff4060 !important;
+  --yellow: #ff1b3d !important;
+  --yw: #ff4060 !important;
+
+  /* Historical cyan/blue aliases are presentation tokens on older pages. */
+  --red: #ff1b3d !important;
+  --red-2: #ff4060 !important;
+  --rd: #ff1b3d !important;
+  --cyan: #ff4060 !important;
+  --cyan-2: #ff1b3d !important;
+  --ice: #f5e8dd !important;
+  --teal: #ff4060 !important;
+
+  /* Restrained red edges and glow. */
+  --line: rgba(255,27,61,.18) !important;
+  --line-2: rgba(255,64,96,.30) !important;
+  --glow: rgba(255,27,61,.10) !important;
+
+  /* Keep semantic status colors meaningful. */
+  --ok: #56e3a6 !important;
+  --good: #56e3a6 !important;
+  --warn: #f2b84b !important;
+  --bad: #ff4060 !important;
+  --danger: #ff4060 !important;
+
+  /* Shared dark-surface tokens for pages that consume the global theme directly. */
+  --cg-cyber-bg: #040206;
+  --cg-cyber-panel: 17, 7, 9;
+  --cg-cyber-panel-strong: 26, 10, 12;
+  --cg-cyber-cyan: 255, 64, 96;
+  --cg-cyber-blue: 255, 27, 61;
+  --cg-cyber-violet: 179, 14, 42;
+  --cg-cyber-magenta: 255, 112, 136;
+  --cg-cyber-ultraviolet: 143, 15, 26;
+  --cg-cyber-mint: 86, 227, 166;
+  --cg-cyber-text: #f5e8dd;
+  --cg-cyber-muted: #bea9a0;
+  --cg-cyber-border: rgba(255, 27, 61, .22);
+  --cg-cyber-glass: rgba(14, 5, 8, .78);
+  --cg-cyber-glass-light: rgba(26, 10, 12, .78);
+  --cg-cyber-halo: 0 0 24px rgba(255,27,61,.10), 0 0 52px rgba(179,14,42,.07);
+  --cg-cyber-edge: linear-gradient(120deg, rgba(255,27,61,.78), rgba(245,232,221,.20) 28%, rgba(255,64,96,.68) 58%, rgba(179,14,42,.62));
+  --cg-cyber-scanline: repeating-linear-gradient(180deg, rgba(255,64,96,.025) 0 1px, transparent 1px 4px);
+  --cg-cyber-grid: linear-gradient(rgba(255,27,61,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,64,96,.035) 1px, transparent 1px);
+  --cg-cyber-ease: cubic-bezier(.16, 1, .3, 1);
+  --cg-cyber-pulse: 7.2s;
+}
+
+html {
+  background: #040206 !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: linear-gradient(180deg, #040206 0%, #080307 48%, #040206 100%) !important;
+  color: #f5e8dd !important;
+  text-rendering: optimizeLegibility;
+}
+
+/* Remove only known oversized ambient/neon orb layers that create pale blobs. */
+#aurora,
+.aurora,
+.cursor-glow,
+.hero-prism,
+.hero-orb,
+.ambient-orb,
+.neon-orb,
+[class*="glow-orb"],
+[class*="neon-orb"],
+[class*="aurora-orb"] {
+  display: none !important;
+}
+
+img,
+svg,
+.nav-mark img,
+.footer-mark img {
+  image-rendering: auto;
+}
