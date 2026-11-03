@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en-CA" data-cg-no-fx>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>ClearGlass Minerals Intelligence — Command Center</title>
+  <meta name="description" content="Source-transparent critical minerals command center for markets, projects, trade, supply chains, risk, alerts, exploration and data-source health.">
+  <link rel="canonical" href="https://www.clearglassinc.com/minerals-platform.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ClearGlass Minerals Intelligence Platform">
+  <meta property="og:description" content="Operational critical-minerals intelligence with explicit provenance, freshness and demo/live separation.">
+  <meta property="og:url" content="https://www.clearglassinc.com/minerals-platform.html">
+  <link rel="icon" href="/assets/images/clearglass-holographic-seal.png">
+  <link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#060910">
+  <link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+  <link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+  <link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+  <meta name="msapplication-TileColor" content="#07111f">
+  <meta name="msapplication-TileImage" content="/icon-192.png">
+  <meta name="msapplication-config" content="/browserconfig.xml">
+  <link rel="stylesheet" href="/minerals-platform.css">
+  <link rel="stylesheet" href="/assets/css/future-buttons.css">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"ClearGlass Minerals Intelligence Platform","applicationCategory":"BusinessApplication","operatingSystem":"Web","url":"https://www.clearglassinc.com/minerals-platform.html","description":"Source-transparent critical-minerals intelligence command center."}
+  </script>
+<link rel="stylesheet" href="/assets/css/cg-design-system.css"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="ClearGlass Minerals Intelligence Platform"/>
+<meta name="twitter:description" content="Operational critical-minerals intelligence with explicit provenance, freshness and demo/live separation."/>
+</head>
+<body>
+<a class="skip" href="#workspace">Skip to intelligence workspace</a>
+<div class="app-shell" id="app-shell">
+  <aside class="side-rail" aria-label="Minerals platform navigation">
+    <a class="platform-brand" href="/" aria-label="ClearGlass home"><span class="brand-orb">CG</span><span><strong>MINERALS</strong><small>INTELLIGENCE</small></span></a>
+    <nav id="module-nav">
+      <button class="module-link active" data-view="command"><span>⌁</span>Command Center</button>
+      <button class="module-link" data-view="map"><span>◎</span>Global Map</button>
+      <button class="module-link" data-view="markets"><span>⌁</span>Mineral Markets</button>
+      <button class="module-link" data-view="projects"><span>◆</span>Mines &amp; Projects</button>
+      <button class="module-link" data-view="supply"><span>⇄</span>Supply Chains</button>
+      <button class="module-link" data-view="trade"><span>↗</span>Trade Intelligence</button>
+      <button class="module-link" data-view="risk"><span>△</span>Risk Radar</button>
+      <button class="module-link" data-view="exploration"><span>⌖</span>Exploration Monitor</button>
+      <button class="module-link" data-view="companies"><span>◇</span>Companies</button>
+      <button class="module-link" data-view="alerts"><span>!</span>Alerts</button>
+      <button class="module-link" data-view="reports"><span>▤</span>Reports</button>
+      <button class="module-link" data-view="sources"><span>≋</span>Data Sources</button>
+      <button class="module-link" data-view="admin"><span>⚙</span>Administration</button>
+    </nav>
+    <div class="rail-foot"><span id="rail-mode-dot" class="live-dot"></span><div><strong id="rail-mode">SOURCE MODE</strong><small id="rail-sync">Loading manifest…</small></div></div>
+  </aside>
+
+  <div class="app-main">
+    <header class="command-bar">
+      <button id="rail-toggle" class="icon-button mobile-only" aria-label="Toggle navigation">☰</button>
+      <button id="command-open" class="command-search" type="button"><span>⌕</span><span>Search minerals, projects, countries, sources…</span><kbd>⌘ K</kbd></button>
+      <div class="top-controls">
+        <label class="compact-select"><span>Mineral</span><select id="global-mineral"><option value="all">All minerals</option></select></label>
+        <label class="compact-select"><span>Region</span><select id="global-region"><option value="all">Global</option></select></label>
+        <button id="mode-toggle" class="mode-button" type="button" aria-pressed="false">Verified mode</button>
+        <button id="refresh-data" class="icon-button" type="button" aria-label="Refresh platform data">↻</button>
+      </div>
+    </header>
+
+    <main id="workspace" tabindex="-1">
+      <section class="view active" data-view-panel="command" aria-labelledby="command-title">
+        <div class="view-head">
+          <div><p class="eyebrow">CLEARGLASS // STRATEGIC MATERIALS</p><h1 id="command-title">Minerals Intelligence Command Center</h1><p class="lede">Global critical-minerals awareness with hard separation between observed records, delayed reference data, calculated indicators, analyst inputs and synthetic demonstration data.</p></div>
+          <div class="freshness-card"><span>GLOBAL DATA AS OF</span><strong id="global-asof">Loading…</strong><small id="global-state">Verifying source manifest</small></div>
+        </div>
+        <div id="demo-banner" class="demo-banner" hidden><strong>DEMO MODE ACTIVE</strong><span>Synthetic records are being used to demonstrate workflows. They are not observed market, mine, company or trade data.</span></div>
+        <div class="metric-strip">
+          <article><span>Mineral taxonomy</span><strong id="metric-minerals">—</strong><small>configured materials</small></article>
+          <article><span>Source feeds</span><strong id="metric-feeds">—</strong><small id="metric-feed-sub">loading</small></article>
+          <article><span>Actionable alerts</span><strong id="metric-alerts">—</strong><small>source + event signals</small></article>
+          <article><span>Tracked entities</span><strong id="metric-entities">—</strong><small id="metric-entity-sub">source mode</small></article>
+          <article><span>Data confidence</span><strong id="metric-confidence">—</strong><small>derived from feed state</small></article>
+        </div>
+
+        <div class="dashboard-grid">
+          <article class="panel span-8">
+            <div class="panel-head"><div><span class="panel-code">GEO-01</span><h2>Global supply and project picture</h2></div><button class="text-button" data-jump="map">Open full map →</button></div>
+            <div class="map-stage compact" id="command-map" aria-label="Minerals intelligence map preview"><svg id="command-map-svg" viewBox="0 0 1000 460" role="img" aria-label="Geographic mineral entities"><rect class="ocean" width="1000" height="460"/><path class="continent" d="M65 115l88-52 112 16 52 58-23 69-76 31-45 72-65-31-33-82zM337 300l43-72 57 6 35 71-14 101-60 47-46-68zM420 94l84-34 98 27 45 47-15 42-65 13-23 58-42-10-27-65-62-20zM620 85l111-18 105 46 91 76-18 72-97 11-38-40-71 19-61-55-38-67zM745 316l78-28 74 36 12 56-64 43-84-26z"/></svg><div id="command-map-empty" class="map-empty">Waiting for geospatial entities.</div></div>
+            <div class="map-legend"><span><i class="dot mine"></i>Mine</span><span><i class="dot refinery"></i>Processing/refining</span><span><i class="dot exploration"></i>Exploration</span><span><i class="dot port"></i>Logistics</span></div>
+          </article>
+
+          <article class="panel span-4">
+            <div class="panel-head"><div><span class="panel-code">RISK-01</span><h2>Risk radar</h2></div><button class="text-button" data-jump="risk">Inspect →</button></div>
+            <div id="risk-summary" class="risk-summary"><div class="empty-state">No verified entity-level risk records loaded.</div></div>
+          </article>
+
+          <article class="panel span-4">
+            <div class="panel-head"><div><span class="panel-code">MKT-01</span><h2>Market feed</h2></div><span id="price-status" class="status-pill">CHECKING</span></div>
+            <div id="price-summary" class="stack-list"><div class="empty-state">Loading price-source status…</div></div>
+          </article>
+
+          <article class="panel span-4">
+            <div class="panel-head"><div><span class="panel-code">ALRT-01</span><h2>Priority alerts</h2></div><button class="text-button" data-jump="alerts">All alerts →</button></div>
+            <div id="alert-summary" class="stack-list"><div class="empty-state">Evaluating source health…</div></div>
+          </article>
+
+          <article class="panel span-4">
+            <div class="panel-head"><div><span class="panel-code">SRC-01</span><h2>Source health</h2></div><button class="text-button" data-jump="sources">Provenance →</button></div>
+            <div id="source-health-mini" class="source-health-mini"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="view" data-view-panel="map" aria-labelledby="map-title">
+        <div class="view-head"><div><p class="eyebrow">GEOSPATIAL OPERATIONS</p><h1 id="map-title">Global Mineral Map</h1><p class="lede">Switch layers, filter loaded entities and inspect provenance. Source mode never substitutes synthetic coordinates for missing real records.</p></div></div>
+        <div class="map-toolbar" id="map-layer-controls"></div>
+        <article class="panel map-panel"><div class="map-stage full"><svg id="global-map-svg" viewBox="0 0 1000 520" role="img" aria-label="Interactive minerals map"><rect class="ocean" width="1000" height="520"/><path class="continent" d="M65 125l88-57 112 17 52 66-23 77-76 34-45 81-65-35-33-91zM337 340l43-82 57 7 35 80-14 114-60 53-46-77zM420 104l84-38 98 30 45 53-15 48-65 15-23 65-42-11-27-73-62-22zM620 95l111-20 105 51 91 86-18 81-97 12-38-46-71 22-61-62-38-76zM745 358l78-32 74 41 12 63-64 49-84-29z"/></svg><div id="global-map-empty" class="map-empty">No map entities available in source mode.</div></div><div id="map-detail" class="detail-drawer"><div class="empty-state">Select a map feature to inspect its record and provenance.</div></div></article>
+      </section>
+
+      <section class="view" data-view-panel="markets" aria-labelledby="markets-title">
+        <div class="view-head"><div><p class="eyebrow">MARKET INTELLIGENCE</p><h1 id="markets-title">Mineral Markets</h1><p class="lede">Observed price data appears only when a licensed or trustworthy public benchmark is connected. Forecasts and observed series remain separate.</p></div></div>
+        <div class="workspace-split"><article class="panel"><div class="panel-head"><h2>Price and benchmark feeds</h2><span id="markets-feed-badge" class="status-pill">CHECKING</span></div><div id="markets-content" class="table-wrap"></div></article><article class="panel"><h2>Methodology</h2><div id="methodology-content" class="method-list"></div></article></div>
+      </section>
+
+      <section class="view" data-view-panel="projects" aria-labelledby="projects-title">
+        <div class="view-head"><div><p class="eyebrow">ASSET INTELLIGENCE</p><h1 id="projects-title">Mines &amp; Projects</h1><p class="lede">Project profiles preserve stage, jurisdiction, commodities, risk inputs, connected facilities and record-level confidence.</p></div></div>
+        <article class="panel"><div class="filter-row"><input id="entity-search" class="input" type="search" placeholder="Search loaded mines, projects and facilities"><select id="entity-type" class="input"><option value="all">All asset types</option><option value="mine">Mines</option><option value="exploration">Exploration</option><option value="refinery">Processing/refining</option><option value="port">Logistics</option></select></div><div id="entity-table" class="table-wrap"></div></article>
+      </section>
+
+      <section class="view" data-view-panel="supply" aria-labelledby="supply-title">
+        <div class="view-head"><div><p class="eyebrow">DEPENDENCY ANALYSIS</p><h1 id="supply-title">Supply Chains</h1><p class="lede">Verified and inferred relationships are never conflated. The relationship graph shows only the links loaded into platform state.</p></div></div>
+        <div class="workspace-split"><article class="panel"><h2>Material-flow relationships</h2><div id="supply-graph" class="flow-graph"></div></article><article class="panel"><h2>Concentration calculator</h2><p class="muted">Use declared market shares to calculate HHI without inventing production inputs.</p><label class="field">Shares (%)<input id="platform-hhi-input" class="input" value="60,20,10,10"></label><button id="platform-hhi-run" class="action-button">Calculate HHI</button><div id="platform-hhi-result" class="calc-result">Awaiting input.</div></article></div>
+      </section>
+
+      <section class="view" data-view-panel="trade" aria-labelledby="trade-title">
+        <div class="view-head"><div><p class="eyebrow">CUSTOMS &amp; FLOW INTELLIGENCE</p><h1 id="trade-title">Trade Intelligence</h1><p class="lede">Trade reporting is period-based and can be delayed. Classification differences and unavailable reporting periods remain visible.</p></div></div>
+        <article class="panel"><div id="trade-content" class="table-wrap"></div></article>
+      </section>
+
+      <section class="view" data-view-panel="risk" aria-labelledby="risk-title">
+        <div class="view-head"><div><p class="eyebrow">TRANSPARENT SCORING</p><h1 id="risk-title">Risk Radar</h1><p class="lede">Scores are explanatory indicators, not certainty. Missing evidence increases data-confidence risk rather than silently becoming a neutral score.</p></div></div>
+        <div class="workspace-split"><article class="panel"><h2>Loaded assessments</h2><div id="risk-table" class="table-wrap"></div></article><article class="panel"><h2>Component framework</h2><div id="risk-components" class="tag-cloud"></div></article></div>
+      </section>
+
+      <section class="view" data-view-panel="exploration" aria-labelledby="exploration-title">
+        <div class="view-head"><div><p class="eyebrow">DISCOVERY MONITOR</p><h1 id="exploration-title">Exploration Monitor</h1><p class="lede">Track loaded exploration-stage assets and new source events without converting announcements into verified resources or reserves.</p></div></div>
+        <article class="panel"><div id="exploration-content" class="table-wrap"></div></article>
+      </section>
+
+      <section class="view" data-view-panel="companies" aria-labelledby="companies-title">
+        <div class="view-head"><div><p class="eyebrow">OWNERSHIP &amp; OPERATORS</p><h1 id="companies-title">Companies</h1><p class="lede">Company and ownership intelligence is shown only when records are present in connected public or licensed sources.</p></div></div>
+        <article class="panel"><div id="companies-content" class="empty-state">No normalized company ownership records are loaded in the current public snapshot.</div></article>
+      </section>
+
+      <section class="view" data-view-panel="alerts" aria-labelledby="alerts-title">
+        <div class="view-head"><div><p class="eyebrow">OPERATIONAL WORKFLOW</p><h1 id="alerts-title">Alerts</h1><p class="lede">Source failures, stale datasets and loaded event signals are deduplicated into a local operational queue.</p></div></div>
+        <article class="panel"><div id="alerts-content" class="alert-board"></div></article>
+      </section>
+
+      <section class="view" data-view-panel="reports" aria-labelledby="reports-title">
+        <div class="view-head"><div><p class="eyebrow">ANALYST OUTPUTS</p><h1 id="reports-title">Reports</h1><p class="lede">Generate a source-state briefing from currently loaded records. Publication still requires analyst review.</p></div></div>
+        <article class="panel report-panel"><button id="generate-brief" class="action-button">Generate current intelligence brief</button><button id="export-state" class="secondary-button">Export loaded state JSON</button><pre id="report-output" class="report-output">No report generated.</pre></article>
+      </section>
+
+      <section class="view" data-view-panel="sources" aria-labelledby="sources-title">
+        <div class="view-head"><div><p class="eyebrow">PROVENANCE CONTROL</p><h1 id="sources-title">Data Sources</h1><p class="lede">Provider, license, cadence, freshness, record count and current status remain visible for every configured public feed.</p></div></div>
+        <article class="panel"><div id="sources-table" class="table-wrap"></div></article>
+      </section>
+
+      <section class="view" data-view-panel="admin" aria-labelledby="admin-title">
+        <div class="view-head"><div><p class="eyebrow">PLATFORM READINESS</p><h1 id="admin-title">Administration</h1><p class="lede">Static MVP controls and service-readiness boundaries. Authentication, private data, organization RBAC and server-side secrets are intentionally absent from GitHub Pages.</p></div></div>
+        <div class="admin-grid"><article class="panel"><h2>Capability state</h2><div id="capability-list"></div></article><article class="panel"><h2>Security boundary</h2><ul class="plain-list"><li>No secrets in client code</li><li>No private supplier/customer records</li><li>Source status cannot be promoted by UI state</li><li>Exports are limited to loaded public/demo state</li><li>Demo records are marked `demo: true`</li><li>Authenticated service requires RBAC, MFA, audit logs and server-side secret management</li></ul></article></div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<dialog id="command-dialog" class="command-dialog"><form method="dialog"><div class="dialog-head"><strong>Command Search</strong><button value="cancel" aria-label="Close">×</button></div><input id="command-input" class="input command-input" type="search" placeholder="Try: lithium, source health, highest risk, trade status…" autocomplete="off"><div id="command-results" class="command-results"></div></form></dialog>
+
+<dialog id="provenance-dialog" class="provenance-dialog"><form method="dialog"><div class="dialog-head"><strong>Record provenance</strong><button value="cancel" aria-label="Close">×</button></div><div id="provenance-content"></div></form></dialog>
+
+<script defer src="/minerals-platform.js"></script>
+<script defer src="/nav.js"></script>
+<script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<script defer src="/assets/js/future-buttons.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="government.html">Government &amp; Procurement</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="sats-digital-twin.html"><span><b>Previous</b>SATS Digital Twin</span></a>
+      <a href="government.html"><span><b>Topic hub</b>Government Solutions</span></a>
+      <a href="government.html"><span><b>Next in journey</b>Government Solutions</span></a>
+    </div>
+    <ul>
+      <li><a href="operations/procurement-readiness.html"><b>Procurement Readiness</b> — verified supplier-registration status</a></li>
+      <li><a href="operations/federal-supplier-handoff.html"><b>Federal Supplier Handoff</b> — supplier registration runbook</a></li>
+      <li><a href="counter-uas-commercialization-os.html"><b>Counter-UAS OS</b> — counter-drone commercialization platform</a></li>
+      <li><a href="traffic-enforcement.html"><b>Speed Vision AI</b> — AI traffic-enforcement platform</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="operations/procurement-readiness.html">Check our procurement readiness</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="/cg-a11y.js"></script>
+</body>
+</html>

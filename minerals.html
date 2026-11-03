@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+  <link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+  <link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+  <link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+  <link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#07111f">
+  <meta name="msapplication-TileColor" content="#07111f">
+  <meta name="msapplication-TileImage" content="/icon-192.png">
+  <meta name="msapplication-config" content="/browserconfig.xml">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Critical Minerals Intelligence | Canada Supply-Chain Risk</title>
+  <meta name="description" content="ClearGlass Critical Minerals Intelligence provides source-transparent mineral profiles, feed health, policy monitoring, supply-concentration and scenario tools.">
+  <link rel="canonical" href="https://www.clearglassinc.com/minerals.html">
+  <meta property="og:title" content="ClearGlass Critical Minerals Intelligence">
+  <meta property="og:description" content="Transparent critical-minerals intelligence, provenance, risk analytics, and compliance decision support.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.clearglassinc.com/minerals.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="/minerals.css">
+  <link rel="stylesheet" href="/assets/css/future-buttons.css">
+  <script src="/minerals.js" defer></script>
+<link rel="stylesheet" href="/assets/css/cg-design-system.css"/>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to critical minerals intelligence</a>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="ClearGlass home">
+      <span class="brand-mark" aria-hidden="true">CG</span>
+      <span><strong>ClearGlass</strong><small>Critical Minerals Intelligence</small></span>
+    </a>
+    <nav aria-label="Primary navigation">
+      <a href="/">Home</a>
+      <a href="/products.html">Products</a>
+      <a href="/store.html">Store</a>
+      <a href="/#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main id="main-content">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="eyebrow">CLEARGLASS // MINERALS INTELLIGENCE</div>
+      <h1 id="page-title">Critical Minerals Intelligence</h1>
+      <p class="hero-copy">A public-data-safe command surface for source provenance, feed health, policy monitoring, deterministic analytics, and compliance decision support. Missing data is reported as <strong>UNKNOWN</strong>; unavailable feeds are never presented as live.</p>
+      <div class="hero-actions">
+        <a class="button primary" href="#mineral-search">Search minerals</a>
+        <a class="button primary" href="/minerals-platform.html">Open Intelligence Platform</a>
+        <a class="button" href="#feed-health">Inspect feed health</a>
+      </div>
+    </section>
+
+    <section class="status-panel glass" aria-labelledby="system-status-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">OPERATIONS STATUS</p>
+          <h2 id="system-status-title">System health</h2>
+        </div>
+        <span id="system-status-badge" class="status unknown">LOADING</span>
+      </div>
+      <div class="status-grid" aria-live="polite">
+        <div><span>System status</span><strong id="system-status">LOADING</strong></div>
+        <div><span>Feeds healthy</span><strong id="feeds-healthy">—</strong></div>
+        <div><span>Feeds degraded</span><strong id="feeds-degraded">—</strong></div>
+        <div><span>Last sync</span><strong id="last-sync">—</strong></div>
+        <div><span>Data pipeline</span><strong id="pipeline-status">LOADING</strong></div>
+        <div><span>Manifest version</span><strong id="manifest-version">—</strong></div>
+      </div>
+      <p id="manifest-message" class="state-message">Loading manifest…</p>
+    </section>
+
+    <section id="mineral-search" class="section-block" aria-labelledby="mineral-search-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">MINERAL DIRECTORY</p>
+          <h2 id="mineral-search-title">Searchable mineral intelligence</h2>
+        </div>
+        <span id="mineral-count" class="counter">0 minerals</span>
+      </div>
+      <label class="search-box" for="mineral-query">
+        <span>Search by mineral, symbol, category, or industrial use</span>
+        <input id="mineral-query" type="search" autocomplete="off" placeholder="Lithium, copper, rare earth elements…">
+      </label>
+      <div id="mineral-grid" class="mineral-grid" aria-live="polite">
+        <div class="skeleton-card" aria-hidden="true"></div>
+        <div class="skeleton-card" aria-hidden="true"></div>
+        <div class="skeleton-card" aria-hidden="true"></div>
+      </div>
+      <p id="mineral-empty" class="state-message" hidden>No matching minerals.</p>
+    </section>
+
+    <section id="feed-health" class="section-block glass" aria-labelledby="feed-health-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">DATA PROVENANCE</p>
+          <h2 id="feed-health-title">Feed health and freshness</h2>
+        </div>
+      </div>
+      <div class="table-shell" tabindex="0" role="region" aria-label="Critical minerals data feed health table">
+        <table>
+          <thead>
+            <tr><th>Feed</th><th>Provider</th><th>Cadence</th><th>Status</th><th>Source update</th><th>Retrieved</th><th>Records</th></tr>
+          </thead>
+          <tbody id="feed-table-body">
+            <tr><td colspan="7">Loading feed manifest…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="legal-note">Status is derived from manifest metadata and expected publishing cadence. “Live” is used only when a source is actually delivering appropriately fresh data.</p>
+    </section>
+
+    <section class="analytics-grid section-block" aria-label="Deterministic mineral analytics">
+      <article class="glass analytics-card">
+        <p class="eyebrow">SUPPLY CONCENTRATION</p>
+        <h2>HHI calculator</h2>
+        <p>Enter market or production shares as percentages. This calculator uses only the values you provide.</p>
+        <label for="share-input">Shares, comma separated</label>
+        <input id="share-input" type="text" inputmode="decimal" placeholder="60, 20, 10, 10">
+        <button id="calculate-hhi" class="button primary" type="button">Calculate concentration</button>
+        <div id="hhi-result" class="result-panel" aria-live="polite">Awaiting input.</div>
+      </article>
+
+      <article class="glass analytics-card">
+        <p class="eyebrow">WHAT-IF ANALYSIS</p>
+        <h2>Supply shock scenario</h2>
+        <p>Scenario analysis is deterministic and user-supplied. It is not a forecast.</p>
+        <label for="producer-share">Affected producer share (%)</label>
+        <input id="producer-share" type="number" min="0" max="100" step="0.1" value="25">
+        <label for="output-shock">Output reduction (%)</label>
+        <input id="output-shock" type="number" min="0" max="100" step="0.1" value="20">
+        <button id="calculate-scenario" class="button primary" type="button">Run scenario</button>
+        <div id="scenario-result" class="result-panel" aria-live="polite">SCENARIO ANALYSIS — NOT A FORECAST</div>
+      </article>
+    </section>
+
+    <section class="section-block glass" aria-labelledby="policy-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">POLICY RADAR</p>
+          <h2 id="policy-title">Authoritative policy and news signals</h2>
+        </div>
+        <span id="policy-status" class="status unknown">LOADING</span>
+      </div>
+      <div id="policy-list" class="policy-list" aria-live="polite">
+        <p class="state-message">Loading policy feed…</p>
+      </div>
+    </section>
+
+    <section class="section-block compliance" aria-labelledby="compliance-title">
+      <div>
+        <p class="eyebrow">COMPLIANCE BOUNDARY</p>
+        <h2 id="compliance-title">Decision support, not legal determination</h2>
+      </div>
+      <p>The ClearGlass Minerals surface supports risk-based due diligence, source provenance, supplier identification, risk assessment, mitigation, audit, reporting, and continuous monitoring. Sanctions and export-control information is decision-support only. Formal compliance determinations require qualified legal and regulatory review.</p>
+      <div class="provenance-legend" aria-label="Provenance levels">
+        <span>DECLARED</span><span>DOCUMENTED</span><span>VERIFIED</span><span>INDEPENDENTLY VERIFIED</span><span>UNKNOWN</span>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>ClearGlass Inc. · Critical Minerals Intelligence · Public-data-safe architecture</p>
+    <p><a href="/legal/privacy.html">Privacy</a> · <a href="/legal/terms.html">Terms</a> · <a href="/#contact">Contact</a></p>
+  </footer>
+  <script defer src="/logo-badge.js"></script>
+  <script defer src="/assets/js/future-buttons.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="intelligence.html">Intelligence &amp; OSINT</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="docs/guardian_command_nexus_spec.html"><span><b>Previous</b>Guardian Command Nexus Spec</span></a>
+      <a href="intelligence.html"><span><b>Topic hub</b>Intelligence</span></a>
+      <a href="intelligence.html"><span><b>Next in journey</b>Intelligence</span></a>
+    </div>
+    <ul>
+      <li><a href="flowsint.html"><b>Flowsint</b> — OSINT investigation graph for domains, IPs and transforms</a></li>
+      <li><a href="clearglass-nexus.html"><b>ClearGlass NEXUS</b> — full-spectrum intelligence platform</a></li>
+      <li><a href="Ontario-osint.html"><b>Ontario OSINT Deck</b> — regional open-source intelligence control deck</a></li>
+      <li><a href="clearglass.html"><b>Network Flow Intelligence</b> — see network traffic as living structure</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="pricing.html">See pricing &amp; plans</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="/nav.js"></script>
+<script defer src="/cg-a11y.js"></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+# ClearGlass Inc
+
+> Enterprise cybersecurity, AI automation, autonomous agents, OSINT, digital
+> investigations, and software architecture. Based in Burlington, Ontario, Canada
+> and serving clients worldwide.
+
+ClearGlass Inc builds governed security platforms, autonomous AI systems,
+investigative/OSINT tooling, and enterprise workflow systems. The site is the
+official home of the Artemis, Guardian, Sentinel, Conduit, and Percival systems.
+
+## Core pages
+- [Home](https://www.clearglassinc.com/)
+- [Services and engagements](https://www.clearglassinc.com/offers/)
+- [Pricing](https://www.clearglassinc.com/pricing.html)
+- [Products](https://www.clearglassinc.com/products.html)
+- [Store](https://www.clearglassinc.com/store.html)
+
+## Platform and products
+- [Artemis IV Core](https://www.clearglassinc.com/artemis-iv.html) — governed autonomous AI security platform
+- [Guardian](https://www.clearglassinc.com/guardian.html) — zero-trust security command center
+- [Sentinel](https://www.clearglassinc.com/sentinel.html) — live geospatial intelligence command center
+- [Conduit](https://www.clearglassinc.com/conduit.html) — enterprise workflow automation
+- [ClearGlass NEXUS](https://www.clearglassinc.com/clearglass-nexus.html) — intelligence platform
+- [Percival OS](https://www.clearglassinc.com/percival-os.html) — governed command center
+
+## Research and intelligence
+- [ClearGlass Intelligence](https://www.clearglassinc.com/blog/)
+- [Graph Topology Beats One Giant Context](https://www.clearglassinc.com/blog/graph-topology-multi-agent-research-workflow.html)
+- [OSINT workflow](https://www.clearglassinc.com/blog/osint-workflow-that-survives-contact-with-reality.html)
+- [Autonomous threat modeling](https://www.clearglassinc.com/blog/autonomous-threat-modeling-2026.html)
+- [Cybersecurity architecture for agentic software](https://www.clearglassinc.com/blog/cybersecurity-architecture-for-agentic-software.html)
+
+## Expertise
+- Cybersecurity consulting and zero-trust architecture
+- AI engineering, LLM orchestration, and governed multi-agent systems
+- OSINT tooling and digital investigations
+- Enterprise workflow automation and secure software architecture
+- AI governance, auditability, and human-approval controls
+
+## Machine-readable discovery
+- [Markdown sitemap](https://www.clearglassinc.com/sitemap.md)
+- [XML sitemap](https://www.clearglassinc.com/sitemap.xml)
+- [Full AI authority map](https://www.clearglassinc.com/llms-full.txt)
+- [Focused authority sitemap](https://www.clearglassinc.com/sitemap-search-authority.xml)
+- [Research feed](https://www.clearglassinc.com/feed.xml)
+- [OpenSearch description](https://www.clearglassinc.com/opensearch.xml)
+- [Agent instructions](https://www.clearglassinc.com/AGENTS.md)
+
+## Contact
+- [ClearGlass Inc. on GitHub](https://github.com/ClearGlassInc)
+- [ClearGlass Inc. on LinkedIn](https://www.linkedin.com/company/cleaglassinc)
+- Email: desmond@clearglassinc.com
