@@ -1,0 +1,4 @@
+/target/
+*.identity
+*.age
+*.decrypted
