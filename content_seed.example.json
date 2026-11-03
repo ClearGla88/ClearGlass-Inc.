@@ -1,0 +1,28 @@
+{
+  "opacity_issue": "a public technology decision has no readable risk record",
+  "security_consequence": "owners, controls, exceptions, and residual risk cannot be independently tested",
+  "founder_truth": "Today I rejected a flashy shortcut because the audit trail matters more than the demo.",
+  "product": "Artemis",
+  "feature": "a decision-ready risk card with evidence and accountable ownership",
+  "pain": "security findings scattered across documents nobody can defend in a meeting",
+  "demo": "open one finding, trace its evidence, assign its owner, and export the decision record",
+  "sources": [
+    "https://www.nist.gov/cyberframework"
+  ],
+  "paid_performance": [
+    {
+      "reel_id": "clarity-breakdown-001",
+      "hours_since_publish": 6,
+      "completion_rate": 0.54,
+      "hook_retention": 0.43,
+      "spend_cad": 0
+    },
+    {
+      "reel_id": "founder-reality-001",
+      "hours_since_publish": 24,
+      "completion_rate": 0.37,
+      "hook_retention": 0.26,
+      "spend_cad": 5
+    }
+  ]
+}

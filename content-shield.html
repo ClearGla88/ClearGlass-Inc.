@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Browser Tab Icons: Edge, Chrome, Safari, iOS -->
+<link rel="icon" href="/assets/images/clearglass-holographic-seal.png" sizes="any">
+<link rel="icon" type="image/png" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="alternate icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="apple-touch-icon" href="/assets/images/clearglass-holographic-seal.png">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#39ffb6">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07111f">
+<meta name="msapplication-TileColor" content="#07111f">
+<meta name="msapplication-TileImage" content="/icon-192.png">
+<meta name="msapplication-config" content="/browserconfig.xml">
+
+<link rel="canonical" href="https://www.clearglassinc.com/content-shield.html">
+<meta property="og:title" content="VEILGUARD Content Shield | ClearGlass Inc">
+<meta property="og:description" content="Layered, consent-based content protection: dynamic watermarking, per-viewer tracers, tamper-evident logging, and leak attribution from a partial screenshot.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.clearglassinc.com/content-shield.html">
+<meta charset="UTF-8"/>
+<script>
+/* cg-boot-loader: first-visit boot routing — plays /loader.html once per browser
+   session on every page except the homepage. Bypass with ?skipboot=1, or visit
+   /loader.html directly to replay. */
+(function(){
+  try {
+    var ua = navigator.userAgent || '';
+    if (/bot|crawl|spider|slurp|bingpreview|google|bing|duckduck|baidu|yandex|sogou|exabot|facebot|ia_archiver|lighthouse|gptbot|oai-searchbot|chatgpt|claudebot|claude-web|anthropic|perplexity|amazonbot|applebot|ccbot|cohere|google-extended/i.test(ua)) return;
+    if (/[?&]skipboot=1\b/.test(location.search)) return;
+    var path = location.pathname;
+    /* homepage renders with no loader */
+    if (path === '/' || path === '/index.html') return;
+    if (sessionStorage.getItem('cg.booted')) return;
+    sessionStorage.setItem('cg.booted', '1');
+    var here = path + location.search + location.hash;
+    location.replace('/loader.html?next=' + encodeURIComponent(here));
+  } catch (e) { /* storage unavailable — render normally */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>VEILGUARD Content Shield · ClearGlass Inc</title>
+<meta name="description" content="VEILGUARD is the ClearGlass content protection layer: per-viewer watermarking, traceable renders, ephemeral previews, and leak attribution from a partial capture."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#04040b;--panel:#0b0f1f;--blue:#1ecbff;--violet:#9c6bff;--cyan:#52fff4;--text:#d7e9ff;--muted:#89a4c4;--danger:#ff5db1;--ok:#58ff95;--warn:#ffd166}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:radial-gradient(circle at 18% 8%,rgba(30,203,255,.16),transparent 36%),radial-gradient(circle at 82% 6%,rgba(156,107,255,.22),transparent 42%),linear-gradient(160deg,#050511 0%,#06071a 52%,#03040d 100%);color:var(--text);font-family:'Share Tech Mono',monospace;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(transparent 96%,rgba(82,255,244,.05) 97%);background-size:100% 4px;mix-blend-mode:screen;animation:scan 11s linear infinite}
+@keyframes scan{from{transform:translateY(-20%)}to{transform:translateY(20%)}}
+.wrapper{width:min(1300px,94vw);margin:2.2rem auto;padding:1rem}
+.topbar{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;border:1px solid rgba(156,107,255,.35);border-radius:14px;padding:12px 18px;background:linear-gradient(145deg,rgba(11,15,31,.82),rgba(6,8,20,.86));box-shadow:0 0 30px rgba(30,203,255,.15)}
+.brand{font-family:'Orbitron',sans-serif;font-size:clamp(1.7rem,5.4vw,3.4rem);font-weight:900;letter-spacing:.16em;background:linear-gradient(90deg,var(--blue),var(--violet),var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 18px rgba(30,203,255,.4)}
+.status{font-size:.86rem;color:var(--muted);letter-spacing:.08em}
+.status .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 12px var(--ok);margin-right:7px;animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.lede{margin-top:16px;border:1px solid rgba(30,203,255,.2);border-radius:14px;padding:18px 20px;background:linear-gradient(160deg,rgba(10,14,30,.86),rgba(6,9,23,.82))}
+.lede p{color:#b7ceea;line-height:1.72;max-width:78ch}
+.lede p + p{margin-top:10px}
+.grid2{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;margin-top:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:16px}
+.panel{background:linear-gradient(160deg,rgba(10,14,30,.9),rgba(6,9,23,.86));border:1px solid rgba(30,203,255,.2);border-radius:14px;padding:16px;position:relative;overflow:hidden}
+.panel::after{content:"";position:absolute;left:16px;right:16px;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--blue),var(--violet),transparent);box-shadow:0 0 16px rgba(30,203,255,.6)}
+.section-title{font-family:'Orbitron',sans-serif;color:var(--blue);font-size:.95rem;letter-spacing:.15em;margin-bottom:12px}
+h2.section-title{font-size:1.02rem}
+.layer{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;padding:10px 0;border-bottom:1px dashed rgba(124,150,255,.16)}
+.layer:last-child{border-bottom:0}
+.layer .n{font-family:'Orbitron',sans-serif;font-size:.9rem;color:var(--violet);border:1px solid rgba(156,107,255,.4);border-radius:8px;text-align:center;padding:4px 0;background:rgba(156,107,255,.08)}
+.layer h3{font-family:'Orbitron',sans-serif;font-size:.82rem;letter-spacing:.1em;color:#c9dcff;margin-bottom:4px}
+.layer p{font-size:.86rem;color:var(--muted);line-height:1.6}
+.log{height:340px;overflow:auto;font-size:.86rem;line-height:1.55;color:#b7ceea;padding-right:8px}
+.log p{padding:2px 0}
+.log p span{color:var(--cyan)}
+.log p.warn span{color:var(--warn)}
+.log p.ok span{color:var(--ok)}
+.log p.crit span{color:var(--danger)}
+.demo label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:6px;letter-spacing:.06em}
+.demo input{width:100%;font-family:'Share Tech Mono',monospace;font-size:.95rem;padding:10px 12px;border-radius:9px;border:1px solid rgba(82,255,244,.3);background:rgba(5,8,20,.75);color:#d4f7ff}
+.demo input:focus{outline:2px solid var(--blue);outline-offset:1px}
+.tracer-out{margin-top:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.tracer-code{font-family:'Orbitron',sans-serif;font-size:1.5rem;letter-spacing:.22em;color:var(--cyan);text-shadow:0 0 18px rgba(82,255,244,.5);padding:8px 14px;border:1px solid rgba(82,255,244,.35);border-radius:10px;background:rgba(5,20,26,.6)}
+.tracer-note{font-size:.8rem;color:var(--muted);max-width:34ch;line-height:1.55}
+.sample{margin-top:14px;position:relative;overflow:hidden;border-radius:12px;border:1px solid rgba(124,150,255,.25);background:linear-gradient(150deg,#0a1230,#140b28);height:190px}
+.sample .content{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:16px}
+.sample .content strong{font-family:'Orbitron',sans-serif;font-size:1rem;letter-spacing:.14em;color:#cfe0ff;display:block;margin-bottom:6px}
+.sample .content em{font-style:normal;font-size:.82rem;color:var(--muted)}
+.sample .mark{position:absolute;inset:0;pointer-events:none;display:grid;grid-template-columns:repeat(4,1fr);mix-blend-mode:overlay}
+.sample .mark span{display:grid;place-items:center;transform:rotate(-24deg);font-size:10px;letter-spacing:.08em;color:#fff;opacity:.17;white-space:nowrap}
+table.matrix{width:100%;border-collapse:collapse;font-size:.84rem}
+table.matrix caption{text-align:left;color:var(--muted);font-size:.8rem;padding-bottom:8px}
+table.matrix th,table.matrix td{text-align:left;padding:8px 10px;border-bottom:1px solid rgba(124,150,255,.14);vertical-align:top;line-height:1.5}
+table.matrix th{font-family:'Orbitron',sans-serif;font-size:.72rem;letter-spacing:.12em;color:var(--blue);text-transform:uppercase}
+table.matrix td.res{color:var(--muted)}
+.tag{display:inline-block;font-size:.68rem;letter-spacing:.1em;padding:2px 7px;border-radius:999px;border:1px solid currentColor;text-transform:uppercase}
+.tag.mit{color:var(--ok)}
+.tag.part{color:var(--warn)}
+.tag.no{color:var(--danger)}
+.honest{border-color:rgba(255,93,177,.3)}
+.honest .section-title{color:var(--danger)}
+.honest ul{list-style:none;margin-top:4px}
+.honest li{padding:7px 0 7px 22px;position:relative;font-size:.87rem;color:#b7ceea;line-height:1.6}
+.honest li::before{content:"✕";position:absolute;left:0;color:var(--danger)}
+.honest li.can::before{content:"✓";color:var(--ok)}
+.phases{display:grid;gap:10px;margin-top:4px}
+.phase{border:1px solid rgba(124,150,255,.2);border-radius:10px;padding:11px 13px;background:rgba(7,12,28,.6)}
+.phase h3{font-family:'Orbitron',sans-serif;font-size:.78rem;letter-spacing:.1em;color:#c9dcff;margin-bottom:5px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.phase p{font-size:.83rem;color:var(--muted);line-height:1.6}
+.phase .st{font-size:.64rem;letter-spacing:.12em;padding:2px 8px;border-radius:999px;border:1px solid currentColor}
+.st.done{color:var(--ok)}
+.st.next{color:var(--blue)}
+.st.plan{color:var(--muted)}
+.cta{margin-top:18px;border:1px solid rgba(82,255,244,.28);border-radius:14px;padding:18px 20px;background:linear-gradient(120deg,rgba(30,203,255,.1),rgba(156,107,255,.12));display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center}
+.cta p{color:#cfe0ff;font-size:.92rem;line-height:1.6;max-width:60ch}
+.cta a{display:inline-block;font-family:'Orbitron',sans-serif;font-size:.8rem;letter-spacing:.12em;padding:11px 20px;border-radius:999px;border:1px solid var(--cyan);color:#03121a;background:linear-gradient(90deg,var(--cyan),var(--blue));text-decoration:none;font-weight:700}
+.cta a:hover,.cta a:focus-visible{filter:brightness(1.12);box-shadow:0 0 22px rgba(82,255,244,.4)}
+.footer-note{margin-top:14px;font-size:.8rem;color:var(--muted);line-height:1.65}
+.footer-note a{color:var(--cyan)}
+@media (max-width:980px){.grid2,.grid3{grid-template-columns:1fr}.log{height:260px}}
+@media (prefers-reduced-motion:reduce){body::before{animation:none}.status .dot{animation:none}}
+</style>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="buttons.css">
+<link rel="stylesheet" href="/assets/css/glass.css">
+
+  <meta property="og:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png">
+<!-- ClearGlass Global Design System — homepage is the design source of truth -->
+<link rel="stylesheet" href="/assets/css/cg-design-system.css">
+<script defer src="/assets/js/cg-design-system.js"></script>
+  <script defer src="/asset-protection.js"></script>
+  <link rel="stylesheet" href="brand-system.css">
+<link rel="stylesheet" href="/assets/css/future-buttons.css">
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="VEILGUARD Content Shield | ClearGlass Inc"/>
+<meta name="twitter:description" content="Layered, consent-based content protection: dynamic watermarking, per-viewer tracers, tamper-evident logging, and leak attribution from a partial screenshot."/>
+<meta name="twitter:image" content="https://www.clearglassinc.com/assets/images/clearglass-logo.png"/>
+</head>
+<body>
+  <main class="wrapper">
+    <header class="topbar">
+      <h1 class="brand">VEILGUARD</h1>
+      <p class="status"><span class="dot" aria-hidden="true"></span>CONTENT SHIELD // ATTRIBUTION LAYER ACTIVE // PHASE 1 OPERATIONAL</p>
+    </header>
+
+    <section class="lede">
+      <p><strong>VEILGUARD is the ClearGlass content protection layer</strong> — a defense-in-depth
+      architecture for images, screenshots, concept drafts, media uploads and proprietary workflow
+      content. It is built entirely from lawful, consent-based controls: dynamic watermarking bound
+      to viewer and session, traceable per-render variants, ephemeral previews, scoped permissions,
+      tamper-evident logging, honeypot canaries, and risk-driven access that tightens on its own.</p>
+      <p>It is designed to be invisible. A legitimate viewer sees a clean surface and one quiet
+      disclosure line — not a wall of warnings and disabled buttons. Restriction that announces
+      itself invites the challenge; protection that simply makes the easy paths unrewarding, and
+      every leaked frame attributable, does not.</p>
+    </section>
+
+    <div class="grid2">
+      <section class="panel" aria-labelledby="layers-title">
+        <h2 class="section-title" id="layers-title">DEFENSE STACK · SEVEN LAYERS</h2>
+
+        <div class="layer"><div class="n">01</div><div>
+          <h3>EDGE</h3>
+          <p>Session gate, burst limiting and protected-route enforcement at the perimeter. Everything
+          below assumes this layer has already been passed — a valid session is not a trusted session.</p>
+        </div></div>
+
+        <div class="layer"><div class="n">02</div><div>
+          <h3>IDENTITY</h3>
+          <p>Plan, session reference and a first-party device token. No covert fingerprinting: no
+          canvas, font or WebGL probing, and no cross-site identifier.</p>
+        </div></div>
+
+        <div class="layer"><div class="n">03</div><div>
+          <h3>RISK</h3>
+          <p>Coarse, consented signals scored 0–100 with a named reason for every point. Access
+          breadth, refusal counts, capture-shaped interactions, device age, implied travel.</p>
+        </div></div>
+
+        <div class="layer"><div class="n">04</div><div>
+          <h3>POLICY</h3>
+          <p>Classification × plan × risk resolved by <em>subtraction only</em> — no combination can
+          ever grant a capability that one of the three withheld. Verified exhaustively in CI.</p>
+        </div></div>
+
+        <div class="layer"><div class="n">05</div><div>
+          <h3>GRANT</h3>
+          <p>An HMAC-signed, expiring authorisation carrying capabilities, the tracer and the
+          watermark. The client is told what it may do; the server decides what it may do.</p>
+        </div></div>
+
+        <div class="layer"><div class="n">06</div><div>
+          <h3>RENDER</h3>
+          <p>Capped resolution, rotating watermark, an ephemeral window that closes on its own, and
+          deterrence for the easy copy paths — all without trapping the keyboard or blocking zoom.</p>
+        </div></div>
+
+        <div class="layer"><div class="n">07</div><div>
+          <h3>RECORD</h3>
+          <p>A hash-chained, pseudonymous event ledger. Editing, deleting or reordering history
+          breaks the chain at the point of the change, and an external anchor catches a full rewrite.</p>
+        </div></div>
+      </section>
+
+      <div>
+        <section class="panel" aria-labelledby="tracer-title">
+          <h2 class="section-title" id="tracer-title">TRACER · PER-VIEWER ATTRIBUTION</h2>
+          <div class="demo">
+            <label for="tracer-input">Viewer identity (illustrative — nothing is transmitted)</label>
+            <input id="tracer-input" type="text" value="viewer@example.com" autocomplete="off"
+                   spellcheck="false" aria-describedby="tracer-note">
+            <div class="tracer-out">
+              <output class="tracer-code" id="tracer-code" for="tracer-input">K7M2Q9XB</output>
+              <p class="tracer-note" id="tracer-note">Every render carries an 8-character tracer in
+              Crockford base32 — no <b>I</b>, <b>L</b>, <b>O</b> or <b>U</b>, the glyphs people
+              misread off a screen. Change the identity to see the code change.</p>
+            </div>
+
+            <div class="sample" aria-hidden="true">
+              <div class="content">
+                <strong>PROTECTED RENDER</strong>
+                <em>capped resolution · window closes in 90s</em>
+              </div>
+              <div class="mark" id="sample-mark"></div>
+            </div>
+            <p class="footer-note">Above: how a marked render looks. In production the tracer is
+            derived by keyed HMAC over asset, viewer, session and grant — the demo above uses a
+            simple non-cryptographic hash purely to illustrate the shape.</p>
+          </div>
+        </section>
+
+        <section class="panel" style="margin-top:16px" aria-labelledby="evidence-title">
+          <h2 class="section-title" id="evidence-title">EVIDENCE STRENGTH FROM A PARTIAL CAPTURE</h2>
+          <table class="matrix">
+            <caption>A leak rarely arrives intact. Tracing compares only the characters that
+            survived, and reports how likely an unrelated viewer would match that well by chance.</caption>
+            <thead><tr><th scope="col">Recovered</th><th scope="col">False match</th><th scope="col">Verdict</th></tr></thead>
+            <tbody>
+              <tr><td>All 8 characters</td><td>9 × 10⁻¹³</td><td><span class="tag mit">Conclusive</span></td></tr>
+              <tr><td>4 characters</td><td>1 × 10⁻⁶</td><td><span class="tag mit">Strong</span></td></tr>
+              <tr><td>3 characters</td><td>3 × 10⁻⁵</td><td><span class="tag part">Indicative</span></td></tr>
+              <tr><td>1 character</td><td>3 × 10⁻²</td><td><span class="tag no">Inconclusive</span></td></tr>
+            </tbody>
+          </table>
+          <p class="footer-note">Tracing returns the full ranked list, never a top-1 answer. Two
+          candidates at equal distance means the evidence does not separate two people — and that
+          has to be visible rather than hidden behind a confident-looking name.</p>
+        </section>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <section class="panel" aria-labelledby="telemetry-title">
+        <h2 class="section-title" id="telemetry-title">SHIELD TELEMETRY · SIMULATED STREAM</h2>
+        <div class="log" id="logPane" role="log" aria-live="off" aria-label="Simulated shield telemetry">
+          <p><span>[BOOT]</span> Shield initialised · policy table loaded · 4 classification tiers</p>
+          <p><span>[KEY]</span> Signing key present · tracer derivation domain-separated</p>
+          <p class="ok"><span>[LEDGER]</span> Hash chain verified · head anchored to external store</p>
+          <p><span>[CANARY]</span> 24 enumeration canaries armed · linked from nowhere</p>
+          <p><span>[GRANT]</span> concept-draft-atlas · restricted · view-only · TTL 90s</p>
+          <p><span>[MARK]</span> Watermark rotation 20s · tracer variants applied across 20 tiles</p>
+          <p class="warn"><span>[SIGNAL]</span> Capture-shaped keystroke observed · frame obscured · logged</p>
+          <p><span>[RISK]</span> Session re-scored 31/elevated · share capability withdrawn</p>
+        </div>
+      </section>
+
+      <section class="panel honest" aria-labelledby="honest-title">
+        <h2 class="section-title" id="honest-title">STATED PLAINLY · WHAT THIS CANNOT DO</h2>
+        <ul>
+          <li><strong>A web page cannot prevent a screenshot.</strong> The operating system's capture
+          path does not consult the page. Anyone claiming otherwise is describing a speed bump.</li>
+          <li><strong>A camera pointed at a monitor defeats every software control ever written.</strong></li>
+          <li><strong>Content cannot be prevented from leaving.</strong> A determined viewer always wins.</li>
+          <li class="can"><strong>A leaked frame can usually be traced</strong> back to the grant that
+          produced it — from a partial, re-photographed crop.</li>
+          <li class="can"><strong>Casual reuse stops being one gesture</strong>, which covers the
+          overwhelming majority of real-world loss.</li>
+          <li class="can"><strong>Access narrows automatically</strong> as a session starts to look
+          unusual, with no human in the loop.</li>
+          <li class="can"><strong>The audit record cannot be quietly edited</strong> after the fact.</li>
+        </ul>
+        <p class="footer-note">Prevention is impossible; attribution is achievable. VEILGUARD is
+        built on the second bet, and every design decision follows from it.</p>
+      </section>
+    </div>
+
+    <section class="panel" style="margin-top:16px" aria-labelledby="threat-title">
+      <h2 class="section-title" id="threat-title">THREAT MATRIX · CONTROL AND RESIDUAL RISK</h2>
+      <table class="matrix">
+        <thead><tr><th scope="col">Threat</th><th scope="col">Control</th><th scope="col">Residual</th></tr></thead>
+        <tbody>
+          <tr><td>Right-click save, drag to desktop</td><td>Context menu and drag suppressed on the shielded surface when export is not granted</td><td class="res"><span class="tag mit">Mitigated</span> screenshot path remains, and is marked</td></tr>
+          <tr><td>Screenshot of a confidential render</td><td>Rotating per-viewer watermark and tracer; frame obscures on capture keystroke and focus loss</td><td class="res"><span class="tag part">Attributable</span> not prevented</td></tr>
+          <tr><td>Bulk harvesting across many assets</td><td>Breadth signal raises risk; capabilities withdrawn at high band; grant lifetimes shorten</td><td class="res"><span class="tag part">Slowed</span> patient low-rate scraping</td></tr>
+          <tr><td>Identifier enumeration</td><td>Refusals counted into risk; canaries answer identically to unknown identifiers</td><td class="res"><span class="tag mit">Mitigated</span> prober learns nothing, own risk rises</td></tr>
+          <tr><td>Client tampering to widen permissions</td><td>Capabilities carried in an HMAC-signed grant; policy re-derived server-side every request</td><td class="res"><span class="tag mit">Mitigated</span></td></tr>
+          <tr><td>Forged telemetry to frame another viewer</td><td>Attribution read from the verified grant, never from the request body</td><td class="res"><span class="tag mit">Mitigated</span> attacker can only raise their own risk</td></tr>
+          <tr><td>Editing the audit record after an incident</td><td>Hash-chained ledger; entry hash covers contents; verification reports the break point</td><td class="res"><span class="tag mit">Detected</span> full rewrite needs the anchor too</td></tr>
+          <tr><td>Leaked export surfacing elsewhere</td><td>Disclosed per-recipient beacon minted into each exported copy</td><td class="res"><span class="tag part">Detected</span> unless stripped or opened offline</td></tr>
+          <tr><td>Camera photograph of the screen</td><td>Visible watermark survives re-photography</td><td class="res"><span class="tag no">Not prevented</span> remains attributable</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="grid3">
+      <section class="panel" aria-labelledby="privacy-title">
+        <h2 class="section-title" id="privacy-title">PRIVACY BY CONSTRUCTION</h2>
+        <p class="footer-note" style="margin-top:0">Collect the least that still supports attribution.</p>
+        <div class="phases">
+          <div class="phase"><h3>NO COVERT TRACKING</h3><p>Every control is disclosed to the viewer. No canvas, font or WebGL probing; no cross-site identifier.</p></div>
+          <div class="phase"><h3>PSEUDONYMOUS LEDGER</h3><p>Entries carry a salted reference, never a raw identity. Re-identification is a separate, gated capability.</p></div>
+          <div class="phase"><h3>BOUNDED RETENTION</h3><p>Risk state is a 15-minute rolling window — never a standing behavioural profile on a person.</p></div>
+          <div class="phase"><h3>MASKED MARKS</h3><p>Watermarks can show a masked identity. The tracer does the attribution, so masking costs nothing.</p></div>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="a11y-title">
+        <h2 class="section-title" id="a11y-title">ACCESSIBILITY IS NOT OPTIONAL</h2>
+        <p class="footer-note" style="margin-top:0">Protection must never cost a disabled user the content.</p>
+        <div class="phases">
+          <div class="phase"><h3>CONTENT STAYS READABLE</h3><p>Images keep real alt text; the watermark overlay is hidden from assistive technology rather than read aloud.</p></div>
+          <div class="phase"><h3>NO TRAPS</h3><p>No keyboard trap, no focus suppression, no zoom blocking. Every permitted action has a real focusable control.</p></div>
+          <div class="phase"><h3>REDUCED MOTION</h3><p>Watermark animation stops on request; rotation continues, because it is a security function rather than decoration.</p></div>
+          <div class="phase"><h3>A STANDING ALTERNATIVE</h3><p>Every shielded item links to a route for requesting an accessible or unmarked copy.</p></div>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="rollout-title">
+        <h2 class="section-title" id="rollout-title">PHASED ROLLOUT</h2>
+        <div class="phases">
+          <div class="phase"><h3>PHASE 1 · ATTRIBUTION <span class="st done">Shipped</span></h3><p>Grant gate, tracer and rotating watermark, hash-chained ledger, risk scoring, canaries, shielded viewer.</p></div>
+          <div class="phase"><h3>PHASE 2 · DURABILITY <span class="st next">Next</span></h3><p>Durable append-only ledger, shared cross-replica state, external checkpoint anchoring, CSP and cache headers.</p></div>
+          <div class="phase"><h3>PHASE 3 · SERVER BURN-IN <span class="st plan">Planned</span></h3><p>Restricted assets rasterised server-side with the mark burned in, so no unmarked source reaches the browser at all.</p></div>
+          <div class="phase"><h3>PHASE 4 · DETECTION AT SCALE <span class="st plan">Planned</span></h3><p>Beacon alerting, scheduled canary sweeps, reverse image search, per-cohort anomaly baselining.</p></div>
+        </div>
+      </section>
+    </div>
+
+    <section class="cta">
+      <p>VEILGUARD ships as part of the ClearGlass governed commerce platform. The full threat model,
+      architecture and implementation strategy are documented alongside the source, and the protection
+      invariants are enforced by continuous integration rather than by convention.</p>
+      <a href="store.html">Book a security engagement</a>
+    </section>
+
+    <p class="footer-note">Related: <a href="cyber-defense-console.html">Cyber Defense Console</a> ·
+    <a href="stegoforge.html">StegoForge</a> · <a href="guardian.html">Guardian</a> ·
+    <a href="legal/privacy.html">Privacy</a>. Deployments that monitor identified individuals may
+    carry data-protection and worker-notification obligations depending on jurisdiction — the
+    technical controls are consent-based by construction, the paperwork is not automatic.</p>
+  </main>
+
+<script>
+/* Illustrative tracer demo — a small non-cryptographic hash, purely to show how
+   the code shape responds to identity. The production derivation is a keyed
+   HMAC over asset, viewer, session and grant, computed server-side; nothing on
+   this page is transmitted anywhere. */
+(function(){
+  var ALPHABET = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"; /* Crockford: no I, L, O, U */
+  var input = document.getElementById('tracer-input');
+  var out = document.getElementById('tracer-code');
+  var mark = document.getElementById('sample-mark');
+  if (!input || !out || !mark) return;
+
+  function code(value){
+    var h1 = 0x811c9dc5, h2 = 0x01000193;
+    for (var i = 0; i < value.length; i++){
+      h1 = (h1 ^ value.charCodeAt(i)) >>> 0;
+      h1 = (h1 * 16777619) >>> 0;
+      h2 = (h2 + value.charCodeAt(i) * (i + 7)) >>> 0;
+    }
+    var s = "";
+    for (var j = 0; j < 8; j++){
+      var source = j < 4 ? h1 : h2;
+      s += ALPHABET[(source >>> ((j % 4) * 5)) & 31];
+    }
+    return s;
+  }
+
+  function render(){
+    var value = input.value || "anonymous";
+    var tracer = code(value);
+    out.textContent = tracer;
+
+    var label = value.length > 22 ? value.slice(0, 21) + "…" : value;
+    var html = "";
+    for (var i = 0; i < 20; i++){
+      /* Sub-pixel offsets stand in for the per-tile variants the real overlay
+         derives from the tracer bits. */
+      var dx = (i % 2 ? 0.5 : -0.5), dy = (i % 3 ? 0.5 : -0.5);
+      var text = i % 3 === 0 ? "CLEARGLASS · PROTECTED" : label + " · " + tracer;
+      html += '<span style="transform:translate(' + dx + 'px,' + dy + 'px) rotate(-24deg)">' +
+              text.replace(/[<>&]/g, '') + '</span>';
+    }
+    mark.innerHTML = html;
+  }
+
+  input.addEventListener('input', render);
+  render();
+})();
+
+/* Simulated telemetry stream. Illustrative only — no live data is read. */
+(function(){
+  var pane = document.getElementById('logPane');
+  if (!pane) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var events = [
+    { c: '', t: '[GRANT] workflow-map-q3 · confidential · view + download · TTL 10m' },
+    { c: 'ok', t: '[LEDGER] Entry appended · chain intact · seq advanced' },
+    { c: '', t: '[MARK] Watermark rotated · tiles re-placed across the render' },
+    { c: 'warn', t: '[SIGNAL] Print requested · frame obscured · export not granted' },
+    { c: '', t: '[RISK] Session 12/nominal · full capability retained' },
+    { c: 'crit', t: '[CANARY] Honeypot asset touched · band forced to critical · access paused' },
+    { c: '', t: '[TRACE] Operator trace requested · 4 characters recovered · strong match' },
+    { c: 'ok', t: '[ANCHOR] Checkpoint published · head hash written to external store' },
+    { c: 'warn', t: '[SIGNAL] Unrecognised device · +18 risk · share capability withdrawn' },
+    { c: '', t: '[RENDER] Preview window closed on schedule · re-attestation required' },
+    { c: 'ok', t: '[BEACON] Export beacon minted for recipient copy · disclosed at release' },
+    { c: '', t: '[POLICY] restricted × premium × elevated → view-only, 54s window' }
+  ];
+
+  var i = 0;
+  setInterval(function(){
+    var e = events[i % events.length];
+    i++;
+    var row = document.createElement('p');
+    if (e.c) row.className = e.c;
+    var tag = document.createElement('span');
+    var split = e.t.indexOf(']');
+    tag.textContent = e.t.slice(0, split + 1);
+    row.appendChild(tag);
+    row.appendChild(document.createTextNode(e.t.slice(split + 1)));
+    pane.appendChild(row);
+    if (pane.children.length > 22) pane.removeChild(pane.children[0]);
+    pane.scrollTop = pane.scrollHeight;
+  }, 2100);
+})();
+</script>
+<script defer src="control-surface.js"></script>
+  <script defer src="ui.js"></script>
+  <script defer src="platform.js"></script>
+  <script defer src="/logo-badge.js"></script>
+<script defer src="/stealth-glass.js"></script>
+<script defer src="nav.js"></script>
+<!-- cg-related:start -->
+<aside id="cg-related">
+  <style>#cg-related{margin:54px auto 0;max-width:1120px;padding:0 18px 38px;font-family:'Inter',system-ui,-apple-system,sans-serif;position:relative}#cg-related .cgr-box{position:relative;overflow:hidden;background:linear-gradient(rgba(34,211,238,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(124,150,255,.05) 1px,transparent 1px),radial-gradient(circle at 12% 0,rgba(34,211,238,.16),transparent 34%),radial-gradient(circle at 88% 100%,rgba(168,85,247,.16),transparent 36%),linear-gradient(165deg,rgba(5,12,28,.97),rgba(9,7,24,.97));background-size:32px 32px,32px 32px,auto,auto,auto;border:1px solid rgba(34,211,238,.34);border-radius:16px;padding:24px 26px;color:#d8e4ff;box-shadow:0 18px 54px rgba(0,0,0,.44),0 0 34px rgba(34,211,238,.12),inset 0 0 0 1px rgba(255,255,255,.035)}#cg-related .cgr-box:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.18),transparent);transform:translateX(-120%) skewX(-18deg);animation:cgr-scan 8s ease-in-out infinite}#cg-related .cgr-box:after{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,#22d3ee,#a855f7,transparent);box-shadow:0 0 18px rgba(34,211,238,.75)}#cg-related .cgr-crumb{position:relative;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#8fb9ff;margin:0 0 12px}#cg-related .cgr-crumb a{color:#67e8f9;text-decoration:none;text-shadow:0 0 12px rgba(34,211,238,.35)}#cg-related .cgr-crumb a:hover{color:#fff;text-decoration:none}#cg-related h2{position:relative;margin:0 0 14px;font-size:15.5px;letter-spacing:.08em;text-transform:uppercase;color:#f3f7ff}#cg-related .cgr-route{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px}#cg-related .cgr-route a{display:flex;min-height:46px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(7,14,32,.52);border:1px solid rgba(124,150,255,.15);color:#cfe0ff;text-decoration:none;font-size:12px;line-height:1.35}#cg-related .cgr-route a:hover,#cg-related .cgr-route a:focus-visible{border-color:#22d3ee;color:#fff;box-shadow:0 0 18px rgba(34,211,238,.14)}#cg-related .cgr-route b{display:block;color:#67e8f9;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:2px}#cg-related ul{position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:8px 18px}#cg-related li a{display:block;padding:9px 11px;border-radius:10px;font-size:13.5px;line-height:1.45;color:#cfe0ff;text-decoration:none;border:1px solid rgba(124,150,255,.08);background:rgba(7,14,32,.36);transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}#cg-related li a:hover,#cg-related li a:focus-visible{transform:translateY(-1px);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.42);color:#fff;box-shadow:0 0 22px rgba(34,211,238,.14)}#cg-related li a b{color:#9bdcff;font-weight:700;text-shadow:0 0 12px rgba(34,211,238,.28)}#cg-related .cgr-cta{position:relative;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(34,211,238,.18);font-size:13.5px;color:#a9b8df}#cg-related .cgr-cta a{color:#67e8f9;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(34,211,238,.36)}#cg-related .cgr-cta a:hover{color:#fff;border-bottom-color:#fff}@media(max-width:620px){#cg-related .cgr-box{padding:21px 17px}#cg-related .cgr-route{grid-template-columns:1fr}#cg-related ul{grid-template-columns:1fr}}@keyframes cgr-scan{0%,58%{transform:translateX(-120%) skewX(-18deg);opacity:0}70%{opacity:1}100%{transform:translateX(220%) skewX(-18deg);opacity:0}}@media(prefers-reduced-motion:reduce){#cg-related .cgr-box:before{animation:none}}</style>
+  <nav class="cgr-box" aria-label="Related ClearGlass pages">
+    <p class="cgr-crumb"><a href="index.html">ClearGlass Inc.</a> › <a href="cyber-defense-console.html">Cyber Defense &amp; Security Operations</a></p>
+    <h2>Continue exploring</h2>
+    <div class="cgr-route" aria-label="Journey navigation">
+      <a href="environmental-cyber-risk.html"><span><b>Previous</b>Environmental Cyber-Risk</span></a>
+      <a href="cyber-defense-console.html"><span><b>Topic hub</b>Cyber Defense Console</span></a>
+      <a href="bluedesk-mobile.html"><span><b>Next in journey</b>BLUEDESK Mobile</span></a>
+    </div>
+    <ul>
+      <li><a href="bluedesk-mobile.html"><b>BLUEDESK Mobile</b> — the CISO risk console on a phone-first canvas</a></li>
+      <li><a href="sentinel.html"><b>SENTINEL</b> — live geospatial security command center</a></li>
+      <li><a href="bluedesk.html"><b>BLUEDESK</b> — CISO risk and blue-team console</a></li>
+      <li><a href="guardian.html"><b>GUARDIAN</b> — intelligence command interface</a></li>
+    </ul>
+    <p class="cgr-cta">Next step: <a href="store.html">Book a security engagement</a> · <a href="offers/security-quick-audit.html">Start with the $249 Security Quick-Audit</a></p>
+  </nav>
+</aside>
+<!-- cg-related:end -->
+<script defer src="/assets/js/future-buttons.js"></script>
+<script defer src="/cg-a11y.js"></script>
+</body>
+</html>
