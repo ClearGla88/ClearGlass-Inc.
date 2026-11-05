@@ -19,13 +19,13 @@ The website pages (`*.html`, `*.css`, `*.js`, `sitemap*.xml`, `CNAME`, `.nojekyl
 | Content agent (governed 50/30/20 drafts) | `content_agent.py`, `content_seed.example.json` | `tests/test_content_agent.py`, CI smoke run |
 | Agent-army orchestrator | `orchestrator.py`, `config.json` | CI smoke run |
 | Auto-heal controller | `auto_heal.py`, `error-patterns.json`, `healing-strategies.json` | `tests/test_auto_heal.py`. It expects its state in `.github/auto-heal/` and exits with status 2, before any API call, when that directory is missing (as it is now). |
-| Agent crypto runtime (Rust, `age`) | `Cargo.toml`, `Cargo.lock`, `src/` | `cargo test --locked` |
+| Agent crypto runtime (Rust, `age`) | `Cargo.toml`, `Cargo.lock`, `src/` | `cargo test --locked`; `.github/workflows/agent-army-crypto.yml` also builds the release binary and checks the CLI encrypt/decrypt round trip and tamper rejection |
 | Repository hygiene gate | `tools/repo_hygiene.py`, `tools/repo_hygiene_baseline.json` | `tests/test_repo_hygiene.py`, CI |
 | Legal intelligence modules | `legal_intelligence_core.py`, `artemis_legal_agent_mvp.py` | Their tests are kept outside this repository |
 
 **Does not run in this tree**
 
-- **Workflows:** about 78 workflow files sit at the root instead of in `.github/workflows/`, so GitHub never runs them. The only active workflow is `.github/workflows/baseline-ci.yml`. Many root workflows run on a schedule, write to the repository, deploy, or read secrets, and many call scripts that are missing. Review each one before moving it into `.github/workflows/`; don't move them in bulk.
+- **Workflows:** about 77 workflow files sit at the root instead of in `.github/workflows/`, so GitHub never runs them. The active workflows are `baseline-ci.yml`, `jekyll-gh-pages.yml`, and `agent-army-crypto.yml` in `.github/workflows/`. Many root workflows run on a schedule, write to the repository, deploy, or read secrets, and many call scripts that are missing. Review each one before moving it into `.github/workflows/`; don't move them in bulk.
 - **Node tooling:** `npm run typecheck`, `npm test`, `npm run sync:stripe`, and `npm run provenance` fail because their TypeScript sources under `scripts/` are missing. `npm ci` does install the locked dependencies.
 - **Python package:** `pyproject.toml` declares an `artemis` package, console scripts, and test paths that are absent. `pip install .` produces no usable package.
 

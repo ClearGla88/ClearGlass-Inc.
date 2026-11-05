@@ -2,7 +2,7 @@
 
 Guidance for agents working in this repository.
 
-> **Status, verified 2026-11-05: this tree does not match the map below.** It was populated by "Add files via upload" commits, almost every file sits at the root, and most directories named here are absent: `clearglass-commerce/`, `apps/`, `agents/`, `bots/`, `deployment/`, `data/`, `operations/`, `sentinel/`, `assets/`, `docs/`, and `tools/` apart from `tools/repo_hygiene.py`. The root `*.yml` workflows do not run, because they are not in `.github/workflows/`. The only active workflow is `.github/workflows/baseline-ci.yml`. Read "Repository status" in `README.md` for what actually exists and runs.
+> **Status, verified 2026-11-05: this tree does not match the map below.** It was populated by "Add files via upload" commits, almost every file sits at the root, and most directories named here are absent: `clearglass-commerce/`, `apps/`, `agents/`, `bots/`, `deployment/`, `data/`, `operations/`, `sentinel/`, `assets/`, `docs/`, and `tools/` apart from `tools/repo_hygiene.py`. The root `*.yml` workflows do not run, because they are not in `.github/workflows/`. The active workflows are the three in `.github/workflows/`: `baseline-ci.yml`, `jekyll-gh-pages.yml`, and `agent-army-crypto.yml`. Read "Repository status" in `README.md` for what actually exists and runs.
 >
 > Rules for agents:
 > - Verify that a path exists before acting on guidance that names it.
