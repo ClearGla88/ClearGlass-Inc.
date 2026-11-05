@@ -43,6 +43,29 @@ class ContentAgentTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             evaluate_paid([{"reel_id": "bad", "hours_since_publish": 1, "completion_rate": 1.1, "hook_retention": .5, "spend_cad": 0}])
 
+    def test_paid_metrics_reject_non_finite_values(self):
+        # Regression: inf/NaN slipped past the range checks because every comparison
+        # with NaN is False, and an infinite spend produced a SCALE_CAP recommendation.
+        base = {"reel_id": "r", "hours_since_publish": 1, "completion_rate": .4, "hook_retention": .4, "spend_cad": 0}
+        for field in ("hours_since_publish", "completion_rate", "hook_retention", "spend_cad"):
+            for value in (float("inf"), float("-inf"), float("nan")):
+                with self.subTest(field=field, value=value), self.assertRaises(ValueError):
+                    evaluate_paid([dict(base, **{field: value})])
+
+    def test_paid_metrics_reject_non_numeric_values(self):
+        base = {"reel_id": "r", "hours_since_publish": 1, "completion_rate": .4, "hook_retention": .4, "spend_cad": 0}
+        for value in (None, "fast", [1]):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                evaluate_paid([dict(base, spend_cad=value)])
+
+    def test_malformed_containers_raise_value_error(self):
+        with self.assertRaises(ValueError):
+            evaluate_paid(["not-a-row"])
+        with self.assertRaises(ValueError):
+            evaluate_paid({"reel_id": "r"})
+        with self.assertRaises(ValueError):
+            validate_seed(["not", "a", "seed"])
+
 
 if __name__ == "__main__":
     unittest.main()
