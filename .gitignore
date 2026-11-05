@@ -16,6 +16,17 @@ env/
 # Artemis local runtime state
 .artemis/
 
+# Rust build output (clearglass-agent-crypto). Cargo.lock stays committed: the
+# crate ships a binary and builds with --locked.
+/target/
+
+# Raw email exports carry personal addresses and mail-routing headers. This
+# repository is public; keep mail out of it. (Ignore rules never untrack files
+# that are already committed — tools/repo_hygiene.py reports those.)
+*.eml
+*.mbox
+*.msg
+
 # OS
 .DS_Store
 Thumbs.db
