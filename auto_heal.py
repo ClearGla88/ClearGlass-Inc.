@@ -258,7 +258,25 @@ def update_flaky(history: dict[str, Any], flaky: dict[str, Any]) -> None:
             })
 
 
+def preflight() -> str | None:
+    """Return an error message if the run-state directory is unusable, else None.
+
+    Must run before any GitHub API call. History is written only at the end of a
+    cycle, and it is the record that stops the next cycle from re-running jobs
+    and re-filing issues, so a cycle that cannot save it must not act at all.
+    """
+    if not CONTROL.is_dir():
+        return f"auto-heal state directory not found: {CONTROL}"
+    if not os.access(CONTROL, os.W_OK):
+        return f"auto-heal state directory is not writable: {CONTROL}"
+    return None
+
+
 def main() -> int:
+    problem = preflight()
+    if problem:
+        print(f"auto-heal preflight failed; no API calls made: {problem}", file=sys.stderr)
+        return 2
     patterns = load_json(PATTERNS_PATH, {"schema_version": 1, "patterns": []})
     strategy_config = load_json(STRATEGIES_PATH, {"global": {}, "strategies": {}})
     history = load_json(HISTORY_PATH, {"schema_version": 1, "entries": []})
