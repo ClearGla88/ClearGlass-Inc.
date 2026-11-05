@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 from dataclasses import asdict, dataclass
 from datetime import date
@@ -45,13 +46,15 @@ def _valid_url(value: str) -> bool:
 
 
 def validate_seed(seed: dict) -> None:
+    if not isinstance(seed, dict):
+        raise ValueError("Seed must be a JSON object")
     required = {"opacity_issue", "security_consequence", "founder_truth", "product", "feature", "pain", "demo", "sources"}
     missing = sorted(required - seed.keys())
     if missing:
         raise ValueError("Missing seed fields: " + ", ".join(missing))
     if not isinstance(seed["sources"], list) or not seed["sources"]:
         raise ValueError("At least one public source is required for Clarity Breakdowns")
-    if any(not _valid_url(item) for item in seed["sources"]):
+    if any(not isinstance(item, str) or not _valid_url(item) for item in seed["sources"]):
         raise ValueError("Every source must be a valid HTTPS URL")
     for key in required - {"sources"}:
         if not isinstance(seed[key], str) or not seed[key].strip():
@@ -96,19 +99,42 @@ def build_plan(seed: dict) -> list[Draft]:
     return drafts
 
 
+def _finite_metric(row: dict, key: str) -> float:
+    """Return ``row[key]`` as a finite float, or raise ``ValueError``.
+
+    NaN and infinity must be rejected explicitly: every comparison with NaN is
+    False, so they would otherwise pass the range checks below and route to a
+    recommendation (an infinite spend previously produced SCALE_CAP).
+    """
+    value = row[key]
+    if isinstance(value, bool):
+        raise ValueError(f"{key} must be a number")
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        raise ValueError(f"{key} must be a number") from None
+    if not math.isfinite(number):
+        raise ValueError(f"{key} must be a finite number")
+    return number
+
+
 def evaluate_paid(performance: list[dict]) -> list[PaidAction]:
     """Turn Reel telemetry into bounded recommendations, never ad-platform writes."""
+    if not isinstance(performance, (list, tuple)):
+        raise ValueError("paid_performance must be a list of objects")
     actions: list[PaidAction] = []
     required = {"reel_id", "hours_since_publish", "completion_rate", "hook_retention", "spend_cad"}
     for row in performance:
+        if not isinstance(row, dict):
+            raise ValueError("Each performance row must be an object")
         missing = sorted(required - row.keys())
         if missing:
             raise ValueError("Missing performance fields: " + ", ".join(missing))
         reel_id = _clean(str(row["reel_id"]))
-        hours = float(row["hours_since_publish"])
-        completion = float(row["completion_rate"])
-        hook = float(row["hook_retention"])
-        spend = float(row["spend_cad"])
+        hours = _finite_metric(row, "hours_since_publish")
+        completion = _finite_metric(row, "completion_rate")
+        hook = _finite_metric(row, "hook_retention")
+        spend = _finite_metric(row, "spend_cad")
         if not reel_id or hours < 0 or spend < 0 or not 0 <= completion <= 1 or not 0 <= hook <= 1:
             raise ValueError("Performance values are outside allowed ranges")
         if spend >= 5 and hook < .30:

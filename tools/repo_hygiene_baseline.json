@@ -1,0 +1,4 @@
+{
+  "_comment": "Tracked files that violate tools/repo_hygiene.py and are awaiting an owner decision. Each entry needs path, rule, and reason. Remove an entry in the same change that untracks its file; stale entries fail the check.",
+  "exceptions": []
+}

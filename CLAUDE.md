@@ -2,6 +2,16 @@
 
 Guidance for agents working in this repository.
 
+> **Status, verified 2026-11-05: this tree does not match the map below.** It was populated by "Add files via upload" commits, almost every file sits at the root, and most directories named here are absent: `clearglass-commerce/`, `apps/`, `agents/`, `bots/`, `deployment/`, `data/`, `operations/`, `sentinel/`, `assets/`, `docs/`, and `tools/` apart from `tools/repo_hygiene.py`. The root `*.yml` workflows do not run, because they are not in `.github/workflows/`. The only active workflow is `.github/workflows/baseline-ci.yml`. Read "Repository status" in `README.md` for what actually exists and runs.
+>
+> Rules for agents:
+> - Verify that a path exists before acting on guidance that names it.
+> - Don't recreate a missing subsystem from this description.
+> - Don't move root workflows into `.github/workflows/` without owner review. Many are scheduled, write to the repo, deploy, or read secrets.
+> - Run `python3 tools/repo_hygiene.py` before proposing a commit.
+>
+> The safety invariants below (governed approvals, append-only audit, no fabricated data, fail-closed auth) still apply to any of these systems that are restored.
+
 ## What this repo is
 
 `ClearGlassInc.github.io` is the ClearGlass Inc. GitHub Pages site **plus** the

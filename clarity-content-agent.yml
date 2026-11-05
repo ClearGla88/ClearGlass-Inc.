@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Test content policy and allocation
-        run: python -m unittest -v test_content_agent.py
+        run: python -m unittest -v tests/test_content_agent.py
       - name: Generate governed draft brief
         run: python content_agent.py --seed content_seed.example.json --output content-brief.md --json-output content-brief.json
       - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
