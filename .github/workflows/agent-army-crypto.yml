@@ -1,19 +1,24 @@
 name: Agent Army Rust Crypto
 
+# The secure runtime crate (clearglass-agent-crypto) lives at the repository
+# root in this tree: Cargo.toml, Cargo.lock, src/. It was written for an
+# agent_army/secure_runtime/ layout, which does not exist here.
 on:
   pull_request:
     branches: ["main"]
     paths:
-      - "agent_army/secure_runtime/**"
-      - "agent_army/README.md"
-      - "agent_army/AGENT_POLICY.md"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "src/**"
+      - "AGENT_POLICY.md"
       - ".github/workflows/agent-army-crypto.yml"
   push:
     branches: ["main"]
     paths:
-      - "agent_army/secure_runtime/**"
-      - "agent_army/README.md"
-      - "agent_army/AGENT_POLICY.md"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "src/**"
+      - "AGENT_POLICY.md"
       - ".github/workflows/agent-army-crypto.yml"
   workflow_dispatch:
 
@@ -26,15 +31,14 @@ concurrency:
 
 env:
   CARGO_TERM_COLOR: always
+  # Same pin as Baseline CI, so clippy -D warnings doesn't change with the runner image.
+  RUSTUP_TOOLCHAIN: "1.97.0"
 
 jobs:
   secure-runtime:
     name: Rust encryption validation
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    defaults:
-      run:
-        working-directory: agent_army/secure_runtime
 
     steps:
       - name: Checkout
@@ -42,11 +46,11 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Verify Rust toolchain
+      - name: Install and verify Rust toolchain
         run: |
+          rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal --component clippy,rustfmt
           rustc --version
           cargo --version
-          rustup component add rustfmt clippy
 
       - name: Verify locked dependency graph
         run: |
