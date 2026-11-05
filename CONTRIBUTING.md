@@ -1,5 +1,21 @@
 # Contributing to ClearGlassInc Artemis
 
+## Current tree: checks that run today
+
+Most of this guide describes the original repository layout (`bots/`, `scripts/`, `operations/`, `.github/workflows/operations-finance-bot.yml`). Those paths are not in this tree; see "Repository status" in `README.md`. These checks are the ones that run here, and `.github/workflows/baseline-ci.yml` runs them on every pull request:
+
+```bash
+python -m pip install -r requirements.txt     # pinned pytest
+python -m pytest -q                           # tests/
+python tools/repo_hygiene.py                  # tracked-file safety gate
+ruff check --select E9,F .                    # syntax errors and pyflakes
+cargo fmt --check && cargo clippy --locked --all-targets -- -D warnings && cargo test --locked
+```
+
+The editable install shown under "Python tooling" completes, but it installs no importable `artemis` package, because that package is not in this tree. It is still a valid way to get the test extras.
+
+Where possible, push from a local clone with `git`. Folders are preserved, `.gitignore` applies, and you can run the checks before anything reaches `main`. Before committing a web upload, review every path in the commit preview.
+
 ## Branch strategy
 
 | Branch | Purpose |
@@ -68,6 +84,17 @@ The finance model in `bots/operations_finance_bot.py` uses Python's `Decimal` fo
 ## Security
 
 Do not commit secrets, API keys, tokens, or credentials. Use GitHub Actions secrets for all sensitive values. See `SECURITY.md` for the vulnerability reporting process.
+
+This repository and its GitHub Pages site are public. Anyone can download what is committed, and it stays in git history after deletion. Never commit:
+
+- personal documents: statements, receipts, letters, registrar or account records, ID documents;
+- email exports (`.eml`, `.mbox`, `.msg`);
+- `.env` files (templates end in `.example`), private keys, or Terraform state;
+- generated output such as `__pycache__/`, `node_modules/`, or `target/`.
+
+`tools/repo_hygiene.py` blocks the file types and credential formats it recognises. It cannot spot personal information inside an ordinary document, so check before uploading. If something sensitive does land, a delete commit is not enough: report it privately, rotate any exposed credential, and arrange a history purge.
+
+`tools/repo_hygiene_baseline.json` lists violations that predate the check. Each entry needs a reason. Remove an entry in the same change that removes its file; an entry with no matching tracked file fails the check.
 
 ## Code style
 
