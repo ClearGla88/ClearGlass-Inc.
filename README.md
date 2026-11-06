@@ -22,10 +22,11 @@ The website pages (`*.html`, `*.css`, `*.js`, `sitemap*.xml`, `CNAME`, `.nojekyl
 | Agent crypto runtime (Rust, `age`) | `Cargo.toml`, `Cargo.lock`, `src/` | `cargo test --locked`; `.github/workflows/agent-army-crypto.yml` also builds the release binary and checks the CLI encrypt/decrypt round trip and tamper rejection |
 | Repository hygiene gate | `tools/repo_hygiene.py`, `tools/repo_hygiene_baseline.json` | `tests/test_repo_hygiene.py`, CI |
 | Legal intelligence modules | `legal_intelligence_core.py`, `artemis_legal_agent_mvp.py` | Their tests are kept outside this repository |
+| Aegis Glass platform (Next.js, PostgreSQL) | `aegis-glass-platform/` | `npm test` (62 tests, incl. a PostgreSQL 16 server) and `npm run build` via `.github/workflows/aegis-glass-ci.yml`. Production sign-in is blocked until an OIDC adapter exists; see `aegis-glass-platform/docs/ARCHITECTURE.md` |
 
 **Does not run in this tree**
 
-- **Workflows:** about 77 workflow files sit at the root instead of in `.github/workflows/`, so GitHub never runs them. The active workflows are `baseline-ci.yml`, `jekyll-gh-pages.yml`, and `agent-army-crypto.yml` in `.github/workflows/`. Many root workflows run on a schedule, write to the repository, deploy, or read secrets, and many call scripts that are missing. Review each one before moving it into `.github/workflows/`; don't move them in bulk.
+- **Workflows:** about 77 workflow files sit at the root instead of in `.github/workflows/`, so GitHub never runs them. The active workflows are `baseline-ci.yml`, `jekyll-gh-pages.yml`, `agent-army-crypto.yml`, and `aegis-glass-ci.yml` in `.github/workflows/`. Many root workflows run on a schedule, write to the repository, deploy, or read secrets, and many call scripts that are missing. Review each one before moving it into `.github/workflows/`; don't move them in bulk.
 - **Node tooling:** `npm run typecheck`, `npm test`, `npm run sync:stripe`, and `npm run provenance` fail because their TypeScript sources under `scripts/` are missing. `npm ci` does install the locked dependencies.
 - **Python package:** `pyproject.toml` declares an `artemis` package, console scripts, and test paths that are absent. `pip install .` produces no usable package.
 

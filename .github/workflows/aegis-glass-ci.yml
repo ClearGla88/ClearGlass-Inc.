@@ -1,0 +1,73 @@
+# Aegis Glass CI: typecheck, the full test suite (including the PostgreSQL
+# server adapter), a dependency audit, and a production build.
+#
+# Security posture: read-only token, no secrets, no deploy, no writes,
+# credentials not persisted. Action SHAs are the pins already used in this
+# repository (checkout v6.0.3, setup-node v4.4.0, verified against upstream tags).
+name: Aegis Glass CI
+
+on:
+  pull_request:
+    paths:
+      - "aegis-glass-platform/**"
+      - ".github/workflows/aegis-glass-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "aegis-glass-platform/**"
+      - ".github/workflows/aegis-glass-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aegis-glass-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Typecheck, test, audit, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: aegis-glass-platform
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          # Throwaway CI database on the runner's private network; not a secret.
+          POSTGRES_USER: aegis_ci
+          POSTGRES_PASSWORD: aegis_ci
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U aegis_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: aegis-glass-platform/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci --no-fund
+      - name: Dependency audit (fails on high or critical)
+        run: npm audit --audit-level=high
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Tests (PGlite + PostgreSQL 16 server)
+        env:
+          AEGIS_TEST_PG_ADMIN_URL: postgres://aegis_ci:aegis_ci@localhost:5432/postgres
+        run: npm test
+      - name: Production build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: npm run build
