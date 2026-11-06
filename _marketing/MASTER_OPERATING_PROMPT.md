@@ -11,8 +11,12 @@ pipeline numbers and internal critiques out of this file.
 1. Paste the **master prompt** into a new conversation.
 2. Paste the **verified context block** right after it. The model starts from
    facts instead of blanks.
-3. Answer the seven questions in the master prompt's FIRST TASK. Then run the
-   follow-up prompts one function at a time.
+3. Answer the FIRST TASK questions the context block leaves open. The model
+   returns a 90-day Marketing Operating System, sections A to K.
+4. Run the **positioning prompt** next, then the follow-up prompts in the order
+   given under **Operating sequence**.
+5. Run the **weekly operating cadence** every week, and put every asset through
+   the **pre-publication quality gate** before it goes out.
 
 Update the context block when a fact changes, and add nothing to it without a
 source.
@@ -230,23 +234,190 @@ Use tables for plans, KPIs, owners, timelines, and priorities. Use concise, exec
 
 ## FIRST TASK
 
-Begin by asking me for:
-1. ClearGlassInc's current website, LinkedIn presence, service descriptions, and available positioning materials
-2. Primary target customers, industries, company sizes, and buying personas
-3. Current business objectives: leads, partnerships, hiring, investor attention, authority, or revenue
-4. Existing proof points: case studies, client outcomes, credentials, publications, speaking, awards, partnerships, and technical assets
-5. Current marketing channels, budget, team capacity, tools, and sales process
-6. Competitors or companies whose positioning ClearGlassInc wants to understand
-7. The first 90-day business outcome that would define success
+Produce a first-pass 90-day ClearGlassInc Marketing Operating System.
 
-Then produce a first-pass strategic marketing operating plan based only on the information provided, clearly labeling assumptions, evidence gaps, and recommended validation steps.
+Before producing recommendations, ask me for the following inputs. If I do not provide them, proceed using clearly labeled assumptions and create a "Critical Evidence Gaps" section.
+
+Skip any input the verified context block already answers; ask only for what it leaves out.
+
+1. ClearGlassInc's current website, LinkedIn company page, founder LinkedIn profile, service descriptions, pitch materials, and available positioning documents.
+2. Primary target customers: industries, company sizes, geographies, buying personas, economic buyers, and technical influencers.
+3. Current business objectives for the next 90 days: qualified leads, sales opportunities, partnerships, hiring, investor attention, media visibility, or revenue.
+4. Existing proof points: verifiable case studies, client outcomes, credentials, publications, speaking history, awards, partnerships, open-source work, technical assets, and internal methodologies.
+5. Current marketing channels, budget, team capacity, tools, CRM, sales process, and conversion paths.
+6. Competitors, alternative providers, or companies whose positioning ClearGlassInc wants to study.
+7. The single most important business outcome that would define success in 90 days.
+
+Then deliver:
+
+A. Executive recommendation
+B. Strategic diagnosis: market position, likely bottlenecks, and highest-leverage opportunities
+C. Audience and buying-context analysis
+D. Positioning and messaging system
+E. Authority architecture and content plan
+F. Search, GEO, and AI-discoverability plan
+G. Demand-generation and conversion architecture
+H. Measurement framework and dashboard specification
+I. 90-day execution roadmap with weekly priorities
+J. Risks, dependencies, decision points, and evidence gaps
+K. A concise one-page executive summary suitable for founder approval
+
+Constraints:
+- Do not invent customers, revenue, rankings, awards, partnerships, certifications, or results.
+- Mark every unverified claim as [NEEDS PROOF].
+- Mark every estimate as [ASSUMPTION].
+- Do not recommend more activity than the stated team capacity can sustain.
+- Prioritize a small number of compounding, high-quality motions over scattered tactics.
+- Make every recommendation specific enough to assign an owner, deadline, deliverable, and success metric.
+
+## WEEKLY OPERATING CADENCE
+
+After producing the 90-day plan, create a repeatable weekly operating system:
+
+1. Weekly planning meeting
+- Review pipeline, content performance, experiment results, and blockers.
+- Select no more than three priority actions for the coming week.
+- Assign owner, deadline, deliverable, and success metric to each action.
+
+2. Content production sprint
+- Produce one flagship asset or update one high-value existing asset.
+- Repurpose it into LinkedIn posts, email insights, sales enablement, webinar material, and short-form video.
+- Route all external claims through fact-checking and approval.
+
+3. Distribution sprint
+- Publish and distribute across the selected owned, earned, partner, and social channels.
+- Engage with relevant technical and executive audiences.
+- Capture audience questions, objections, and language for future content.
+
+4. Conversion review
+- Review landing-page performance, lead quality, meeting bookings, sales handoffs, and funnel drop-off.
+- Identify one conversion improvement to test.
+
+5. Measurement review
+- Update the dashboard with leading indicators, conversion indicators, and business outcomes.
+- Identify what to continue, improve, pause, or kill.
+
+6. Strategy review
+- Ask: What did we learn? What assumption changed? What is the next highest-leverage constraint?
+- Update the next week's priorities accordingly.
+
+Do not treat publishing volume as success. Optimize for qualified attention, trust, conversion, and strategic outcomes.
 ```
+
+## Positioning prompt
+
+Run this first, after the master prompt has produced the 90-day plan. It
+replaces the shorter positioning prompt that used to sit in the follow-up table.
+
+```text
+Using the ClearGlassInc context and inputs provided, create a positioning operating system.
+
+Deliver:
+
+1. Strategic diagnosis
+- Identify the market problem ClearGlassInc is best positioned to address.
+- Identify what buyers currently misunderstand, tolerate, or accept as normal.
+- Separate verified facts, assumptions, and evidence gaps.
+
+2. Category decision
+- Recommend whether ClearGlassInc should enter an existing category, reframe one, create a subcategory, or lead with a business outcome.
+- Explain the strategic rationale and risks.
+
+3. Positioning statement
+Use this structure:
+"For [specific audience] who struggle with [business problem], ClearGlassInc is the [category or alternative] that helps them [measurable outcome], unlike [alternative], because [defensible approach or mechanism]."
+
+4. Strategic wedge
+- Identify one sharp, ownable market angle.
+- Explain why ClearGlassInc can credibly own it.
+- Identify the proof required before using it publicly.
+
+5. Messaging hierarchy
+Provide:
+- One primary company message
+- Three supporting claims
+- Five proof themes
+- Three objections to preempt
+- Three phrases to stop using
+
+6. Execution implications
+Explain how the positioning should shape:
+- Homepage
+- Service pages
+- LinkedIn presence
+- Founder content
+- Sales outreach
+- SEO pages
+- Partnerships
+- Webinars
+- Email nurture
+
+Rules:
+- Do not use generic enterprise buzzwords.
+- Do not make claims that cannot be substantiated.
+- Mark every claim requiring evidence as [NEEDS PROOF].
+- Prioritize clarity, credibility, and commercial usefulness over clever wording.
+```
+
+## Operating sequence
+
+Run the system in this order. Each step feeds the next.
+
+| Step | Stage | Prompt to run |
+|---|---|---|
+| 1 | Inputs and audit: website, LinkedIn, services, ICP, proof, channels, budget, sales process, objectives | Master prompt FIRST TASK |
+| 2 | Positioning: the strategic wedge and messaging hierarchy | Positioning prompt |
+| 3 | ICP and buying triggers: who ClearGlassInc serves and why they act | ICP |
+| 4 | Authority map: topic clusters that support credibility and demand | Authority map |
+| 5 | Content engine: a realistic 90-day calendar and repurposing system | Content engine, then LinkedIn engine |
+| 6 | SEO and GEO: expertise that search engines, AI systems and agents can find | SEO/GEO |
+| 7 | Conversion system: attention into qualified conversations | Demand generation |
+| 8 | Measurement: leading indicators and business outcomes | Measurement |
+| 9 | Weekly cadence: execute, learn, improve, reallocate | Weekly operating cadence (inside the master prompt) |
+
+## First 90-day scorecard
+
+Keep the scorecard narrow for the first 90 days.
+
+| Layer | Primary KPI | Why it matters |
+|---|---|---|
+| Authority | Published flagship assets and executive POV posts | Builds durable expertise and reusable proof |
+| Discovery | Branded search, organic entrances, referral visibility, AI visibility signals | Tests whether the market can find and recognize ClearGlassInc |
+| Demand | Qualified inbound conversations and meeting requests | Tests whether visibility attracts the right buyers |
+| Conversion | Sales-accepted opportunities and proposal activity | Tests whether marketing produces commercial quality |
+| Strategic relationships | Partner, speaking, media, and investor conversations | Builds non-linear credibility and distribution |
+| Learning | Experiments completed and decisions made | Prevents activity from replacing progress |
+
+Every baseline is unknown. No GA4, Search Console, Google Business Profile, CRM
+or LinkedIn data has been collected (`baseline_metrics.json`, 2026-07-30). The
+Discovery, Demand and Conversion rows cannot be measured until those sources are
+connected.
+
+Don't optimize for impressions, followers or raw traffic until those signals can
+be tied to qualified interest and commercial outcomes.
+
+## Pre-publication quality gate
+
+Every asset passes this test before it goes out.
+
+```text
+1. Does it address a specific buyer problem or decision?
+2. Does it reflect a ClearGlassInc capability we can substantiate?
+3. Does it contain a clear, differentiated point of view?
+4. Does it provide practical value beyond promotion?
+5. Is every factual claim verifiable or explicitly labeled as an assumption?
+6. Does it have a clear next action for the intended audience?
+7. Can it be repurposed into at least five downstream assets?
+8. Does it support the 90-day business objective?
+```
+
+If an asset fails more than one test, revise it or don't publish it.
 
 ## Follow-up prompts
 
 | Marketing function | Follow-up prompt |
 |---|---|
-| Positioning | "Using the ClearGlassInc context above, create three differentiated positioning options, a recommended positioning, messaging hierarchy, proof themes, and messages to avoid. Flag every claim that requires evidence." |
+| Positioning | Use the full **Positioning prompt** above. |
 | ICP | "Create 3 detailed B2B buyer personas for ClearGlassInc, including role, business pressures, problems, buying triggers, objections, decision criteria, channels, and content needs. Separate observed facts from assumptions." |
 | Authority map | "Build a 12-month topical authority map for ClearGlassInc across AI automation, cybersecurity, digital risk, software architecture, and enterprise technology strategy. Include pillar pages, supporting assets, search intent, internal links, and conversion paths." |
 | Content engine | "Create a 90-day content calendar for ClearGlassInc. Include asset type, topic, buyer stage, channel, CTA, distribution plan, repurposing plan, owner, KPI, and approval requirement." |
