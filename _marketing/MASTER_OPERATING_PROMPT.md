@@ -363,6 +363,10 @@ Rules:
 
 Run the system in this order. Each step feeds the next.
 
+For evidence on target customers and competitors (FIRST TASK inputs 2 and 6,
+and step 3 below), run the Market Intelligence Command in
+`MARKET_INTELLIGENCE_COMMAND.md` first.
+
 | Step | Stage | Prompt to run |
 |---|---|---|
 | 1 | Inputs and audit: website, LinkedIn, services, ICP, proof, channels, budget, sales process, objectives | Master prompt FIRST TASK |
