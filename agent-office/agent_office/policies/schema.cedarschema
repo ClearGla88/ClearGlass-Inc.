@@ -1,0 +1,34 @@
+// Cedar schema for the ClearGlass Agent Office governance gate.
+// The engine validates every policy against this schema at load time and
+// refuses to start if one does not type-check. Requests that do not match it
+// are refused too, so a missing context field can never skip a forbid.
+
+entity Agent = {
+  department: String,
+  status: String,
+  can_request_critical: Bool
+};
+
+entity Tool = {
+  key: String,
+  category: String,
+  environment: String
+};
+
+type GateContext = {
+  risk: String,
+  approved_by_human: Bool,
+  mission_mode: String,
+  external: Bool,
+  has_rollback_plan: Bool,
+  has_test_evidence: Bool,
+  amount_cents: Long,
+  approved_amount_cents: Long,
+  data_classification: String
+};
+
+action "read", "write", "execute" appliesTo {
+  principal: [Agent],
+  resource: [Tool],
+  context: GateContext
+};
