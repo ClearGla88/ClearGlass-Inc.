@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ClearGlass Agent Office</title>
+  <link rel="stylesheet" href="/static/glass.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#view">Skip to content</a>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <div>
+        <div class="brand-name">CLEARGLASS AGENT OFFICE</div>
+        <div class="brand-tag">See Through Everything</div>
+      </div>
+    </div>
+    <nav class="nav" aria-label="Views">
+      <a href="#/" data-view="hq">Headquarters</a>
+      <a href="#/agents" data-view="agents">Agents</a>
+      <a href="#/missions" data-view="missions">Missions</a>
+      <a href="#/approvals" data-view="approvals">Approval Desk <span id="approval-count" class="pill" hidden></span></a>
+      <a href="#/collaboration" data-view="collaboration">Collaboration</a>
+      <a href="#/vault" data-view="vault">Vault</a>
+      <a href="#/audit" data-view="audit">Audit</a>
+      <a href="#/briefing" data-view="briefing">Briefing</a>
+    </nav>
+    <div class="session">
+      <label class="operator-field" id="operator-field">
+        <span>Operator</span>
+        <select id="operator-select" aria-label="Development operator">
+          <option value="operator-1">operator-1</option>
+          <option value="operator-2">operator-2</option>
+        </select>
+      </label>
+      <button id="estop" class="estop" type="button">EMERGENCY STOP</button>
+    </div>
+  </header>
+
+  <div id="halt-banner" class="halt-banner" role="alert" hidden></div>
+  <div id="auth-banner" class="auth-banner" hidden></div>
+
+  <main id="view" tabindex="-1" aria-live="polite"></main>
+
+  <dialog id="dialog" class="glass dialog">
+    <form method="dialog" id="dialog-form">
+      <h2 id="dialog-title"></h2>
+      <p id="dialog-body"></p>
+      <label class="field" id="dialog-extra-wrap" hidden>
+        <span id="dialog-extra-label"></span>
+        <textarea id="dialog-extra" rows="8" spellcheck="false"></textarea>
+      </label>
+      <label class="field">
+        <span id="dialog-reason-label">Reason (required)</span>
+        <textarea id="dialog-reason" rows="3" required minlength="8"></textarea>
+      </label>
+      <label class="field" id="dialog-confirm-wrap" hidden>
+        <span>Type <strong>STOP</strong> to confirm</span>
+        <input id="dialog-confirm" autocomplete="off">
+      </label>
+      <p id="dialog-error" class="error" role="alert"></p>
+      <div class="actions">
+        <button value="cancel" type="button" id="dialog-cancel" class="btn ghost">Cancel</button>
+        <button value="ok" type="submit" id="dialog-ok" class="btn">Confirm</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>
