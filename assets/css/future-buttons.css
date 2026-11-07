@@ -1,0 +1,102 @@
+/* ClearGlass · Neon buttons (v1.0)
+   ───────────────────────────────────────────────────────────────────────────
+   Opt-in .cg-neon-button for primary actions. Works with or without
+   cg-design-system.css (every token has a fallback).
+
+     .cg-neon-button                  primary (cyan)
+     .cg-neon-button--secondary       violet
+     .cg-neon-button--ghost           outline only, for tertiary actions
+     .cg-neon-button--danger          destructive actions only (status red)
+     .cg-neon-button--sm / --lg       44px stays the minimum touch target
+
+   Hover raises the glow halo (an absolutely positioned ::before, so only its
+   opacity animates) and lifts the button 1px. future-buttons.js feeds the
+   pointer position into --cg-mx / --cg-my for the inner highlight; without
+   the script the highlight sits at the top centre. */
+
+.cg-neon-button {
+  --_rgb: var(--cg-neon-primary, 34, 211, 238);
+  --cg-mx: 50%;
+  --cg-my: 0%;
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5em;
+  min-height: 44px;
+  padding: 0 1.25em;
+  border: 1px solid rgba(var(--_rgb), .55);
+  border-radius: var(--cg-r-pill, 999px);
+  background:
+    radial-gradient(120% 140% at var(--cg-mx) var(--cg-my), rgba(var(--_rgb), .26), transparent 60%),
+    linear-gradient(180deg, rgba(var(--_rgb), .16), rgba(var(--_rgb), .06)),
+    var(--cg-bg-1, #0a0e1c);
+  color: #f4fbff;
+  font: 600 .9375rem/1 var(--cg-sans, system-ui, sans-serif);
+  letter-spacing: .02em;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12), 0 6px 18px -8px rgba(var(--_rgb), .55);
+  transition:
+    transform var(--cg-dur-1, .2s) var(--cg-spring, ease),
+    border-color var(--cg-dur-1, .2s) var(--cg-ease, ease),
+    color var(--cg-dur-1, .2s) var(--cg-ease, ease);
+}
+.cg-neon-button::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  box-shadow: 0 0 14px rgba(var(--_rgb), .5), 0 0 34px rgba(var(--_rgb), .24);
+  opacity: 0;
+  transition: opacity var(--cg-dur-2, .35s) var(--cg-ease, ease);
+  pointer-events: none;
+}
+.cg-neon-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(var(--_rgb), .9);
+}
+.cg-neon-button:hover::before,
+.cg-neon-button:focus-visible::before { opacity: 1; }
+.cg-neon-button:active { transform: translateY(0) scale(.98); }
+.cg-neon-button:focus-visible {
+  outline: var(--cg-focus-width, 2px) solid rgb(var(--_rgb));
+  outline-offset: var(--cg-focus-offset, 3px);
+}
+.cg-neon-button:is(:disabled, [aria-disabled="true"], .is-disabled) {
+  opacity: .5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+.cg-neon-button:is(:disabled, [aria-disabled="true"], .is-disabled)::before { opacity: 0; }
+
+.cg-neon-button--secondary { --_rgb: var(--cg-neon-secondary, 167, 139, 250); }
+.cg-neon-button--danger { --_rgb: var(--cg-danger, 255, 92, 108); }
+.cg-neon-button--ghost {
+  background: transparent;
+  border-color: rgba(var(--_rgb), .38);
+  color: rgb(var(--_rgb));
+  box-shadow: none;
+}
+.cg-neon-button--ghost:hover { background: rgba(var(--_rgb), .08); color: #f4fbff; }
+.cg-neon-button--sm { min-height: 44px; padding: 0 1em; font-size: .8125rem; }
+.cg-neon-button--lg { min-height: 52px; padding: 0 1.6em; font-size: 1.0625rem; }
+.cg-neon-button--block { display: flex; width: 100%; }
+
+@media (hover: none) {
+  .cg-neon-button:hover { transform: none; }
+  .cg-neon-button:hover::before { opacity: 0; }
+}
+@media (prefers-contrast: more) {
+  .cg-neon-button { border-color: rgb(var(--_rgb)); background: var(--cg-bg-1, #0a0e1c); }
+}
+@media (forced-colors: active) {
+  .cg-neon-button { border: 1px solid ButtonText; background: ButtonFace; color: ButtonText; box-shadow: none; }
+  .cg-neon-button::before { display: none; }
+}
