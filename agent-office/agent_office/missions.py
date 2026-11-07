@@ -102,6 +102,7 @@ class MissionService:
         deliverables: list[str] | None = None,
         mode: str = "production",
         priority: int = 3,
+        actor_type: str = "human",
     ) -> dict[str, Any]:
         validate_dag(tasks)
         dept = self.conn.execute(
@@ -134,7 +135,7 @@ class MissionService:
                      dumps(t.get("depends_on", [])), t["tool"], t["action"], dumps(t.get("payload", {})), now),
                 )
             self.ledger.append(
-                actor_type="human", actor_id=created_by, action="mission.create", resource_type="mission",
+                actor_type=actor_type, actor_id=created_by, action="mission.create", resource_type="mission",
                 resource_id=mission_id, outcome="success", correlation_id=new_id(),
                 payload={"code": code, "tasks": [t["key"] for t in tasks]}, metadata={"mode": mode},
             )
