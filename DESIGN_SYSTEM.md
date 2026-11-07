@@ -157,6 +157,121 @@ invented telemetry as live status.
   (`DETECTED → CORRELATED → CLASSIFIED → REVIEWED`), but the page's subject
   matter made it ambiguous and the rename costs no meaning.
 
+## Neon Glass System (v1.0, 2026-11-07)
+
+### Why it exists
+
+Every page above links `/assets/css/cg-design-system.css`, but `assets/` was
+never uploaded to this repository. On 2026-11-07 that file, `glass.css`,
+`future-buttons.css`, `cinematic-motion.css` and their three scripts were 404s
+on 42 to 94 pages each: 530 failed CSS/JS requests in one pass over the site
+at 375px. Nothing on the site depended on them, because they had never
+loaded, so the system is built to be strictly additive.
+
+### Files
+
+| File | Holds |
+| --- | --- |
+| `assets/css/cg-design-system.css` | Tokens, layered global defaults, the safety rules, neon/status/scanline/grid/aurora components |
+| `assets/css/glass.css` | `.cg-glass`, `.cg-glass-elevated`: states, solid fallback, preference handling |
+| `assets/css/future-buttons.css` | `.cg-neon-button` and its variants |
+| `assets/css/cinematic-motion.css` | Opt-in entrance reveal plus the `cg-low-power` contract `platform.js` sets |
+| `assets/js/cg-design-system.js` | Hidden-tab pause; broken-image containment and a "CG" monogram for logo frames |
+| `assets/js/future-buttons.js` | Pointer-tracked highlight on neon buttons (skipped on touch and reduced motion) |
+| `assets/js/cinematic-motion.js` | IntersectionObserver reveal, staggered; never hides content without the runtime |
+| `assets/css/mission-control.css` | First full page built on the tokens (`mission-control.html` was unstyled) |
+
+### Rules that keep it safe on ~94 existing pages
+
+- **Tokens** are `--cg-*`. Names that already existed keep their values: the
+  `--cg-neon-cyan/blue/violet/magenta` triplets equal `ui.css`, and radius,
+  spacing, font and motion tokens mirror `tokens.css`. A test fails on drift.
+  `--cg-shadow` and `--cg-radius` belong to `brand-system.css` and are not redefined.
+- **Global defaults** (focus ring, `pre` scrolling, long-word wrapping) live in
+  `@layer cg-defaults`, which loses to every unlayered page rule.
+- **Safety rules** are the only unlayered globals: reduced motion, the
+  low-power contract, pausing animation in hidden tabs, hiding a broken
+  image's spilled alt text (it stays exposed to assistive tech), and a ≤900px
+  `overflow-x: clip` guard against sideways panning.
+- **Components** are opt-in classes. Nothing restyles a page that doesn't use them.
+
+### Palette and limits
+
+One dominant neon (cyan `34,211,238`), one secondary (violet `167,139,250`),
+one accent (magenta `244,114,182`). Green, amber and red (`--cg-success`,
+`--cg-warning`, `--cg-danger`) are for status only, and danger is not the
+accent. Text tokens on `--cg-bg-0`: `--cg-text` 16.9:1, `--cg-text-muted` 8.9:1,
+`--cg-text-dim` 6.0:1. Backdrop blur is capped at 18px (`--cg-blur-sm/md/lg` =
+6/12/18). Glow is for titles, primary actions, live status and metrics, never body text.
+
+### Components
+
+| Class | Use |
+| --- | --- |
+| `.cg-glass`, `.cg-glass-elevated`, `.cg-glass--pad` | Panels. Interactive glass lifts 2px; `.is-active`/`aria-current`/`aria-selected` and `.is-disabled`/`aria-disabled` states |
+| `.cg-neon-border` (`--animated`, `--live`) | 1px masked gradient ring that sweeps or breathes |
+| `.cg-neon-title` (`--gradient`), `.cg-neon-metric` | Headlines and key numbers |
+| `.cg-neon-button` (`--secondary`, `--ghost`, `--danger`, `--sm`, `--lg`, `--block`) | Primary actions, 44px minimum |
+| `.cg-status-live` (`.is-warning`, `.is-danger`, `.is-info`, `.is-idle`) | Live indicator with a transform/opacity pulse |
+| `.cg-scanline` (`--sweep`), `.cg-grid-bg`, `.cg-aurora` | Ambient layers; `--sweep` clips its host, so keep it off popover owners |
+| `.cg-reveal` / `[data-cg-reveal="fade"\|"scale"]` | Entrance motion on pages that load `platform.js` |
+
+All of them respect `prefers-reduced-motion`, `prefers-contrast: more`,
+`forced-colors` and print; glass also respects `prefers-reduced-transparency`.
+
+### Repairs in the same pass
+
+| Defect | Fix |
+| --- | --- |
+| Corner logo coin printed "ClearG…" alt text outside the circle (every non-home page); nav and homepage orbs showed broken-image icons or alt text | `logo-badge.js` and `nav.js` swap a failed logo for a "CG" monogram; `cg-design-system.js` does the same for brand marks in content |
+| On phones the control-surface cluster ("Command Ctrl K") covered each page's own header | Icon-only below 720px (the button already had an `aria-label`); no keyboard hint on touch-only devices |
+| Sticky nav re-blurred 34px behind a ~90%-opaque bar on every scroll frame | 18px, `saturate(1.6)` |
+| Text pushed past the right edge on 26 pages at 320px and 17 at 375px | Root causes fixed: grid tracks of plain `1fr` (automatic minimum) blown out by nowrap content, header rows that could not wrap, `aspect-ratio` + `min-height` forcing a minimum width, a `content-box` card 36–64px wider than intended. Per-page fixes sit in one marked `<style data-cg-mobile-fit>` block; shared causes were fixed at source (`web-growth-system.css`, `editorial-visuals.js`) |
+| `mission-control.html` rendered as raw browser-default HTML | `assets/css/mission-control.css`, built on the tokens |
+
+`sw.js` `VERSION` was bumped to `cg-v67` so returning visitors drop cached copies.
+
+### Checks
+
+```bash
+python3 -m pytest tests/test_neon_glass_system.py -q   # 29 contract tests (run in Baseline CI)
+python3 -m http.server 8765 --bind 127.0.0.1 &
+BASE=http://127.0.0.1:8765/ node tests/browser/neon-system.mjs   # 15 component checks
+node tests/browser/layout-audit.mjs out.json 375                 # site-wide layout audit
+```
+
+Measured with `layout-audit.mjs` against the previous commit and this one, on
+the 94 pages that load the system. Pages with text a visitor cannot reach:
+26 → 0 at 320px, 17 → 0 at 375px, 7 → 1 at 768px, 3 → 0 at 1024px, 1 → 0 at
+1440px, 0 → 0 at 1920px. No page got worse at any width. The 768px holdout is
+`artemis-self-evolving-platform.html`, where `adaptive-action-bar.js` does not
+move overflowing actions into its "More" menu. Across all 158 root pages,
+same-origin 404 responses went from 769 to 251, and CSS/JS 404s from 530 to 12.
+
+### Still open (needs the owner)
+
+- **Brand images are not in the repo.** `assets/images/clearglass-logo.png`
+  (87 pages), `clearglass-logo-256.webp` (54), `clearglass-holographic-seal.png`
+  (favicon on ~100 pages, homepage hero), `assets/video/hero.mp4`. The monogram
+  is a fallback, not a replacement. `icon.svg` states that it is separate from
+  the company logo, so it was not substituted.
+- **Pages whose own code is missing**: `products.html` (catalog CSS/JS and
+  data fabric), `intelligence-interface.html` (page CSS/JS),
+  `mission-control.html` (mission data and behaviour; the theme toggle does
+  nothing yet), and `data/control-surface/runs.json` (37 pages). Rebuilding
+  them would mean inventing product or mission data.
+- **Two palettes.** `theme.css` forces every accent alias to crimson
+  `#ff1b3d` with `!important`, including `--cyan`, `--yellow` and `--gold`,
+  on 40 pages, while `tokens.css`, the favicon and this system are
+  cyan/violet. A warning styled with `--yellow` renders as brand crimson,
+  right next to `--danger`. Which palette is canonical is a brand decision.
+- **Animation load.** 41–43 of the 94 in-system pages run more than 8 infinite
+  animations at once (about 1,400–1,500 in total). They now pause in
+  background tabs and stop under reduced motion or low power, but each page
+  still needs its own pass.
+- `adaptive-action-bar.js` overflow measurement (above); the control-surface
+  cluster still overlaps the right edge of some page headers on phones.
+
 ## Verification
 
 ```bash

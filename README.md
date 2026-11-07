@@ -8,7 +8,7 @@ ClearGlass Inc. is an Ontario-focused cybersecurity, AI-governance, OSINT, autom
 
 Verified against this tree on 2026-11-05.
 
-The repository was populated by "Add files via upload" commits, and almost every file sits at the repository root. Much of the original source tree is not in this repository: `scripts/`, `tools/` (apart from the hygiene check), `data/`, `assets/`, `services/`, `sentinel/`, `clearglass-commerce/`, `.circleci/`, and the `artemis` Python package. The sections from **Governed Data Fabric** onward describe that original layout. Read them as design documentation, not as a description of what this tree contains or runs.
+The repository was populated by "Add files via upload" commits, and almost every file sits at the repository root. Much of the original source tree is not in this repository: `scripts/`, `tools/` (apart from the hygiene check), `data/`, `assets/` (apart from the Neon Glass System stylesheets and scripts; see `DESIGN_SYSTEM.md`), `services/`, `sentinel/`, `clearglass-commerce/`, `.circleci/`, and the `artemis` Python package. The sections from **Governed Data Fabric** onward describe that original layout. Read them as design documentation, not as a description of what this tree contains or runs.
 
 The website pages (`*.html`, `*.css`, `*.js`, `sitemap*.xml`, `CNAME`, `.nojekyll`) live at the root on purpose. GitHub Pages serves them from there.
 
