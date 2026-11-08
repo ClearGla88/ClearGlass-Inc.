@@ -29,7 +29,7 @@ The website pages (`*.html`, `*.css`, `*.js`, `sitemap*.xml`, `CNAME`, `.nojekyl
 
 - **Workflows:** about 77 workflow files sit at the root instead of in `.github/workflows/`, so GitHub never runs them. The active workflows are `baseline-ci.yml`, `jekyll-gh-pages.yml`, `agent-army-crypto.yml`, `aegis-glass-ci.yml`, and `agent-office-ci.yml` in `.github/workflows/`. Many root workflows run on a schedule, write to the repository, deploy, or read secrets, and many call scripts that are missing. Review each one before moving it into `.github/workflows/`; don't move them in bulk.
 - **Node tooling:** `npm run typecheck`, `npm test`, `npm run sync:stripe`, and `npm run provenance` fail because their TypeScript sources under `scripts/` are missing. `npm ci` does install the locked dependencies.
-- **`agent-office/`:** an earlier work-in-progress agent kernel (Cedar policies via `cedarpy`, which `requirements.txt` does not install). It has no tests, README, or CI workflow, and it overlaps `clearglass-agent-office/`. Which one to keep is an open owner decision.
+- **`agent-office/`:** an earlier agent-office kernel (merged in #19, commits marked wip) that overlaps `clearglass-agent-office/`. It runs once `cedarpy` is installed (`requirements.txt` does not install it): `python -m agent_office daily-ops` completed and its ledger verified on 2026-11-08. It has no tests, README, or CI workflow, so nothing gates it. Which one to keep, and what to port from it first, is an open owner decision.
 - **Python package:** `pyproject.toml` declares an `artemis` package, console scripts, and test paths that are absent. `pip install .` produces no usable package.
 
 **Local checks**
