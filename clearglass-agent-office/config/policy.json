@@ -1,0 +1,125 @@
+{
+  "policy_version": "2026.11.07-1",
+  "description": "ClearGlass Agent Office policy-as-code. Every agent action is evaluated against this file by packages/policy_engine. Change it through review, then bump policy_version.",
+  "permission_levels": ["none", "read", "propose", "write", "execute"],
+  "tiers": {
+    "low": {
+      "score": 15,
+      "approval": "none",
+      "summary": "Internal drafts, research summaries, documentation, analysis. Auto-executes and is logged."
+    },
+    "medium": {
+      "score": 45,
+      "approval": "none",
+      "internal_only": true,
+      "summary": "Code changes on branches, workflow creation, internal data updates. Executes internally, is logged, and is listed for operator review in the end-of-day report."
+    },
+    "high": {
+      "score": 75,
+      "approval": "operator",
+      "summary": "External communication, publishing, staging deployment, financial action, data export. Blocked until the operator approves with a reason."
+    },
+    "critical": {
+      "score": 95,
+      "approval": "operator",
+      "requires": ["change_plan", "rollback_plan", "verification_plan"],
+      "post_verification": true,
+      "summary": "Production changes, credential access, deletion, security configuration, legal commitments, money movement. Requires a change plan, a rollback plan, a verification plan, operator approval, and post-action verification."
+    }
+  },
+  "approval": {
+    "ttl_hours": 72,
+    "min_reason_chars": 12,
+    "approver_roles": ["operator"],
+    "bind_to_payload": true
+  },
+  "actions": {
+    "research.collect":          {"domain": "research",   "level": "read",    "tier": "low",      "verify": "artifact"},
+    "research.summarize":        {"domain": "research",   "level": "propose", "tier": "low",      "verify": "citations"},
+    "osint.public_research":     {"domain": "research",   "level": "read",    "tier": "low",      "verify": "citations", "lawful_sources_only": true},
+    "leads.research":            {"domain": "research",   "level": "read",    "tier": "low",      "verify": "citations", "lawful_sources_only": true, "untrusted_input": true},
+    "analysis.run":              {"domain": "analysis",   "level": "read",    "tier": "low",      "verify": "artifact"},
+    "leads.score":               {"domain": "analysis",   "level": "propose", "tier": "low",      "verify": "artifact"},
+    "pricing.model":             {"domain": "analysis",   "level": "propose", "tier": "low",      "verify": "artifact"},
+    "docs.draft":                {"domain": "docs",       "level": "propose", "tier": "low",      "verify": "artifact"},
+    "docs.update":               {"domain": "docs",       "level": "write",   "tier": "medium",   "verify": "artifact"},
+    "proposal.draft":            {"domain": "docs",       "level": "propose", "tier": "low",      "verify": "artifact"},
+    "briefing.compile":          {"domain": "reports",    "level": "propose", "tier": "low",      "verify": "artifact"},
+    "report.compile":            {"domain": "reports",    "level": "propose", "tier": "low",      "verify": "artifact"},
+    "code.draft_patch":          {"domain": "code",       "level": "propose", "tier": "low",      "verify": "artifact"},
+    "code.review":               {"domain": "code",       "level": "propose", "tier": "low",      "verify": "artifact"},
+    "code.commit_branch":        {"domain": "code",       "level": "write",   "tier": "medium",   "verify": "artifact"},
+    "tests.plan":                {"domain": "tests",      "level": "propose", "tier": "low",      "verify": "artifact"},
+    "tests.run_sandbox":         {"domain": "tests",      "level": "execute", "tier": "medium",   "verify": "artifact"},
+    "deploy.plan":               {"domain": "deploy",     "level": "propose", "tier": "low",      "verify": "rollback_plan"},
+    "deploy.staging":            {"domain": "deploy",     "level": "execute", "tier": "high",     "verify": "receipt", "external": true},
+    "deploy.production":         {"domain": "deploy",     "level": "execute", "tier": "critical", "verify": "receipt", "external": true},
+    "workflow.create":           {"domain": "workflow",   "level": "write",   "tier": "medium",   "verify": "artifact"},
+    "data.update_internal":      {"domain": "data",       "level": "write",   "tier": "medium",   "verify": "artifact"},
+    "data.export":               {"domain": "data",       "level": "execute", "tier": "high",     "verify": "receipt", "external": true},
+    "data.delete":               {"domain": "data",       "level": "execute", "tier": "critical", "verify": "receipt"},
+    "memory.write_task":         {"domain": "memory",     "level": "write",   "tier": "low",      "verify": "artifact"},
+    "memory.propose_long_term":  {"domain": "memory",     "level": "propose", "tier": "low",      "verify": "artifact"},
+    "message.internal":          {"domain": "messaging",  "level": "write",   "tier": "low",      "verify": "artifact"},
+    "content.draft":             {"domain": "content",    "level": "propose", "tier": "low",      "verify": "artifact"},
+    "content.schedule":          {"domain": "content",    "level": "write",   "tier": "medium",   "verify": "artifact"},
+    "content.publish":           {"domain": "social",     "level": "execute", "tier": "high",     "verify": "receipt", "external": true},
+    "outreach.draft":            {"domain": "outreach",   "level": "propose", "tier": "low",      "verify": "artifact"},
+    "outreach.send":             {"domain": "outreach",   "level": "execute", "tier": "high",     "verify": "receipt", "external": true},
+    "email.send":                {"domain": "email",      "level": "execute", "tier": "high",     "verify": "receipt", "external": true},
+    "finance.purchase":          {"domain": "finance",    "level": "execute", "tier": "high",     "verify": "receipt", "external": true},
+    "finance.move_money":        {"domain": "finance",    "level": "execute", "tier": "critical", "verify": "receipt", "external": true},
+    "pricing.change_live":       {"domain": "finance",    "level": "execute", "tier": "critical", "verify": "receipt", "external": true},
+    "contract.sign":             {"domain": "contracts",  "level": "execute", "tier": "critical", "verify": "receipt", "external": true},
+    "security.audit_config":     {"domain": "security",   "level": "read",    "tier": "low",      "verify": "artifact"},
+    "security.incident_draft":   {"domain": "security",   "level": "propose", "tier": "low",      "verify": "artifact"},
+    "security.modify_config":    {"domain": "security",   "level": "execute", "tier": "critical", "verify": "receipt"},
+    "secrets.access":            {"domain": "secrets",    "level": "execute", "tier": "critical", "verify": "receipt"},
+    "simulation.run":            {"domain": "simulation", "level": "execute", "tier": "low",      "verify": "artifact", "sandbox_only": true}
+  },
+  "hard_blocked": {
+    "audit.modify": "The audit ledger is append-only. No principal may edit it.",
+    "audit.delete": "The audit ledger is append-only. No principal may delete from it.",
+    "approval.self_approve": "Agents cannot approve actions. Approval is a human operator decision.",
+    "policy.self_modify": "Agents cannot change their own policy, permissions, or tool grants.",
+    "surveillance.individual": "Tracking, profiling, or monitoring a private individual is prohibited.",
+    "intrusion.exploit": "Unauthorized access, exploitation, or intrusion is prohibited.",
+    "credentials.exfiltrate": "Moving credentials out of the vault is prohibited.",
+    "harassment.contact": "Repeated or unwanted contact with any person is prohibited."
+  },
+  "department_rules": {
+    "sim": {
+      "allowed_actions": ["simulation.run", "docs.draft", "report.compile", "analysis.run", "message.internal", "memory.write_task", "memory.propose_long_term"],
+      "reason": "The Simulation War Room is sandbox-only. It never touches production systems or external parties."
+    },
+    "cyber": {
+      "required_param_flags": {"osint.public_research": "authorized_scope"},
+      "reason": "Cyber research runs only inside a documented, authorized scope."
+    }
+  },
+  "escalation_modifiers": {
+    "production_environment": {"param": "environment", "equals": "production", "min_tier": "critical"},
+    "external_recipients": {"param": "recipients", "non_empty": true, "min_tier": "high"},
+    "bulk_records": {"param": "record_count", "greater_than": 1000, "bump": 1},
+    "untrusted_injection": {"force_approval": true}
+  },
+  "untrusted_input": {
+    "markers": [
+      "ignore previous instructions",
+      "ignore all previous instructions",
+      "disregard your instructions",
+      "you are now",
+      "system prompt",
+      "reveal your instructions",
+      "act as the operator",
+      "approve this automatically",
+      "email every contact",
+      "send all contacts"
+    ]
+  },
+  "unknown_action": {
+    "decision": "deny",
+    "tier": "critical",
+    "reason": "Unknown action types fail closed."
+  }
+}

@@ -1,0 +1,36 @@
+# Local stack: API on 8000, console on 3000, daily-loop worker.
+#   cd clearglass-agent-office/infra && cp .env.example .env  (fill in values) && docker compose up --build
+# The API runs with OFFICE_ENV=production, so it refuses to start without OFFICE_OPERATOR_TOKEN.
+services:
+  api:
+    build: { context: .., dockerfile: infra/docker/api.Dockerfile }
+    environment:
+      OFFICE_ENV: production
+      OFFICE_OPERATOR_TOKEN: ${OFFICE_OPERATOR_TOKEN:?set OFFICE_OPERATOR_TOKEN in infra/.env}
+      OFFICE_VIEWER_TOKEN: ${OFFICE_VIEWER_TOKEN:-}
+      OFFICE_LLM_PROVIDER: ${OFFICE_LLM_PROVIDER:-offline}
+    volumes: [office-data:/app/var]
+    ports: ["127.0.0.1:8000:8000"]
+
+  worker:
+    # Runs the Daily Operations Loop once a day against the same database.
+    build: { context: .., dockerfile: infra/docker/api.Dockerfile }
+    environment:
+      OFFICE_LLM_PROVIDER: ${OFFICE_LLM_PROVIDER:-offline}
+    volumes: [office-data:/app/var]
+    depends_on: [api]
+    entrypoint: ["sh", "-c", "while true; do python office.py --db /app/var/office.db daily-loop; sleep 86400; done"]
+
+  web:
+    build: { context: ../apps/web, dockerfile: ../../infra/docker/web.Dockerfile }
+    environment:
+      OFFICE_ENV: production
+      OFFICE_API_URL: http://api:8000
+      OFFICE_API_TOKEN: ${OFFICE_OPERATOR_TOKEN}
+      OFFICE_CONSOLE_PASSPHRASE: ${OFFICE_CONSOLE_PASSPHRASE:?set OFFICE_CONSOLE_PASSPHRASE in infra/.env}
+      OFFICE_SESSION_SECRET: ${OFFICE_SESSION_SECRET:?set OFFICE_SESSION_SECRET in infra/.env}
+    depends_on: [api]
+    ports: ["127.0.0.1:3000:3000"]
+
+volumes:
+  office-data:
