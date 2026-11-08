@@ -23,11 +23,13 @@ The website pages (`*.html`, `*.css`, `*.js`, `sitemap*.xml`, `CNAME`, `.nojekyl
 | Repository hygiene gate | `tools/repo_hygiene.py`, `tools/repo_hygiene_baseline.json` | `tests/test_repo_hygiene.py`, CI |
 | Legal intelligence modules | `legal_intelligence_core.py`, `artemis_legal_agent_mvp.py` | Their tests are kept outside this repository |
 | Aegis Glass platform (Next.js, PostgreSQL) | `aegis-glass-platform/` | `npm test` (62 tests, incl. a PostgreSQL 16 server) and `npm run build` via `.github/workflows/aegis-glass-ci.yml`. Production sign-in is blocked until an OIDC adapter exists; see `aegis-glass-platform/docs/ARCHITECTURE.md` |
+| ClearGlass Agent Office (governed multi-agent operations: FastAPI, Next.js console, PostgreSQL schema) | `clearglass-agent-office/` | `pytest` (100 tests, incl. a PostgreSQL 16 server), a Daily Operations Loop smoke run, and the console's `npm run build` via `.github/workflows/agent-office-ci.yml`. External connectors are dry-run; see `clearglass-agent-office/README.md` |
 
 **Does not run in this tree**
 
-- **Workflows:** about 77 workflow files sit at the root instead of in `.github/workflows/`, so GitHub never runs them. The active workflows are `baseline-ci.yml`, `jekyll-gh-pages.yml`, `agent-army-crypto.yml`, and `aegis-glass-ci.yml` in `.github/workflows/`. Many root workflows run on a schedule, write to the repository, deploy, or read secrets, and many call scripts that are missing. Review each one before moving it into `.github/workflows/`; don't move them in bulk.
+- **Workflows:** about 77 workflow files sit at the root instead of in `.github/workflows/`, so GitHub never runs them. The active workflows are `baseline-ci.yml`, `jekyll-gh-pages.yml`, `agent-army-crypto.yml`, `aegis-glass-ci.yml`, and `agent-office-ci.yml` in `.github/workflows/`. Many root workflows run on a schedule, write to the repository, deploy, or read secrets, and many call scripts that are missing. Review each one before moving it into `.github/workflows/`; don't move them in bulk.
 - **Node tooling:** `npm run typecheck`, `npm test`, `npm run sync:stripe`, and `npm run provenance` fail because their TypeScript sources under `scripts/` are missing. `npm ci` does install the locked dependencies.
+- **`agent-office/`:** an earlier work-in-progress agent kernel (Cedar policies via `cedarpy`, which `requirements.txt` does not install). It has no tests, README, or CI workflow, and it overlaps `clearglass-agent-office/`. Which one to keep is an open owner decision.
 - **Python package:** `pyproject.toml` declares an `artemis` package, console scripts, and test paths that are absent. `pip install .` produces no usable package.
 
 **Local checks**

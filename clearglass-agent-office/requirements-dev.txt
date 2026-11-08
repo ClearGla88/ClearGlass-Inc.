@@ -1,0 +1,9 @@
+# Tests and lint. TestClient needs httpx2; without it the API tests cannot run.
+-r requirements.txt
+httpx2==2.16.0
+pytest==9.1.1
+ruff==0.16.9
+# PostgreSQL schema test (tests/test_postgres_schema.py); it skips, with a reason, unless OFFICE_TEST_PG_URL is set.
+psycopg[binary]==3.3.8
+# Optional: OFFICE_LLM_PROVIDER=claude drafting rewrites. Not needed for CI or the demo.
+# anthropic==2.6.0
