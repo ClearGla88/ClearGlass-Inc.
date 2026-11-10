@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from agent_core.models import Decision, Mission, Report, RiskAssessment, Task, Workflow
+from agent_core.models import Decision, Mission, Permission, Report, RiskAssessment, Task, Workflow
 from agent_core.office import Office
 from agent_core.reports import compute_kpis, objective_progress
 from simulation.sandbox import SCENARIOS
@@ -65,6 +65,8 @@ def build_snapshot(office: Office, *, audit_limit: int = 150, message_limit: int
         "rooms": office.config.rooms,
         "departments": [d.to_dict() for d in office.departments()],
         "agents": [a.to_dict() for a in agents],
+        "grants": [g.to_dict() for g in office.store.list(Permission) if g.constraints or g.expires_at or g.revoked_at],
+        "shadow": office.shadow_report(limit=25),
         "missions": missions,
         "approvals": [a.to_dict() for a in office.desk.list()],
         "messages": [m.to_dict() for m in office.messages(limit=message_limit)],

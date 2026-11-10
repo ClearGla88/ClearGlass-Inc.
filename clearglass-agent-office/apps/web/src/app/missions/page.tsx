@@ -1,4 +1,5 @@
 import { ActionButton } from "@/components/actions";
+import { MissionLifecycle } from "@/components/mission-actions";
 import { MissionCreate } from "@/components/mission-create";
 import { Trace } from "@/components/trace";
 import { Chip, Dot, Empty, PageHeader, Panel, StatusChip, TierChip, label } from "@/components/ui";
@@ -24,8 +25,10 @@ export default async function MissionsPage() {
             <Panel key={m.id} kicker={`${depts[m.department]} · P${m.priority}${m.deadline ? ` · due ${m.deadline}` : ""} · owner ${names[m.owner]?.name ?? m.owner}`}
               title={m.title}
               actions={<>
-                <StatusChip status={m.workflow_status ?? m.status} />
+                {m.mode === "simulation" && <Chip color="var(--cg-paused)">simulation: no production or external actions</Chip>}
+                <StatusChip status={m.status === "active" ? (m.workflow_status ?? m.status) : m.status} />
                 {m.status === "active" && <ActionButton path={`missions/${m.id}/run`}>Advance</ActionButton>}
+                <MissionLifecycle id={m.id} status={m.status} />
               </>}>
               <p className="text-sm text-dim">{m.objective}</p>
               <div className="mt-3 grid gap-3 text-xs md:grid-cols-3">

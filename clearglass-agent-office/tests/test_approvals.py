@@ -11,7 +11,9 @@ REASON = "Read the full post text; it is accurate and on-brand."
 
 
 def publish_request(text="Hello Ontario.\n\nCLEARGLASS: See Through Everything"):
-    return ActionRequest(agent_id="growth.social-media", action_type="content.publish", params={"text": text})
+    return ActionRequest(
+        agent_id="growth.social-media", action_type="content.publish", params={"text": text, "channel": "linkedin"}
+    )
 
 
 def held(office):

@@ -1,0 +1,18 @@
+{
+  "shadow_version": "2026.11.08-1",
+  "description": "Candidate rules. The engine evaluates every request against them and records where the outcome would differ (GET /policy/shadow-report), but never enforces them. To promote a rule, add the equivalent enforced rule to config/policy.json in a reviewed pull request, bump policy_version, and remove it here.",
+  "rules": [
+    {
+      "id": "shadow.long-term-memory-proposals-need-approval",
+      "description": "Ported from agent-office/policies/shadow/memory_writes.cedar. Proposing long-term memory would itself wait for the operator, not only the promotion decision.",
+      "effect": "approval_required",
+      "when": {"action_types": ["memory.propose_long_term"]}
+    },
+    {
+      "id": "shadow.large-internal-updates-denied",
+      "description": "Candidate: refuse internal data updates touching more than 500 records instead of escalating them.",
+      "effect": "deny",
+      "when": {"action_types": ["data.update_internal"], "param_greater_than": {"record_count": 500}}
+    }
+  ]
+}

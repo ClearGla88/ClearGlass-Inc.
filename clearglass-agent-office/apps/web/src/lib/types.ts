@@ -40,7 +40,21 @@ export interface Task {
 export interface Mission {
   id: string; key: string; title: string; objective: string; department: string; owner: string; priority: number;
   deadline: string | null; deliverables: string[]; constraints: string[]; approval_rules: string[]; goal_ids: string[];
-  status: string; workflow_status: string | null; waves: string[][]; tasks: Task[];
+  status: string; mode: "production" | "simulation"; workflow_status: string | null; waves: string[][]; tasks: Task[];
+}
+
+export interface Grant {
+  id: string; agent_id: string; domain: string; level: string; granted_by: string; granted_at: string;
+  constraints: { spend_limit_cents?: number; payload_allowlist?: Record<string, unknown[]> };
+  expires_at: string | null; revoked_at: string | null; revoked_by: string | null;
+}
+
+export interface ShadowReport {
+  shadow_version: string | null; enforced: false; total: number;
+  rules: { id: string; description: string; effect: string; when: Record<string, unknown> }[];
+  by_rule: { rule_id: string; divergences: number; would_deny: number; would_require_approval: number }[];
+  recent: { id: string; rule_ids: string[]; action_type: string; agent_id: string; enforced_outcome: string;
+    shadow_outcome: string; created_at: string }[];
 }
 
 export interface ApprovalDecision {
@@ -121,6 +135,8 @@ export interface Snapshot {
   rooms: Room[];
   departments: Department[];
   agents: Agent[];
+  grants: Grant[];
+  shadow: ShadowReport;
   missions: Mission[];
   approvals: Approval[];
   messages: Message[];

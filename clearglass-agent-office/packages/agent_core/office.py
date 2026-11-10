@@ -14,7 +14,14 @@ from pathlib import Path
 from typing import Any
 
 from agent_core.approvals import SYSTEM, ApprovalDesk, ApprovalError, Principal
-from agent_core.config import ConfigError, OfficeConfig, build_agent, load_config, validate_agents
+from agent_core.config import (
+    ConfigError,
+    OfficeConfig,
+    build_agent,
+    load_config,
+    validate_agents,
+    validate_grant_constraints,
+)
 from agent_core.governance import GovernedExecutor, PerformResult
 from agent_core.models import (
     HUMAN_ONLY_LEVEL,
@@ -28,22 +35,25 @@ from agent_core.models import (
     Mission,
     Permission,
     Report,
+    ShadowDivergence,
     Simulation,
     Task,
     Tool,
     Workflow,
 )
 from agent_core.providers import OfflineProvider, TextProvider
+from agent_core.sandbox_runner import SandboxRunner
 from agent_core.skills import HANDLERS
 from agent_core.store import Store
-from agent_core.util import Clock, IdFactory, random_ids
+from agent_core.util import Clock, IdFactory, parse_iso, random_ids
 from agent_core.workflow import WorkflowEngine, WorkflowError
 from audit_ledger.ledger import AuditLedger
 from memory_vault.vault import MemoryVault
-from policy_engine.engine import ActionRequest, GateDecision, OfficeState, PolicyEngine
+from policy_engine.engine import ActionRequest, GateDecision, GrantView, MissionView, OfficeState, PolicyEngine
 from tool_registry.registry import ToolRegistry
 from tool_registry.vault import SecretVault
 
+MISSION_MODES = ("production", "simulation")
 AGENT_EDITABLE = (
     "name",
     "objective",
@@ -90,6 +100,7 @@ class Office:
         self.desk = ApprovalDesk(self)
         self.executor = GovernedExecutor(self)
         self.workflows = WorkflowEngine(self)
+        self.sandbox = SandboxRunner.from_config(self.base_dir / "config" / "sandbox.json", self.base_dir)
         self.provider: TextProvider = provider or OfflineProvider()
         self._bootstrap()
 
@@ -131,7 +142,7 @@ class Office:
             agent = copy.deepcopy(agent)
             agent.created_at = agent.updated_at = now
             self.store.put(agent, now)
-            self._write_grants(agent, "config/org.json")
+            self._write_grants(agent, "config/org.json", self.config.grant_constraints.get(agent.id, {}))
         self.log(
             "system.office",
             "system",
@@ -193,8 +204,20 @@ class Office:
         for title, content, source, tags in seeds:
             self.memory.add_approved(op, "company", title, content, source, "internal", tags)
 
-    def _write_grants(self, agent: Agent, granted_by: str) -> None:
+    def _write_grants(
+        self, agent: Agent, granted_by: str, constraints: dict[str, dict[str, Any]] | None = None
+    ) -> None:
+        """Sync grant records with ``agent.permissions``.
+
+        A domain that stays keeps its constraints and expiry unless new ones are given;
+        a domain that was dropped is marked revoked (never deleted).
+        """
+        now = self.clock.iso()
+        existing = {g.domain: g for g in self.grants(agent.id)}
         for domain, level in agent.permissions.items():
+            prior = existing.get(domain)
+            keep = prior if prior and not prior.revoked_at else None
+            new_constraints = (constraints or {}).get(domain)
             self.store.put(
                 Permission(
                     id=f"{agent.id}:{domain}",
@@ -202,10 +225,21 @@ class Office:
                     domain=domain,
                     level=level,
                     granted_by=granted_by,
-                    granted_at=self.clock.iso(),
+                    granted_at=now,
+                    constraints=dict(
+                        new_constraints if new_constraints is not None else keep.constraints if keep else {}
+                    ),
+                    expires_at=keep.expires_at if keep else None,
                 ),
-                self.clock.iso(),
+                now,
             )
+        for domain, prior in existing.items():
+            if domain not in agent.permissions and not prior.revoked_at:
+                prior.revoked_at, prior.revoked_by = now, granted_by
+                self.store.put(prior, now)
+
+    def grants(self, agent_id: str) -> list[Permission]:
+        return self.store.list(Permission, lambda g: g.agent_id == agent_id)
 
     # -- reads ----------------------------------------------------------------------
 
@@ -238,12 +272,25 @@ class Office:
     def halted(self) -> bool:
         return bool(self.halt_state().get("halted"))
 
-    def state(self, ignore_halt: bool = False) -> OfficeState:
+    def state(self, ignore_halt: bool = False, request: ActionRequest | None = None) -> OfficeState:
         halt = self.halt_state()
+        mission_view: MissionView | None = None
+        test_runs: dict[str, dict[str, Any]] = {}
+        if request is not None and request.mission_id:
+            mission = self.store.get(Mission, request.mission_id)
+            if mission is not None:
+                mission_view = MissionView(mission.id, mission.status, mission.mode)
+                for t in self.store.list(Task, lambda t: t.mission_id == mission.id):
+                    artifact = (t.output or {}).get("artifact") or {}
+                    if t.status == "completed" and t.action.get("type") == "tests.run_sandbox":
+                        test_runs[t.id] = {"passed": artifact.get("passed") is True, "suite": artifact.get("suite")}
         return OfficeState(
             halted=bool(halt.get("halted")) and not ignore_halt,
             halted_reason=halt.get("reason"),
             approved_sources=tuple(s["id"] for s in self.company().approved_sources),
+            now=self.clock.iso(),
+            mission=mission_view,
+            test_runs=test_runs,
         )
 
     # -- governance -------------------------------------------------------------------
@@ -254,11 +301,21 @@ class Office:
         """Pure policy evaluation (steps 1-6). Never executes, never writes."""
         if agent is None:
             agent = self.agent(request.agent_id)
-        return self.engine.evaluate(request, agent=agent, tools=self.tools.tools, state=self.state(ignore_halt))
+        grants = {
+            g.domain: GrantView(g.level, g.constraints, g.expires_at, g.revoked_at)
+            for g in self.grants(request.agent_id)
+        }
+        return self.engine.evaluate(
+            request,
+            agent=agent,
+            tools=self.tools.tools,
+            state=self.state(ignore_halt, request),
+            grants=grants,
+        )
 
     def perform(self, request: ActionRequest) -> PerformResult:
         result = self.executor.perform(request)
-        if result.status == "completed" and result.output:
+        if result.status == "completed" and result.output and not result.replayed:
             self._apply_side_effects(request.agent_id, request.mission_id, request.task_id, result.output)
         return result
 
@@ -487,6 +544,8 @@ class Office:
             raise OfficeError(f"unknown department {spec['department']!r}")
         if self.agent(spec["owner"]) is None:
             raise OfficeError(f"unknown owner {spec['owner']!r}")
+        if spec.get("mode", "production") not in MISSION_MODES:
+            raise OfficeError(f"mission mode must be one of {MISSION_MODES}")
         now = self.clock.now()
         deadline = spec.get("deadline")
         if not deadline and spec.get("deadline_days") is not None:
@@ -504,6 +563,7 @@ class Office:
             constraints=list(spec.get("constraints", [])),
             approval_rules=list(spec.get("approval_rules", [])),
             goal_ids=list(spec.get("goal_ids", [])),
+            mode=str(spec.get("mode", "production")),
             created_by=created_by,
             created_at=now.isoformat(timespec="seconds"),
             updated_at=now.isoformat(timespec="seconds"),
@@ -548,6 +608,152 @@ class Office:
         if mission.status != "active":
             raise OfficeError(f"mission is {mission.status}")
         return self.workflows.run(mission.workflow_id)
+
+    def set_mission_lifecycle(self, mission_id: str, action: str, principal: Principal, reason: str) -> Mission:
+        """Pause, resume, or cancel a mission. The gate refuses actions for any mission that is not active."""
+        mission = self.store.get(Mission, mission_id)
+        if mission is None:
+            raise OfficeError("unknown mission")
+        if principal.kind != "human":
+            raise ApprovalError("only a human operator can change a mission's lifecycle")
+        if len(reason.strip()) < self.policy.min_reason_chars:
+            raise ApprovalError(f"a reason of at least {self.policy.min_reason_chars} characters is required")
+        transitions = {
+            "pause": ("paused", {"active"}),
+            "resume": ("active", {"paused"}),
+            "cancel": ("cancelled", {"active", "paused"}),
+        }
+        if action not in transitions:
+            raise OfficeError(f"unknown mission action {action!r}")
+        target, allowed = transitions[action]
+        if mission.status not in allowed:
+            raise OfficeError(f"cannot {action} a mission that is {mission.status}")
+        now = self.clock.iso()
+        mission.status = target
+        mission.updated_at = now
+        self.store.put(mission, now)
+        cancelled_approvals: list[str] = []
+        if action == "cancel":
+            for task in self.store.list(Task, lambda t: t.mission_id == mission_id):
+                if task.status in ("pending", "blocked", "waiting_approval"):
+                    task.status = "cancelled"
+                    task.error = f"mission cancelled: {reason}"
+                    task.completed_at = now
+                    self.save_task(task)
+            for approval in self.desk.list():
+                if approval.mission_id == mission_id and approval.status in ("pending", "approved"):
+                    self.store.append_decision(
+                        approval_id=approval.id,
+                        decision="cancelled",
+                        reason=f"mission cancelled: {reason}",
+                        decided_by=principal.id,
+                        decided_at=now,
+                        modifications=None,
+                        resulting_digest=None,
+                    )
+                    approval.status = "cancelled"
+                    approval.updated_at = now
+                    approval.decisions = []
+                    self.store.put(approval, now)
+                    cancelled_approvals.append(approval.id)
+        self.log(
+            principal.id,
+            "human",
+            f"mission.{action}",
+            mission_id,
+            {"reason": reason, "approvals_cancelled": cancelled_approvals},
+            "medium",
+        )
+        return mission
+
+    def grant(
+        self,
+        agent_id: str,
+        domain: str,
+        level: str,
+        principal: Principal,
+        *,
+        constraints: dict[str, Any] | None = None,
+        expires_at: str | None = None,
+    ) -> Permission:
+        """Grant (or replace) one domain, with optional limits and expiry. Audited at high tier."""
+        agent = self.agent(agent_id)
+        if agent is None:
+            raise OfficeError("unknown agent")
+        problems = validate_grant_constraints(constraints or {}, f"grant '{domain}'")
+        if expires_at is not None:
+            try:
+                parse_iso(expires_at)
+            except ValueError:
+                problems.append("expires_at must be an ISO 8601 timestamp")
+        if problems:
+            raise OfficeError("; ".join(problems))
+        before = dict(agent.permissions)
+        self.update_agent(agent_id, {"permissions": {**agent.permissions, domain: level}}, principal)
+        now = self.clock.iso()
+        record = Permission(
+            id=f"{agent_id}:{domain}",
+            agent_id=agent_id,
+            domain=domain,
+            level=level,
+            granted_by=principal.id,
+            granted_at=now,
+            constraints=dict(constraints or {}),
+            expires_at=expires_at,
+        )
+        self.store.put(record, now)
+        self.log(
+            principal.id,
+            "human",
+            "grant.issued",
+            agent_id,
+            {
+                "domain": domain,
+                "level": level,
+                "previous": before.get(domain),
+                "constraints": constraints or {},
+                "expires_at": expires_at,
+            },
+            "high",
+        )
+        return record
+
+    def revoke_grant(self, agent_id: str, domain: str, principal: Principal, reason: str) -> Permission:
+        agent = self.agent(agent_id)
+        if agent is None:
+            raise OfficeError("unknown agent")
+        if domain not in agent.permissions:
+            raise OfficeError(f"{agent_id} holds no grant on '{domain}'")
+        if len(reason.strip()) < self.policy.min_reason_chars:
+            raise ApprovalError(f"a reason of at least {self.policy.min_reason_chars} characters is required")
+        remaining = {d: lvl for d, lvl in agent.permissions.items() if d != domain}
+        self.update_agent(agent_id, {"permissions": remaining}, principal)
+        record = next(g for g in self.grants(agent_id) if g.domain == domain)
+        self.log(principal.id, "human", "grant.revoked", agent_id, {"domain": domain, "reason": reason}, "high")
+        return record
+
+    def shadow_report(self, limit: int = 50) -> dict[str, Any]:
+        """Where candidate rules would have decided differently from the enforced policy."""
+        items = self.store.list(ShadowDivergence, newest_first=True)
+        by_rule: dict[str, dict[str, Any]] = {}
+        for d in items:
+            for rule in d.rule_ids:
+                row = by_rule.setdefault(
+                    rule, {"rule_id": rule, "divergences": 0, "would_deny": 0, "would_require_approval": 0}
+                )
+                row["divergences"] += 1
+                row["would_deny" if d.shadow_outcome == "deny" else "would_require_approval"] += 1
+        return {
+            "shadow_version": self.policy.shadow_version,
+            "rules": [
+                {"id": r.id, "description": r.description, "effect": r.effect, "when": r.when}
+                for r in self.policy.shadow_rules
+            ],
+            "by_rule": sorted(by_rule.values(), key=lambda r: -r["divergences"]),
+            "recent": [d.to_dict() for d in items[:limit]],
+            "total": len(items),
+            "enforced": False,
+        }
 
     # -- approvals ----------------------------------------------------------------------------
 
@@ -833,9 +1039,19 @@ class Office:
 
     # -- simulation ----------------------------------------------------------------------------
 
-    def run_simulation(self, agent_id: str, spec: dict[str, Any]) -> PerformResult:
+    def run_simulation(
+        self, agent_id: str, spec: dict[str, Any], *, idempotency_key: str | None = None
+    ) -> PerformResult:
         params = {k: spec[k] for k in ("scenario_type", "assumptions", "options", "seed", "runs", "title") if k in spec}
-        return self.perform(ActionRequest(agent_id=agent_id, action_type="simulation.run", params=params, sandbox=True))
+        return self.perform(
+            ActionRequest(
+                agent_id=agent_id,
+                action_type="simulation.run",
+                params=params,
+                sandbox=True,
+                idempotency_key=f"sim:{idempotency_key}" if idempotency_key else None,
+            )
+        )
 
     def simulations(self) -> list[Simulation]:
         return self.store.list(Simulation, newest_first=True)

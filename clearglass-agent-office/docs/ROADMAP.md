@@ -3,6 +3,11 @@
 Day 0 is the merge of this MVP. Each week ends with a working, tested increment and a go/no-go check. Nothing in a
 later week weakens a gate from an earlier one.
 
+Landed since day 0: grant limits, risk escalation for sensitive data, irreversible actions and payments, the
+test-evidence gate on production deploys, mission pause/resume/cancel with simulation mode, the pre-execution
+intent record, approval integrity, shadow policies, and idempotency keys. These were ported from the earlier
+`agent-office/` kernel as tested JSON-rule behavior.
+
 ## Week 1 (days 1-7): run it for real, every day
 
 | Deliverable | Done when |
@@ -13,7 +18,7 @@ later week weakens a gate from an earlier one.
 | Operator review rhythm: approvals checked twice a day | Median decision time measured (KPI) |
 | Backups: nightly SQLite backup + ledger head exported | Restore tested once; `verify()` passes on the restored copy |
 
-Go/no-go: zero unapproved external actions, 18/18 control tests, no open critical findings.
+Go/no-go: zero unapproved external actions, 22/22 control tests, no open critical findings.
 
 ## Week 2 (days 8-14): durable state and concurrency
 
@@ -21,8 +26,8 @@ Go/no-go: zero unapproved external actions, 18/18 control tests, no open critica
 |---|---|
 | PostgreSQL store adapter implementing `Store` on `001_init.sql` | Full test suite passes on PostgreSQL; parity test still green |
 | One-time migration SQLite to PostgreSQL | Ledger `verify()` identical before and after (same head hash) |
-| Queue-backed worker (Redis or a managed queue): one job per ready task, idempotency key `task_id:attempt` | A wave's tasks run concurrently; audit order stays consistent per task |
-| Handlers for `tests.run_sandbox` and `code.commit_branch` (isolated container, branch-only push) | Engineering missions produce real test runs and branches |
+| Queue-backed worker (Redis or a managed queue): one job per ready task, reusing the per-attempt idempotency key already on every task (`task:<id>:attempt:<n>`) | A wave's tasks run concurrently; audit order stays consistent per task |
+| Move `tests.run_sandbox` from a subprocess into an isolated container; add a `code.commit_branch` handler (branch-only push) | Test runs have no network or host access; engineering missions produce real branches |
 
 ## Week 3 (days 15-21): identity and the first live connector
 

@@ -35,10 +35,14 @@ and interactive docs at `/docs`. This page is the contract summary.
 | POST | `/agents/{id}/clone` | operator | Clone grants into a new identity (`new_id`, `callsign`) |
 | PATCH | `/agents/{id}` | operator | Edit objective, tools, permissions, scopes; version bumps; grant edits audited as high |
 | POST | `/agents/{id}/{pause\|resume\|retire}` | operator | Lifecycle; retired agents keep their history |
+| GET | `/agents/{id}/grants` | viewer | The agent's grant records with limits, expiry, and revocation |
+| POST | `/agents/{id}/grants` | operator | Issue or replace a grant: `{domain, level, constraints?, expires_at?}`. `level` is read, propose, write, or execute |
+| POST | `/agents/{id}/grants/{domain}/revoke` | operator | Revoke a grant (`{reason}`, 12+ characters) |
 | GET | `/missions` | viewer | Missions |
-| POST | `/missions` | operator | Create: validates keys, assignees, dependencies, cycles |
+| POST | `/missions` | operator | Create: validates keys, assignees, dependencies, cycles. `mode` is `production` (default) or `simulation` |
 | GET | `/missions/{id}` | viewer | Mission, workflow waves, tasks with governance traces |
 | POST | `/missions/{id}/run` | operator | Advance the workflow until nothing more can move |
+| POST | `/missions/{id}/{pause\|resume\|cancel}` | operator | Lifecycle (`{reason}`, 12+ characters). Cancel also cancels the mission's open tasks and approvals. 400 if the mission is not in a state that allows it |
 | POST | `/daily-loop/run` | operator | Run the Daily Operations Loop now |
 | GET | `/messages?thread_id=&kind=&limit=` | viewer | Collaboration Floor |
 | GET | `/decisions` | viewer | Decision records |
@@ -51,7 +55,7 @@ and interactive docs at `/docs`. This page is the contract summary.
 | GET | `/simulations/scenarios` | viewer | Scenario types with example inputs |
 | GET | `/simulations` | viewer | Runs on file |
 | GET | `/simulations/{id}` | viewer | One run |
-| POST | `/simulations` | operator | Run a scenario in the sandbox as an agent (goes through the gate) |
+| POST | `/simulations` | operator | Run a scenario in the sandbox as an agent (goes through the gate). With an `Idempotency-Key` header, a repeat returns the first run with `replayed: true` |
 | GET | `/reports?kind=` | viewer | Report index |
 | GET | `/reports/latest/{kind}` | viewer | Latest briefing, eod, weekly, security_review, or incident |
 | GET | `/reports/{id}` | viewer | One report |
@@ -59,6 +63,7 @@ and interactive docs at `/docs`. This page is the contract summary.
 | GET | `/audit/verify` | viewer | Replay the hash chain |
 | GET | `/policy` | viewer | The policy-as-code document |
 | POST | `/policy/evaluate` | operator | Dry run of steps 1-6; nothing executes or is written |
+| GET | `/policy/shadow-report` | viewer | Shadow rules and where each would have changed an outcome. `enforced` is always false |
 | GET | `/tools` | viewer | Tool registry |
 | GET | `/vault` | viewer | Secret references and whether each is configured (never values) |
 | GET | `/emergency-stop` | viewer | Current stop state |
@@ -76,11 +81,15 @@ POST /approvals/apr_0076/decision
 | Response | When |
 |---|---|
 | 200, status `executed` | approved; the held task resumed, ran through the connector, and produced a receipt |
-| 409 | reason under 12 characters, approval not pending, expired, office halted, unknown keys in `modifications`, or the edited action no longer passes policy |
+| 409 | reason under 12 characters, approval not pending or already decided, expired, office halted, stored request edited since it was filed, unknown keys in `modifications`, or the edited action no longer passes policy |
 | 401 / 403 | missing token / viewer token |
 
 `modify` may only change parameter keys that already exist. The edited action is re-evaluated by the policy engine and
 its digest becomes `approved_digest`. The executor runs only a payload whose digest equals it.
+
+An approval is used once. It is consumed when execution starts, before the tool runs, so if the run then fails the
+action needs a new approval. A second identical request from the same task while one is pending returns the pending
+approval instead of filing another.
 
 ## Error codes
 

@@ -138,9 +138,13 @@ class WorkflowEngine:
     def run(self, workflow_id: str, max_rounds: int = 50) -> dict[str, int]:
         o = self.office
         ran = 0
+        wf = o.store.get(Workflow, workflow_id)
         for _ in range(max_rounds):
             if o.halted:
                 break
+            mission = o.store.get(Mission, wf.mission_id) if wf else None
+            if mission is not None and mission.status != "active":
+                break  # paused or cancelled: nothing new starts (the gate would refuse it anyway)
             tasks = self.tasks(workflow_id)
             by_id = {t.id: t for t in tasks}
             self._propagate_blocks(tasks, by_id)
@@ -186,6 +190,8 @@ class WorkflowEngine:
             task_id=task.id,
             mission_id=task.mission_id,
             approval_id=task.approval_id,
+            # One key per attempt: a crash-and-rerun of the same attempt replays instead of acting twice.
+            idempotency_key=f"task:{task.id}:attempt:{task.attempts}",
         )
         result = o.executor.perform(request)
         governance = {

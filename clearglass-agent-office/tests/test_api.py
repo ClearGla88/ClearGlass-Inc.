@@ -121,3 +121,61 @@ def test_open_dev_mode_is_labelled():
     c = TestClient(create_app(make_office(), Settings(env="development")))
     r = c.get("/session")
     assert r.status_code == 200 and r.headers["X-Office-Auth"] == "development-open"
+
+
+def test_grant_and_revoke_over_http(client):
+    r = client.post(
+        "/agents/revenue.sales-strategist/grants",
+        headers=H_OP,
+        json={
+            "domain": "outreach",
+            "level": "execute",
+            "constraints": {"payload_allowlist": {"channel": ["email"]}, "spend_limit_cents": 0},
+        },
+    )
+    assert r.status_code == 201 and r.json()["constraints"]["spend_limit_cents"] == 0
+    assert (
+        client.post(
+            "/agents/revenue.sales-strategist/grants", headers=H_OP, json={"domain": "outreach", "level": "approve"}
+        ).status_code
+        == 422
+    )
+    assert (
+        client.post(
+            "/agents/revenue.sales-strategist/grants/outreach/revoke",
+            headers=H_VW,
+            json={"reason": "viewer tries to revoke"},
+        ).status_code
+        == 403
+    )
+    r = client.post(
+        "/agents/revenue.sales-strategist/grants/outreach/revoke",
+        headers=H_OP,
+        json={"reason": "Outreach paused until the list is cleaned."},
+    )
+    assert r.status_code == 200 and r.json()["revoked_at"]
+    grants = client.get("/agents/revenue.sales-strategist/grants", headers=H_VW).json()
+    assert any(g["domain"] == "outreach" and g["revoked_at"] for g in grants)
+
+
+def test_mission_lifecycle_over_http(client):
+    client.post("/daily-loop/run", headers=H_OP)
+    mission = next(m for m in client.get("/missions", headers=H_VW).json() if m["status"] == "active")
+    done = next(m for m in client.get("/missions", headers=H_VW).json() if m["status"] == "completed")
+    assert client.post(f"/missions/{done['id']}/pause", headers=H_OP, json={"reason": "x" * 20}).status_code == 400
+    r = client.post(f"/missions/{mission['id']}/pause", headers=H_OP, json={"reason": "Waiting on the client."})
+    assert r.status_code == 200 and r.json()["status"] == "paused"
+    assert client.post(f"/missions/{mission['id']}/explode", headers=H_OP, json={"reason": "x" * 20}).status_code == 422
+    r = client.post(f"/missions/{mission['id']}/resume", headers=H_OP, json={"reason": "Client replied today."})
+    assert r.json()["status"] == "active"
+
+
+def test_shadow_report_and_idempotent_simulation(client):
+    report = client.get("/policy/shadow-report", headers=H_VW).json()
+    assert report["enforced"] is False and report["rules"]
+    ex = client.get("/simulations/scenarios", headers=H_VW).json()["rollout"]["example"]
+    body = {"scenario_type": "rollout", **ex}
+    first = client.post("/simulations", headers={**H_OP, "Idempotency-Key": "sim-1"}, json=body)
+    second = client.post("/simulations", headers={**H_OP, "Idempotency-Key": "sim-1"}, json=body)
+    assert first.status_code == second.status_code == 201
+    assert second.json()["replayed"] is True and len(client.get("/simulations", headers=H_VW).json()) == 1
