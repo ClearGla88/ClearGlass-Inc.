@@ -40,7 +40,9 @@ def test_nothing_runs_while_halted(ran, operator):
     assert r.status == "denied" and "emergency stop" in r.error
     assert run_daily_loop(office, DEMO)["skipped"]
     approval = office.perform(
-        ActionRequest(agent_id="growth.social-media", action_type="content.publish", params={"text": "x"})
+        ActionRequest(
+            agent_id="growth.social-media", action_type="content.publish", params={"text": "x", "channel": "linkedin"}
+        )
     )
     assert approval.status == "denied"
 

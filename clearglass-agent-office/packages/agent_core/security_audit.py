@@ -47,21 +47,29 @@ CONTROL_TESTS: tuple[tuple[str, str, str, dict[str, Any], bool, str], ...] = (
         "deny",
     ),
     (
-        "Production deploy with plans waits for the operator",
+        "Production deploy without a passing sandbox test run is refused",
         "eng.devops",
         "deploy.production",
         {**PLANS, "environment": "production"},
         False,
-        "approval_required",
+        "deny",
     ),
     ("Writer cannot publish", "growth.content-writer", "content.publish", {"text": "hello"}, False, "deny"),
     (
         "Publishing waits for the operator",
         "growth.social-media",
         "content.publish",
-        {"text": "hello"},
+        {"text": "hello", "channel": "linkedin"},
         False,
         "approval_required",
+    ),
+    (
+        "Publishing outside the granted channels is refused",
+        "growth.social-media",
+        "content.publish",
+        {"text": "hello", "channel": "tiktok"},
+        False,
+        "deny",
     ),
     (
         "Researcher cannot contact prospects",
@@ -75,7 +83,31 @@ CONTROL_TESTS: tuple[tuple[str, str, str, dict[str, Any], bool, str], ...] = (
         "Outreach waits for the operator",
         "revenue.sales-strategist",
         "outreach.send",
-        {"recipients": ["a@example.com"]},
+        {"recipients": ["a@example.com"], "channel": "email"},
+        False,
+        "approval_required",
+    ),
+    (
+        "Money in any payload is critical",
+        "revenue.sales-strategist",
+        "outreach.send",
+        {"recipients": ["a@example.com"], "channel": "email", "amount_cents": 5000},
+        False,
+        "deny",
+    ),
+    (
+        "Sensitive data needs the operator",
+        "exec.operations",
+        "data.update_internal",
+        {"data_classification": "pii"},
+        False,
+        "approval_required",
+    ),
+    (
+        "Irreversible changes need the operator",
+        "exec.operations",
+        "data.update_internal",
+        {"reversible": False},
         False,
         "approval_required",
     ),
@@ -121,7 +153,9 @@ CONTROL_TESTS: tuple[tuple[str, str, str, dict[str, Any], bool, str], ...] = (
 )
 
 
-def run_security_audit(office: Office, include_control_tests: bool = True) -> dict[str, Any]:
+def run_security_audit(
+    office: Office, include_control_tests: bool = True, current_subject: str | None = None
+) -> dict[str, Any]:
     findings: list[dict[str, Any]] = []
 
     def add(severity: str, title: str, detail: str, source: str, fix: str) -> None:
@@ -244,6 +278,28 @@ def run_security_audit(office: Office, include_control_tests: bool = True) -> di
                 action_type,
                 "config/policy.json",
                 "External actions must be high or critical.",
+            )
+
+    intents = office.audit.events(event_type="action.intent", limit=1000)
+    outcome_digests: dict[str, int] = {}
+    for kind in ("action.executed", "action.failed", "verification.failed"):
+        for e in office.audit.events(event_type=kind, limit=1000):
+            d = e["payload"].get("digest")
+            outcome_digests[d] = outcome_digests.get(d, 0) + 1
+    seen: dict[str, int] = {}
+    for e in sorted(intents, key=lambda e: e["seq"]):
+        if current_subject and e["subject"] == current_subject:
+            continue  # the review itself is running between its intent and its outcome
+        d = e["payload"].get("digest")
+        seen[d] = seen.get(d, 0) + 1
+        if seen[d] > outcome_digests.get(d, 0):
+            add(
+                "high",
+                "Execution started without a recorded outcome",
+                f"audit #{e['seq']}: {e['payload'].get('action_type')} by {e['actor']} has an intent record "
+                "but no executed, failed, or verification-failed event",
+                "audit ledger",
+                "Check the incident records and the tool's own logs; record the outcome before resuming.",
             )
 
     chain = office.audit.verify()

@@ -1,0 +1,10 @@
+{
+  "description": "Allow-listed sandbox test suites for tests.run_sandbox. Agents pick a suite id, never a command. Every argv must start with {python} (the office's own interpreter). Runs in a subprocess with a scrubbed environment (no secrets, no tokens) and a timeout. It is not a network sandbox: containerized isolation is on the roadmap. Changing this file is a reviewed change.",
+  "suites": {
+    "office-governance": {
+      "description": "The Agent Office's own policy-engine and approval-desk tests.",
+      "argv": ["{python}", "-m", "pytest", "-q", "-p", "no:cacheprovider", "tests/test_policy_engine.py", "tests/test_approvals.py"],
+      "timeout_s": 300
+    }
+  }
+}

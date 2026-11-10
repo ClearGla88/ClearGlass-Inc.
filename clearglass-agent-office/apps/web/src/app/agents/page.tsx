@@ -72,6 +72,16 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
                 <p><span className="label mr-2">Reports to</span>{a.reports_to === "operator" ? "Operator" : names[a.reports_to] ?? a.reports_to}</p>
                 <div className="flex flex-wrap items-center gap-1"><span className="label mr-1">Permissions</span>
                   {Object.entries(a.permissions).map(([d, l]) => <Chip key={d}>{d}:{l}</Chip>)}</div>
+                {snap.grants.filter((g) => g.agent_id === a.id).map((g) => (
+                  <p key={g.id} className="text-warn">
+                    <span className="label mr-2">Limits</span>
+                    {g.domain}: {g.revoked_at ? `revoked ${g.revoked_at.slice(0, 10)}` : [
+                      g.constraints.spend_limit_cents !== undefined ? `spend ≤ ${g.constraints.spend_limit_cents}¢` : null,
+                      ...Object.entries(g.constraints.payload_allowlist ?? {}).map(([k, v]) => `${k} ∈ {${v.join(", ")}}`),
+                      g.expires_at ? `expires ${g.expires_at.slice(0, 16)}` : null,
+                    ].filter(Boolean).join(" · ")}
+                  </p>
+                ))}
                 <div className="flex flex-wrap items-center gap-1"><span className="label mr-1">Tools</span>
                   {a.tools.map((t) => <Chip key={t} color="var(--cg-accent-2)">{t}</Chip>)}</div>
                 <p><span className="label mr-2">Memory</span><span className="mono text-dim">{a.memory_scopes.join(", ")}</span> · {a.clearance}</p>

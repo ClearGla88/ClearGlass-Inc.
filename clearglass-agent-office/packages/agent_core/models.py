@@ -203,6 +203,7 @@ class Mission(Record):
     approval_rules: list[str] = field(default_factory=list)
     goal_ids: list[str] = field(default_factory=list)
     status: str = MissionStatus.ACTIVE
+    mode: str = "production"  # production | simulation
     workflow_id: str = ""
     created_by: str = ""
     created_at: str = ""
@@ -318,7 +319,12 @@ class Tool(Record):
 
 @dataclass
 class Permission(Record):
-    """One normalized grant row. ``Agent.permissions`` is the denormalized view."""
+    """One grant: an agent's level on one domain, plus the limits the gate enforces on it.
+
+    ``Agent.permissions`` is the denormalized level view. ``constraints`` may hold
+    ``spend_limit_cents`` (int) and ``payload_allowlist`` ({param: [allowed values]}).
+    A revoked or expired grant counts as no grant at all.
+    """
 
     KIND: ClassVar[str] = "permission"
     id: str
@@ -327,6 +333,10 @@ class Permission(Record):
     level: str
     granted_by: str
     granted_at: str = ""
+    constraints: dict[str, Any] = field(default_factory=dict)
+    expires_at: str | None = None
+    revoked_at: str | None = None
+    revoked_by: str | None = None
 
 
 @dataclass
@@ -413,6 +423,23 @@ class RiskAssessment(Record):
     created_at: str = ""
 
 
+@dataclass
+class ShadowDivergence(Record):
+    """A request where a shadow (candidate) rule would have decided differently."""
+
+    KIND: ClassVar[str] = "shadow_divergence"
+    id: str
+    rule_ids: list[str]
+    action_type: str
+    agent_id: str
+    enforced_outcome: str
+    shadow_outcome: str
+    digest: str
+    shadow_version: str
+    task_id: str | None = None
+    created_at: str = ""
+
+
 ALL_MODELS: tuple[type[Record], ...] = (
     Company,
     Department,
@@ -430,5 +457,6 @@ ALL_MODELS: tuple[type[Record], ...] = (
     Simulation,
     Report,
     RiskAssessment,
+    ShadowDivergence,
 )
 MODEL_BY_KIND: dict[str, type[Record]] = {m.KIND: m for m in ALL_MODELS}

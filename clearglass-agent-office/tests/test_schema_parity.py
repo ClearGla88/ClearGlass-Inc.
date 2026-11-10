@@ -6,7 +6,8 @@ from dataclasses import fields
 from agent_core.models import ALL_MODELS
 from tests.conftest import ROOT
 
-SQL = (ROOT / "infra" / "db" / "postgres" / "001_init.sql").read_text()
+MIGRATIONS = sorted((ROOT / "infra" / "db" / "postgres").glob("*.sql"))
+SQL = "\n".join(m.read_text() for m in MIGRATIONS)
 
 TABLE = {
     "company": "companies",
@@ -25,6 +26,7 @@ TABLE = {
     "simulation": "simulations",
     "report": "reports",
     "risk_assessment": "risk_assessments",
+    "shadow_divergence": "shadow_divergences",
 }
 
 # Fields stored outside their own table, with where they live.
@@ -41,7 +43,7 @@ SKIP = ("CHECK", "UNIQUE", "PRIMARY", "CONSTRAINT", "FOREIGN", "--", ")")
 
 
 def tables() -> dict[str, set[str]]:
-    out = {}
+    out: dict[str, set[str]] = {}
     for name, body in re.findall(r"CREATE TABLE (\w+) \((.*?)\n\);", SQL, re.S):
         cols = set()
         for line in body.splitlines():
@@ -49,7 +51,16 @@ def tables() -> dict[str, set[str]]:
             if line and not line.startswith(SKIP):
                 cols.add(line.split()[0])
         out[name] = cols
+    for name, column in re.findall(r"ALTER TABLE (\w+) ADD COLUMN (\w+)", SQL):
+        out.setdefault(name, set()).add(column)
     return out
+
+
+def test_migrations_are_numbered_and_transactional():
+    assert [m.name[:4] for m in MIGRATIONS] == [f"{i:03d}_" for i in range(1, len(MIGRATIONS) + 1)]
+    for m in MIGRATIONS:
+        text = m.read_text()
+        assert "BEGIN;" in text and text.rstrip().endswith("COMMIT;"), m.name
 
 
 def test_every_model_has_a_table():
@@ -75,6 +86,14 @@ def test_every_field_has_a_column():
 
 
 def test_append_only_tables_are_guarded():
-    for table in ("audit_events", "approval_decisions", "decisions", "messages", "risk_assessments"):
+    for table in (
+        "audit_events",
+        "approval_decisions",
+        "decisions",
+        "messages",
+        "risk_assessments",
+        "approval_executions",
+        "shadow_divergences",
+    ):
         assert f"'{table}'" in SQL
     assert "'approve'" not in SQL.split("CREATE TABLE permissions")[1].split(");")[0]

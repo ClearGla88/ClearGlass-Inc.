@@ -31,7 +31,7 @@ def test_missing_permission_is_denied(office):
 
 
 def test_publishing_needs_operator_approval(office):
-    d = gate(office, "growth.social-media", "content.publish", {"text": "hi"})
+    d = gate(office, "growth.social-media", "content.publish", {"text": "hi", "channel": "linkedin"})
     assert d.outcome == "approval_required" and d.tier == "high" and d.external
 
 
@@ -40,7 +40,7 @@ def test_critical_requires_all_three_plans(office):
     assert d.outcome == "deny"
     assert any("rollback_plan" in r and "verification_plan" in r for r in d.reasons)
     d = gate(office, "eng.devops", "deploy.production", {"environment": "production", **PLANS})
-    assert d.outcome == "approval_required" and d.tier == "critical"
+    assert d.outcome == "deny" and d.tier == "critical"  # plans alone are not enough: no passing test run
 
 
 def test_production_modifier_applies_to_acting_actions_only(office):
@@ -128,9 +128,9 @@ def test_paused_agent_is_denied(office, operator):
 
 
 def test_digest_binds_the_exact_payload(office):
-    a = gate(office, "growth.social-media", "content.publish", {"text": "one"})
-    b = gate(office, "growth.social-media", "content.publish", {"text": "two"})
-    c = gate(office, "growth.social-media", "content.publish", {"text": "one"})
+    a = gate(office, "growth.social-media", "content.publish", {"text": "one", "channel": "x"})
+    b = gate(office, "growth.social-media", "content.publish", {"text": "two", "channel": "x"})
+    c = gate(office, "growth.social-media", "content.publish", {"text": "one", "channel": "x"})
     assert a.digest != b.digest and a.digest == c.digest
 
 

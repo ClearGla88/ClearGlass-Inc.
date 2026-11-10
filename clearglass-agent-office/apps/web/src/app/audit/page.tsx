@@ -10,6 +10,27 @@ export default async function AuditPage() {
         <Chip color={v.ok ? "var(--cg-ok)" : "var(--cg-bad)"}>{v.ok ? "chain verified" : `broken at #${v.broken_at}: ${v.reason}`}</Chip>
         <Chip>{v.count} events</Chip>
       </PageHeader>
+      <Panel kicker={`Shadow policies · ${snap.shadow.shadow_version ?? "none"} · never enforced`}
+        title={`${snap.shadow.total} divergence${snap.shadow.total === 1 ? "" : "s"} from the enforced policy`} className="mb-5">
+        <p className="mb-3 text-sm text-dim">
+          Candidate rules in <span className="mono">config/policy.shadow.json</span> run on every request. Where one
+          would have decided differently, it is logged here and nothing else happens. Promote a rule by a reviewed
+          change to <span className="mono">config/policy.json</span>.
+        </p>
+        <ul className="space-y-2 text-sm">
+          {snap.shadow.rules.map((r) => {
+            const hits = snap.shadow.by_rule.find((b) => b.rule_id === r.id);
+            return (
+              <li key={r.id} className="rounded-lg border border-line p-3">
+                <div className="flex flex-wrap items-center gap-2"><span className="mono text-xs">{r.id}</span>
+                  <Chip color={r.effect === "deny" ? "var(--cg-bad)" : "var(--cg-warn)"}>would {r.effect.replace("_", " ")}</Chip>
+                  <Chip>{hits?.divergences ?? 0} divergences</Chip></div>
+                <p className="mt-1 text-xs text-dim">{r.description}</p>
+              </li>
+            );
+          })}
+        </ul>
+      </Panel>
       <Panel kicker={`head ${v.head}`} title={`Latest ${snap.audit.events.length} events`}>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[46rem] text-left text-sm">

@@ -44,6 +44,13 @@ def verify_output(rule: str, output: dict[str, Any] | None, *, approved_digest: 
             return False, "plan has no rollback steps"
         return True, f"{len(artifact['rollback'])} rollback step(s)"
 
+    if rule == "tests_passed":
+        if not isinstance(artifact, dict) or "passed" not in artifact:
+            return False, "no test-run result"
+        if artifact.get("passed") is not True:
+            return False, f"suite '{artifact.get('suite')}' failed (exit code {artifact.get('returncode')})"
+        return True, f"suite '{artifact.get('suite')}' passed in {artifact.get('duration_s')}s"
+
     if rule == "receipt":
         receipt = output.get("receipt")
         if not isinstance(receipt, dict):

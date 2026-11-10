@@ -9,7 +9,7 @@ Approval Desk until a named human approves that exact payload.
 
 CLEARGLASS: See Through Everything
 
-## Status (verified 2026-11-08)
+## Status (verified 2026-11-10)
 
 | Area | State | Verified by |
 |---|---|---|
@@ -17,6 +17,14 @@ CLEARGLASS: See Through Everything
 | Approval Desk (payload-bound, reason required, append-only history, modify-and-approve) | Runs | `tests/test_approvals.py` |
 | Hash-chained audit ledger with database-level append-only triggers | Runs | `tests/test_audit_ledger.py`, `/ready` |
 | Emergency stop (pause all, cancel open approvals, preserve state, incident record, notify) | Runs | `tests/test_emergency_stop.py` |
+| Grant limits (spend caps, parameter allow-lists, expiry, revocation) | Runs | `tests/test_governance_controls.py`, `tests/test_postgres_schema.py` |
+| Risk escalation (sensitive data and irreversible actions are high; any payment is critical) | Runs | `tests/test_governance_controls.py`, control tests |
+| Production deploy needs a passing sandbox test run from the same mission | Runs. The runner executes allow-listed suites in a subprocess; it is **not** a container or network sandbox | `tests/test_governance_controls.py` |
+| Mission pause, resume, cancel; simulation-mode missions cannot act externally or on production | Runs | `tests/test_governance_controls.py`, `tests/test_api.py` |
+| Intent sealed before a tool runs; incident raised if the outcome record fails | Runs | `tests/test_governance_controls.py` |
+| Approval integrity (immutable request, one decision, one use, duplicate requests merged) | Runs | `tests/test_governance_controls.py`, `tests/test_postgres_schema.py` |
+| Shadow policies (evaluated on every request, never enforced) with a divergence report | Runs | `tests/test_governance_controls.py`, `GET /policy/shadow-report` |
+| Idempotency keys (replay, conflict, retry after failure) | Runs | `tests/test_governance_controls.py`, `tests/test_api.py` |
 | Workflow engine (DAG, waves, retries, downstream blocking, input references) | Runs | `tests/test_workflow.py` |
 | Daily Operations Loop (8 agents, 4 departments, 1 approval, briefing, end-of-day report) | Runs | `tests/test_daily_loop.py`, CI smoke run |
 | Memory (task memory, operator-approved company memory, secret rejection) | Runs | `tests/test_memory_and_simulation.py` |
@@ -54,7 +62,7 @@ Other commands: `verify-audit`, `approve <id> --reason ...`, `emergency-stop --r
 
 ```bash
 ruff check . && ruff format --check .
-python -m pytest -rs                                       # 94 tests; 6 more with a PostgreSQL server:
+python -m pytest -rs                                       # 133 tests; 10 more with a PostgreSQL server:
 OFFICE_TEST_PG_URL=postgresql://user:pass@localhost:5432/postgres python -m pytest -rs
 cd apps/web && npm audit --audit-level=high && npm run typecheck && npm run build
 ```
@@ -78,7 +86,7 @@ cd apps/web && npm audit --audit-level=high && npm run typecheck && npm run buil
 | 1 | Product vision and positioning | [docs/PRODUCT.md](docs/PRODUCT.md) |
 | 2 | System architecture | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
 | 3 | Repository file tree | [docs/ARCHITECTURE.md#repository-layout](docs/ARCHITECTURE.md#repository-layout) |
-| 4 | Database schema | [infra/db/postgres/001_init.sql](infra/db/postgres/001_init.sql), [docs/DATABASE.md](docs/DATABASE.md) |
+| 4 | Database schema | [infra/db/postgres/](infra/db/postgres/) (`001_init.sql`, `002_governance_controls.sql`), [docs/DATABASE.md](docs/DATABASE.md) |
 | 5 | API specification | [docs/API.md](docs/API.md); live OpenAPI at `/docs` |
 | 6 | Agent schema and permission model | [docs/AGENT_MODEL.md](docs/AGENT_MODEL.md), [config/org.json](config/org.json), [config/policy.json](config/policy.json) |
 | 7 | Workflow engine design | [docs/WORKFLOW_ENGINE.md](docs/WORKFLOW_ENGINE.md) |
@@ -94,7 +102,8 @@ cd apps/web && npm audit --audit-level=high && npm run typecheck && npm run buil
 ```
 clearglass-agent-office/
   office.py            CLI: daily-loop, serve, demo, verify-audit, approve, emergency-stop
-  config/              company.json, org.json (7 departments, 35 agents, 12 rooms), policy.json, tools.json
+  config/              company.json, org.json (7 departments, 35 agents, 12 rooms), policy.json, tools.json,
+                       policy.shadow.json (candidate rules, never enforced), sandbox.json (allow-listed test suites)
   demo/                demo missions and a fictional prospect list
   packages/
     agent_core/        models, office runtime, governed executor, approval desk, workflow engine, skills, reports
@@ -110,7 +119,7 @@ clearglass-agent-office/
     web/               Next.js console
   infra/               PostgreSQL schema, Dockerfiles, compose stack
   docs/                the deliverables above
-  tests/               100 tests (6 need PostgreSQL)
+  tests/               143 tests (10 need PostgreSQL)
 ```
 
 The brief named the Python packages `agent-core`, `policy-engine`, `memory`, `tools`, and `audit`. They are

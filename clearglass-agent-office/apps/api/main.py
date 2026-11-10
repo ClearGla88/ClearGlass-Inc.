@@ -22,7 +22,7 @@ for _p in (ROOT / "packages", ROOT):
     if str(_p) not in sys.path:
         sys.path.insert(0, str(_p))
 
-from fastapi import Depends, FastAPI, HTTPException, Query, Request  # noqa: E402
+from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request  # noqa: E402
 from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
 from fastapi.responses import JSONResponse  # noqa: E402
 from pydantic import BaseModel, ConfigDict, Field  # noqa: E402
@@ -119,7 +119,19 @@ class MissionSpec(Body):
     constraints: list[str] = Field(default_factory=list)
     approval_rules: list[str] = Field(default_factory=list)
     goal_ids: list[str] = Field(default_factory=list)
+    mode: Literal["production", "simulation"] = "production"
     tasks: list[TaskSpec] = Field(min_length=1, max_length=50)
+
+
+class GrantBody(Body):
+    domain: str = Field(pattern=r"^[a-z]{2,20}$")
+    level: Literal["read", "propose", "write", "execute"]
+    constraints: dict[str, Any] = Field(default_factory=dict)
+    expires_at: str | None = None
+
+
+class MissionLifecycleBody(Body):
+    reason: str = Field(min_length=1, max_length=2000)
 
 
 class MemoryBody(Body):
@@ -276,6 +288,24 @@ def create_app(office: Office | None = None, settings: Settings | None = None) -
     def edit(agent_id: str, body: AgentPatch, request: Request, p: Principal = Operator) -> dict[str, Any]:
         return _office(request).update_agent(agent_id, body.model_dump(exclude_none=True), p).to_dict()
 
+    @app.get("/agents/{agent_id}/grants", tags=["agents"])
+    def grants(agent_id: str, request: Request, _: Principal = Viewer) -> list[dict[str, Any]]:
+        return [g.to_dict() for g in _office(request).grants(agent_id)]
+
+    @app.post("/agents/{agent_id}/grants", tags=["agents"], status_code=201)
+    def grant(agent_id: str, body: GrantBody, request: Request, p: Principal = Operator) -> dict[str, Any]:
+        return (
+            _office(request)
+            .grant(agent_id, body.domain, body.level, p, constraints=body.constraints, expires_at=body.expires_at)
+            .to_dict()
+        )
+
+    @app.post("/agents/{agent_id}/grants/{domain}/revoke", tags=["agents"])
+    def revoke(
+        agent_id: str, domain: str, body: ReasonBody, request: Request, p: Principal = Operator
+    ) -> dict[str, Any]:
+        return _office(request).revoke_grant(agent_id, domain, p, body.reason).to_dict()
+
     @app.post("/agents/{agent_id}/{action}", tags=["agents"])
     def lifecycle(
         agent_id: str,
@@ -305,6 +335,16 @@ def create_app(office: Office | None = None, settings: Settings | None = None) -
     @app.post("/missions/{mission_id}/run", tags=["missions"])
     def run_mission(mission_id: str, request: Request, _: Principal = Operator) -> dict[str, Any]:
         return _office(request).run_mission(mission_id)
+
+    @app.post("/missions/{mission_id}/{action}", tags=["missions"])
+    def mission_lifecycle(
+        mission_id: str,
+        action: Literal["pause", "resume", "cancel"],
+        body: MissionLifecycleBody,
+        request: Request,
+        p: Principal = Operator,
+    ) -> dict[str, Any]:
+        return _office(request).set_mission_lifecycle(mission_id, action, p, body.reason).to_dict()
 
     @app.post("/daily-loop/run", tags=["missions"])
     def daily_loop(request: Request, _: Principal = Operator) -> dict[str, Any]:
@@ -395,12 +435,22 @@ def create_app(office: Office | None = None, settings: Settings | None = None) -
         return s.to_dict()
 
     @app.post("/simulations", tags=["simulation"], status_code=201)
-    def run_simulation(body: SimulationBody, request: Request, _: Principal = Operator) -> dict[str, Any]:
+    def run_simulation(
+        body: SimulationBody,
+        request: Request,
+        _: Principal = Operator,
+        idempotency_key: str | None = Header(default=None, max_length=200),
+    ) -> dict[str, Any]:
         spec = body.model_dump()
-        result = _office(request).run_simulation(spec.pop("agent_id"), spec)
+        result = _office(request).run_simulation(spec.pop("agent_id"), spec, idempotency_key=idempotency_key)
         if result.status != "completed":
             raise HTTPException(400, result.error or result.status)
-        return {"status": result.status, "trace": result.trace(), "result": result.output["artifact"]}  # type: ignore[index]
+        return {
+            "status": result.status,
+            "replayed": result.replayed,
+            "trace": result.trace(),
+            "result": result.output["artifact"],  # type: ignore[index]
+        }
 
     # -- briefing room ---------------------------------------------------------------------------
     @app.get("/reports", tags=["reports"])
@@ -444,6 +494,11 @@ def create_app(office: Office | None = None, settings: Settings | None = None) -
     @app.get("/policy", tags=["policy"])
     def policy(request: Request, _: Principal = Viewer) -> dict[str, Any]:
         return _office(request).policy.raw
+
+    @app.get("/policy/shadow-report", tags=["policy"])
+    def shadow_report(request: Request, _: Principal = Viewer) -> dict[str, Any]:
+        """Where candidate rules would have decided differently. Never enforced."""
+        return _office(request).shadow_report()
 
     @app.post("/policy/evaluate", tags=["policy"])
     def evaluate(body: EvaluateBody, request: Request, _: Principal = Operator) -> dict[str, Any]:

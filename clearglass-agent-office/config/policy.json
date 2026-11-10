@@ -1,5 +1,5 @@
 {
-  "policy_version": "2026.11.07-1",
+  "policy_version": "2026.11.08-1",
   "description": "ClearGlass Agent Office policy-as-code. Every agent action is evaluated against this file by packages/policy_engine. Change it through review, then bump policy_version.",
   "permission_levels": ["none", "read", "propose", "write", "execute"],
   "tiers": {
@@ -50,10 +50,10 @@
     "code.review":               {"domain": "code",       "level": "propose", "tier": "low",      "verify": "artifact"},
     "code.commit_branch":        {"domain": "code",       "level": "write",   "tier": "medium",   "verify": "artifact"},
     "tests.plan":                {"domain": "tests",      "level": "propose", "tier": "low",      "verify": "artifact"},
-    "tests.run_sandbox":         {"domain": "tests",      "level": "execute", "tier": "medium",   "verify": "artifact"},
+    "tests.run_sandbox":         {"domain": "tests",      "level": "execute", "tier": "medium",   "verify": "tests_passed"},
     "deploy.plan":               {"domain": "deploy",     "level": "propose", "tier": "low",      "verify": "rollback_plan"},
     "deploy.staging":            {"domain": "deploy",     "level": "execute", "tier": "high",     "verify": "receipt", "external": true},
-    "deploy.production":         {"domain": "deploy",     "level": "execute", "tier": "critical", "verify": "receipt", "external": true},
+    "deploy.production":         {"domain": "deploy",     "level": "execute", "tier": "critical", "verify": "receipt", "external": true, "requires_test_evidence": true},
     "workflow.create":           {"domain": "workflow",   "level": "write",   "tier": "medium",   "verify": "artifact"},
     "data.update_internal":      {"domain": "data",       "level": "write",   "tier": "medium",   "verify": "artifact"},
     "data.export":               {"domain": "data",       "level": "execute", "tier": "high",     "verify": "receipt", "external": true},
@@ -67,7 +67,7 @@
     "outreach.draft":            {"domain": "outreach",   "level": "propose", "tier": "low",      "verify": "artifact"},
     "outreach.send":             {"domain": "outreach",   "level": "execute", "tier": "high",     "verify": "receipt", "external": true},
     "email.send":                {"domain": "email",      "level": "execute", "tier": "high",     "verify": "receipt", "external": true},
-    "finance.purchase":          {"domain": "finance",    "level": "execute", "tier": "high",     "verify": "receipt", "external": true},
+    "finance.purchase":          {"domain": "finance",    "level": "execute", "tier": "critical", "verify": "receipt", "external": true},
     "finance.move_money":        {"domain": "finance",    "level": "execute", "tier": "critical", "verify": "receipt", "external": true},
     "pricing.change_live":       {"domain": "finance",    "level": "execute", "tier": "critical", "verify": "receipt", "external": true},
     "contract.sign":             {"domain": "contracts",  "level": "execute", "tier": "critical", "verify": "receipt", "external": true},
@@ -97,13 +97,16 @@
       "reason": "Cyber research runs only inside a documented, authorized scope."
     }
   },
-  "escalation_modifiers": {
-    "production_environment": {"param": "environment", "equals": "production", "min_tier": "critical"},
-    "external_recipients": {"param": "recipients", "non_empty": true, "min_tier": "high"},
-    "bulk_records": {"param": "record_count", "greater_than": 1000, "bump": 1},
-    "untrusted_injection": {"force_approval": true}
-  },
+  "escalation_modifiers": [
+    {"id": "production_environment", "param": "environment",         "op": "equals",       "value": "production", "applies_to": "acting", "min_tier": "critical", "factor": "targets production"},
+    {"id": "external_recipients",    "param": "recipients",          "op": "non_empty",                            "applies_to": "acting", "min_tier": "high",     "factor": "has external recipients"},
+    {"id": "bulk_records",           "param": "record_count",        "op": "greater_than", "value": 1000,         "applies_to": "all",    "bump": 1,              "factor": "bulk operation (over 1000 records)"},
+    {"id": "sensitive_data",         "param": "data_classification", "op": "in",           "value": ["confidential", "restricted", "pii", "secret", "regulated"], "applies_to": "all", "min_tier": "high", "factor": "sensitive data classification"},
+    {"id": "irreversible",           "param": "reversible",          "op": "equals",       "value": false,        "applies_to": "all",    "min_tier": "high",     "factor": "irreversible action"},
+    {"id": "moves_money",            "param": "amount_cents",        "op": "greater_than", "value": 0,            "applies_to": "all",    "min_tier": "critical", "factor": "moves money"}
+  ],
   "untrusted_input": {
+    "force_approval": true,
     "markers": [
       "ignore previous instructions",
       "ignore all previous instructions",

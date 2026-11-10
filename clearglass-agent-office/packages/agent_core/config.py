@@ -31,6 +31,29 @@ class OfficeConfig:
     tools: list[Tool]
     policy: Policy
     base_grants: dict[str, Any]
+    # agent id -> domain -> {"spend_limit_cents", "payload_allowlist", "expires_at"}
+    grant_constraints: dict[str, dict[str, dict[str, Any]]]
+
+
+GRANT_CONSTRAINT_KEYS = ("spend_limit_cents", "payload_allowlist")
+
+
+def validate_grant_constraints(constraints: Any, where: str) -> list[str]:
+    """Shape checks for one grant's constraints. Unknown keys are refused, not ignored."""
+    problems: list[str] = []
+    if not isinstance(constraints, dict):
+        return [f"{where}: constraints must be an object"]
+    unknown = set(constraints) - set(GRANT_CONSTRAINT_KEYS)
+    if unknown:
+        problems.append(f"{where}: unknown constraint(s) {sorted(unknown)}")
+    limit = constraints.get("spend_limit_cents")
+    if limit is not None and (not isinstance(limit, int) or isinstance(limit, bool) or limit < 0):
+        problems.append(f"{where}: spend_limit_cents must be a non-negative integer")
+    allow = constraints.get("payload_allowlist")
+    if allow is not None:
+        if not isinstance(allow, dict) or not all(isinstance(v, list) and v for v in allow.values()):
+            problems.append(f"{where}: payload_allowlist must map parameter names to non-empty lists")
+    return problems
 
 
 def _read(path: Path) -> dict[str, Any]:
@@ -116,7 +139,7 @@ def load_config(config_dir: str | Path) -> OfficeConfig:
     config_dir = Path(config_dir)
     company_raw = _read(config_dir / "company.json")
     org = _read(config_dir / "org.json")
-    policy = load_policy(config_dir / "policy.json")
+    policy = load_policy(config_dir / "policy.json", config_dir / "policy.shadow.json")
     tools = load_tools(config_dir / "tools.json")
     tool_map = {t.id: t for t in tools}
 
@@ -157,6 +180,14 @@ def load_config(config_dir: str | Path) -> OfficeConfig:
     base = org.get("base_grants", {})
     agents = [build_agent(spec, base, departments) for spec in org.get("agents", [])]
     problems = validate_agents(agents, departments, tool_map, room_ids, policy)
+    grant_constraints: dict[str, dict[str, dict[str, Any]]] = {}
+    for spec in org.get("agents", []):
+        for domain, cons in (spec.get("grant_constraints") or {}).items():
+            where = f"agent {spec['id']} grant '{domain}'"
+            if domain not in (spec.get("permissions") or {}):
+                problems.append(f"{where}: constraint on a domain the agent is not granted")
+            problems.extend(validate_grant_constraints(cons, where))
+            grant_constraints.setdefault(spec["id"], {})[domain] = dict(cons)
     if problems:
         raise ConfigError("; ".join(problems))
     return OfficeConfig(
@@ -167,4 +198,5 @@ def load_config(config_dir: str | Path) -> OfficeConfig:
         tools=tools,
         policy=policy,
         base_grants=base,
+        grant_constraints=grant_constraints,
     )

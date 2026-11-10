@@ -26,7 +26,8 @@ def db():
         admin.execute(f'CREATE DATABASE "{name}"')
     base, _, _ = URL.rpartition("/")
     conn = psycopg.connect(f"{base}/{name}", autocommit=True)
-    conn.execute((ROOT / "infra" / "db" / "postgres" / "001_init.sql").read_text())
+    for migration in sorted((ROOT / "infra" / "db" / "postgres").glob("*.sql")):
+        conn.execute(migration.read_text())
     try:
         yield conn
     finally:
@@ -116,4 +117,85 @@ def test_decision_reasons_must_be_substantive(db):
         db.execute(
             "INSERT INTO approval_decisions (approval_id, decision, reason, decided_by)"
             " VALUES ('a1','approve','ok','operator.founder')"
+        )
+
+
+def _approval(db, aid="a1", tier="high", status="pending"):
+    db.execute(
+        "INSERT INTO approvals (id, action_type, action, action_digest, requested_by, risk_tier, status,"
+        " approved_digest, expires_at) VALUES (%s, 'content.publish', '{}', %s, 'eng.lead', %s, %s, %s, now())",
+        (aid, DIGEST, tier, status, DIGEST if status in ("approved", "executed") else None),
+    )
+
+
+def test_approval_request_is_immutable_and_terminal_states_stick(db):
+    import psycopg
+
+    seed(db)
+    _approval(db)
+    with pytest.raises(psycopg.errors.InsufficientPrivilege):
+        db.execute("UPDATE approvals SET action = '{\"edited\": true}' WHERE id = 'a1'")
+    db.execute("UPDATE approvals SET status = 'approved', approved_digest = %s WHERE id = 'a1'", (DIGEST,))
+    with pytest.raises(psycopg.errors.InsufficientPrivilege):
+        db.execute("UPDATE approvals SET approved_digest = %s WHERE id = 'a1'", ("b" * 64,))
+    db.execute("UPDATE approvals SET status = 'executed' WHERE id = 'a1'")
+    with pytest.raises(psycopg.errors.InsufficientPrivilege):
+        db.execute("UPDATE approvals SET status = 'approved' WHERE id = 'a1'")
+    with pytest.raises(psycopg.errors.InsufficientPrivilege):
+        db.execute("DELETE FROM approvals WHERE id = 'a1'")
+
+
+def test_one_decision_and_one_execution_per_approval(db):
+    import psycopg
+
+    seed(db)
+    _approval(db)
+    insert = (
+        "INSERT INTO approval_decisions (approval_id, decision, reason, decided_by)"
+        " VALUES ('a1', %s, 'Checked the payload against the brief.', 'operator.founder')"
+    )
+    db.execute(insert, ("approve",))
+    with pytest.raises(psycopg.errors.UniqueViolation):
+        db.execute(insert, ("reject",))
+    db.execute(insert, ("cancelled",))  # a cancellation may still follow
+    db.execute("INSERT INTO approval_executions (approval_id, executed_digest) VALUES ('a1', %s)", (DIGEST,))
+    with pytest.raises(psycopg.errors.UniqueViolation):
+        db.execute("INSERT INTO approval_executions (approval_id, executed_digest) VALUES ('a1', %s)", (DIGEST,))
+    with pytest.raises(psycopg.errors.InsufficientPrivilege):
+        db.execute("DELETE FROM approval_executions")
+
+
+def test_grant_limits_and_revocation_are_checked(db):
+    import psycopg
+
+    seed(db)
+    base = "INSERT INTO permissions (id, agent_id, domain, level, granted_by, constraints, revoked_at, revoked_by)"
+    db.execute(
+        base + " VALUES ('p1','eng.lead','finance','execute','op', %s, NULL, NULL)", ('{"spend_limit_cents": 5000}',)
+    )
+    with pytest.raises(psycopg.errors.CheckViolation):
+        db.execute(base + " VALUES ('p2','eng.lead','social','execute','op', %s, NULL, NULL)", ('{"anything": 1}',))
+    with pytest.raises(psycopg.errors.CheckViolation):
+        db.execute(
+            base + " VALUES ('p3','eng.lead','email','execute','op', %s, NULL, NULL)", ('{"spend_limit_cents": -1}',)
+        )
+    with pytest.raises(psycopg.errors.CheckViolation):
+        db.execute(base + " VALUES ('p4','eng.lead','data','write','op', '{}', now(), NULL)")
+
+
+def test_mission_mode_and_shadow_divergence_rules(db):
+    import psycopg
+
+    seed(db)
+    with pytest.raises(psycopg.errors.CheckViolation), db.transaction():
+        db.execute(
+            "INSERT INTO workflows (id, mission_id) VALUES ('w1', 'm1');"
+            "INSERT INTO missions (id, title, objective, department, owner, workflow_id, created_by, mode)"
+            " VALUES ('m1','t','o','eng','eng.lead','w1','op','chaos')"
+        )
+    with pytest.raises(psycopg.errors.CheckViolation):
+        db.execute(
+            "INSERT INTO shadow_divergences (id, rule_ids, action_type, agent_id, enforced_outcome, shadow_outcome,"
+            " digest, shadow_version) VALUES ('s1', '[\"r\"]', 'x', 'eng.lead', 'allow', 'allow', %s, 'v1')",
+            (DIGEST,),
         )

@@ -2,8 +2,18 @@
 
 Records are stored as JSON documents keyed by (kind, id). There is deliberately
 no delete method: agents are retired, missions cancelled, approvals expired, and
-every one of those transitions is audited. Approval decisions live in their own
-append-only table with triggers that abort UPDATE and DELETE.
+every one of those transitions is audited.
+
+Approval integrity does not rest on the JSON documents. Three tables carry it,
+and the database itself refuses to break their rules:
+
+- ``approval_requests``: the original request (payload + digest), append-only.
+- ``approval_decisions``: append-only, and a unique partial index allows one
+  approve/reject/modify decision per approval (cancellations are extra rows).
+- ``approval_executions``: one row per executed approval (primary key), append-only.
+
+``idempotency_keys`` maps a caller's key to the request digest and its result,
+so a retried request replays the stored result instead of acting twice.
 
 The normalized production schema is ``infra/db/postgres/001_init.sql``. The
 document store keeps the MVP dependency-free; the PostgreSQL adapter is on the
@@ -49,6 +59,42 @@ CREATE TRIGGER IF NOT EXISTS approval_decisions_no_update BEFORE UPDATE ON appro
 BEGIN SELECT RAISE(ABORT, 'approval_decisions is append-only'); END;
 CREATE TRIGGER IF NOT EXISTS approval_decisions_no_delete BEFORE DELETE ON approval_decisions
 BEGIN SELECT RAISE(ABORT, 'approval_decisions is append-only'); END;
+
+CREATE UNIQUE INDEX IF NOT EXISTS approval_decisions_once
+    ON approval_decisions(approval_id) WHERE decision IN ('approve', 'reject', 'modify');
+
+CREATE TABLE IF NOT EXISTS approval_requests (
+    approval_id    TEXT PRIMARY KEY,
+    action_digest  TEXT NOT NULL,
+    action         TEXT NOT NULL,
+    requested_by   TEXT NOT NULL,
+    risk_tier      TEXT NOT NULL,
+    requested_at   TEXT NOT NULL
+);
+CREATE TRIGGER IF NOT EXISTS approval_requests_no_update BEFORE UPDATE ON approval_requests
+BEGIN SELECT RAISE(ABORT, 'approval_requests is append-only'); END;
+CREATE TRIGGER IF NOT EXISTS approval_requests_no_delete BEFORE DELETE ON approval_requests
+BEGIN SELECT RAISE(ABORT, 'approval_requests is append-only'); END;
+
+CREATE TABLE IF NOT EXISTS approval_executions (
+    approval_id     TEXT PRIMARY KEY,
+    executed_digest TEXT NOT NULL,
+    executed_at     TEXT NOT NULL,
+    task_id         TEXT
+);
+CREATE TRIGGER IF NOT EXISTS approval_executions_no_update BEFORE UPDATE ON approval_executions
+BEGIN SELECT RAISE(ABORT, 'approval_executions is append-only'); END;
+CREATE TRIGGER IF NOT EXISTS approval_executions_no_delete BEFORE DELETE ON approval_executions
+BEGIN SELECT RAISE(ABORT, 'approval_executions is append-only'); END;
+
+CREATE TABLE IF NOT EXISTS idempotency_keys (
+    key            TEXT PRIMARY KEY,
+    request_digest TEXT NOT NULL,
+    status         TEXT NOT NULL CHECK (status IN ('in_progress', 'completed', 'failed')),
+    result         TEXT,
+    created_at     TEXT NOT NULL,
+    updated_at     TEXT NOT NULL
+);
 
 CREATE TABLE IF NOT EXISTS office_state (
     key   TEXT PRIMARY KEY,
@@ -163,6 +209,110 @@ class Store:
                 }
             )
         return out
+
+    # -- approval request and execution records (append-only) ----------------------
+
+    def record_approval_request(
+        self,
+        *,
+        approval_id: str,
+        action_digest: str,
+        action: dict[str, Any],
+        requested_by: str,
+        risk_tier: str,
+        requested_at: str,
+    ) -> None:
+        with self.lock:
+            self.conn.execute(
+                "INSERT INTO approval_requests (approval_id, action_digest, action, requested_by, risk_tier,"
+                " requested_at) VALUES (?, ?, ?, ?, ?, ?)",
+                (
+                    approval_id,
+                    action_digest,
+                    json.dumps(action, sort_keys=True, default=str),
+                    requested_by,
+                    risk_tier,
+                    requested_at,
+                ),
+            )
+            self.conn.commit()
+
+    def approval_request(self, approval_id: str) -> dict[str, Any] | None:
+        with self.lock:
+            row = self.conn.execute(
+                "SELECT action_digest, action, requested_by, risk_tier, requested_at FROM approval_requests"
+                " WHERE approval_id = ?",
+                (approval_id,),
+            ).fetchone()
+        if row is None:
+            return None
+        return {
+            "action_digest": row[0],
+            "action": json.loads(row[1]),
+            "requested_by": row[2],
+            "risk_tier": row[3],
+            "requested_at": row[4],
+        }
+
+    def record_execution(
+        self, *, approval_id: str, executed_digest: str, executed_at: str, task_id: str | None
+    ) -> None:
+        """Raises sqlite3.IntegrityError if the approval was already used."""
+        with self.lock:
+            self.conn.execute(
+                "INSERT INTO approval_executions (approval_id, executed_digest, executed_at, task_id)"
+                " VALUES (?, ?, ?, ?)",
+                (approval_id, executed_digest, executed_at, task_id),
+            )
+            self.conn.commit()
+
+    def execution_of(self, approval_id: str) -> dict[str, Any] | None:
+        with self.lock:
+            row = self.conn.execute(
+                "SELECT executed_digest, executed_at, task_id FROM approval_executions WHERE approval_id = ?",
+                (approval_id,),
+            ).fetchone()
+        return {"executed_digest": row[0], "executed_at": row[1], "task_id": row[2]} if row else None
+
+    # -- idempotency ------------------------------------------------------------------
+
+    def idempotency_get(self, key: str) -> dict[str, Any] | None:
+        with self.lock:
+            row = self.conn.execute(
+                "SELECT request_digest, status, result FROM idempotency_keys WHERE key = ?", (key,)
+            ).fetchone()
+        if row is None:
+            return None
+        return {"request_digest": row[0], "status": row[1], "result": json.loads(row[2]) if row[2] else None}
+
+    def idempotency_claim(self, key: str, request_digest: str, now: str) -> bool:
+        """Mark a key in progress. False if another request holds it in progress or already completed it."""
+        with self.lock:
+            existing = self.conn.execute("SELECT status FROM idempotency_keys WHERE key = ?", (key,)).fetchone()
+            if existing is None:
+                self.conn.execute(
+                    "INSERT INTO idempotency_keys (key, request_digest, status, result, created_at, updated_at)"
+                    " VALUES (?, ?, 'in_progress', NULL, ?, ?)",
+                    (key, request_digest, now, now),
+                )
+            elif existing[0] == "failed":
+                self.conn.execute(
+                    "UPDATE idempotency_keys SET status = 'in_progress', request_digest = ?, updated_at = ?"
+                    " WHERE key = ?",
+                    (request_digest, now, key),
+                )
+            else:
+                return False
+            self.conn.commit()
+            return True
+
+    def idempotency_finish(self, key: str, status: str, result: dict[str, Any] | None, now: str) -> None:
+        with self.lock:
+            self.conn.execute(
+                "UPDATE idempotency_keys SET status = ?, result = ?, updated_at = ? WHERE key = ?",
+                (status, json.dumps(result, sort_keys=True, default=str) if result is not None else None, now, key),
+            )
+            self.conn.commit()
 
     # -- office state -------------------------------------------------------------
 

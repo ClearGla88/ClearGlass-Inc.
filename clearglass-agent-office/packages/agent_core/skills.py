@@ -13,8 +13,8 @@ Ground rules every handler follows:
 - A model rewrite (optional provider) is rejected if it introduces digits
   that were not in the template draft, a cheap guard against invented figures.
 
-Actions without a handler here (``code.commit_branch``, ``tests.run_sandbox``,
-``data.update_internal``) fail with a clear error instead of pretending to work.
+Actions without a handler here (``code.commit_branch``, ``data.update_internal``)
+fail with a clear error instead of pretending to work.
 External and critical actions route to the dry-run connector.
 """
 
@@ -168,6 +168,14 @@ def code_review(ctx: Ctx) -> dict[str, Any]:
             "outcome": verdict,
         },
     }
+
+
+def tests_run_sandbox(ctx: Ctx) -> dict[str, Any]:
+    """Run one allow-listed suite. The task id of a passing run is deploy evidence."""
+    suite = str(ctx["params"].get("suite", ""))
+    result = {**_office(ctx).sandbox.run(suite), "run_id": ctx.get("task_id")}
+    verdict = "passed" if result["passed"] else f"failed (exit {result['returncode']})"
+    return {"summary": f"Sandbox suite '{suite}' {verdict} in {result['duration_s']}s", "artifact": result}
 
 
 def deploy_plan(ctx: Ctx) -> dict[str, Any]:
@@ -465,7 +473,9 @@ def security_audit(ctx: Ctx) -> dict[str, Any]:
     from agent_core.security_audit import run_security_audit
 
     result = run_security_audit(
-        _office(ctx), include_control_tests=bool(ctx["params"].get("include_control_tests", True))
+        _office(ctx),
+        include_control_tests=bool(ctx["params"].get("include_control_tests", True)),
+        current_subject=ctx.get("task_id") or str(ctx.get("digest", ""))[:16],
     )
     counts = result["summary"]["by_severity"]
     title = "Security review: agent grants, tools, approval gates"
@@ -642,6 +652,7 @@ HANDLERS: dict[str, Any] = {
     "code.draft_patch": code_draft_patch,
     "code.review": code_review,
     "tests.plan": tests_plan,
+    "tests.run_sandbox": tests_run_sandbox,
     "deploy.plan": deploy_plan,
     "content.draft": content_draft,
     "content.schedule": content_schedule,

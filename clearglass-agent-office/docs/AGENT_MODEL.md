@@ -25,15 +25,34 @@ Every agent also receives the base grants: `memory: write`, `messaging: write`, 
 
 An action is allowed to *run* only if all of these hold (steps 1, 2, 4, 5 of the pipeline):
 
-1. The agent exists and is not paused or retired, and the office is not halted.
-2. `permissions[action.domain] >= action.level` from the policy catalog.
-3. No hard block, department rule, sandbox rule, source rule, or missing critical plan applies.
+1. The agent exists and is not paused or retired, the office is not halted, and the mission the request names
+   (if any) exists and is `active`.
+2. `permissions[action.domain] >= action.level` from the policy catalog, and the grant is not revoked, not
+   expired, and the request is inside the grant's limits (below).
+3. No hard block, department rule, sandbox or simulation rule, source rule, missing test evidence, or missing
+   critical plan applies.
 4. A tool in `agent.tools` declares the action and its `risk_ceiling` covers the action's tier.
 
 And it then *executes without a human* only if its tier is low or medium and no injection marker was found (step 6).
 
 `approve` is not a permission level. The config validator rejects it, the PostgreSQL schema's CHECK rejects it, and
 the Approval Desk refuses any decision whose principal is not a human with an approver role.
+
+### Grant limits
+
+Each `{domain: level}` entry is also a `Permission` record that can carry limits. Limits only narrow a grant;
+they never widen it. Set them in `config/org.json` (`grant_constraints`) or with `POST /agents/{id}/grants`.
+
+| Limit | Meaning | The request is denied when |
+|---|---|---|
+| `constraints.spend_limit_cents` | Cap on `amount_cents` for actions in the domain | `amount_cents` is not a non-negative integer, or is above the cap |
+| `constraints.payload_allowlist` | `{parameter: [allowed values]}` | the parameter is missing or empty, or any value (every item, for a list) is not on the list |
+| `expires_at` | The grant ends at this time | the clock has reached it |
+| `revoked_at`, `revoked_by` | Operator revocation, with a reason in the ledger (`grant.revoked`) | always, until the operator issues the grant again (`grant.issued`) |
+
+Shipped limits: Social Media may publish only to `channel` linkedin or x; the Sales Strategist may send outreach
+only on `channel` email. An agent edit that does not touch a domain keeps that domain's limits and expiry. A
+propose-level grant never files an approval for a higher-level action: the request is denied at step 2.
 
 ### Domains and the actions in them
 
@@ -44,11 +63,11 @@ the Approval Desk refuses any decision whose principal is not a human with an ap
 | docs | `docs.draft` (propose, low), `docs.update` (write, medium), `proposal.draft` (propose, low) |
 | reports | `briefing.compile`, `report.compile` (propose, low) |
 | code / tests | `code.draft_patch`, `code.review`, `tests.plan` (propose, low); `code.commit_branch` (write, medium); `tests.run_sandbox` (execute, medium) |
-| deploy | `deploy.plan` (propose, low); `deploy.staging` (execute, high); `deploy.production` (execute, critical) |
+| deploy | `deploy.plan` (propose, low); `deploy.staging` (execute, high); `deploy.production` (execute, critical; needs `test_evidence` naming a passed `tests.run_sandbox` task in the same mission) |
 | content / social | `content.draft` (propose, low); `content.schedule` (write, medium); `content.publish` (execute, high) |
 | outreach / email | `outreach.draft` (propose, low); `outreach.send`, `email.send` (execute, high) |
 | data | `data.update_internal` (write, medium); `data.export` (execute, high); `data.delete` (execute, critical) |
-| finance / contracts | `finance.purchase` (execute, high); `finance.move_money`, `pricing.change_live`, `contract.sign` (execute, critical) |
+| finance / contracts | `finance.purchase`, `finance.move_money`, `pricing.change_live`, `contract.sign` (execute, critical). The loader refuses a policy with a finance action below critical |
 | security / secrets | `security.audit_config` (read, low); `security.incident_draft` (propose, low); `security.modify_config`, `secrets.access` (execute, critical) |
 | workflow, memory, messaging, simulation | `workflow.create` (write, medium); `memory.write_task` (write, low); `memory.propose_long_term` (propose, low); `message.internal` (write, low); `simulation.run` (execute, low, sandbox only) |
 
@@ -85,6 +104,7 @@ from reviewed config (objectives, brand guidelines, ICP, approved sources, polic
 
 ## Audit trail per agent
 
-Every evaluation (`policy.evaluated`), hold (`approval.requested`), execution (`action.executed`), failure, and
+Every evaluation (`policy.evaluated`), hold (`approval.requested`), start of execution (`action.intent`), execution
+(`action.executed`), replay (`action.replayed`), grant change (`grant.issued`, `grant.revoked`), failure, and
 operator change to an agent (`agent.hired`, `agent.updated`, `agent.pause`, ...) is a ledger event.
 `GET /agents/{id}` returns the agent's recent events.
