@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-11",
+  "entity": {
+    "proposed_name": "ClearGlass Institute",
+    "statute": "Not-for-Profit Corporations Act, 2010 (Ontario)",
+    "registered_office_municipality": "Burlington, Ontario",
+    "corporation_number": null,
+    "incorporation_date": null,
+    "financial_year_end": null
+  },
+  "gates": {
+    "certificate_of_incorporation": {"met": false, "date": null, "evidence": null},
+    "three_director_consents": {"met": false, "date": null, "evidence": null},
+    "bylaws_adopted_in_minutes": {"met": false, "date": null, "evidence": null},
+    "cra_business_number": {"met": false, "date": null, "evidence": null},
+    "institute_bank_account": {"met": false, "date": null, "evidence": null},
+    "public_charity_disclaimer": {"met": false, "date": null, "evidence": null}
+  },
+  "milestones": {
+    "tax_and_name_opinion": {"met": false, "date": null, "evidence": null},
+    "name_search_report": {"met": false, "date": null, "evidence": null},
+    "articles_filed": {"met": false, "date": null, "evidence": null},
+    "initial_return_filed": {"met": false, "date": null, "evidence": null},
+    "minute_book_opened": {"met": false, "date": null, "evidence": null},
+    "separate_domain_and_code_host": {"met": false, "date": null, "evidence": null},
+    "first_public_brief_published": {"met": false, "date": null, "evidence": null}
+  },
+  "charity": {"registered": false, "date": null, "evidence": null},
+  "public_site": {"live": false, "url": null},
+  "named_partners": []
+}

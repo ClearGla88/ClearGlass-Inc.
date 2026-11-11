@@ -24,6 +24,7 @@ The website pages (`*.html`, `*.css`, `*.js`, `sitemap*.xml`, `CNAME`, `.nojekyl
 | Legal intelligence modules | `legal_intelligence_core.py`, `artemis_legal_agent_mvp.py` | Their tests are kept outside this repository |
 | Aegis Glass platform (Next.js, PostgreSQL) | `aegis-glass-platform/` | `npm test` (62 tests, incl. a PostgreSQL 16 server) and `npm run build` via `.github/workflows/aegis-glass-ci.yml`. Production sign-in is blocked until an OIDC adapter exists; see `aegis-glass-platform/docs/ARCHITECTURE.md` |
 | ClearGlass Agent Office (governed multi-agent operations: FastAPI, Next.js console, PostgreSQL schema) | `clearglass-agent-office/` | `pytest` (143 tests, 10 of them against a PostgreSQL 16 server), a Daily Operations Loop smoke run, and the console's `npm run build` via `.github/workflows/agent-office-ci.yml`. External connectors are dry-run; see `clearglass-agent-office/README.md` |
+| ClearGlass Institute founding kit (draft incorporation package for a separate Ontario not-for-profit; whether it exists yet is in `clearglass-institute/STATUS.md`) | `clearglass-institute/` | `clearglass-institute/tests/` (39 tests, run by Baseline CI) and `python3 clearglass-institute/tools/institute_kit.py check`. The checker ties every status statement to `data/status.json` and every legal rule to a source register; see `clearglass-institute/README.md` |
 
 **Does not run in this tree**
 
