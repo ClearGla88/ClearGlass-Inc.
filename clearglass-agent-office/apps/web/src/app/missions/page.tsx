@@ -26,6 +26,7 @@ export default async function MissionsPage() {
               title={m.title}
               actions={<>
                 {m.mode === "simulation" && <Chip color="var(--cg-paused)">simulation: no production or external actions</Chip>}
+                {m.mode === "plan_first" && <Chip color="var(--cg-paused)">plan-first: research and drafts only</Chip>}
                 <StatusChip status={m.status === "active" ? (m.workflow_status ?? m.status) : m.status} />
                 {m.status === "active" && <ActionButton path={`missions/${m.id}/run`}>Advance</ActionButton>}
                 <MissionLifecycle id={m.id} status={m.status} />

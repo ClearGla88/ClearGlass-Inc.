@@ -101,6 +101,8 @@ class Policy:
     modifiers: tuple[Modifier, ...]
     injection_markers: tuple[str, ...]
     unknown_action: dict[str, Any]
+    # Restricted mission modes: mode name -> {allowed_levels, also_allowed_actions, deny_spend, reason}.
+    mission_modes: dict[str, dict[str, Any]] = field(default_factory=dict)
     shadow_rules: tuple[ShadowRule, ...] = ()
     shadow_version: str | None = None
     raw: dict[str, Any] = field(repr=False, default_factory=dict)
@@ -180,6 +182,52 @@ def _parse_modifiers(entries: Any, problems: list[str]) -> tuple[Modifier, ...]:
             )
         )
     return tuple(out)
+
+
+RESERVED_MISSION_MODES = ("production", "simulation")
+
+
+def _parse_mission_modes(raw: Any, actions: dict[str, ActionSpec], problems: list[str]) -> dict[str, dict[str, Any]]:
+    """Restricted mission modes can only narrow what a mission may do, never widen it."""
+    if not isinstance(raw, dict):
+        problems.append("mission_modes must be an object")
+        return {}
+    out: dict[str, dict[str, Any]] = {}
+    for name, rules in raw.items():
+        if name in RESERVED_MISSION_MODES:
+            problems.append(f"mission mode {name!r} is built in and cannot be redefined")
+            continue
+        if not isinstance(rules, dict):
+            problems.append(f"mission mode {name}: rules must be an object")
+            continue
+        unknown = set(rules) - {"allowed_levels", "also_allowed_actions", "deny_spend", "reason"}
+        if unknown:
+            problems.append(f"mission mode {name}: unknown keys {sorted(unknown)}")
+        levels = rules.get("allowed_levels")
+        if not isinstance(levels, list) or not levels or any(lv not in LEVEL_ORDER for lv in levels):
+            problems.append(f"mission mode {name}: allowed_levels must be a non-empty list of permission levels")
+            levels = []
+        extra = rules.get("also_allowed_actions", [])
+        if not isinstance(extra, list):
+            problems.append(f"mission mode {name}: also_allowed_actions must be a list")
+            extra = []
+        for action_type in extra:
+            spec = actions.get(action_type)
+            if spec is None:
+                problems.append(f"mission mode {name}: also_allowed_actions names unknown action {action_type!r}")
+            elif spec.external or spec.tier in ("high", "critical"):
+                problems.append(
+                    f"mission mode {name}: {action_type!r} is external or high risk and cannot be an exception"
+                )
+        if not str(rules.get("reason") or "").strip():
+            problems.append(f"mission mode {name}: reason is required")
+        out[str(name)] = {
+            "allowed_levels": tuple(levels),
+            "also_allowed_actions": tuple(extra),
+            "deny_spend": bool(rules.get("deny_spend", True)),
+            "reason": str(rules.get("reason") or ""),
+        }
+    return out
 
 
 def _parse_shadow(raw: dict[str, Any] | None, problems: list[str]) -> tuple[tuple[ShadowRule, ...], str | None]:
@@ -270,6 +318,7 @@ def parse_policy(raw: dict[str, Any], shadow: dict[str, Any] | None = None) -> P
         problems.append("untrusted_input.force_approval must be true")
 
     modifiers = _parse_modifiers(raw.get("escalation_modifiers", []), problems)
+    mission_modes = _parse_mission_modes(raw.get("mission_modes") or {}, actions, problems)
     shadow_rules, shadow_version = _parse_shadow(shadow, problems)
 
     if problems:
@@ -285,6 +334,7 @@ def parse_policy(raw: dict[str, Any], shadow: dict[str, Any] | None = None) -> P
         modifiers=modifiers,
         injection_markers=markers,
         unknown_action=unknown,
+        mission_modes=mission_modes,
         shadow_rules=shadow_rules,
         shadow_version=shadow_version,
         raw=raw,

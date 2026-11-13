@@ -126,7 +126,7 @@ class GrantView:
 class MissionView:
     id: str
     status: str  # active | paused | cancelled | completed
-    mode: str = "production"  # production | simulation
+    mode: str = "production"  # production | simulation | a restricted mode from policy.mission_modes
 
 
 @dataclass(frozen=True)
@@ -332,6 +332,18 @@ class PolicyEngine:
                 targets_prod = any(request.params.get(k) == "production" for k in PRODUCTION_PARAMS)
                 if spec.external or targets_prod:
                     policy_problems.append("a simulation mission cannot take external or production actions")
+            mode_rules = p.mission_modes.get(state.mission.mode) if state.mission is not None else None
+            if state.mission is not None and state.mission.mode not in ("production", "simulation") and not mode_rules:
+                # A mission in a mode this policy does not define cannot be reasoned about. Fail closed.
+                policy_problems.append(f"mission mode '{state.mission.mode}' is not defined by this policy")
+            if mode_rules:
+                level_ok = spec.level in mode_rules["allowed_levels"]
+                excepted = request.action_type in mode_rules["also_allowed_actions"]
+                if spec.external or not (level_ok or excepted):
+                    policy_problems.append(f"{state.mission.mode} mission: {mode_rules['reason']}")
+                amount = request.params.get("amount_cents", 0)
+                if mode_rules["deny_spend"] and (not _is_amount(amount) or amount > 0):
+                    policy_problems.append(f"{state.mission.mode} mission: no spending in this mode")
             if spec.lawful_sources_only:
                 source = request.params.get("source")
                 if source not in state.approved_sources:

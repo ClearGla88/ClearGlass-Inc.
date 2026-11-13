@@ -544,8 +544,9 @@ class Office:
             raise OfficeError(f"unknown department {spec['department']!r}")
         if self.agent(spec["owner"]) is None:
             raise OfficeError(f"unknown owner {spec['owner']!r}")
-        if spec.get("mode", "production") not in MISSION_MODES:
-            raise OfficeError(f"mission mode must be one of {MISSION_MODES}")
+        modes = (*MISSION_MODES, *self.policy.mission_modes)
+        if spec.get("mode", "production") not in modes:
+            raise OfficeError(f"mission mode must be one of {modes}")
         now = self.clock.now()
         deadline = spec.get("deadline")
         if not deadline and spec.get("deadline_days") is not None:

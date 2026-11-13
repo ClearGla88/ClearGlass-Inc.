@@ -9,7 +9,7 @@ Approval Desk until a named human approves that exact payload.
 
 CLEARGLASS: See Through Everything
 
-## Status (verified 2026-11-10)
+## Status (verified 2026-11-13)
 
 | Area | State | Verified by |
 |---|---|---|
@@ -25,6 +25,9 @@ CLEARGLASS: See Through Everything
 | Approval integrity (immutable request, one decision, one use, duplicate requests merged) | Runs | `tests/test_governance_controls.py`, `tests/test_postgres_schema.py` |
 | Shadow policies (evaluated on every request, never enforced) with a divergence report | Runs | `tests/test_governance_controls.py`, `GET /policy/shadow-report` |
 | Idempotency keys (replay, conflict, retry after failure) | Runs | `tests/test_governance_controls.py`, `tests/test_api.py` |
+| Plan-first missions (research, analysis and drafts only; every send, publish, record write and spend is denied) | Runs | `tests/test_plan_first.py`, `tests/test_postgres_schema.py` |
+| Plan-first contract check for a revenue plan payload (`office.py plan-check`) | Runs. The stored plan is valid and **not ready**: approval is pending | `tests/test_plan_first.py`, [docs/REVENUE_GATEWAY.md](docs/REVENUE_GATEWAY.md) |
+| Consent and suppression checks, budget reservation ledger, per-action parameter schemas | **Not built.** Required before any live connector; see [docs/REVENUE_GATEWAY.md](docs/REVENUE_GATEWAY.md) | — |
 | Workflow engine (DAG, waves, retries, downstream blocking, input references) | Runs | `tests/test_workflow.py` |
 | Daily Operations Loop (8 agents, 4 departments, 1 approval, briefing, end-of-day report) | Runs | `tests/test_daily_loop.py`, CI smoke run |
 | Memory (task memory, operator-approved company memory, secret rejection) | Runs | `tests/test_memory_and_simulation.py` |
@@ -56,13 +59,14 @@ OFFICE_API_URL=http://127.0.0.1:8000 npm run dev    # console on http://localhos
 Without `OFFICE_API_URL` the console renders the committed demo snapshot (fictional sample data) read-only.
 `python office.py demo` rebuilds that snapshot from a fresh deterministic run.
 
-Other commands: `verify-audit`, `approve <id> --reason ...`, `emergency-stop --reason ...`, `release-stop --reason ...`.
+Other commands: `verify-audit`, `approve <id> --reason ...`, `emergency-stop --reason ...`, `release-stop --reason ...`,
+`plan-check <plan.json>` (validates a plan-first payload; exit 0 ready, 2 valid but blocked, 1 invalid).
 
 ### Checks
 
 ```bash
 ruff check . && ruff format --check .
-python -m pytest -rs                                       # 133 tests; 10 more with a PostgreSQL server:
+python -m pytest -rs                                       # 165 tests; 11 more with a PostgreSQL server:
 OFFICE_TEST_PG_URL=postgresql://user:pass@localhost:5432/postgres python -m pytest -rs
 cd apps/web && npm audit --audit-level=high && npm run typecheck && npm run build
 ```
@@ -104,6 +108,7 @@ clearglass-agent-office/
   office.py            CLI: daily-loop, serve, demo, verify-audit, approve, emergency-stop
   config/              company.json, org.json (7 departments, 35 agents, 12 rooms), policy.json, tools.json,
                        policy.shadow.json (candidate rules, never enforced), sandbox.json (allow-listed test suites)
+  plans/               plan-first payloads awaiting approval, with their decision records and mission templates
   demo/                demo missions and a fictional prospect list
   packages/
     agent_core/        models, office runtime, governed executor, approval desk, workflow engine, skills, reports
@@ -112,6 +117,7 @@ clearglass-agent-office/
     memory_vault/      task memory and operator-approved company memory
     tool_registry/     tool registry, dry-run connector, secret references
     simulation/        seeded what-if scenarios (no imports from the runtime)
+    plan_contract/     strict validator for a plan-first payload (no imports from the runtime)
     ui/                design tokens for the console
   apps/
     api/               FastAPI service
@@ -119,7 +125,7 @@ clearglass-agent-office/
     web/               Next.js console
   infra/               PostgreSQL schema, Dockerfiles, compose stack
   docs/                the deliverables above
-  tests/               143 tests (10 need PostgreSQL)
+  tests/               176 tests (11 need PostgreSQL)
 ```
 
 The brief named the Python packages `agent-core`, `policy-engine`, `memory`, `tools`, and `audit`. They are

@@ -203,7 +203,7 @@ class Mission(Record):
     approval_rules: list[str] = field(default_factory=list)
     goal_ids: list[str] = field(default_factory=list)
     status: str = MissionStatus.ACTIVE
-    mode: str = "production"  # production | simulation
+    mode: str = "production"  # production | simulation | plan_first (see policy.mission_modes)
     workflow_id: str = ""
     created_by: str = ""
     created_at: str = ""
