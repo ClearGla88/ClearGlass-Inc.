@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "clearshield"
+version = "1.0.0.dev0"
+description = "Local, defensive monitoring for Linux hosts you own: file integrity, TCP listeners, SSH authentication failures, WAV and opt-in microphone digital levels, HMAC-chained audit log."
+readme = "README.md"
+requires-python = ">=3.10"
+# Licensing follows the repository LICENSE (ClearGlass Inc. proprietary).
+dependencies = []  # core uses the Python standard library only
+
+[project.optional-dependencies]
+# Live microphone analysis only. Also needs the system PortAudio library on Linux.
+audio-live = ["sounddevice>=0.5"]
+test = ["pytest>=8"]
+
+[project.scripts]
+clearshield = "clearshield_core.cli:main"
+
+[tool.setuptools]
+packages = ["clearshield_core"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--import-mode=importlib"

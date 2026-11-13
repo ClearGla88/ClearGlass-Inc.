@@ -1,0 +1,43 @@
+{
+  "_comment": "ClearShield sample configuration with the conservative defaults. Copy over <state-dir>/config.json and edit; unknown keys are rejected. See README.md, Configuration.",
+  "integrity": {
+    "max_file_bytes": 67108864
+  },
+  "auth": {
+    "enabled": true,
+    "sources": [
+      "auto"
+    ],
+    "failure_threshold": 10,
+    "window_seconds": 600,
+    "initial_lookback_seconds": 3600,
+    "max_bytes_per_scan": 52428800,
+    "journal_timeout_seconds": 30,
+    "record_invalid_usernames": false,
+    "max_tracked_sources": 10000
+  },
+  "listeners": {
+    "enabled": true,
+    "attribute_processes": true,
+    "attribution_time_budget_seconds": 5.0,
+    "allow": []
+  },
+  "audio": {
+    "window_ms": 1000,
+    "sustained_dbfs": -12.0,
+    "sustained_seconds": 10.0,
+    "clip_run_samples": 3,
+    "max_bytes": 2147483648,
+    "max_seconds": 7200,
+    "live": {
+      "enabled": false,
+      "max_seconds": 600,
+      "sample_rate": 48000,
+      "channels": 1
+    }
+  },
+  "audit": {
+    "max_log_bytes": 67108864,
+    "max_findings_per_record": 200
+  }
+}
