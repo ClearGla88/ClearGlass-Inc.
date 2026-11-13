@@ -2,7 +2,7 @@
 
 ## Decision (2026-11-13)
 
-**Evaluation-ready for testing on hosts you own**, conditional on the ClearShield CI workflow passing on Python 3.10–3.13 (pending at the time of writing). **Not production-ready.**
+**Evaluation-ready for testing on hosts you own.** ClearShield CI passed on Python 3.10, 3.11, 3.12 and 3.13 on 2026-11-13 (pull request ClearGla88/ClearGlass-Inc.#28, head `0a770fd`), alongside every Baseline CI job. **Not production-ready.**
 
 This is a clean-room `1.0.0.dev0`. It is not the original v1 code, and the results reported for that code (nine tests, one Linux smoke test) were never verified here and are not claimed.
 
@@ -12,27 +12,28 @@ Environment: Ubuntu 24.04.5 LTS container, kernel 6.18.44, x86-64 (little-endian
 
 | Check | Command (from the repository root) | Result |
 |---|---|---|
-| Unit and integration, Python 3.11.18, root | `python3.11 -m pytest -q -p no:cacheprovider clearshield/tests` | 190 passed, 1 skipped (the real-permission test, skipped because root ignores permissions) |
-| Same, Python 3.12.3, root | `python3.12 -m pytest …` | 190 passed, 1 skipped |
-| Same, Python 3.13.18, root | `python3.13 -m pytest …` | 190 passed, 1 skipped |
-| Same, Python 3.13.18, uid 65534 (`nobody`) | `setpriv --reuid=65534 --regid=65534 --clear-groups python -m pytest … clearshield/tests` | 191 passed |
-| Whole repository suite (what Baseline CI runs), 3.11 and 3.13 | `python -m pytest -q` | 292 passed, 1 skipped (102 existing tests, all still passing, plus ClearShield's 191) |
+| Unit and integration, Python 3.11.18, root | `python3.11 -m pytest -q -p no:cacheprovider clearshield/tests` | 190 passed, 2 skipped: the real-permission test (root ignores permissions) and the live IPv6 test (no IPv6 in this container) |
+| Same, Python 3.12.3, root | `python3.12 -m pytest …` | 190 passed, 2 skipped |
+| Same, Python 3.13.18, root | `python3.13 -m pytest …` | 190 passed, 2 skipped |
+| Same, Python 3.13.18, uid 65534 (`nobody`) | `setpriv --reuid=65534 --regid=65534 --clear-groups python -m pytest … clearshield/tests` | 191 passed, 1 skipped (live IPv6) |
+| Whole repository suite (what Baseline CI runs), 3.13 | `python -m pytest -q` | 292 passed, 2 skipped (102 existing tests, all still passing, plus ClearShield's 192) |
+| ClearShield CI on a GitHub-hosted Ubuntu 24.04.5 runner (kernel 7.0.0-1017-azure), unprivileged uid 1001, Python 3.10.22 | `.github/workflows/clearshield-ci.yml` | At `0a770fd`: 191 passed (all tests at that commit), smoke PASS with `tcp6 ok` and `/var/log/auth.log` read as `ok`, ruff pass, package installs. 3.11, 3.12 and 3.13 jobs also green. The live IPv6 test was added afterwards and runs in the same workflow |
 | Linux smoke, root and uid 65534 | `python3 clearshield/tests/smoke/linux_smoke.py` | PASS for both. As `nobody`, attribution was denied for 76 processes and the listeners were still reported |
 | Lint | `ruff check --select E9,F .` (ruff 0.16.9) | pass |
 | Compile every tracked file, 3.11 and 3.13 | `git ls-files -z '*.py' \| xargs -0 python -m py_compile` | pass |
 | Repository hygiene | `python3 tools/repo_hygiene.py` | 0 findings |
 | Package install, Python 3.11 venv | `pip install ./clearshield && clearshield --version` | `ClearShield 1.0.0.dev0`, no dependencies installed |
 | Tests catch real defects (fault injection) | Bugs injected one at a time: skipping the record-tag check, skipping the sequence check, decoding IPv4 big-endian, treating 8-bit audio as signed, skipping state authentication, removing the end anchor from the address match | Each made the suite fail (1–5 failures each). A no-op control passed |
-| Python 3.10 | — | **Not run locally** (not installed). Covered only by `.github/workflows/clearshield-ci.yml` |
+| Python 3.10 | — | Not installed locally; verified only in CI (row above) |
 
 ## Not yet verified (before relying on these layers)
 
-- [ ] Real OpenSSH log lines on each target distribution, including the `sshd-session` program name used by newer OpenSSH. Only synthetic lines have been tested.
+- [ ] Real OpenSSH log lines on each target distribution, including the `sshd-session` program name used by newer OpenSSH. Only synthetic lines have been parsed. The CI runner's `/var/log/auth.log` was read successfully as a non-root user, but it contained no `sshd` entries.
 - [ ] A systemd journal that actually contains entries, read as an unprivileged member of `systemd-journal`/`adm`. Only simulated `journalctl` output has been tested.
-- [ ] IPv6 listener tables on a live kernel. Only fixture tables have been tested.
+- [ ] IPv6 listener decoding on a live kernel: `test_live_kernel_ipv6_listener_is_decoded` runs in ClearShield CI. Tick this once a CI run shows it passed rather than skipped (all ClearShield tests passing with none skipped on the unprivileged runner).
 - [ ] A big-endian host.
 - [ ] Live microphone hardware: opening, permission denial, unplugging mid-session. Only a simulated stream has been tested.
-- [ ] Python 3.10 (CI).
+- [x] Python 3.10: 3.10.22 in CI, 2026-11-13.
 
 ## Manual deployment checks (per host, by a person)
 

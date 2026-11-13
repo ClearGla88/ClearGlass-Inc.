@@ -207,7 +207,7 @@ The session length is bounded by `--seconds` and `audio.live.max_seconds`. Sampl
 
 | Layer | Command | Notes |
 |---|---|---|
-| Unit and integration | `python3 -m pytest -q clearshield/tests` (from the repository root), or `python3 -m pytest -q` here | Synthetic fixtures and temporary directories only. One test is skipped as root, because root ignores file permissions; run the suite unprivileged as well. |
+| Unit and integration | `python3 -m pytest -q clearshield/tests` (from the repository root), or `python3 -m pytest -q` here | Synthetic fixtures and temporary directories only. Two tests can skip: the real-permission test under root (root ignores file permissions), and the live IPv6 test on hosts without IPv6. Run the suite unprivileged as well. |
 | Linux smoke | `python3 tests/smoke/linux_smoke.py` | Real `/etc/hosts`, the real listener table and real auth sources, using a throwaway state directory. Run it as your monitoring user and as root. |
 | Manual deployment checks | RELEASE_CHECKLIST.md | Run by a person on each target host. |
 

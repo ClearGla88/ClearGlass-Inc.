@@ -127,6 +127,33 @@ def test_parse_allow_rejects_bad_entries(bad):
         listeners.parse_allow([bad])
 
 
+def _ipv6_loopback_available() -> bool:
+    if not socket.has_ipv6 or not os.path.exists("/proc/net/tcp6"):
+        return False
+    try:
+        with socket.socket(socket.AF_INET6, socket.SOCK_STREAM) as probe:
+            probe.bind(("::1", 0))
+        return True
+    except OSError:
+        return False
+
+
+@pytest.mark.skipif(not _ipv6_loopback_available(), reason="needs IPv6 loopback and /proc/net/tcp6")
+def test_live_kernel_ipv6_listener_is_decoded():
+    sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+    try:
+        sock.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 1)
+        sock.bind(("::1", 0))
+        sock.listen()
+        port = sock.getsockname()[1]
+        result = listeners.collect("/proc", attribute=False)
+        assert result["sources"]["tcp6"] == "ok" and result["malformed_lines"] == 0
+        entry = {e["id"]: e for e in result["listeners"]}[f"tcp6/[::1]:{port}"]
+        assert entry["scope"] == "loopback" and entry["address"] == "::1"
+    finally:
+        sock.close()
+
+
 @pytest.mark.skipif(not os.path.exists("/proc/net/tcp"), reason="needs Linux /proc")
 def test_live_kernel_listener_is_seen():
     sock = socket.socket()

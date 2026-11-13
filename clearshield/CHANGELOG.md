@@ -17,7 +17,7 @@ A clean-room implementation of the ClearShield v1 specification. The original v1
 - Opt-in live microphone analysis (two-step consent, in memory, sessions logged).
 - An HMAC-SHA256 chained audit log, HMAC-authenticated state, key rotation, segment archive and purge, and off-host checkpoints.
 - The README, SECURITY.md, PRIVACY.md, a sample configuration, and the release checklist.
-- 191 tests (unit and integration), a Linux smoke script, and a CI workflow for Python 3.10–3.13.
+- 192 tests (unit and integration), a Linux smoke script, and a CI workflow for Python 3.10–3.13.
 
 ### Fixed during development (found by testing, before any release)
 
