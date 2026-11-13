@@ -1,6 +1,6 @@
 # Articles of incorporation: fill-in sheet
 
-> **Status notice.** ClearGlass Institute is a proposed organization. It is not yet incorporated and is not a registered charity. Files in this folder are working drafts and templates, not legal advice. Signed originals belong in the minute book, not in this repository.
+> **Status notice.** ClearGlass Institute is a proposed organization. It has not been incorporated. ClearGlass Institute is not currently a registered charity with the Canada Revenue Agency. Donations are not eligible for official charitable tax receipts. Documents in this folder are drafts and templates, not legal advice. Signed originals belong in the minute book, not in this repository.
 
 Working copy of what goes into the Articles of Incorporation under ONCA (Form 5270) [L-07]. Nothing here has been filed. Three items are open and must be closed before filing, because articles cost money and a members' vote to amend.
 

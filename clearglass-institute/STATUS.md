@@ -1,33 +1,36 @@
 # ClearGlass Institute: formation status
 
-> **Status notice.** ClearGlass Institute is a proposed organization. It is not yet incorporated and is not a registered charity. Files in this folder are working drafts and templates, not legal advice. Signed originals belong in the minute book, not in this repository.
+> **Status notice.** ClearGlass Institute is a proposed organization. It has not been incorporated. ClearGlass Institute is not currently a registered charity with the Canada Revenue Agency. Donations are not eligible for official charitable tax receipts. Documents in this folder are drafts and templates, not legal advice. Signed originals belong in the minute book, not in this repository.
 
 Record as of 2026-11-11. Source: `data/status.json`.
 
-## The six tests
+## Go/no-go conditions
 
-The founding kit calls the Institute real only when all six are true.
+The Institute may describe itself as an operating not-for-profit corporation only when all ten are recorded. Detail: `package/12_VALIDATION_CHECKLIST.md`.
 
-| # | Test | State | Evidence |
+| # | Condition | State | Evidence |
 |---|---|---|---|
-| 1 | Ontario certificate of incorporation in hand | Not yet |  |
-| 2 | Three directors' consents on file | Not yet |  |
-| 3 | By-laws adopted in minutes | Not yet |  |
-| 4 | CRA business number issued | Not yet |  |
-| 5 | Bank account in the Institute's name | Not yet |  |
-| 6 | Public disclaimer that it is not a registered charity | Not yet |  |
+| 1 | Ontario certificate of incorporation received | Not yet |  |
+| 2 | Articles filed and retained | Not yet |  |
+| 3 | Three director consents on file | Not yet |  |
+| 4 | By-laws adopted | Not yet |  |
+| 5 | Organizational minutes signed | Not yet |  |
+| 6 | CRA Business Number obtained | Not yet |  |
+| 7 | Bank account opened in the Institute's legal name | Not yet |  |
+| 8 | Public "not a registered charity" disclaimer live | Not yet |  |
+| 9 | Conflict-of-interest policy adopted | Not yet |  |
+| 10 | Annual-return calendar created | Not yet |  |
 
-**Result: 0 of 6 tests met. Treat the kit as a plan, not an organization.**
+**Result: NO-GO. 0 of 10 conditions recorded. The package is a plan, not an organization.**
 
 ## Other tracked steps
 
 | Step | State | Evidence |
 |---|---|---|
-| Written advice on tax status, name and dissolution clause | Not yet |  |
-| Ontario-biased NUANS report obtained, or a number name chosen | Not yet |  |
-| Articles of incorporation filed | Not yet |  |
+| Written legal and tax advice on the open questions | Not yet |  |
+| Ontario-biased NUANS report obtained | Not yet |  |
 | Initial return filed | Not yet |  |
-| Minute book opened | Not yet |  |
+| Minute book and registers opened | Not yet |  |
 | Domain and code host separate from ClearGlass Inc. | Not yet |  |
 | First public education brief published | Not yet |  |
 
@@ -41,11 +44,30 @@ The founding kit calls the Institute real only when all six are true.
 - Financial year end: not chosen
 - Charity registration: Not registered
 - Public site: Not live
-- Partners with a written agreement on record: 0
+- Organizations with a written agreement on record: 0
 
 ## Next step
 
-Written advice on tax status, name and dissolution clause. See `operations/RUNBOOK.md`.
+Written legal and tax advice on the open questions. See `package/09_14_DAY_EXECUTION_PLAN.md`.
+
+## Open items in the documents
+
+Each tag marks something a person still has to confirm, review or decide. The decisions are collected in `package/13_OPEN_QUESTIONS.md`.
+
+| Document | CONFIRM | LEGAL REVIEW | DECISION REQUIRED |
+|---|---|---|---|
+| `package/01_EXECUTIVE_BRIEF.md` | 1 | 1 | 1 |
+| `package/03_BYLAWS.md` | 0 | 5 | 4 |
+| `package/04_CONFLICT_AND_RELATED_PARTY_POLICY.md` | 0 | 4 | 1 |
+| `package/05_FOUNDING_BOARD_PACKAGE.md` | 1 | 1 | 3 |
+| `package/06_BANKING_AND_FINANCIAL_CONTROLS.md` | 4 | 3 | 2 |
+| `package/07_PUBLIC_LAUNCH_PAGE_COPY.md` | 3 | 0 | 2 |
+| `package/08_FIRST_PUBLIC_BRIEF_OUTLINE.md` | 7 | 1 | 4 |
+| `package/09_14_DAY_EXECUTION_PLAN.md` | 1 | 0 | 2 |
+| `package/10_90_DAY_OPERATING_PLAN.md` | 0 | 1 | 2 |
+| `package/11_RISK_AND_COMPLIANCE_REGISTER.md` | 0 | 3 | 2 |
+| `package/13_OPEN_QUESTIONS.md` | 12 | 15 | 17 |
+| **Total** | **29** | **34** | **40** |
 
 ## Compliance dates
 
