@@ -1878,9 +1878,9 @@
    {
     "actor": "sim.business-war-gamer",
     "actor_type": "agent",
-    "event_id": "evt_3c6e57dbe98e4a24",
+    "event_id": "evt_9a57d6f5b24c46f3",
     "event_type": "action.executed",
-    "hash": "45e2f250e1dd6723dfcbb94ba338c90e2e20484c36c63ef61672bd71ce530ca8",
+    "hash": "8393959555103daa69a0ba6cf17334c7b5b666f2ab30f741684a38c167aff6c5",
     "payload": {
      "action_type": "simulation.run",
      "approval_id": null,
@@ -1890,8 +1890,8 @@
      "summary": "Simulation sim_0085: recommend 'Entry tier at $950/mo'",
      "tool_id": "simulation.sandbox"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "620e1f5a868387a635a84d6c82b0f7697c36def3be8f6250cb38e5c6a3981ca7",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "70ebed299afa43cb9db1e38d7f193061d4fac7ef024ab816fbde9a0bb772eb12",
     "risk_tier": "low",
     "seq": 80,
     "subject": "7f30817d2a52fd3d",
@@ -1900,17 +1900,17 @@
    {
     "actor": "sim.business-war-gamer",
     "actor_type": "agent",
-    "event_id": "evt_cfa6f50ce2ad493b",
+    "event_id": "evt_40515e6bf9014392",
     "event_type": "action.intent",
-    "hash": "620e1f5a868387a635a84d6c82b0f7697c36def3be8f6250cb38e5c6a3981ca7",
+    "hash": "70ebed299afa43cb9db1e38d7f193061d4fac7ef024ab816fbde9a0bb772eb12",
     "payload": {
      "action_type": "simulation.run",
      "approval_id": null,
      "digest": "7f30817d2a52fd3db4103fb0f4fc528de157566c29a73ec9b6c67a97fe4d01c3",
      "tool_id": "simulation.sandbox"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "728e757a8cbc8a02c1f207110fe0fb55050c49571bb01db1f70bd6cb1fff806d",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "59441a58fe927e12f44fb3312ded718a08ccb3e38c122d170bf9b4cdc54c8f5f",
     "risk_tier": "low",
     "seq": 79,
     "subject": "7f30817d2a52fd3d",
@@ -1919,9 +1919,9 @@
    {
     "actor": "sim.business-war-gamer",
     "actor_type": "agent",
-    "event_id": "evt_3d19c56b682344ef",
+    "event_id": "evt_d5b759084c264495",
     "event_type": "policy.evaluated",
-    "hash": "728e757a8cbc8a02c1f207110fe0fb55050c49571bb01db1f70bd6cb1fff806d",
+    "hash": "59441a58fe927e12f44fb3312ded718a08ccb3e38c122d170bf9b4cdc54c8f5f",
     "payload": {
      "action_type": "simulation.run",
      "digest": "7f30817d2a52fd3db4103fb0f4fc528de157566c29a73ec9b6c67a97fe4d01c3",
@@ -1961,8 +1961,8 @@
      ],
      "tool_id": "simulation.sandbox"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "834b4440e64b2d21389baa5f7bf3a3b212dd84a103cd4b335e1832844d2a1beb",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "058450335bb679ea27dc43f69dc57c23d3a31f3178f683fbb8bf474dbde90640",
     "risk_tier": "low",
     "seq": 78,
     "subject": "7f30817d2a52fd3d",
@@ -1971,16 +1971,16 @@
    {
     "actor": "system.office",
     "actor_type": "system",
-    "event_id": "evt_b11a28dd16ba4abc",
+    "event_id": "evt_f9facf96f6be4b81",
     "event_type": "daily_loop.finished",
-    "hash": "834b4440e64b2d21389baa5f7bf3a3b212dd84a103cd4b335e1832844d2a1beb",
+    "hash": "058450335bb679ea27dc43f69dc57c23d3a31f3178f683fbb8bf474dbde90640",
     "payload": {
      "audit_ok": true,
      "briefing_id": "rpt_0033",
      "eod_id": "rpt_0082"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "48a168ac360106fafe89aef0bc775e0e87ef1443694796fd0319668a8a9b1003",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "c88ec6469cf610e3207f6ef1c4582ae3244c2bd1c7eba70cd6ded850eb97f561",
     "risk_tier": null,
     "seq": 77,
     "subject": "2026-11-06",
@@ -1989,9 +1989,9 @@
    {
     "actor": "exec.chief-of-staff",
     "actor_type": "agent",
-    "event_id": "evt_50f299ed6c7241d6",
+    "event_id": "evt_b44ed46cf06b433e",
     "event_type": "action.executed",
-    "hash": "48a168ac360106fafe89aef0bc775e0e87ef1443694796fd0319668a8a9b1003",
+    "hash": "c88ec6469cf610e3207f6ef1c4582ae3244c2bd1c7eba70cd6ded850eb97f561",
     "payload": {
      "action_type": "report.compile",
      "approval_id": null,
@@ -2001,8 +2001,8 @@
      "summary": "End-of-day operations report: 2026-11-06",
      "tool_id": "docs.workspace"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "9128af0f1ca2a0ffc6c59d5f466917e37c85c598138b9632e67c5b434c7e9aca",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "3dc281cfb444f37ba9d090f8dd2e7803603cb684a6d8e055f954961f3bff9f9c",
     "risk_tier": "low",
     "seq": 76,
     "subject": "4a569671e0ab385b",
@@ -2011,17 +2011,17 @@
    {
     "actor": "exec.chief-of-staff",
     "actor_type": "agent",
-    "event_id": "evt_d0719a8c91e44abf",
+    "event_id": "evt_f3467caf185648f0",
     "event_type": "action.intent",
-    "hash": "9128af0f1ca2a0ffc6c59d5f466917e37c85c598138b9632e67c5b434c7e9aca",
+    "hash": "3dc281cfb444f37ba9d090f8dd2e7803603cb684a6d8e055f954961f3bff9f9c",
     "payload": {
      "action_type": "report.compile",
      "approval_id": null,
      "digest": "4a569671e0ab385bf57a69fe250d13086b15a0a261c20b1d867770a638a2deaa",
      "tool_id": "docs.workspace"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "ebf40b95822ed52faa8e57abff3f00fc43c316a498698a34203502c6637c49fe",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "0d7fbd249a1a1eea345702fdf31d28b43b11334e562259a0be6555ae7dabcd4e",
     "risk_tier": "low",
     "seq": 75,
     "subject": "4a569671e0ab385b",
@@ -2030,9 +2030,9 @@
    {
     "actor": "exec.chief-of-staff",
     "actor_type": "agent",
-    "event_id": "evt_9dc934981e66479b",
+    "event_id": "evt_6866f9fa49bc4511",
     "event_type": "policy.evaluated",
-    "hash": "ebf40b95822ed52faa8e57abff3f00fc43c316a498698a34203502c6637c49fe",
+    "hash": "0d7fbd249a1a1eea345702fdf31d28b43b11334e562259a0be6555ae7dabcd4e",
     "payload": {
      "action_type": "report.compile",
      "digest": "4a569671e0ab385bf57a69fe250d13086b15a0a261c20b1d867770a638a2deaa",
@@ -2072,8 +2072,8 @@
      ],
      "tool_id": "docs.workspace"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "7c0bb9c4849a3dd576a295660fa67d5a06a12154aacd4f6d9f7bf74786653c16",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "76e1b134ff7123fbe1ae452db7234af5dddde85d3bdf3bb95934b878de01a47a",
     "risk_tier": "low",
     "seq": 74,
     "subject": "4a569671e0ab385b",
@@ -2082,9 +2082,9 @@
    {
     "actor": "exec.risk-compliance",
     "actor_type": "agent",
-    "event_id": "evt_c8238576d4b44dc7",
+    "event_id": "evt_aceb9e923c8849a0",
     "event_type": "action.executed",
-    "hash": "7c0bb9c4849a3dd576a295660fa67d5a06a12154aacd4f6d9f7bf74786653c16",
+    "hash": "76e1b134ff7123fbe1ae452db7234af5dddde85d3bdf3bb95934b878de01a47a",
     "payload": {
      "action_type": "message.internal",
      "approval_id": null,
@@ -2094,8 +2094,8 @@
      "summary": "Message msg_0080 to operator",
      "tool_id": "messaging.internal"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "2ffc421fb3e79a74089e034aa7f55bd9d18e63f490f94bfd5e1bb8c7bd47331d",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "eb455784b3936276fc0ad0c599fa06d50875cb3f744988ca99eb4bb9c34c66a6",
     "risk_tier": "low",
     "seq": 73,
     "subject": "ea4c7ee161a988af",
@@ -2104,17 +2104,17 @@
    {
     "actor": "exec.risk-compliance",
     "actor_type": "agent",
-    "event_id": "evt_a455822248f04bd2",
+    "event_id": "evt_b9e97e87684349ed",
     "event_type": "action.intent",
-    "hash": "2ffc421fb3e79a74089e034aa7f55bd9d18e63f490f94bfd5e1bb8c7bd47331d",
+    "hash": "eb455784b3936276fc0ad0c599fa06d50875cb3f744988ca99eb4bb9c34c66a6",
     "payload": {
      "action_type": "message.internal",
      "approval_id": null,
      "digest": "ea4c7ee161a988afdf33ee1176d1fac6ce9244e947cd2326fc9a4681f3394164",
      "tool_id": "messaging.internal"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "0c17376c975372e7ccf46edc46862495557d610a9587661c0f8578417f8b1dc2",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "c378651edf1af1e120fb5d9e7706e751417931f780b786dcd1deb7c44c74318c",
     "risk_tier": "low",
     "seq": 72,
     "subject": "ea4c7ee161a988af",
@@ -2123,9 +2123,9 @@
    {
     "actor": "exec.risk-compliance",
     "actor_type": "agent",
-    "event_id": "evt_95f5ccac79084913",
+    "event_id": "evt_104f13257f9844d9",
     "event_type": "policy.evaluated",
-    "hash": "0c17376c975372e7ccf46edc46862495557d610a9587661c0f8578417f8b1dc2",
+    "hash": "c378651edf1af1e120fb5d9e7706e751417931f780b786dcd1deb7c44c74318c",
     "payload": {
      "action_type": "message.internal",
      "digest": "ea4c7ee161a988afdf33ee1176d1fac6ce9244e947cd2326fc9a4681f3394164",
@@ -2165,8 +2165,8 @@
      ],
      "tool_id": "messaging.internal"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "922e3abdcba62b41bdf8e57a9d512f5e7674ca6c9c4996f80ae993b85d3e8d45",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "b30f5dae1d6378bf355e31a449d528aa75a974c3cf52d2a61bfdfade7b7f17ef",
     "risk_tier": "low",
     "seq": 71,
     "subject": "ea4c7ee161a988af",
@@ -2175,9 +2175,9 @@
    {
     "actor": "growth.social-media",
     "actor_type": "agent",
-    "event_id": "evt_7af60100e54340e4",
+    "event_id": "evt_79dcb104ac6c4066",
     "event_type": "approval.requested",
-    "hash": "922e3abdcba62b41bdf8e57a9d512f5e7674ca6c9c4996f80ae993b85d3e8d45",
+    "hash": "b30f5dae1d6378bf355e31a449d528aa75a974c3cf52d2a61bfdfade7b7f17ef",
     "payload": {
      "action_type": "content.publish",
      "digest": "a7e43930bbf47d6f72021d2e33c7db51d1bea577dd3be76ae39fbb621d950acf",
@@ -2187,8 +2187,8 @@
      ],
      "task_id": "task_0020"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "697e9f577dc63591fc79adb2e3af162c2469c938b712cd0f811f2ab8561cccd5",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "cfc027986b094dd9a0c49ba3ff91ab9489ec42a7bfbd95a9d50e2b6224bfde3d",
     "risk_tier": "high",
     "seq": 70,
     "subject": "apr_0076",
@@ -2197,9 +2197,9 @@
    {
     "actor": "growth.social-media",
     "actor_type": "agent",
-    "event_id": "evt_26ae918fabc14c66",
+    "event_id": "evt_f64617ea88624cc4",
     "event_type": "policy.evaluated",
-    "hash": "697e9f577dc63591fc79adb2e3af162c2469c938b712cd0f811f2ab8561cccd5",
+    "hash": "cfc027986b094dd9a0c49ba3ff91ab9489ec42a7bfbd95a9d50e2b6224bfde3d",
     "payload": {
      "action_type": "content.publish",
      "digest": "a7e43930bbf47d6f72021d2e33c7db51d1bea577dd3be76ae39fbb621d950acf",
@@ -2239,8 +2239,8 @@
      ],
      "tool_id": "social.publisher"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "1d3804dc05d22299a5f5a021e096cc92f03a6add65fbbbeae6965c675722a362",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "a4181eeb7874d2e8eca1dc17f5c2a9cd299f1cebd2a7ef7814443ccb850f1be7",
     "risk_tier": "high",
     "seq": 69,
     "subject": "task_0020",
@@ -2249,9 +2249,9 @@
    {
     "actor": "growth.social-media",
     "actor_type": "agent",
-    "event_id": "evt_68009acbd9c740be",
+    "event_id": "evt_1b7e1a98e96449a9",
     "event_type": "action.executed",
-    "hash": "1d3804dc05d22299a5f5a021e096cc92f03a6add65fbbbeae6965c675722a362",
+    "hash": "a4181eeb7874d2e8eca1dc17f5c2a9cd299f1cebd2a7ef7814443ccb850f1be7",
     "payload": {
      "action_type": "content.schedule",
      "approval_id": null,
@@ -2261,8 +2261,8 @@
      "summary": "3 entries added to the content calendar",
      "tool_id": "content.studio"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "be21d277706574cd7824007130a15a45e954fe7a06c0c9cc5cb0a74042b4f793",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "39662d1af90a61c4b779f85a94afc712f1209a03f5cf6939614f1397cbc1f85e",
     "risk_tier": "medium",
     "seq": 68,
     "subject": "task_0019",
@@ -2271,17 +2271,17 @@
    {
     "actor": "growth.social-media",
     "actor_type": "agent",
-    "event_id": "evt_2b58d310ab4148c0",
+    "event_id": "evt_b25a7ba316d047e9",
     "event_type": "action.intent",
-    "hash": "be21d277706574cd7824007130a15a45e954fe7a06c0c9cc5cb0a74042b4f793",
+    "hash": "39662d1af90a61c4b779f85a94afc712f1209a03f5cf6939614f1397cbc1f85e",
     "payload": {
      "action_type": "content.schedule",
      "approval_id": null,
      "digest": "4631e5cdc35a3c773138ba0a42741d41ebe13b1692e828260f47237d9b22545f",
      "tool_id": "content.studio"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "b6898f4ea31c4afad4ba4f53a877c120e1f42b50c10483afb1c4a71dd95785d9",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "dfe8f203fc189fdfc0bcbdf282b0036d1de765c8138c1c9b7f762774053b2074",
     "risk_tier": "medium",
     "seq": 67,
     "subject": "task_0019",
@@ -2290,9 +2290,9 @@
    {
     "actor": "growth.social-media",
     "actor_type": "agent",
-    "event_id": "evt_229bdb106cf242fd",
+    "event_id": "evt_3f57ae81c6674242",
     "event_type": "policy.evaluated",
-    "hash": "b6898f4ea31c4afad4ba4f53a877c120e1f42b50c10483afb1c4a71dd95785d9",
+    "hash": "dfe8f203fc189fdfc0bcbdf282b0036d1de765c8138c1c9b7f762774053b2074",
     "payload": {
      "action_type": "content.schedule",
      "digest": "4631e5cdc35a3c773138ba0a42741d41ebe13b1692e828260f47237d9b22545f",
@@ -2332,8 +2332,8 @@
      ],
      "tool_id": "content.studio"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "9b1429a8883800401ad4bbba7232d9acd46441cc3fc920eaaaa190fe4d12d6c4",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "c0c10e3b61f41855f0cdc7da2763326e2355c3be223efd9ac202fce0a3cde55a",
     "risk_tier": "medium",
     "seq": 66,
     "subject": "task_0019",
@@ -2342,9 +2342,9 @@
    {
     "actor": "growth.content-writer",
     "actor_type": "agent",
-    "event_id": "evt_ec8c54e1be9241a2",
+    "event_id": "evt_c433c568c29d4eaf",
     "event_type": "action.executed",
-    "hash": "9b1429a8883800401ad4bbba7232d9acd46441cc3fc920eaaaa190fe4d12d6c4",
+    "hash": "c0c10e3b61f41855f0cdc7da2763326e2355c3be223efd9ac202fce0a3cde55a",
     "payload": {
      "action_type": "content.draft",
      "approval_id": null,
@@ -2354,8 +2354,8 @@
      "summary": "3 drafts; 3 pass every brand check",
      "tool_id": "content.studio"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "b94493db0a8f717bd7e6cc8e043605c175a0e1e5fbcaf8658e5131a1c5f600bf",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "ac7b835c7bc6df8e4a3b26b54e837e4d0868d6c02e8f2c6c703e089da49bffb5",
     "risk_tier": "low",
     "seq": 65,
     "subject": "task_0018",
@@ -2364,17 +2364,17 @@
    {
     "actor": "growth.content-writer",
     "actor_type": "agent",
-    "event_id": "evt_97a4098e4cd64716",
+    "event_id": "evt_712304ea02e848c0",
     "event_type": "action.intent",
-    "hash": "b94493db0a8f717bd7e6cc8e043605c175a0e1e5fbcaf8658e5131a1c5f600bf",
+    "hash": "ac7b835c7bc6df8e4a3b26b54e837e4d0868d6c02e8f2c6c703e089da49bffb5",
     "payload": {
      "action_type": "content.draft",
      "approval_id": null,
      "digest": "23798cbf16716fadc96c42d6525c7e4141bffb738bd7387423fada3af3989be0",
      "tool_id": "content.studio"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "943d4020f4a261cf08f421ed1ed287e67712ddff54d2345f4be5b42ab7c4fad3",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "376d218f97dba2dff7e68d97c414454ae73ff7453964da5f463fdc802762e7f7",
     "risk_tier": "low",
     "seq": 64,
     "subject": "task_0018",
@@ -2383,9 +2383,9 @@
    {
     "actor": "growth.content-writer",
     "actor_type": "agent",
-    "event_id": "evt_5ffc0c0543084119",
+    "event_id": "evt_35196c3ecfc2410c",
     "event_type": "policy.evaluated",
-    "hash": "943d4020f4a261cf08f421ed1ed287e67712ddff54d2345f4be5b42ab7c4fad3",
+    "hash": "376d218f97dba2dff7e68d97c414454ae73ff7453964da5f463fdc802762e7f7",
     "payload": {
      "action_type": "content.draft",
      "digest": "23798cbf16716fadc96c42d6525c7e4141bffb738bd7387423fada3af3989be0",
@@ -2425,8 +2425,8 @@
      ],
      "tool_id": "content.studio"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "40982f60d2bb5a90871ac739e06cd6c98a1691eda89b4903e258f693c4a6fd76",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "e1367c79f29bf98366ed2596d814280e322226318cda9c1b31fe293324f7f23f",
     "risk_tier": "low",
     "seq": 63,
     "subject": "task_0018",
@@ -2435,14 +2435,14 @@
    {
     "actor": "system.office",
     "actor_type": "system",
-    "event_id": "evt_e9a93cbfd23f40a4",
+    "event_id": "evt_8c06a7e36c2845d1",
     "event_type": "mission.completed",
-    "hash": "40982f60d2bb5a90871ac739e06cd6c98a1691eda89b4903e258f693c4a6fd76",
+    "hash": "e1367c79f29bf98366ed2596d814280e322226318cda9c1b31fe293324f7f23f",
     "payload": {
      "title": "Revenue research: qualify this week's Ontario prospects"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "75050c0fbef53ea21e8b468f1b1f3f68c39ba6a2ccc570180de2ed6a0504e7a1",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "a9ccb5fdff411ed0a5d013d9344ef452bbb466662a26e4140a156762a38ae784",
     "risk_tier": null,
     "seq": 62,
     "subject": "msn_0026",
@@ -2451,9 +2451,9 @@
    {
     "actor": "revenue.lead-research",
     "actor_type": "agent",
-    "event_id": "evt_c79e7b8cd5354683",
+    "event_id": "evt_ffbbac1fe0924c90",
     "event_type": "action.executed",
-    "hash": "75050c0fbef53ea21e8b468f1b1f3f68c39ba6a2ccc570180de2ed6a0504e7a1",
+    "hash": "a9ccb5fdff411ed0a5d013d9344ef452bbb466662a26e4140a156762a38ae784",
     "payload": {
      "action_type": "research.summarize",
      "approval_id": null,
@@ -2463,8 +2463,8 @@
      "summary": "4 account notes for 'Qualified prospect shortlist'",
      "tool_id": "research.sources"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "ddfc90f996bf0e11ce090444cd75c9b85ed3d28950df176e2c920155a12650d1",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "a31d2161ff851bbf8bfc36020dbb2de96ae13c5848ecddafd00afc2c874b4e89",
     "risk_tier": "low",
     "seq": 61,
     "subject": "task_0030",
@@ -2473,17 +2473,17 @@
    {
     "actor": "revenue.lead-research",
     "actor_type": "agent",
-    "event_id": "evt_0df3644ad4c3437d",
+    "event_id": "evt_a6ad06193cf6445a",
     "event_type": "action.intent",
-    "hash": "ddfc90f996bf0e11ce090444cd75c9b85ed3d28950df176e2c920155a12650d1",
+    "hash": "a31d2161ff851bbf8bfc36020dbb2de96ae13c5848ecddafd00afc2c874b4e89",
     "payload": {
      "action_type": "research.summarize",
      "approval_id": null,
      "digest": "a30f2c4d7164565431900cb36b7a94558839e1b95866b9b15eec00678aec1a31",
      "tool_id": "research.sources"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "b4c1cbfc9afaa6803fca5cc5725bc29070332718c2870105eae198609b8dc607",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "97ff845f7bc446f5e220ad76961aa4397c46998d637ac4ae1b7383d940c48ce0",
     "risk_tier": "low",
     "seq": 60,
     "subject": "task_0030",
@@ -2492,9 +2492,9 @@
    {
     "actor": "revenue.lead-research",
     "actor_type": "agent",
-    "event_id": "evt_ae780064c71c4abb",
+    "event_id": "evt_13f95f5fdf1747a9",
     "event_type": "policy.evaluated",
-    "hash": "b4c1cbfc9afaa6803fca5cc5725bc29070332718c2870105eae198609b8dc607",
+    "hash": "97ff845f7bc446f5e220ad76961aa4397c46998d637ac4ae1b7383d940c48ce0",
     "payload": {
      "action_type": "research.summarize",
      "digest": "a30f2c4d7164565431900cb36b7a94558839e1b95866b9b15eec00678aec1a31",
@@ -2534,8 +2534,8 @@
      ],
      "tool_id": "research.sources"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "01eb9799ad3e2ed6159c57d9f0a2e4e2b39fc773de8bf4adf84889f63fb7eb41",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "0fc2297a3920e28d6e86756b77fdc74c9f0bcbdea0e14cd968de819cb6673234",
     "risk_tier": "low",
     "seq": 59,
     "subject": "task_0030",
@@ -2544,9 +2544,9 @@
    {
     "actor": "revenue.lead-research",
     "actor_type": "agent",
-    "event_id": "evt_243b9f5e9a00452b",
+    "event_id": "evt_80d0d55cda654a3b",
     "event_type": "action.executed",
-    "hash": "01eb9799ad3e2ed6159c57d9f0a2e4e2b39fc773de8bf4adf84889f63fb7eb41",
+    "hash": "0fc2297a3920e28d6e86756b77fdc74c9f0bcbdea0e14cd968de819cb6673234",
     "payload": {
      "action_type": "leads.score",
      "approval_id": null,
@@ -2556,8 +2556,8 @@
      "summary": "4 of 6 prospects qualified (threshold 60, in region, in size range)",
      "tool_id": "analytics.engine"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "c1fd26ba06da6517a17b08ead53dcf7f798178696e75192c029f637e0da19aa7",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "9b16fe90654422f909d660d35be580dfec0b71f8f62229b657d99a01f8c94989",
     "risk_tier": "low",
     "seq": 58,
     "subject": "task_0029",
@@ -2566,17 +2566,17 @@
    {
     "actor": "revenue.lead-research",
     "actor_type": "agent",
-    "event_id": "evt_a2723909cdb74fba",
+    "event_id": "evt_aa0057420bb746b3",
     "event_type": "action.intent",
-    "hash": "c1fd26ba06da6517a17b08ead53dcf7f798178696e75192c029f637e0da19aa7",
+    "hash": "9b16fe90654422f909d660d35be580dfec0b71f8f62229b657d99a01f8c94989",
     "payload": {
      "action_type": "leads.score",
      "approval_id": null,
      "digest": "b3691a614d48a410b44ba1fa964aeeca5f483a13a396c4fab2c8418e4e77823c",
      "tool_id": "analytics.engine"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "dc14b92c3c61957b9baacf6ca6e69873554964ef3202e48ccf150702febfb4e6",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "d69c10e0ef42513c6d2b60fdf1e4ba38e3e9c7ff59958c3ff04272f3923f4084",
     "risk_tier": "low",
     "seq": 57,
     "subject": "task_0029",
@@ -2585,9 +2585,9 @@
    {
     "actor": "revenue.lead-research",
     "actor_type": "agent",
-    "event_id": "evt_4fd6bdc79393413a",
+    "event_id": "evt_44e71ad58c73489b",
     "event_type": "policy.evaluated",
-    "hash": "dc14b92c3c61957b9baacf6ca6e69873554964ef3202e48ccf150702febfb4e6",
+    "hash": "d69c10e0ef42513c6d2b60fdf1e4ba38e3e9c7ff59958c3ff04272f3923f4084",
     "payload": {
      "action_type": "leads.score",
      "digest": "b3691a614d48a410b44ba1fa964aeeca5f483a13a396c4fab2c8418e4e77823c",
@@ -2627,8 +2627,8 @@
      ],
      "tool_id": "analytics.engine"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "ae2c2d5dc48b52dfd4170ab860c9d13574808384571d9e448e3e821c245d959d",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "43eded4ace6b2c245814f303b7797ce37446949b235cb9ca22c80e12f5ac63c6",
     "risk_tier": "low",
     "seq": 56,
     "subject": "task_0029",
@@ -2637,9 +2637,9 @@
    {
     "actor": "revenue.lead-research",
     "actor_type": "agent",
-    "event_id": "evt_225643e3b9894eaa",
+    "event_id": "evt_3cd4d7887b82461d",
     "event_type": "action.executed",
-    "hash": "ae2c2d5dc48b52dfd4170ab860c9d13574808384571d9e448e3e821c245d959d",
+    "hash": "43eded4ace6b2c245814f303b7797ce37446949b235cb9ca22c80e12f5ac63c6",
     "payload": {
      "action_type": "leads.research",
      "approval_id": null,
@@ -2649,8 +2649,8 @@
      "summary": "6 records collected from 'operator-provided', 1 quarantined",
      "tool_id": "research.sources"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "938a644c12d8e0c7e00c280c20ed841191a2c1cf819075e182e38bfc7d1b55fb",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "285bdf0309cdf457e490708c647180afd2cb68979dbda01fa41111e196769d54",
     "risk_tier": "low",
     "seq": 55,
     "subject": "task_0028",
@@ -2659,17 +2659,17 @@
    {
     "actor": "revenue.lead-research",
     "actor_type": "agent",
-    "event_id": "evt_ab233b1da1af4112",
+    "event_id": "evt_03a9743a494a4387",
     "event_type": "action.intent",
-    "hash": "938a644c12d8e0c7e00c280c20ed841191a2c1cf819075e182e38bfc7d1b55fb",
+    "hash": "285bdf0309cdf457e490708c647180afd2cb68979dbda01fa41111e196769d54",
     "payload": {
      "action_type": "leads.research",
      "approval_id": null,
      "digest": "84eb7ee9ae8d23829b22fd95a00c7faf1a30877141d71967b16855f92eaa55e8",
      "tool_id": "research.sources"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "1f2d35a4bc7fd2a766c7d36a464f5a3810acb9684e0e6536d1fdba2630376701",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "cafa82ce004ded4d0dfa32b5c132b1f4a7cf5e9ba91fa03c9ce8c1f8cf7854bd",
     "risk_tier": "low",
     "seq": 54,
     "subject": "task_0028",
@@ -2678,9 +2678,9 @@
    {
     "actor": "revenue.lead-research",
     "actor_type": "agent",
-    "event_id": "evt_2ecfd727d79a491e",
+    "event_id": "evt_ba30f68d80c74e81",
     "event_type": "policy.evaluated",
-    "hash": "1f2d35a4bc7fd2a766c7d36a464f5a3810acb9684e0e6536d1fdba2630376701",
+    "hash": "cafa82ce004ded4d0dfa32b5c132b1f4a7cf5e9ba91fa03c9ce8c1f8cf7854bd",
     "payload": {
      "action_type": "leads.research",
      "digest": "84eb7ee9ae8d23829b22fd95a00c7faf1a30877141d71967b16855f92eaa55e8",
@@ -2720,8 +2720,8 @@
      ],
      "tool_id": "research.sources"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "ec9e4b5dae1b7b7d9244f6ea477c92f37712e0a0d4a6c35ed11c13a9f7bf725c",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "47ce45ac94dd075218125ba3a4ef036f4cd32334be34339a150e55387749f250",
     "risk_tier": "low",
     "seq": 53,
     "subject": "task_0028",
@@ -2730,14 +2730,14 @@
    {
     "actor": "system.office",
     "actor_type": "system",
-    "event_id": "evt_d8acea8a53234cb8",
+    "event_id": "evt_03d7cc61c0de441e",
     "event_type": "mission.completed",
-    "hash": "ec9e4b5dae1b7b7d9244f6ea477c92f37712e0a0d4a6c35ed11c13a9f7bf725c",
+    "hash": "47ce45ac94dd075218125ba3a4ef036f4cd32334be34339a150e55387749f250",
     "payload": {
      "title": "Ship a dependency-aware readiness probe for the Agent Office API"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "8c25aa6500be2a457c59ccfddbf6987642f678f5f310ef8a3caaef713f6a8f95",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "5369b7cf258540c9f60333b4838988b85901d90a969ff21753401b9cab3c6010",
     "risk_tier": null,
     "seq": 52,
     "subject": "msn_0008",
@@ -2746,9 +2746,9 @@
    {
     "actor": "eng.software-architect",
     "actor_type": "agent",
-    "event_id": "evt_89268a08384745d3",
+    "event_id": "evt_14c0735ffe7c402c",
     "event_type": "action.executed",
-    "hash": "8c25aa6500be2a457c59ccfddbf6987642f678f5f310ef8a3caaef713f6a8f95",
+    "hash": "5369b7cf258540c9f60333b4838988b85901d90a969ff21753401b9cab3c6010",
     "payload": {
      "action_type": "deploy.plan",
      "approval_id": null,
@@ -2758,8 +2758,8 @@
      "summary": "Rollout plan for Readiness probe to production (ready)",
      "tool_id": "deploy.pipeline"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "c819e02eb9bb20fc4631d18c5090b1c7a7301719be11ba6c0a00a0cc4ecfdff4",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "c5be0d2f0c67e8a52ecf445f29208ce48dadf5db436e42b47f90000416151862",
     "risk_tier": "low",
     "seq": 51,
     "subject": "task_0014",
@@ -2768,17 +2768,17 @@
    {
     "actor": "eng.software-architect",
     "actor_type": "agent",
-    "event_id": "evt_51625458ee3d4f9e",
+    "event_id": "evt_25984646292c4be0",
     "event_type": "action.intent",
-    "hash": "c819e02eb9bb20fc4631d18c5090b1c7a7301719be11ba6c0a00a0cc4ecfdff4",
+    "hash": "c5be0d2f0c67e8a52ecf445f29208ce48dadf5db436e42b47f90000416151862",
     "payload": {
      "action_type": "deploy.plan",
      "approval_id": null,
      "digest": "efe4f76d2c0833ccaa7580b9bd909eccaeb8ab70b449bb959aa0ef29a2076e3b",
      "tool_id": "deploy.pipeline"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "c564ab6e27951ef13d9163455fede2d5709440d6731df56c10ed8b14c5224c03",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "59fa135d43ed002e3d5575285b81123765a358501add23f4a0c8ad8c2362a2b5",
     "risk_tier": "low",
     "seq": 50,
     "subject": "task_0014",
@@ -2787,9 +2787,9 @@
    {
     "actor": "eng.software-architect",
     "actor_type": "agent",
-    "event_id": "evt_289f16582b484666",
+    "event_id": "evt_5527bbc63f834a6e",
     "event_type": "policy.evaluated",
-    "hash": "c564ab6e27951ef13d9163455fede2d5709440d6731df56c10ed8b14c5224c03",
+    "hash": "59fa135d43ed002e3d5575285b81123765a358501add23f4a0c8ad8c2362a2b5",
     "payload": {
      "action_type": "deploy.plan",
      "digest": "efe4f76d2c0833ccaa7580b9bd909eccaeb8ab70b449bb959aa0ef29a2076e3b",
@@ -2829,8 +2829,8 @@
      ],
      "tool_id": "deploy.pipeline"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "82f23212b0b97ea04c98cbcd67706476865eb67a4ae989e21de7e75cea528c73",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "87935c5acfa6c224976300e4b32d095aa671993b7b4d7b5d34b8e49ea212012c",
     "risk_tier": "low",
     "seq": 49,
     "subject": "task_0014",
@@ -2839,9 +2839,9 @@
    {
     "actor": "eng.qa",
     "actor_type": "agent",
-    "event_id": "evt_5e2706bdb35d479b",
+    "event_id": "evt_23f861382f804caa",
     "event_type": "action.executed",
-    "hash": "82f23212b0b97ea04c98cbcd67706476865eb67a4ae989e21de7e75cea528c73",
+    "hash": "87935c5acfa6c224976300e4b32d095aa671993b7b4d7b5d34b8e49ea212012c",
     "payload": {
      "action_type": "code.review",
      "approval_id": null,
@@ -2851,8 +2851,8 @@
      "summary": "Review verdict: approve (5/5 checks passed)",
      "tool_id": "code.workspace"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "eb18183597dcddc489d2eb8eafead61b0469380413fabff9101e8a1768e45a20",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "d409553e293330faca0da66fcce8c054463de67828aad5e7aa07606094d385e0",
     "risk_tier": "low",
     "seq": 48,
     "subject": "task_0013",
@@ -2861,17 +2861,17 @@
    {
     "actor": "eng.qa",
     "actor_type": "agent",
-    "event_id": "evt_4421427cc1b341eb",
+    "event_id": "evt_4dec143ad33f45c9",
     "event_type": "action.intent",
-    "hash": "eb18183597dcddc489d2eb8eafead61b0469380413fabff9101e8a1768e45a20",
+    "hash": "d409553e293330faca0da66fcce8c054463de67828aad5e7aa07606094d385e0",
     "payload": {
      "action_type": "code.review",
      "approval_id": null,
      "digest": "68ef1b383a7282dddbd0e3566250a07d932db2104fb3ddb58b40341509910152",
      "tool_id": "code.workspace"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "fc6de3bf794d064ccde2b7280a3881a65e08e675c82fb3be9597afeac8a76775",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "e20456a096dc16e4d02543b8ad06e1488110acedfded0e16dd0148283af75cc7",
     "risk_tier": "low",
     "seq": 47,
     "subject": "task_0013",
@@ -2880,9 +2880,9 @@
    {
     "actor": "eng.qa",
     "actor_type": "agent",
-    "event_id": "evt_ea43ce507b024e9b",
+    "event_id": "evt_420d8909159e449b",
     "event_type": "policy.evaluated",
-    "hash": "fc6de3bf794d064ccde2b7280a3881a65e08e675c82fb3be9597afeac8a76775",
+    "hash": "e20456a096dc16e4d02543b8ad06e1488110acedfded0e16dd0148283af75cc7",
     "payload": {
      "action_type": "code.review",
      "digest": "68ef1b383a7282dddbd0e3566250a07d932db2104fb3ddb58b40341509910152",
@@ -2922,8 +2922,8 @@
      ],
      "tool_id": "code.workspace"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "54dd09492f47f1cc9e6530f88edeafe40f0682d158e657f4db31f7eb95b2d533",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "d8e50e723aa303303f97bc6f8550c242535272acb069695aac365de66b6c5f0f",
     "risk_tier": "low",
     "seq": 46,
     "subject": "task_0013",
@@ -2932,9 +2932,9 @@
    {
     "actor": "eng.qa",
     "actor_type": "agent",
-    "event_id": "evt_0baf9dcd3e744e07",
+    "event_id": "evt_9e58070b5ec745d7",
     "event_type": "action.executed",
-    "hash": "54dd09492f47f1cc9e6530f88edeafe40f0682d158e657f4db31f7eb95b2d533",
+    "hash": "d8e50e723aa303303f97bc6f8550c242535272acb069695aac365de66b6c5f0f",
     "payload": {
      "action_type": "tests.plan",
      "approval_id": null,
@@ -2944,8 +2944,8 @@
      "summary": "5 test cases from 5 acceptance criteria",
      "tool_id": "code.workspace"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "1949de0c3a85d5c2d6999bf68c977929bc8b50063ce9f32ee8224fd23a9f2605",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "eb3b37fd448fecf399509e73e6f8f7ef4b463a0b5d16ed7cea5de0d3b9c403a0",
     "risk_tier": "low",
     "seq": 45,
     "subject": "task_0012",
@@ -2954,17 +2954,17 @@
    {
     "actor": "eng.qa",
     "actor_type": "agent",
-    "event_id": "evt_ceb52c771d134dca",
+    "event_id": "evt_6cf3599a4c3f40a5",
     "event_type": "action.intent",
-    "hash": "1949de0c3a85d5c2d6999bf68c977929bc8b50063ce9f32ee8224fd23a9f2605",
+    "hash": "eb3b37fd448fecf399509e73e6f8f7ef4b463a0b5d16ed7cea5de0d3b9c403a0",
     "payload": {
      "action_type": "tests.plan",
      "approval_id": null,
      "digest": "08579fb1e156086f7e8da576892575cee334d34444db4df7897b6829c57caa43",
      "tool_id": "code.workspace"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "912fba1a30b096cd4cbffac1b01a8d64a42d6a02e1ed0acbfb7440559d08d6e4",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "d0fb9b249f2be6674cafa89bec7e3b31b86f3ff48fc05c89bae99cd5ffb9a941",
     "risk_tier": "low",
     "seq": 44,
     "subject": "task_0012",
@@ -2973,9 +2973,9 @@
    {
     "actor": "eng.qa",
     "actor_type": "agent",
-    "event_id": "evt_71b0ece7211f4d8f",
+    "event_id": "evt_18022926ff554bbd",
     "event_type": "policy.evaluated",
-    "hash": "912fba1a30b096cd4cbffac1b01a8d64a42d6a02e1ed0acbfb7440559d08d6e4",
+    "hash": "d0fb9b249f2be6674cafa89bec7e3b31b86f3ff48fc05c89bae99cd5ffb9a941",
     "payload": {
      "action_type": "tests.plan",
      "digest": "08579fb1e156086f7e8da576892575cee334d34444db4df7897b6829c57caa43",
@@ -3015,8 +3015,8 @@
      ],
      "tool_id": "code.workspace"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "425e867edf0c4410b68fe23ad08fb2cde5207711b84854087b572842d1384dcb",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "227f23b459a4d0297d3d2dec74cb2cf5f375cac3d2d74942876a81de442c9a9d",
     "risk_tier": "low",
     "seq": 43,
     "subject": "task_0012",
@@ -3025,9 +3025,9 @@
    {
     "actor": "eng.backend",
     "actor_type": "agent",
-    "event_id": "evt_6d5ff632c78b4517",
+    "event_id": "evt_64d97e79a26445d0",
     "event_type": "action.executed",
-    "hash": "425e867edf0c4410b68fe23ad08fb2cde5207711b84854087b572842d1384dcb",
+    "hash": "227f23b459a4d0297d3d2dec74cb2cf5f375cac3d2d74942876a81de442c9a9d",
     "payload": {
      "action_type": "code.draft_patch",
      "approval_id": null,
@@ -3037,8 +3037,8 @@
      "summary": "Patch draft: Add GET /ready backed by Office.readiness() (3 files)",
      "tool_id": "code.workspace"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "4893c73e516fb7f105e5c12ae2f187d896e92fb5c180e43a28c268a3ea4a1a3e",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "e7330e398e22dba6f7eaf238b0daddbf767407a9f30ce5e1e47f7c8c029aa0b0",
     "risk_tier": "low",
     "seq": 42,
     "subject": "task_0011",
@@ -3047,17 +3047,17 @@
    {
     "actor": "eng.backend",
     "actor_type": "agent",
-    "event_id": "evt_1c5105ae517c44d6",
+    "event_id": "evt_d7a0e53239454815",
     "event_type": "action.intent",
-    "hash": "4893c73e516fb7f105e5c12ae2f187d896e92fb5c180e43a28c268a3ea4a1a3e",
+    "hash": "e7330e398e22dba6f7eaf238b0daddbf767407a9f30ce5e1e47f7c8c029aa0b0",
     "payload": {
      "action_type": "code.draft_patch",
      "approval_id": null,
      "digest": "c2781cfafaa4ef36ab591927d618973d693b441041cf9e16376c29a5528eb3cb",
      "tool_id": "code.workspace"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "7238f364c60c1900deb4191188f01b50f467b6a3a5ee1b690eb89ea99db95e71",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "ab310a2c531842f513db3b4ebcec7a68f2dff081003823c5eb709017666aab50",
     "risk_tier": "low",
     "seq": 41,
     "subject": "task_0011",
@@ -3066,9 +3066,9 @@
    {
     "actor": "eng.backend",
     "actor_type": "agent",
-    "event_id": "evt_f2900a5412d54de8",
+    "event_id": "evt_7db6a5250fd64543",
     "event_type": "policy.evaluated",
-    "hash": "7238f364c60c1900deb4191188f01b50f467b6a3a5ee1b690eb89ea99db95e71",
+    "hash": "ab310a2c531842f513db3b4ebcec7a68f2dff081003823c5eb709017666aab50",
     "payload": {
      "action_type": "code.draft_patch",
      "digest": "c2781cfafaa4ef36ab591927d618973d693b441041cf9e16376c29a5528eb3cb",
@@ -3108,8 +3108,8 @@
      ],
      "tool_id": "code.workspace"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "1765bf2a3dbf09d534178c60a4a8fc065f09184f11160a8bd68aab7be666ab05",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "78b615301f59b535686e161a5f818dd46675bbcc0e2aed9a6d1993f91b48afa0",
     "risk_tier": "low",
     "seq": 40,
     "subject": "task_0011",
@@ -3118,9 +3118,9 @@
    {
     "actor": "eng.software-architect",
     "actor_type": "agent",
-    "event_id": "evt_fb31f18b8bec4186",
+    "event_id": "evt_9f8a6b4cd8a447ae",
     "event_type": "action.executed",
-    "hash": "1765bf2a3dbf09d534178c60a4a8fc065f09184f11160a8bd68aab7be666ab05",
+    "hash": "78b615301f59b535686e161a5f818dd46675bbcc0e2aed9a6d1993f91b48afa0",
     "payload": {
      "action_type": "docs.draft",
      "approval_id": null,
@@ -3130,8 +3130,8 @@
      "summary": "Drafted 'Readiness probe design'",
      "tool_id": "docs.workspace"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "054204ac68535c5fb7687d506a37e699d53bd5bdea79df01eb8e9d8766d2fbfe",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "144f54c3e8c9a3e32c0ba7df52a86dade073845ac12b75a11b383c50185c257f",
     "risk_tier": "low",
     "seq": 39,
     "subject": "task_0010",
@@ -3140,17 +3140,17 @@
    {
     "actor": "eng.software-architect",
     "actor_type": "agent",
-    "event_id": "evt_893c7b409c7c4045",
+    "event_id": "evt_c78f4a3ca16f46f0",
     "event_type": "action.intent",
-    "hash": "054204ac68535c5fb7687d506a37e699d53bd5bdea79df01eb8e9d8766d2fbfe",
+    "hash": "144f54c3e8c9a3e32c0ba7df52a86dade073845ac12b75a11b383c50185c257f",
     "payload": {
      "action_type": "docs.draft",
      "approval_id": null,
      "digest": "cdd301c0a691746d9fa39794bf138ba98127c99903cbdfdebf7de5db99eb05d9",
      "tool_id": "docs.workspace"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "2729ff93eb556ef6a0c049a2317a6b17a6b0f391f33f9682d92c4f7dfb992090",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "0b435e76a325674bcf3829c2e112aaa2780341d043e2731fbf6a204412f7e2f3",
     "risk_tier": "low",
     "seq": 38,
     "subject": "task_0010",
@@ -3159,9 +3159,9 @@
    {
     "actor": "eng.software-architect",
     "actor_type": "agent",
-    "event_id": "evt_625cffd62a9e4449",
+    "event_id": "evt_781a27fc17684835",
     "event_type": "policy.evaluated",
-    "hash": "2729ff93eb556ef6a0c049a2317a6b17a6b0f391f33f9682d92c4f7dfb992090",
+    "hash": "0b435e76a325674bcf3829c2e112aaa2780341d043e2731fbf6a204412f7e2f3",
     "payload": {
      "action_type": "docs.draft",
      "digest": "cdd301c0a691746d9fa39794bf138ba98127c99903cbdfdebf7de5db99eb05d9",
@@ -3201,8 +3201,8 @@
      ],
      "tool_id": "docs.workspace"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "7b221835680a34ab8b5df60b7c3f539f627bb734d395748047551ad70ee81912",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "fc79d7c53a0f1097e7c5275ddb3bcd594719211631f4c49528a70bd2d30d3568",
     "risk_tier": "low",
     "seq": 37,
     "subject": "task_0010",
@@ -3211,14 +3211,14 @@
    {
     "actor": "system.office",
     "actor_type": "system",
-    "event_id": "evt_df2d6781d58348af",
+    "event_id": "evt_1dcb11bbfdc14098",
     "event_type": "mission.completed",
-    "hash": "7b221835680a34ab8b5df60b7c3f539f627bb734d395748047551ad70ee81912",
+    "hash": "fc79d7c53a0f1097e7c5275ddb3bcd594719211631f4c49528a70bd2d30d3568",
     "payload": {
      "title": "Security review: agent grants, tool registry, and approval gates"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "8c52e75bc943c6db3fec5e84dfa3b5ff63dc4d5f808f3fd2fcfa9c405e40d9c6",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "ae1615908ba5951cd0b24724ad97f32e7710477a55f6ee2d58920b98ce6351b1",
     "risk_tier": null,
     "seq": 36,
     "subject": "msn_0022",
@@ -3227,9 +3227,9 @@
    {
     "actor": "exec.risk-compliance",
     "actor_type": "agent",
-    "event_id": "evt_6f29bec2479947ca",
+    "event_id": "evt_c310fa724968497f",
     "event_type": "action.executed",
-    "hash": "8c52e75bc943c6db3fec5e84dfa3b5ff63dc4d5f808f3fd2fcfa9c405e40d9c6",
+    "hash": "ae1615908ba5951cd0b24724ad97f32e7710477a55f6ee2d58920b98ce6351b1",
     "payload": {
      "action_type": "security.audit_config",
      "approval_id": null,
@@ -3239,8 +3239,8 @@
      "summary": "2 findings (0 critical, 0 high); 22/22 control tests passed",
      "tool_id": "security.auditor"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "b19484002bd32384053e571344d367d8abff0d89bd5aad161cd47c8feb4ba2ac",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "2a11d995b1315b4a950b5b5ead521e98da344b46bf5292ba851a56c6f7320e07",
     "risk_tier": "low",
     "seq": 35,
     "subject": "task_0024",
@@ -3249,17 +3249,17 @@
    {
     "actor": "exec.risk-compliance",
     "actor_type": "agent",
-    "event_id": "evt_49ddac073fcc494f",
+    "event_id": "evt_df67ee2565784e07",
     "event_type": "action.intent",
-    "hash": "b19484002bd32384053e571344d367d8abff0d89bd5aad161cd47c8feb4ba2ac",
+    "hash": "2a11d995b1315b4a950b5b5ead521e98da344b46bf5292ba851a56c6f7320e07",
     "payload": {
      "action_type": "security.audit_config",
      "approval_id": null,
      "digest": "99f6065a5054b699759ffdbe0a689d7a8b0f5ab87486c14acec87250f29e3b97",
      "tool_id": "security.auditor"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "3db11887cffbe28c9535daf2ed2999a63320dcc76b386d6f4a9314da4b0c54b8",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "29afedabfb9dc0c20a0d18bbcb47986f9b6fdb7fd4a2044d68b4329935b13eb3",
     "risk_tier": "low",
     "seq": 34,
     "subject": "task_0024",
@@ -3268,9 +3268,9 @@
    {
     "actor": "exec.risk-compliance",
     "actor_type": "agent",
-    "event_id": "evt_9e2d497b50234938",
+    "event_id": "evt_a9901accdf2449c1",
     "event_type": "policy.evaluated",
-    "hash": "3db11887cffbe28c9535daf2ed2999a63320dcc76b386d6f4a9314da4b0c54b8",
+    "hash": "29afedabfb9dc0c20a0d18bbcb47986f9b6fdb7fd4a2044d68b4329935b13eb3",
     "payload": {
      "action_type": "security.audit_config",
      "digest": "99f6065a5054b699759ffdbe0a689d7a8b0f5ab87486c14acec87250f29e3b97",
@@ -3310,8 +3310,8 @@
      ],
      "tool_id": "security.auditor"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "eb90dba1a2e7dc22a3bdbd608688a1f83bf2e4b7edc5262b34935371514cd4a2",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "a6b886451cdd759ab9fe93f944620559fcb7753c80185d5aa29cd9ab206e00de",
     "risk_tier": "low",
     "seq": 33,
     "subject": "task_0024",
@@ -3320,9 +3320,9 @@
    {
     "actor": "exec.chief-of-staff",
     "actor_type": "agent",
-    "event_id": "evt_8564499c489b4e93",
+    "event_id": "evt_3c4019dbd4494c16",
     "event_type": "action.executed",
-    "hash": "eb90dba1a2e7dc22a3bdbd608688a1f83bf2e4b7edc5262b34935371514cd4a2",
+    "hash": "a6b886451cdd759ab9fe93f944620559fcb7753c80185d5aa29cd9ab206e00de",
     "payload": {
      "action_type": "message.internal",
      "approval_id": null,
@@ -3332,8 +3332,8 @@
      "summary": "Message msg_0042 to growth.content-writer",
      "tool_id": "messaging.internal"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "3d5b6d170f10594e577887a15cc691bd92364a62a826926a09ee1fa8b0d47d25",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "8dc531c1de8819ae9bcab1abc8d2bddde136f40945a7560bf68140f5d32cb0f7",
     "risk_tier": "low",
     "seq": 32,
     "subject": "4d99b30b869945dd",
@@ -3342,17 +3342,17 @@
    {
     "actor": "exec.chief-of-staff",
     "actor_type": "agent",
-    "event_id": "evt_33a0cd6ced1c4660",
+    "event_id": "evt_393a902b746d4adb",
     "event_type": "action.intent",
-    "hash": "3d5b6d170f10594e577887a15cc691bd92364a62a826926a09ee1fa8b0d47d25",
+    "hash": "8dc531c1de8819ae9bcab1abc8d2bddde136f40945a7560bf68140f5d32cb0f7",
     "payload": {
      "action_type": "message.internal",
      "approval_id": null,
      "digest": "4d99b30b869945dde91a7169c8176c061bec2713bd0a8710be762d431d4a5a41",
      "tool_id": "messaging.internal"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "731676878219418b5a07e4e9e8dc3de8536270f10d543d6fdc6c622a5cf271a8",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "8f90318238c63b1f62f2fefdbf3cff7395b4027925da75749e1652987e021cbe",
     "risk_tier": "low",
     "seq": 31,
     "subject": "4d99b30b869945dd",
@@ -3361,9 +3361,9 @@
    {
     "actor": "exec.chief-of-staff",
     "actor_type": "agent",
-    "event_id": "evt_4b8cd502f92444b4",
+    "event_id": "evt_82796528881c4865",
     "event_type": "policy.evaluated",
-    "hash": "731676878219418b5a07e4e9e8dc3de8536270f10d543d6fdc6c622a5cf271a8",
+    "hash": "8f90318238c63b1f62f2fefdbf3cff7395b4027925da75749e1652987e021cbe",
     "payload": {
      "action_type": "message.internal",
      "digest": "4d99b30b869945dde91a7169c8176c061bec2713bd0a8710be762d431d4a5a41",
@@ -3403,8 +3403,8 @@
      ],
      "tool_id": "messaging.internal"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "4bfe3560bbb491a8e70783db55d258ced57ac3aaf35fe283b260b1275d6dfacb",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "e21323548cf348e0ebfcb9a868f31847d55930923b23d5eb0de8653d8c6b6a1d",
     "risk_tier": "low",
     "seq": 30,
     "subject": "4d99b30b869945dd",
@@ -3413,9 +3413,9 @@
    {
     "actor": "exec.chief-of-staff",
     "actor_type": "agent",
-    "event_id": "evt_a103ad4ff9b84045",
+    "event_id": "evt_9e515ec71dae451d",
     "event_type": "action.executed",
-    "hash": "4bfe3560bbb491a8e70783db55d258ced57ac3aaf35fe283b260b1275d6dfacb",
+    "hash": "e21323548cf348e0ebfcb9a868f31847d55930923b23d5eb0de8653d8c6b6a1d",
     "payload": {
      "action_type": "message.internal",
      "approval_id": null,
@@ -3425,8 +3425,8 @@
      "summary": "Message msg_0040 to revenue.lead-research",
      "tool_id": "messaging.internal"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "fcda396dae690c4ec5247a17ad37449afe32b2891d6059497f4b5867c5dfd83a",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "7a0ebf0da2563f08cf013c4d496c8a1f7694b40eca62239f394fd1eb8e2ea776",
     "risk_tier": "low",
     "seq": 29,
     "subject": "16e7a26896c29e07",
@@ -3435,17 +3435,17 @@
    {
     "actor": "exec.chief-of-staff",
     "actor_type": "agent",
-    "event_id": "evt_f34bc26bddf24465",
+    "event_id": "evt_859f2ddb510c41da",
     "event_type": "action.intent",
-    "hash": "fcda396dae690c4ec5247a17ad37449afe32b2891d6059497f4b5867c5dfd83a",
+    "hash": "7a0ebf0da2563f08cf013c4d496c8a1f7694b40eca62239f394fd1eb8e2ea776",
     "payload": {
      "action_type": "message.internal",
      "approval_id": null,
      "digest": "16e7a26896c29e0750b0ef869faac109bfcdb716fbdd236e98383548d083e4bd",
      "tool_id": "messaging.internal"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "ec7c053605a48bfab22684e999256f980bbe096ec997663045a749a00967a9ee",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "6b09d553de81cc7d2e20fe9c716341864e20e47a3163e025f812d1fef3493870",
     "risk_tier": "low",
     "seq": 28,
     "subject": "16e7a26896c29e07",
@@ -3454,9 +3454,9 @@
    {
     "actor": "exec.chief-of-staff",
     "actor_type": "agent",
-    "event_id": "evt_1ab27c57abab4d5b",
+    "event_id": "evt_31289d22902041c8",
     "event_type": "policy.evaluated",
-    "hash": "ec7c053605a48bfab22684e999256f980bbe096ec997663045a749a00967a9ee",
+    "hash": "6b09d553de81cc7d2e20fe9c716341864e20e47a3163e025f812d1fef3493870",
     "payload": {
      "action_type": "message.internal",
      "digest": "16e7a26896c29e0750b0ef869faac109bfcdb716fbdd236e98383548d083e4bd",
@@ -3496,8 +3496,8 @@
      ],
      "tool_id": "messaging.internal"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "af005a4aed4ba3b8eeba7e3346f2afb01e51fae0ce25712a074bab43965af751",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "db52e88cbac146700f912cc0685960bca9431a86d759a13dd35c8763047330a1",
     "risk_tier": "low",
     "seq": 27,
     "subject": "16e7a26896c29e07",
@@ -3506,9 +3506,9 @@
    {
     "actor": "exec.chief-of-staff",
     "actor_type": "agent",
-    "event_id": "evt_e2383803fed34152",
+    "event_id": "evt_a8bb98274a6b4771",
     "event_type": "action.executed",
-    "hash": "af005a4aed4ba3b8eeba7e3346f2afb01e51fae0ce25712a074bab43965af751",
+    "hash": "db52e88cbac146700f912cc0685960bca9431a86d759a13dd35c8763047330a1",
     "payload": {
      "action_type": "message.internal",
      "approval_id": null,
@@ -3518,8 +3518,8 @@
      "summary": "Message msg_0038 to eng.software-architect",
      "tool_id": "messaging.internal"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "d940fff3eee61d15686d8d63b4e175900b8f2871ec65bfc7deeb88f2a4118a1e",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "69a7f0bf7ba1bb5da9e974ddbe994c570c7d3f8206589d24afcad82052c70872",
     "risk_tier": "low",
     "seq": 26,
     "subject": "a5f424f926f3a5fb",
@@ -3528,17 +3528,17 @@
    {
     "actor": "exec.chief-of-staff",
     "actor_type": "agent",
-    "event_id": "evt_f416f7ae18f84a5b",
+    "event_id": "evt_884260d287174646",
     "event_type": "action.intent",
-    "hash": "d940fff3eee61d15686d8d63b4e175900b8f2871ec65bfc7deeb88f2a4118a1e",
+    "hash": "69a7f0bf7ba1bb5da9e974ddbe994c570c7d3f8206589d24afcad82052c70872",
     "payload": {
      "action_type": "message.internal",
      "approval_id": null,
      "digest": "a5f424f926f3a5fbfd918ee55eccc7cdf87e9c4e32de800eaf9f1f3bdf4c3565",
      "tool_id": "messaging.internal"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "4d70b73b025b803b262552533b66631e0f6671cf69a581aaf4ba8c5d315040e3",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "a0d2c0f570f4b3cdb2edaef8f70546489fd48cb95cceb9833a6843eb28438bb6",
     "risk_tier": "low",
     "seq": 25,
     "subject": "a5f424f926f3a5fb",
@@ -3547,9 +3547,9 @@
    {
     "actor": "exec.chief-of-staff",
     "actor_type": "agent",
-    "event_id": "evt_d17c765b63f14dc2",
+    "event_id": "evt_52c014332a554d03",
     "event_type": "policy.evaluated",
-    "hash": "4d70b73b025b803b262552533b66631e0f6671cf69a581aaf4ba8c5d315040e3",
+    "hash": "a0d2c0f570f4b3cdb2edaef8f70546489fd48cb95cceb9833a6843eb28438bb6",
     "payload": {
      "action_type": "message.internal",
      "digest": "a5f424f926f3a5fbfd918ee55eccc7cdf87e9c4e32de800eaf9f1f3bdf4c3565",
@@ -3589,8 +3589,8 @@
      ],
      "tool_id": "messaging.internal"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "be8335eea8bd3095235f57d5cc85d7dc0aed32a21125b9d5342bc42571e9a025",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "0b640341bf38c724ddc907349b1a7701b4ace8d0bcba5b55046b426bdeb7b375",
     "risk_tier": "low",
     "seq": 24,
     "subject": "a5f424f926f3a5fb",
@@ -3599,9 +3599,9 @@
    {
     "actor": "exec.chief-of-staff",
     "actor_type": "agent",
-    "event_id": "evt_51f633ad66cf4b83",
+    "event_id": "evt_f6058e4570ea47af",
     "event_type": "action.executed",
-    "hash": "be8335eea8bd3095235f57d5cc85d7dc0aed32a21125b9d5342bc42571e9a025",
+    "hash": "0b640341bf38c724ddc907349b1a7701b4ace8d0bcba5b55046b426bdeb7b375",
     "payload": {
      "action_type": "message.internal",
      "approval_id": null,
@@ -3611,8 +3611,8 @@
      "summary": "Message msg_0036 to exec.risk-compliance",
      "tool_id": "messaging.internal"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "d4f006430330785692b34e44468e1ac8a1f9cca3d15caa47bbb7e9444f4a56bd",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "ef73b5e4254e0f03d053649ba7858d81cd52ef0e0105126a9cf2d82bb7ed0ea6",
     "risk_tier": "low",
     "seq": 23,
     "subject": "ac67a1383aa60158",
@@ -3621,17 +3621,17 @@
    {
     "actor": "exec.chief-of-staff",
     "actor_type": "agent",
-    "event_id": "evt_6bdb160e9f5d40ab",
+    "event_id": "evt_4adec1642ac24538",
     "event_type": "action.intent",
-    "hash": "d4f006430330785692b34e44468e1ac8a1f9cca3d15caa47bbb7e9444f4a56bd",
+    "hash": "ef73b5e4254e0f03d053649ba7858d81cd52ef0e0105126a9cf2d82bb7ed0ea6",
     "payload": {
      "action_type": "message.internal",
      "approval_id": null,
      "digest": "ac67a1383aa601588dcb04b4180fff44befafa231e48f55adbc0e480f741df74",
      "tool_id": "messaging.internal"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "53ba91bebb9dad815c3a0dbe918516dadac99c5df56a4c6431a05cb0fa32c667",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "e4b3a14f61c1aa073c59bc373e7e4172378109c5253678fd5e5864eb1db2e6dc",
     "risk_tier": "low",
     "seq": 22,
     "subject": "ac67a1383aa60158",
@@ -3640,9 +3640,9 @@
    {
     "actor": "exec.chief-of-staff",
     "actor_type": "agent",
-    "event_id": "evt_3b79c5dfd5114593",
+    "event_id": "evt_509b9b9523614833",
     "event_type": "policy.evaluated",
-    "hash": "53ba91bebb9dad815c3a0dbe918516dadac99c5df56a4c6431a05cb0fa32c667",
+    "hash": "e4b3a14f61c1aa073c59bc373e7e4172378109c5253678fd5e5864eb1db2e6dc",
     "payload": {
      "action_type": "message.internal",
      "digest": "ac67a1383aa601588dcb04b4180fff44befafa231e48f55adbc0e480f741df74",
@@ -3682,8 +3682,8 @@
      ],
      "tool_id": "messaging.internal"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "1e7081532cd447ad9e7d463b14cf08159329c835427dd520dbb0608ed918c1a0",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "03f7afed961ee110aea4934470d4c32e28ec6706386a7cb2701b375579733a56",
     "risk_tier": "low",
     "seq": 21,
     "subject": "ac67a1383aa60158",
@@ -3692,9 +3692,9 @@
    {
     "actor": "exec.chief-of-staff",
     "actor_type": "agent",
-    "event_id": "evt_71b006bc13554e07",
+    "event_id": "evt_658c3942f37b4a2b",
     "event_type": "action.executed",
-    "hash": "1e7081532cd447ad9e7d463b14cf08159329c835427dd520dbb0608ed918c1a0",
+    "hash": "03f7afed961ee110aea4934470d4c32e28ec6706386a7cb2701b375579733a56",
     "payload": {
      "action_type": "briefing.compile",
      "approval_id": null,
@@ -3704,8 +3704,8 @@
      "summary": "Executive briefing: 2026-11-06",
      "tool_id": "docs.workspace"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "bb22c0d631aa3aa1ad3cd8c6da57d21125f3048194346ed05fd9a7b79aa78878",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "6c4743f53199676de894106f5aa87a391a08c30cddc08543a3c807ea3f9b69c3",
     "risk_tier": "low",
     "seq": 20,
     "subject": "c895e575398f6f20",
@@ -3714,17 +3714,17 @@
    {
     "actor": "exec.chief-of-staff",
     "actor_type": "agent",
-    "event_id": "evt_e5b26c0379114f42",
+    "event_id": "evt_cf13324a800d487a",
     "event_type": "action.intent",
-    "hash": "bb22c0d631aa3aa1ad3cd8c6da57d21125f3048194346ed05fd9a7b79aa78878",
+    "hash": "6c4743f53199676de894106f5aa87a391a08c30cddc08543a3c807ea3f9b69c3",
     "payload": {
      "action_type": "briefing.compile",
      "approval_id": null,
      "digest": "c895e575398f6f203b92e0178aa3bec3f3a619ded5cb2a53df23291995e44e5c",
      "tool_id": "docs.workspace"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "6740008b60fbeff72b5ab9603bff72a48de5f86ddfb4c8d83f9273a14b27ff0f",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "69170f7021123d213fa1e90d0d4b4bc1921fd5a456ea99c186e97788b47936d6",
     "risk_tier": "low",
     "seq": 19,
     "subject": "c895e575398f6f20",
@@ -3733,9 +3733,9 @@
    {
     "actor": "exec.chief-of-staff",
     "actor_type": "agent",
-    "event_id": "evt_a92c8e0f47d64037",
+    "event_id": "evt_ec4e1fec69404d8c",
     "event_type": "policy.evaluated",
-    "hash": "6740008b60fbeff72b5ab9603bff72a48de5f86ddfb4c8d83f9273a14b27ff0f",
+    "hash": "69170f7021123d213fa1e90d0d4b4bc1921fd5a456ea99c186e97788b47936d6",
     "payload": {
      "action_type": "briefing.compile",
      "digest": "c895e575398f6f203b92e0178aa3bec3f3a619ded5cb2a53df23291995e44e5c",
@@ -3775,8 +3775,8 @@
      ],
      "tool_id": "docs.workspace"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "ee8c2cbd22f3e7bae4f9e6193b7d93e8ef2cdb11fed30a9ac622f7d3bcb0d8e0",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "42a637765c80c025205e04d250fdca36d9677e64cd06fdada98a629fea4110bf",
     "risk_tier": "low",
     "seq": 18,
     "subject": "c895e575398f6f20",
@@ -3785,16 +3785,16 @@
    {
     "actor": "operator.founder",
     "actor_type": "human",
-    "event_id": "evt_1157072e69854285",
+    "event_id": "evt_a3c9befb63c24e72",
     "event_type": "memory.added",
-    "hash": "ee8c2cbd22f3e7bae4f9e6193b7d93e8ef2cdb11fed30a9ac622f7d3bcb0d8e0",
+    "hash": "42a637765c80c025205e04d250fdca36d9677e64cd06fdada98a629fea4110bf",
     "payload": {
      "scope": "company",
      "source": "missions.json",
      "title": "Workflow template: Revenue research: qualify this week's Ontario prospects"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "b2247797779c7b58a36cb0638369601d18155c9dea5ad10493edfd41294b8b14",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "bf4288fe1e27db5ef78f30be49a78c50f9a9a53531ffff150f5b4f1ac6657f89",
     "risk_tier": null,
     "seq": 17,
     "subject": "mem_0031",
@@ -3803,16 +3803,16 @@
    {
     "actor": "operator.founder",
     "actor_type": "human",
-    "event_id": "evt_549178de1b094585",
+    "event_id": "evt_72a3f946dd6248c6",
     "event_type": "mission.created",
-    "hash": "b2247797779c7b58a36cb0638369601d18155c9dea5ad10493edfd41294b8b14",
+    "hash": "bf4288fe1e27db5ef78f30be49a78c50f9a9a53531ffff150f5b4f1ac6657f89",
     "payload": {
      "tasks": 3,
      "title": "Revenue research: qualify this week's Ontario prospects",
      "waves": 3
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "75588a4023a227aef2b601bc15252c0eec36393fbced060a36ea56115892c2e4",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "3f9601b01744e4aeee747893e0422a0cdfb4adc3c361e01de565a6407cdbbc78",
     "risk_tier": null,
     "seq": 16,
     "subject": "msn_0026",
@@ -3821,16 +3821,16 @@
    {
     "actor": "operator.founder",
     "actor_type": "human",
-    "event_id": "evt_d8a237baa7c640ce",
+    "event_id": "evt_0688ba43dab04fd9",
     "event_type": "memory.added",
-    "hash": "75588a4023a227aef2b601bc15252c0eec36393fbced060a36ea56115892c2e4",
+    "hash": "3f9601b01744e4aeee747893e0422a0cdfb4adc3c361e01de565a6407cdbbc78",
     "payload": {
      "scope": "company",
      "source": "missions.json",
      "title": "Workflow template: Security review: agent grants, tool registry, and approval gates"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "0a10ed0947c7629a4525840988e5519a15e8913396808b23b321c4c2d7431807",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "72173a7f6efc342200bf9cd30981b93044915758843e74e3cae538034e387d7d",
     "risk_tier": null,
     "seq": 15,
     "subject": "mem_0025",
@@ -3839,16 +3839,16 @@
    {
     "actor": "operator.founder",
     "actor_type": "human",
-    "event_id": "evt_6c40664ee15b4242",
+    "event_id": "evt_12aa9bf1c7d4446a",
     "event_type": "mission.created",
-    "hash": "0a10ed0947c7629a4525840988e5519a15e8913396808b23b321c4c2d7431807",
+    "hash": "72173a7f6efc342200bf9cd30981b93044915758843e74e3cae538034e387d7d",
     "payload": {
      "tasks": 1,
      "title": "Security review: agent grants, tool registry, and approval gates",
      "waves": 1
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "ef1a3c3fba4e209d5ccf643033ee80fb34690ab8467a1a8247611ffaa766c120",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "833df05282b823f669fac8f91137b08bd071fcad9541538e11c88fc0ad2d58d6",
     "risk_tier": null,
     "seq": 14,
     "subject": "msn_0022",
@@ -3857,16 +3857,16 @@
    {
     "actor": "operator.founder",
     "actor_type": "human",
-    "event_id": "evt_f8f00e740bfc4de8",
+    "event_id": "evt_5b332dc989474a07",
     "event_type": "memory.added",
-    "hash": "ef1a3c3fba4e209d5ccf643033ee80fb34690ab8467a1a8247611ffaa766c120",
+    "hash": "833df05282b823f669fac8f91137b08bd071fcad9541538e11c88fc0ad2d58d6",
     "payload": {
      "scope": "company",
      "source": "missions.json",
      "title": "Workflow template: Authority week: three plain-language posts for Ontario operators"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "e17b34bca3c8cb84c2959bf8798fa13772eb6fe37fff2b569805e94b997e36dc",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "a52accc2cc1896d7f94c8b1424da3a11da11844d563a6d67f0d038fdecc00b4d",
     "risk_tier": null,
     "seq": 13,
     "subject": "mem_0021",
@@ -3875,16 +3875,16 @@
    {
     "actor": "operator.founder",
     "actor_type": "human",
-    "event_id": "evt_b194e5c16e1641ee",
+    "event_id": "evt_8910db3cd22e4128",
     "event_type": "mission.created",
-    "hash": "e17b34bca3c8cb84c2959bf8798fa13772eb6fe37fff2b569805e94b997e36dc",
+    "hash": "a52accc2cc1896d7f94c8b1424da3a11da11844d563a6d67f0d038fdecc00b4d",
     "payload": {
      "tasks": 3,
      "title": "Authority week: three plain-language posts for Ontario operators",
      "waves": 3
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "e8216ba08586d507d8d71ce02bfd715338d80363f08b5a6e209130c7e53d1840",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "a7a38d83d3643ae61e8982536731dcdb1c8e206d1e13f6ba9d193df92f8926b0",
     "risk_tier": null,
     "seq": 12,
     "subject": "msn_0016",
@@ -3893,16 +3893,16 @@
    {
     "actor": "operator.founder",
     "actor_type": "human",
-    "event_id": "evt_f6d60051ff7a4e4f",
+    "event_id": "evt_74014fec1ff2413d",
     "event_type": "memory.added",
-    "hash": "e8216ba08586d507d8d71ce02bfd715338d80363f08b5a6e209130c7e53d1840",
+    "hash": "a7a38d83d3643ae61e8982536731dcdb1c8e206d1e13f6ba9d193df92f8926b0",
     "payload": {
      "scope": "company",
      "source": "missions.json",
      "title": "Workflow template: Ship a dependency-aware readiness probe for the Agent Office API"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "21f0b5d29c4cb7082ffaf47d9e8bf00021faff003aebf581c8e609a97ce05fda",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "0020b90de30d0a76ea60fe3b97c8b5ee0023f01e4b98421d65f19c12babde5a6",
     "risk_tier": null,
     "seq": 11,
     "subject": "mem_0015",
@@ -3911,16 +3911,16 @@
    {
     "actor": "operator.founder",
     "actor_type": "human",
-    "event_id": "evt_ee0c58d4e35643d7",
+    "event_id": "evt_ab637e06a33e436e",
     "event_type": "mission.created",
-    "hash": "21f0b5d29c4cb7082ffaf47d9e8bf00021faff003aebf581c8e609a97ce05fda",
+    "hash": "0020b90de30d0a76ea60fe3b97c8b5ee0023f01e4b98421d65f19c12babde5a6",
     "payload": {
      "tasks": 5,
      "title": "Ship a dependency-aware readiness probe for the Agent Office API",
      "waves": 4
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "08015f072678ab0c069a37380c6c46409f8ffe644cba7a5d7d995519ba28213b",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "019013852c4d6005685905b70be1ce229951105a7793273afc04a7aff8540491",
     "risk_tier": null,
     "seq": 10,
     "subject": "msn_0008",
@@ -3929,12 +3929,12 @@
    {
     "actor": "system.office",
     "actor_type": "system",
-    "event_id": "evt_6d95bdc6e4434ebf",
+    "event_id": "evt_31742d9bd92f4290",
     "event_type": "daily_loop.started",
-    "hash": "08015f072678ab0c069a37380c6c46409f8ffe644cba7a5d7d995519ba28213b",
+    "hash": "019013852c4d6005685905b70be1ce229951105a7793273afc04a7aff8540491",
     "payload": {},
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "15b0b1f5d7a043d52380d243329b46ab416cef80ee9d614fc5b38bce83af420a",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "688fb595b877fb3600a95c4f094d7f0df86e39f7c965115628dbf0104c0c390d",
     "risk_tier": null,
     "seq": 9,
     "subject": "2026-11-06",
@@ -3943,16 +3943,16 @@
    {
     "actor": "operator.founder",
     "actor_type": "human",
-    "event_id": "evt_bd6a5d1bbf9e4c4a",
+    "event_id": "evt_e759e0eb71a5456f",
     "event_type": "memory.added",
-    "hash": "15b0b1f5d7a043d52380d243329b46ab416cef80ee9d614fc5b38bce83af420a",
+    "hash": "688fb595b877fb3600a95c4f094d7f0df86e39f7c965115628dbf0104c0c390d",
     "payload": {
      "scope": "company",
      "source": "docs/",
      "title": "Technical documentation index"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "a1f39a6b2f83102aca462291bee7223a399c14e38a2d6ee31bff7db84f2a5682",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "ce997de96667575a5bf3ed265c8abaca565f514a48fa469042ebe6970e000e27",
     "risk_tier": null,
     "seq": 8,
     "subject": "mem_0007",
@@ -3961,16 +3961,16 @@
    {
     "actor": "operator.founder",
     "actor_type": "human",
-    "event_id": "evt_dddb847fb0504d1c",
+    "event_id": "evt_fea57d8a43c44ff6",
     "event_type": "memory.added",
-    "hash": "a1f39a6b2f83102aca462291bee7223a399c14e38a2d6ee31bff7db84f2a5682",
+    "hash": "ce997de96667575a5bf3ed265c8abaca565f514a48fa469042ebe6970e000e27",
     "payload": {
      "scope": "company",
      "source": "packages/agent_core/providers.py",
      "title": "Reusable prompt: drafting rewrite"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "b0b00c03f64241bf5004de2a6096acb4eeed63607e8a40c8d62cd7001bd5dc61",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "8da123c5460a159386d3f3d6777c008f54754b9a46e865c2815e114a2e84e42e",
     "risk_tier": null,
     "seq": 7,
     "subject": "mem_0006",
@@ -3979,16 +3979,16 @@
    {
     "actor": "operator.founder",
     "actor_type": "human",
-    "event_id": "evt_523f9eec58ff4525",
+    "event_id": "evt_0d4ce7525b5c4fce",
     "event_type": "memory.added",
-    "hash": "b0b00c03f64241bf5004de2a6096acb4eeed63607e8a40c8d62cd7001bd5dc61",
+    "hash": "8da123c5460a159386d3f3d6777c008f54754b9a46e865c2815e114a2e84e42e",
     "payload": {
      "scope": "company",
      "source": "config/policy.json",
      "title": "Governance policy summary"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "9cea005970be78c9d6b6d6734ab0507a98a796f06a9ec61a440a0d614cdff287",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "1877224594f1925a19be2102f04a4f3606cb5ecb5171e5a097704ede3a1fdf67",
     "risk_tier": null,
     "seq": 6,
     "subject": "mem_0005",
@@ -3997,16 +3997,16 @@
    {
     "actor": "operator.founder",
     "actor_type": "human",
-    "event_id": "evt_5a823cb296a744e4",
+    "event_id": "evt_575d3748fe2d4747",
     "event_type": "memory.added",
-    "hash": "9cea005970be78c9d6b6d6734ab0507a98a796f06a9ec61a440a0d614cdff287",
+    "hash": "1877224594f1925a19be2102f04a4f3606cb5ecb5171e5a097704ede3a1fdf67",
     "payload": {
      "scope": "company",
      "source": "config/company.json",
      "title": "Approved research sources"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "7cd4b4925b7816acf3c9c02c06d3aa809fd3f17943cd61230ab5eebe55b1933a",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "3a81badeb1b7bed50e44998d5580276d66358433d8e8c96073b97ce444ce7742",
     "risk_tier": null,
     "seq": 5,
     "subject": "mem_0004",
@@ -4015,16 +4015,16 @@
    {
     "actor": "operator.founder",
     "actor_type": "human",
-    "event_id": "evt_09ce0dca89ac4f22",
+    "event_id": "evt_4ad58c26a8db4748",
     "event_type": "memory.added",
-    "hash": "7cd4b4925b7816acf3c9c02c06d3aa809fd3f17943cd61230ab5eebe55b1933a",
+    "hash": "3a81badeb1b7bed50e44998d5580276d66358433d8e8c96073b97ce444ce7742",
     "payload": {
      "scope": "company",
      "source": "config/company.json",
      "title": "Ideal customer profile"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "9f09c5e7b608e748fea629756752804cef29f11ea625a4a86434240cdec40f25",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "ce142df345104a4b8dc37a0c4ebd6d135fa4c6aee33999a1dc7b742aa8f35206",
     "risk_tier": null,
     "seq": 4,
     "subject": "mem_0003",
@@ -4033,16 +4033,16 @@
    {
     "actor": "operator.founder",
     "actor_type": "human",
-    "event_id": "evt_9e7514abb35942e4",
+    "event_id": "evt_041d8eba6b6c40d4",
     "event_type": "memory.added",
-    "hash": "9f09c5e7b608e748fea629756752804cef29f11ea625a4a86434240cdec40f25",
+    "hash": "ce142df345104a4b8dc37a0c4ebd6d135fa4c6aee33999a1dc7b742aa8f35206",
     "payload": {
      "scope": "company",
      "source": "config/company.json",
      "title": "Brand guidelines"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "317228591d45b8b0986133a202b6dbc1aec13feeec1ef376614f69ffb16ec24d",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "b8614b2887de9fa4c1a02b606b6ece15a1ea9eeb52fce29f94e573d412ea7d14",
     "risk_tier": null,
     "seq": 3,
     "subject": "mem_0002",
@@ -4051,16 +4051,16 @@
    {
     "actor": "operator.founder",
     "actor_type": "human",
-    "event_id": "evt_4729addb76044113",
+    "event_id": "evt_27a1497fcec64115",
     "event_type": "memory.added",
-    "hash": "317228591d45b8b0986133a202b6dbc1aec13feeec1ef376614f69ffb16ec24d",
+    "hash": "b8614b2887de9fa4c1a02b606b6ece15a1ea9eeb52fce29f94e573d412ea7d14",
     "payload": {
      "scope": "company",
      "source": "config/company.json",
      "title": "Company objectives"
     },
-    "policy_version": "2026.11.08-1",
-    "prev_hash": "a31f43ec929a65a6e9f901b8e45ac8cb6447f64b0cfeb6ab5b00a9e38fb0ecba",
+    "policy_version": "2026.11.13-1",
+    "prev_hash": "ec4551fd376f5e4a53ceba82ae8601a6618a253234bee3ed1c7f03aae8862a78",
     "risk_tier": null,
     "seq": 2,
     "subject": "mem_0001",
@@ -4069,16 +4069,16 @@
    {
     "actor": "system.office",
     "actor_type": "system",
-    "event_id": "evt_e57b10c15c194f95",
+    "event_id": "evt_31b6d5c72d1d4223",
     "event_type": "office.bootstrapped",
-    "hash": "a31f43ec929a65a6e9f901b8e45ac8cb6447f64b0cfeb6ab5b00a9e38fb0ecba",
+    "hash": "ec4551fd376f5e4a53ceba82ae8601a6618a253234bee3ed1c7f03aae8862a78",
     "payload": {
      "agents": 35,
      "departments": 7,
-     "policy_version": "2026.11.08-1",
+     "policy_version": "2026.11.13-1",
      "tools": 19
     },
-    "policy_version": "2026.11.08-1",
+    "policy_version": "2026.11.13-1",
     "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
     "risk_tier": null,
     "seq": 1,
@@ -4089,7 +4089,7 @@
   "verify": {
    "broken_at": null,
    "count": 80,
-   "head": "45e2f250e1dd6723dfcbb94ba338c90e2e20484c36c63ef61672bd71ce530ca8",
+   "head": "8393959555103daa69a0ba6cf17334c7b5b666f2ab30f741684a38c167aff6c5",
    "ok": true,
    "reason": null
   }
@@ -5121,7 +5121,7 @@
       "governance": {
        "digest": "cdd301c0a691746d9fa39794bf138ba98127c99903cbdfdebf7de5db99eb05d9",
        "outcome": "completed",
-       "policy_version": "2026.11.08-1",
+       "policy_version": "2026.11.13-1",
        "score": 15,
        "tier": "low",
        "trace": [
@@ -5174,7 +5174,7 @@
          "step": 8
         },
         {
-         "detail": "sealed as audit #39 1765bf2a3dbf",
+         "detail": "sealed as audit #39 78b615301f59",
          "name": "audit",
          "state": "pass",
          "step": 9
@@ -5272,7 +5272,7 @@
       "governance": {
        "digest": "c2781cfafaa4ef36ab591927d618973d693b441041cf9e16376c29a5528eb3cb",
        "outcome": "completed",
-       "policy_version": "2026.11.08-1",
+       "policy_version": "2026.11.13-1",
        "score": 15,
        "tier": "low",
        "trace": [
@@ -5325,7 +5325,7 @@
          "step": 8
         },
         {
-         "detail": "sealed as audit #42 425e867edf0c",
+         "detail": "sealed as audit #42 227f23b459a4",
          "name": "audit",
          "state": "pass",
          "step": 9
@@ -5429,7 +5429,7 @@
       "governance": {
        "digest": "08579fb1e156086f7e8da576892575cee334d34444db4df7897b6829c57caa43",
        "outcome": "completed",
-       "policy_version": "2026.11.08-1",
+       "policy_version": "2026.11.13-1",
        "score": 15,
        "tier": "low",
        "trace": [
@@ -5482,7 +5482,7 @@
          "step": 8
         },
         {
-         "detail": "sealed as audit #45 54dd09492f47",
+         "detail": "sealed as audit #45 d8e50e723aa3",
          "name": "audit",
          "state": "pass",
          "step": 9
@@ -5588,7 +5588,7 @@
       "governance": {
        "digest": "68ef1b383a7282dddbd0e3566250a07d932db2104fb3ddb58b40341509910152",
        "outcome": "completed",
-       "policy_version": "2026.11.08-1",
+       "policy_version": "2026.11.13-1",
        "score": 15,
        "tier": "low",
        "trace": [
@@ -5641,7 +5641,7 @@
          "step": 8
         },
         {
-         "detail": "sealed as audit #48 82f23212b0b9",
+         "detail": "sealed as audit #48 87935c5acfa6",
          "name": "audit",
          "state": "pass",
          "step": 9
@@ -5778,7 +5778,7 @@
       "governance": {
        "digest": "efe4f76d2c0833ccaa7580b9bd909eccaeb8ab70b449bb959aa0ef29a2076e3b",
        "outcome": "completed",
-       "policy_version": "2026.11.08-1",
+       "policy_version": "2026.11.13-1",
        "score": 15,
        "tier": "low",
        "trace": [
@@ -5831,7 +5831,7 @@
          "step": 8
         },
         {
-         "detail": "sealed as audit #51 8c25aa6500be",
+         "detail": "sealed as audit #51 5369b7cf2585",
          "name": "audit",
          "state": "pass",
          "step": 9
@@ -5999,7 +5999,7 @@
       "governance": {
        "digest": "23798cbf16716fadc96c42d6525c7e4141bffb738bd7387423fada3af3989be0",
        "outcome": "completed",
-       "policy_version": "2026.11.08-1",
+       "policy_version": "2026.11.13-1",
        "score": 15,
        "tier": "low",
        "trace": [
@@ -6052,7 +6052,7 @@
          "step": 8
         },
         {
-         "detail": "sealed as audit #65 9b1429a88838",
+         "detail": "sealed as audit #65 c0c10e3b61f4",
          "name": "audit",
          "state": "pass",
          "step": 9
@@ -6153,7 +6153,7 @@
       "governance": {
        "digest": "4631e5cdc35a3c773138ba0a42741d41ebe13b1692e828260f47237d9b22545f",
        "outcome": "completed",
-       "policy_version": "2026.11.08-1",
+       "policy_version": "2026.11.13-1",
        "score": 45,
        "tier": "medium",
        "trace": [
@@ -6206,7 +6206,7 @@
          "step": 8
         },
         {
-         "detail": "sealed as audit #68 1d3804dc05d2",
+         "detail": "sealed as audit #68 a4181eeb7874",
          "name": "audit",
          "state": "pass",
          "step": 9
@@ -6302,7 +6302,7 @@
       "governance": {
        "digest": "a7e43930bbf47d6f72021d2e33c7db51d1bea577dd3be76ae39fbb621d950acf",
        "outcome": "waiting_approval",
-       "policy_version": "2026.11.08-1",
+       "policy_version": "2026.11.13-1",
        "score": 78,
        "tier": "high",
        "trace": [
@@ -6447,7 +6447,7 @@
        "audit_chain": {
         "broken_at": null,
         "count": 34,
-        "head": "b19484002bd32384053e571344d367d8abff0d89bd5aad161cd47c8feb4ba2ac",
+        "head": "2a11d995b1315b4a950b5b5ead521e98da344b46bf5292ba851a56c6f7320e07",
         "ok": true,
         "reason": null
        },
@@ -6682,7 +6682,7 @@
       "governance": {
        "digest": "99f6065a5054b699759ffdbe0a689d7a8b0f5ab87486c14acec87250f29e3b97",
        "outcome": "completed",
-       "policy_version": "2026.11.08-1",
+       "policy_version": "2026.11.13-1",
        "score": 15,
        "tier": "low",
        "trace": [
@@ -6735,7 +6735,7 @@
          "step": 8
         },
         {
-         "detail": "sealed as audit #35 8c52e75bc943",
+         "detail": "sealed as audit #35 ae1615908ba5",
          "name": "audit",
          "state": "pass",
          "step": 9
@@ -6766,7 +6766,7 @@
         "audit_chain": {
          "broken_at": null,
          "count": 34,
-         "head": "b19484002bd32384053e571344d367d8abff0d89bd5aad161cd47c8feb4ba2ac",
+         "head": "2a11d995b1315b4a950b5b5ead521e98da344b46bf5292ba851a56c6f7320e07",
          "ok": true,
          "reason": null
         },
@@ -7178,7 +7178,7 @@
       "governance": {
        "digest": "84eb7ee9ae8d23829b22fd95a00c7faf1a30877141d71967b16855f92eaa55e8",
        "outcome": "completed",
-       "policy_version": "2026.11.08-1",
+       "policy_version": "2026.11.13-1",
        "score": 15,
        "tier": "low",
        "trace": [
@@ -7231,7 +7231,7 @@
          "step": 8
         },
         {
-         "detail": "sealed as audit #55 ae2c2d5dc48b",
+         "detail": "sealed as audit #55 43eded4ace6b",
          "name": "audit",
          "state": "pass",
          "step": 9
@@ -7704,7 +7704,7 @@
       "governance": {
        "digest": "b3691a614d48a410b44ba1fa964aeeca5f483a13a396c4fab2c8418e4e77823c",
        "outcome": "completed",
-       "policy_version": "2026.11.08-1",
+       "policy_version": "2026.11.13-1",
        "score": 15,
        "tier": "low",
        "trace": [
@@ -7757,7 +7757,7 @@
          "step": 8
         },
         {
-         "detail": "sealed as audit #58 01eb9799ad3e",
+         "detail": "sealed as audit #58 0fc2297a3920",
          "name": "audit",
          "state": "pass",
          "step": 9
@@ -7960,7 +7960,7 @@
       "governance": {
        "digest": "a30f2c4d7164565431900cb36b7a94558839e1b95866b9b15eec00678aec1a31",
        "outcome": "completed",
-       "policy_version": "2026.11.08-1",
+       "policy_version": "2026.11.13-1",
        "score": 15,
        "tier": "low",
        "trace": [
@@ -8013,7 +8013,7 @@
          "step": 8
         },
         {
-         "detail": "sealed as audit #61 75050c0fbef5",
+         "detail": "sealed as audit #61 a9ccb5fdff41",
          "name": "audit",
          "state": "pass",
          "step": 9
@@ -8559,7 +8559,7 @@
     "summary": "Code changes on branches, workflow creation, internal data updates. Executes internally, is logged, and is listed for operator review in the end-of-day report."
    }
   },
-  "version": "2026.11.08-1"
+  "version": "2026.11.13-1"
  },
  "reports": {
   "briefing": {
@@ -9126,7 +9126,7 @@
     "audit": {
      "broken_at": null,
      "count": 75,
-     "head": "9128af0f1ca2a0ffc6c59d5f466917e37c85c598138b9632e67c5b434c7e9aca",
+     "head": "3dc281cfb444f37ba9d090f8dd2e7803603cb684a6d8e055f954961f3bff9f9c",
      "ok": true,
      "reason": null
     },
@@ -9336,7 +9336,7 @@
     "audit_chain": {
      "broken_at": null,
      "count": 34,
-     "head": "b19484002bd32384053e571344d367d8abff0d89bd5aad161cd47c8feb4ba2ac",
+     "head": "2a11d995b1315b4a950b5b5ead521e98da344b46bf5292ba851a56c6f7320e07",
      "ok": true,
      "reason": null
     },
@@ -9581,7 +9581,7 @@
    "id": "risk_0084",
    "injection_suspected": false,
    "outcome": "allow",
-   "policy_version": "2026.11.08-1",
+   "policy_version": "2026.11.13-1",
    "score": 15,
    "subject_id": "7f30817d2a52fd3d",
    "subject_type": "request",
@@ -9595,7 +9595,7 @@
    "id": "risk_0081",
    "injection_suspected": false,
    "outcome": "allow",
-   "policy_version": "2026.11.08-1",
+   "policy_version": "2026.11.13-1",
    "score": 15,
    "subject_id": "4a569671e0ab385b",
    "subject_type": "request",
@@ -9609,7 +9609,7 @@
    "id": "risk_0079",
    "injection_suspected": false,
    "outcome": "allow",
-   "policy_version": "2026.11.08-1",
+   "policy_version": "2026.11.13-1",
    "score": 15,
    "subject_id": "ea4c7ee161a988af",
    "subject_type": "request",
@@ -9626,7 +9626,7 @@
    "id": "risk_0075",
    "injection_suspected": false,
    "outcome": "approval_required",
-   "policy_version": "2026.11.08-1",
+   "policy_version": "2026.11.13-1",
    "score": 78,
    "subject_id": "task_0020",
    "subject_type": "task",
@@ -9640,7 +9640,7 @@
    "id": "risk_0073",
    "injection_suspected": false,
    "outcome": "allow",
-   "policy_version": "2026.11.08-1",
+   "policy_version": "2026.11.13-1",
    "score": 45,
    "subject_id": "task_0019",
    "subject_type": "task",
@@ -9654,7 +9654,7 @@
    "id": "risk_0070",
    "injection_suspected": false,
    "outcome": "allow",
-   "policy_version": "2026.11.08-1",
+   "policy_version": "2026.11.13-1",
    "score": 15,
    "subject_id": "task_0018",
    "subject_type": "task",
@@ -9668,7 +9668,7 @@
    "id": "risk_0068",
    "injection_suspected": false,
    "outcome": "allow",
-   "policy_version": "2026.11.08-1",
+   "policy_version": "2026.11.13-1",
    "score": 15,
    "subject_id": "task_0030",
    "subject_type": "task",
@@ -9682,7 +9682,7 @@
    "id": "risk_0065",
    "injection_suspected": false,
    "outcome": "allow",
-   "policy_version": "2026.11.08-1",
+   "policy_version": "2026.11.13-1",
    "score": 15,
    "subject_id": "task_0029",
    "subject_type": "task",
@@ -9696,7 +9696,7 @@
    "id": "risk_0062",
    "injection_suspected": false,
    "outcome": "allow",
-   "policy_version": "2026.11.08-1",
+   "policy_version": "2026.11.13-1",
    "score": 15,
    "subject_id": "task_0028",
    "subject_type": "task",
@@ -9710,7 +9710,7 @@
    "id": "risk_0060",
    "injection_suspected": false,
    "outcome": "allow",
-   "policy_version": "2026.11.08-1",
+   "policy_version": "2026.11.13-1",
    "score": 15,
    "subject_id": "task_0014",
    "subject_type": "task",
@@ -9724,7 +9724,7 @@
    "id": "risk_0056",
    "injection_suspected": false,
    "outcome": "allow",
-   "policy_version": "2026.11.08-1",
+   "policy_version": "2026.11.13-1",
    "score": 15,
    "subject_id": "task_0013",
    "subject_type": "task",
@@ -9738,7 +9738,7 @@
    "id": "risk_0054",
    "injection_suspected": false,
    "outcome": "allow",
-   "policy_version": "2026.11.08-1",
+   "policy_version": "2026.11.13-1",
    "score": 15,
    "subject_id": "task_0012",
    "subject_type": "task",
@@ -9752,7 +9752,7 @@
    "id": "risk_0051",
    "injection_suspected": false,
    "outcome": "allow",
-   "policy_version": "2026.11.08-1",
+   "policy_version": "2026.11.13-1",
    "score": 15,
    "subject_id": "task_0011",
    "subject_type": "task",
@@ -9766,7 +9766,7 @@
    "id": "risk_0047",
    "injection_suspected": false,
    "outcome": "allow",
-   "policy_version": "2026.11.08-1",
+   "policy_version": "2026.11.13-1",
    "score": 15,
    "subject_id": "task_0010",
    "subject_type": "task",
@@ -9780,7 +9780,7 @@
    "id": "risk_0043",
    "injection_suspected": false,
    "outcome": "allow",
-   "policy_version": "2026.11.08-1",
+   "policy_version": "2026.11.13-1",
    "score": 15,
    "subject_id": "task_0024",
    "subject_type": "task",
@@ -9794,7 +9794,7 @@
    "id": "risk_0041",
    "injection_suspected": false,
    "outcome": "allow",
-   "policy_version": "2026.11.08-1",
+   "policy_version": "2026.11.13-1",
    "score": 15,
    "subject_id": "4d99b30b869945dd",
    "subject_type": "request",
@@ -9808,7 +9808,7 @@
    "id": "risk_0039",
    "injection_suspected": false,
    "outcome": "allow",
-   "policy_version": "2026.11.08-1",
+   "policy_version": "2026.11.13-1",
    "score": 15,
    "subject_id": "16e7a26896c29e07",
    "subject_type": "request",
@@ -9822,7 +9822,7 @@
    "id": "risk_0037",
    "injection_suspected": false,
    "outcome": "allow",
-   "policy_version": "2026.11.08-1",
+   "policy_version": "2026.11.13-1",
    "score": 15,
    "subject_id": "a5f424f926f3a5fb",
    "subject_type": "request",
@@ -9836,7 +9836,7 @@
    "id": "risk_0035",
    "injection_suspected": false,
    "outcome": "allow",
-   "policy_version": "2026.11.08-1",
+   "policy_version": "2026.11.13-1",
    "score": 15,
    "subject_id": "ac67a1383aa60158",
    "subject_type": "request",
@@ -9850,7 +9850,7 @@
    "id": "risk_0032",
    "injection_suspected": false,
    "outcome": "allow",
-   "policy_version": "2026.11.08-1",
+   "policy_version": "2026.11.13-1",
    "score": 15,
    "subject_id": "c895e575398f6f20",
    "subject_type": "request",

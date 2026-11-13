@@ -1,5 +1,5 @@
 {
-  "policy_version": "2026.11.08-1",
+  "policy_version": "2026.11.13-1",
   "description": "ClearGlass Agent Office policy-as-code. Every agent action is evaluated against this file by packages/policy_engine. Change it through review, then bump policy_version.",
   "permission_levels": ["none", "read", "propose", "write", "execute"],
   "tiers": {
@@ -95,6 +95,14 @@
     "cyber": {
       "required_param_flags": {"osint.public_research": "authorized_scope"},
       "reason": "Cyber research runs only inside a documented, authorized scope."
+    }
+  },
+  "mission_modes": {
+    "plan_first": {
+      "allowed_levels": ["read", "propose"],
+      "also_allowed_actions": ["memory.write_task", "message.internal"],
+      "deny_spend": true,
+      "reason": "A plan-first mission researches, analyses and drafts. It cannot send, publish, write to records, deploy, or spend. Those need a separate production mission that the operator creates after approving the plan."
     }
   },
   "escalation_modifiers": [

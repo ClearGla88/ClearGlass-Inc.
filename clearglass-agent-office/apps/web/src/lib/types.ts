@@ -40,7 +40,7 @@ export interface Task {
 export interface Mission {
   id: string; key: string; title: string; objective: string; department: string; owner: string; priority: number;
   deadline: string | null; deliverables: string[]; constraints: string[]; approval_rules: string[]; goal_ids: string[];
-  status: string; mode: "production" | "simulation"; workflow_status: string | null; waves: string[][]; tasks: Task[];
+  status: string; mode: "production" | "simulation" | "plan_first"; workflow_status: string | null; waves: string[][]; tasks: Task[];
 }
 
 export interface Grant {

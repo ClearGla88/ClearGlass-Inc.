@@ -199,3 +199,24 @@ def test_mission_mode_and_shadow_divergence_rules(db):
             " digest, shadow_version) VALUES ('s1', '[\"r\"]', 'x', 'eng.lead', 'allow', 'allow', %s, 'v1')",
             (DIGEST,),
         )
+
+
+def test_plan_first_mission_mode_is_accepted(db):
+    """003_plan_first_mode.sql widens the mode check; it does not remove it."""
+    import psycopg
+
+    seed(db)
+    with db.transaction():
+        db.execute(
+            "INSERT INTO workflows (id, mission_id) VALUES ('w2', 'm2');"
+            "INSERT INTO missions (id, title, objective, department, owner, workflow_id, created_by, mode)"
+            " VALUES ('m2','t','o','eng','eng.lead','w2','op','plan_first')"
+        )
+    stored = db.execute("SELECT count(*) FROM missions WHERE id = 'm2' AND mode = 'plan_first'").fetchone()[0]
+    assert stored == 1
+    with pytest.raises(psycopg.errors.CheckViolation), db.transaction():
+        db.execute(
+            "INSERT INTO workflows (id, mission_id) VALUES ('w3', 'm3');"
+            "INSERT INTO missions (id, title, objective, department, owner, workflow_id, created_by, mode)"
+            " VALUES ('m3','t','o','eng','eng.lead','w3','op','growth_hack')"
+        )

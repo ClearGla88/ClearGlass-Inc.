@@ -8,6 +8,7 @@
     python office.py emergency-stop --reason "..."
     python office.py release-stop --reason "..."
     python office.py approve <approval_id> --reason "..." [--decision approve|reject]
+    python office.py plan-check <plan.json> [--approvals <file>]
 
 The CLI acts as the operator named in config/company.json. It runs locally with
 whatever access the shell user has; the API is the authenticated surface.
@@ -135,6 +136,37 @@ def cmd_approve(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_plan_check(args: argparse.Namespace) -> int:
+    """Validate a PLAN-FIRST payload. Exit 0 ready, 2 valid but blocked, 1 invalid."""
+    from plan_contract import PlanError, check_approvals, check_plan, load_json, readiness
+
+    plan_path = Path(args.plan)
+    approvals_path = Path(args.approvals) if args.approvals else plan_path.with_suffix(".approvals.json")
+    try:
+        plan = load_json(plan_path)
+        approvals = load_json(approvals_path) if approvals_path.exists() else None
+    except PlanError as exc:
+        print(f"INVALID: {exc}")
+        return 1
+    findings = check_plan(plan)
+    if approvals is not None:
+        findings += [f"approvals: {f}" for f in check_approvals(approvals, plan_path.name)]
+    if findings:
+        print(f"INVALID: {plan_path.name} breaks the plan-first contract")
+        for finding in findings:
+            print(f"  - {finding}")
+        return 1
+    blockers = readiness(plan, approvals)
+    print(f"VALID: {plan_path.name} meets the plan-first contract")
+    if blockers:
+        print("NOT READY: the first cycle may not start")
+        for blocker in blockers:
+            print(f"  - {blocker}")
+        return 2
+    print("READY: the operator may create the plan-first mission. This check authorizes nothing by itself.")
+    return 0
+
+
 def cmd_serve(args: argparse.Namespace) -> int:
     import os
 
@@ -180,6 +212,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--reason", required=True)
     p.add_argument("--decision", default="approve", choices=["approve", "reject"])
     p.set_defaults(func=cmd_approve)
+
+    p = sub.add_parser("plan-check", help="validate a plan-first payload and report what blocks its first cycle")
+    p.add_argument("plan")
+    p.add_argument("--approvals", help="approvals record (default: <plan>.approvals.json beside the plan)")
+    p.set_defaults(func=cmd_plan_check)
 
     p = sub.add_parser("serve", help="run the API with uvicorn")
     p.add_argument("--host", default="127.0.0.1")

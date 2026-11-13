@@ -28,4 +28,4 @@ ignore = [
 "tests/*" = ["S105", "S106"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["agent_core", "policy_engine", "audit_ledger", "memory_vault", "tool_registry", "simulation", "apps"]
+known-first-party = ["agent_core", "policy_engine", "audit_ledger", "memory_vault", "tool_registry", "simulation", "plan_contract", "apps"]

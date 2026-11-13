@@ -119,7 +119,7 @@ class MissionSpec(Body):
     constraints: list[str] = Field(default_factory=list)
     approval_rules: list[str] = Field(default_factory=list)
     goal_ids: list[str] = Field(default_factory=list)
-    mode: Literal["production", "simulation"] = "production"
+    mode: Literal["production", "simulation", "plan_first"] = "production"
     tasks: list[TaskSpec] = Field(min_length=1, max_length=50)
 
 
