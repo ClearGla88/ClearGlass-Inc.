@@ -1,21 +1,25 @@
 #!/usr/bin/env python3
-"""Gate for the ClearGlass Institute founding kit.
+"""Gate for the ClearGlass Institute founding package.
 
-The kit is a plan for an organization that does not exist yet. This tool keeps
-the files honest about that.
+The package is a plan for an organization that does not exist yet. This tool
+keeps the files honest about that.
 
 * ``data/status.json`` records which formation steps have actually happened,
   each with a date and a pointer to the evidence. Unknown keys, a completed
   step without evidence, and a step recorded before the step it depends on all
-  fail the check.
+  fail the check. Ten of the steps are the go/no-go conditions: only when all
+  ten are recorded do the files describe the Institute as operating.
 * Every document carries a status notice generated from that record, so no
   document can say more than the record supports.
-* The public page is scanned for statements about incorporation, charitable
-  registration, partners or reach that the record does not support. The scan
-  is a tripwire for drift. It does not replace a human read.
-* ``data/legal_claims.json`` lists each legal rule the kit relies on, how far
-  it was verified, and its sources. Documents cite rules by id, and an id that
-  is not in the register fails the check.
+* The public page is scanned for statements about incorporation, operation,
+  charitable registration, partners or reach that the record does not support,
+  and must carry the two required disclaimers word for word. The scan is a
+  tripwire for drift. It does not replace a human read.
+* ``data/legal_claims.json`` lists each legal rule the package relies on, how
+  far it was verified, and its sources. Documents cite rules by id, and an id
+  that is not in the register fails the check.
+* Unresolved items in the documents are tagged [CONFIRM], [LEGAL REVIEW] or
+  [DECISION REQUIRED]. The status report counts them per document.
 
 Usage::
 
@@ -41,22 +45,26 @@ from urllib.parse import urlparse
 
 KIT_ROOT = Path(__file__).resolve().parents[1]
 
-# The six tests the founding kit sets for calling the Institute real.
+# The ten go/no-go conditions in package/12_VALIDATION_CHECKLIST.md. Only when all
+# ten are recorded may the Institute be described as an operating corporation.
 CORE_GATES: tuple[tuple[str, str], ...] = (
-    ("certificate_of_incorporation", "Ontario certificate of incorporation in hand"),
-    ("three_director_consents", "Three directors' consents on file"),
-    ("bylaws_adopted_in_minutes", "By-laws adopted in minutes"),
-    ("cra_business_number", "CRA business number issued"),
-    ("institute_bank_account", "Bank account in the Institute's name"),
-    ("public_charity_disclaimer", "Public disclaimer that it is not a registered charity"),
+    ("certificate_of_incorporation", "Ontario certificate of incorporation received"),
+    ("articles_filed", "Articles filed and retained"),
+    ("three_director_consents", "Three director consents on file"),
+    ("bylaws_adopted", "By-laws adopted"),
+    ("organizational_minutes_signed", "Organizational minutes signed"),
+    ("cra_business_number", "CRA Business Number obtained"),
+    ("institute_bank_account", "Bank account opened in the Institute's legal name"),
+    ("public_charity_disclaimer", 'Public "not a registered charity" disclaimer live'),
+    ("conflict_policy_adopted", "Conflict-of-interest policy adopted"),
+    ("annual_return_calendar", "Annual-return calendar created"),
 )
 
 MILESTONES: tuple[tuple[str, str], ...] = (
-    ("tax_and_name_opinion", "Written advice on tax status, name and dissolution clause"),
-    ("name_search_report", "Ontario-biased NUANS report obtained, or a number name chosen"),
-    ("articles_filed", "Articles of incorporation filed"),
+    ("legal_and_tax_advice", "Written legal and tax advice on the open questions"),
+    ("name_search_report", "Ontario-biased NUANS report obtained"),
     ("initial_return_filed", "Initial return filed"),
-    ("minute_book_opened", "Minute book opened"),
+    ("minute_book_opened", "Minute book and registers opened"),
     ("separate_domain_and_code_host", "Domain and code host separate from ClearGlass Inc."),
     ("first_public_brief_published", "First public education brief published"),
 )
@@ -65,25 +73,31 @@ MILESTONES: tuple[tuple[str, str], ...] = (
 REQUIRES: dict[str, tuple[str, ...]] = {
     "articles_filed": ("three_director_consents", "name_search_report"),
     "certificate_of_incorporation": ("articles_filed",),
-    "bylaws_adopted_in_minutes": ("certificate_of_incorporation",),
+    "bylaws_adopted": ("certificate_of_incorporation",),
+    "organizational_minutes_signed": ("certificate_of_incorporation",),
+    "conflict_policy_adopted": ("certificate_of_incorporation",),
+    "annual_return_calendar": ("certificate_of_incorporation",),
     "minute_book_opened": ("certificate_of_incorporation",),
     "initial_return_filed": ("certificate_of_incorporation",),
     "cra_business_number": ("certificate_of_incorporation",),
-    "institute_bank_account": ("certificate_of_incorporation",),
+    "institute_bank_account": ("certificate_of_incorporation", "organizational_minutes_signed"),
 }
 
-# The order the runbook works through the steps.
+# The order the execution plan works through the steps.
 RUNBOOK_ORDER: tuple[str, ...] = (
-    "tax_and_name_opinion",
+    "legal_and_tax_advice",
     "three_director_consents",
     "name_search_report",
     "articles_filed",
     "certificate_of_incorporation",
-    "bylaws_adopted_in_minutes",
+    "bylaws_adopted",
+    "conflict_policy_adopted",
+    "organizational_minutes_signed",
     "minute_book_opened",
     "initial_return_filed",
     "cra_business_number",
     "institute_bank_account",
+    "annual_return_calendar",
     "separate_domain_and_code_host",
     "public_charity_disclaimer",
     "first_public_brief_published",
@@ -104,8 +118,14 @@ STALE_AFTER_DAYS = 180
 
 NOTICE_PREFIX = "> **Status notice.** "
 NOTICE_TAIL = (
-    "Files in this folder are working drafts and templates, not legal advice. "
+    "Documents in this folder are drafts and templates, not legal advice. "
     "Signed originals belong in the minute book, not in this repository."
+)
+# Unresolved items are tagged with one of these, so they can be counted and found.
+MARKERS = ("[CONFIRM]", "[LEGAL REVIEW]", "[DECISION REQUIRED]")
+# A tag may carry a short note after a colon, for example [DECISION REQUIRED: licence].
+_MARKER_PATTERNS = tuple(
+    re.compile(re.escape(marker[:-1]) + r"(?::[^\]\n]*)?\]") for marker in MARKERS
 )
 GENERATED_DOCS = ("STATUS.md", "LEGAL_VERIFICATION.md")
 GENERATED_FOOTER = (
@@ -181,6 +201,12 @@ PUBLIC_RULES: tuple[tuple[str, str | None, re.Pattern[str], str], ...] = (
             re.IGNORECASE,
         ),
         "states or implies the Institute is incorporated, which the record does not show",
+    ),
+    (
+        "operating-claim",
+        "all_gates",
+        re.compile(r"\boperating\b|\bis operational\b|\bin operation\b", re.IGNORECASE),
+        "states or implies the Institute is operating, which the record does not show",
     ),
     (
         "authority-claim",
@@ -506,20 +532,47 @@ def _claim_index(register: dict) -> dict[str, dict]:
 # ------------------------------------------------------------------------ notices
 
 
+def all_gates_met(status: dict) -> bool:
+    return all(_met(status, key) for key, _ in CORE_GATES)
+
+
+def charity_disclaimer(status: dict) -> str:
+    """The owner's required wording, used until the CRA registers the Institute."""
+    name = status["entity"]["proposed_name"]
+    return (
+        f"{name} is not currently a registered charity with the Canada Revenue Agency. "
+        "Donations are not eligible for official charitable tax receipts."
+    )
+
+
+def separation_disclaimer(status: dict) -> str:
+    name = status["entity"]["proposed_name"]
+    return (
+        f"{name} is a separate not-for-profit initiative from ClearGlass Inc. "
+        "ClearGlass Inc. is a separate commercial entity."
+    )
+
+
 def entity_statement(status: dict) -> str:
-    """One or two sentences on what the Institute is, taken from the record."""
+    """What the Institute is and is not, taken from the record."""
     entity = status["entity"]
     name = entity["proposed_name"]
     if not _met(status, "certificate_of_incorporation"):
-        return (
-            f"{name} is a proposed organization. "
-            "It is not yet incorporated and is not a registered charity."
+        lead = f"{name} is a proposed organization. It has not been incorporated."
+    elif not all_gates_met(status):
+        lead = (
+            f"{name} was incorporated under the laws of Ontario on {entity['incorporation_date']} "
+            f"(Ontario Corporation Number {entity['corporation_number']}). "
+            "It is still being organized and is not yet operating."
         )
-    number = entity["corporation_number"]
-    lead = f"{name} is an Ontario not-for-profit corporation (Ontario Corporation Number {number})."
+    else:
+        lead = (
+            f"{name} is an operating Ontario not-for-profit corporation "
+            f"(Ontario Corporation Number {entity['corporation_number']})."
+        )
     if _charity_registered(status):
-        return lead + " It is a registered charity."
-    return lead + " It is not a registered charity and cannot issue official donation receipts."
+        return f"{lead} {name} is a registered charity."
+    return f"{lead} {charity_disclaimer(status)}"
 
 
 def doc_notice(status: dict) -> str:
@@ -530,9 +583,7 @@ def page_notice(status: dict) -> str:
     statement = entity_statement(status)
     if not _met(status, "certificate_of_incorporation"):
         return statement + " It does not accept donations, payments or memberships."
-    if _charity_registered(status):
-        return statement
-    return statement + " Donations are not tax-receiptable."
+    return statement
 
 
 # ----------------------------------------------------------------------- rendering
@@ -549,7 +600,20 @@ def next_step(status: dict) -> str | None:
     return None
 
 
-def render_status_md(status: dict, register: dict) -> str:
+def marker_counts(root: Path) -> list[tuple[str, list[int]]]:
+    """Count the open-item tags in each hand-written document."""
+    rows = []
+    for path in _doc_files(root):
+        if path.parent == root:
+            continue  # the README explains the tags; it does not carry open items
+        text = path.read_text(encoding="utf-8")
+        counts = [len(pattern.findall(text)) for pattern in _MARKER_PATTERNS]
+        if any(counts):
+            rows.append((path.relative_to(root).as_posix(), counts))
+    return rows
+
+
+def render_status_md(root: Path, status: dict, register: dict) -> str:
     entity = status["entity"]
     records = _records(status)
     done = sum(1 for key, _ in CORE_GATES if records[key]["met"])
@@ -560,21 +624,24 @@ def render_status_md(status: dict, register: dict) -> str:
         "",
         f"Record as of {status['as_of']}. Source: `data/status.json`.",
         "",
-        "## The six tests",
+        "## Go/no-go conditions",
         "",
-        "The founding kit calls the Institute real only when all six are true.",
+        "The Institute may describe itself as an operating not-for-profit corporation only "
+        "when all ten are recorded. Detail: `package/12_VALIDATION_CHECKLIST.md`.",
         "",
-        "| # | Test | State | Evidence |",
+        "| # | Condition | State | Evidence |",
         "|---|---|---|---|",
     ]
     for number, (key, label) in enumerate(CORE_GATES, start=1):
         record = records[key]
         lines.append(f"| {number} | {label} | {_state_cell(record)} | {record['evidence'] or ''} |")
-    verdict = (
-        "All six tests are met."
-        if done == len(CORE_GATES)
-        else f"{done} of {len(CORE_GATES)} tests met. Treat the kit as a plan, not an organization."
-    )
+    if done == len(CORE_GATES):
+        verdict = "GO. All ten conditions are recorded."
+    else:
+        verdict = (
+            f"NO-GO. {done} of {len(CORE_GATES)} conditions recorded. "
+            "The package is a plan, not an organization."
+        )
     lines += [
         "",
         f"**Result: {verdict}**",
@@ -603,7 +670,7 @@ def render_status_md(status: dict, register: dict) -> str:
         f"- Financial year end: {entity['financial_year_end'] or 'not chosen'}",
         f"- Charity registration: {charity_state}",
         f"- Public site: {site_state}",
-        f"- Partners with a written agreement on record: {len(status['named_partners'])}",
+        f"- Organizations with a written agreement on record: {len(status['named_partners'])}",
         "",
         "## Next step",
         "",
@@ -612,7 +679,24 @@ def render_status_md(status: dict, register: dict) -> str:
     if step is None:
         lines.append("Every tracked step is recorded as done.")
     else:
-        lines.append(f"{STEP_LABELS[step]}. See `operations/RUNBOOK.md`.")
+        lines.append(f"{STEP_LABELS[step]}. See `package/09_14_DAY_EXECUTION_PLAN.md`.")
+    lines += ["", "## Open items in the documents", ""]
+    rows = marker_counts(root)
+    if not rows:
+        lines.append("No document carries an open-item tag.")
+    else:
+        lines += [
+            "Each tag marks something a person still has to confirm, review or decide. "
+            "The decisions are collected in `package/13_OPEN_QUESTIONS.md`.",
+            "",
+            "| Document | " + " | ".join(marker.strip("[]") for marker in MARKERS) + " |",
+            "|---|" + "---|" * len(MARKERS),
+        ]
+        totals = [0] * len(MARKERS)
+        for rel, counts in rows:
+            lines.append(f"| `{rel}` | " + " | ".join(str(count) for count in counts) + " |")
+            totals = [total + count for total, count in zip(totals, counts)]
+        lines.append("| **Total** | " + " | ".join(f"**{total}**" for total in totals) + " |")
     incorporated = _parse_date(entity["incorporation_date"])
     lines += ["", "## Compliance dates", ""]
     if incorporated is None:
@@ -734,7 +818,7 @@ def _page_files(root: Path) -> list[Path]:
 def expected_files(root: Path, status: dict, register: dict) -> tuple[dict[Path, str], list[str]]:
     """Return the content every managed file should have, plus structural findings."""
     expected: dict[Path, str] = {
-        root / "STATUS.md": render_status_md(status, register),
+        root / "STATUS.md": render_status_md(root, status, register),
         root / "LEGAL_VERIFICATION.md": render_legal_md(status, register),
     }
     findings: list[str] = []
@@ -793,6 +877,8 @@ def _rule_off(status: dict, switch: str | None) -> bool:
         return _charity_registered(status)
     if switch == "named_partners":
         return bool(status["named_partners"])
+    if switch == "all_gates":
+        return all_gates_met(status)
     return _met(status, switch)
 
 
@@ -857,9 +943,18 @@ def compliance_dates(
         items += [
             item(end, "First financial year ends"),
             item(due, "File the Ontario annual return", "L-13"),
-            item(due, "File the T2 return, and the T1044 if its tests are met", "L-25", "L-24"),
             item(
-                due, "Planning date: annual meeting held and financial statements presented", "L-16"
+                due,
+                "File the federal income tax return, and the non-profit information return "
+                "if its tests are met",
+                "L-25",
+                "L-24",
+            ),
+            item(
+                due,
+                "Last day to hold the annual meeting with financial statements that are "
+                "not more than six months old",
+                "L-16",
             ),
         ]
     return sorted(items, key=lambda entry: (entry["date"], entry["obligation"]))
@@ -893,7 +988,15 @@ def check(root: Path, today: dt.date | None = None) -> tuple[list[str], list[str
             findings.append(f"{rel}: cites [{ref}], which is not in data/legal_claims.json")
     for path in _page_files(root):
         rel = path.relative_to(root).as_posix()
-        findings += scan_public_text(status, rel, path.read_text(encoding="utf-8"))
+        page = path.read_text(encoding="utf-8")
+        findings += scan_public_text(status, rel, page)
+        visible = " ".join(visible_sentences(page))
+        required = [separation_disclaimer(status)]
+        if not _charity_registered(status):
+            required.append(charity_disclaimer(status))
+        for sentence in required:
+            if sentence not in visible:
+                findings.append(f'{rel}: must carry this wording exactly: "{sentence}"')
     warnings = stale_claims(register, today or dt.date.today())
     return findings, warnings
 
@@ -957,7 +1060,8 @@ def _cmd_status(args: argparse.Namespace) -> int:
         met = records[key]["met"]
         done += met
         print(f"[{'x' if met else ' '}] {label}")
-    print(f"\n{done} of {len(CORE_GATES)} tests met as of {status['as_of']}.")
+    verdict = "GO" if done == len(CORE_GATES) else "NO-GO"
+    print(f"\n{verdict}: {done} of {len(CORE_GATES)} conditions recorded as of {status['as_of']}.")
     step = next_step(status)
     print(f"Next step: {STEP_LABELS[step]}." if step else "Every tracked step is done.")
     return 0
@@ -1006,7 +1110,7 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("render", help="regenerate notices and generated files").set_defaults(
         func=_cmd_render
     )
-    sub.add_parser("status", help="print the six tests").set_defaults(func=_cmd_status)
+    sub.add_parser("status", help="print the go/no-go conditions").set_defaults(func=_cmd_status)
     p_cal = sub.add_parser("calendar", help="compute compliance dates")
     p_cal.add_argument("--incorporated", help="incorporation date (YYYY-MM-DD)")
     p_cal.add_argument("--fye", help="financial year end (MM-DD)")
