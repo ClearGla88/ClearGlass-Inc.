@@ -18,7 +18,8 @@ Local, defensive monitoring for Linux hosts you own or are authorized to monitor
 
 - Linux with `/proc`. Python **3.10 or newer**. The core uses only the standard library.
 - Verified on 2026-11-13: Ubuntu 24.04.5 LTS container, kernel 6.18.44, Python 3.11.18, 3.12.3 and 3.13.18, both as root and as an unprivileged user. Python 3.10 is the declared minimum, but it was not installed in that environment. It is tested only by the CI workflow `.github/workflows/clearshield-ci.yml`.
-- **Not yet verified on real systems:** big-endian hosts; IPv6 listener tables on a live kernel (tested with fixture tables only); real `sshd` log output (tested with synthetic lines in the OpenSSH format); a journal containing entries (tested with simulated `journalctl` output); microphone hardware (tested with a simulated stream). Check these on your target hosts before relying on them. See RELEASE_CHECKLIST.md.
+- Also verified in CI on a GitHub-hosted Ubuntu 24.04.5 runner as an unprivileged user: Python 3.10.22, and decoding of a live IPv6 listener.
+- **Not yet verified on real systems:** big-endian hosts; real `sshd` log output (tested with synthetic lines in the OpenSSH format); a journal containing entries (tested with simulated `journalctl` output); microphone hardware (tested with a simulated stream). Check these on your target hosts before relying on them. See RELEASE_CHECKLIST.md.
 - Optional live audio: the `sounddevice` package and the system PortAudio library.
 
 ## Install

@@ -30,7 +30,7 @@ Environment: Ubuntu 24.04.5 LTS container, kernel 6.18.44, x86-64 (little-endian
 
 - [ ] Real OpenSSH log lines on each target distribution, including the `sshd-session` program name used by newer OpenSSH. Only synthetic lines have been parsed. The CI runner's `/var/log/auth.log` was read successfully as a non-root user, but it contained no `sshd` entries.
 - [ ] A systemd journal that actually contains entries, read as an unprivileged member of `systemd-journal`/`adm`. Only simulated `journalctl` output has been tested.
-- [ ] IPv6 listener decoding on a live kernel: `test_live_kernel_ipv6_listener_is_decoded` runs in ClearShield CI. Tick this once a CI run shows it passed rather than skipped (all ClearShield tests passing with none skipped on the unprivileged runner).
+- [x] IPv6 listener decoding on a live kernel: `test_live_kernel_ipv6_listener_is_decoded` passed in ClearShield CI at `d8e90f4` (Python 3.10.22, uid 1001: 192 passed, none skipped).
 - [ ] A big-endian host.
 - [ ] Live microphone hardware: opening, permission denial, unplugging mid-session. Only a simulated stream has been tested.
 - [x] Python 3.10: 3.10.22 in CI, 2026-11-13.

@@ -107,7 +107,7 @@ Prevention or blocking; firewall changes; malware scanning; packet capture or tr
 
 - Periodic scans, not continuous monitoring. Nothing runs between scans.
 - Only SSH authentication messages in the OpenSSH format are parsed, and they were tested with synthetic lines, not a live `sshd`.
-- IPv6 parsing is tested with fixture tables. The test environment had no IPv6.
+- IPv6 parsing is tested with fixture tables and with one live `[::1]` listener in CI. No other IPv6 configuration (global addresses, IPv4-mapped sockets on a live kernel) has been tested.
 - Big-endian hosts are untested.
 - The live microphone path was tested with a simulated stream only.
 - A dedicated clean-room implementation has not had an independent security review.
