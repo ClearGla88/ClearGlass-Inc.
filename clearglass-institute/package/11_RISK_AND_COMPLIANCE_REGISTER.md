@@ -2,7 +2,7 @@
 
 > **Status notice.** ClearGlass Institute is a proposed organization. It has not been incorporated. ClearGlass Institute is not currently a registered charity with the Canada Revenue Agency. Donations are not eligible for official charitable tax receipts. Documents in this folder are drafts and templates, not legal advice. Signed originals belong in the minute book, not in this repository.
 
-Twenty risks. Likelihood and impact are first ratings by the drafter on a three-point scale (low, medium, high), given the facts known today: no corporation, a founder who also controls ClearGlass Inc., three directors not yet named. They are judgments, not measurements. [DECISION REQUIRED] the board confirms or changes each rating at its first meeting and reviews the register every quarter.
+Twenty-two risks. Risks 21 and 22 were added on 2026-11-14 from the owner's kit of that date. Likelihood and impact are first ratings by the drafter on a three-point scale (low, medium, high), given the facts known today: no corporation, a founder who also controls ClearGlass Inc., three directors not yet named. They are judgments, not measurements. [DECISION REQUIRED] the board confirms or changes each rating at its first meeting and reviews the register every quarter.
 
 Owners are roles until the directors are named.
 
@@ -52,6 +52,13 @@ Owners are roles until the directors are named.
 | 18 | **Use of third-party content.** Text, images or charts reproduced without permission; licence terms breached | Medium | Medium | Original writing; short sourced quotations only; images created by the Institute or used under a recorded licence; licence of each reused item noted. [LEGAL REVIEW] the rule for images and longer excerpts | Author | Each publication | Licence record per item |
 | 19 | **AI-generated content accuracy.** Text drafted with software contains invented facts, sources or quotations | High | High | Named human author responsible for every sentence; every source opened by the author and confirmed by a second reader; no source, no sentence; corrections log. [DECISION REQUIRED] whether drafting assistance is disclosed | Author | Each publication | Completed source-verification checklist |
 | 20 | **Reliance on unverified legal information in this package.** Some rules rest on secondary sources or are unverified | Medium | High | `LEGAL_VERIFICATION.md` states the level of each rule; counsel reviews before filing; register rechecked every six months | Secretary | Every six months; every `check` run warns after 180 days | Register with dates; advice letter |
+
+## F. Operations and funding
+
+| # | Risk | Likelihood | Impact | Mitigation | Owner | Monitoring | Evidence required |
+|---|---|---|---|---|---|---|---|
+| 21 | **Security incident on the Institute's own systems.** A takeover of the Institute's bank, registry, domain, email or code-host account, or loss of its records. For an organization that teaches digital safety, the damage to credibility is as serious as the loss | Medium | High | Each person has their own login; no shared passwords. Multifactor authentication on every account that offers it. Access limited to the officers who need it, and removed within 5 business days of a change in officers. No account shared with ClearGlass Inc. Minute-book scans and site source backed up, and a restore tested. A written list of whom to contact if an account is lost | Secretary (registry, domain, email, code host); Treasurer (bank) | Quarterly access review; restore test each year | Access review record; restore test record; contact list |
+| 22 | **Grant or sponsorship conditions.** A funder's terms on eligibility, reporting, branding, publicity, intellectual property or repayment conflict with the Institute's purposes, its open licence, or its separation from ClearGlass Inc., or a reporting deadline is missed. A funder may accept applications only from registered charities, which the Institute is not | Medium | High | Read the full terms before applying. Confirm the Institute is eligible as it stands. Board approves each acceptance by resolution. No term that gives a funder control over content, or an exclusive licence to public-education material (doc 4, section 9). Counsel reviews any term out of the ordinary. Reporting deadlines go into the compliance calendar | Treasurer | Before each application and each acceptance; deadlines reviewed quarterly | Signed agreement; board resolution; counsel's note where obtained |
 
 ---
 

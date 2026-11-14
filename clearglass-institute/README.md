@@ -4,14 +4,14 @@
 
 An execution-ready package for incorporating ClearGlass Institute as an Ontario not-for-profit corporation, and a checker that stops these files from claiming more than has happened.
 
-Current state: [`STATUS.md`](STATUS.md). How far each legal rule was verified: [`LEGAL_VERIFICATION.md`](LEGAL_VERIFICATION.md). What is still open: [`package/13_OPEN_QUESTIONS.md`](package/13_OPEN_QUESTIONS.md).
+Current state: [`STATUS.md`](STATUS.md). How far each legal rule was verified: [`LEGAL_VERIFICATION.md`](LEGAL_VERIFICATION.md). What is still open: [`package/13_OPEN_QUESTIONS.md`](package/13_OPEN_QUESTIONS.md). What was taken from the owner's kit of 2026-11-14, and what was not: [`OWNER_KIT_2026-11-14.md`](OWNER_KIT_2026-11-14.md).
 
 ## The package, in order
 
 | # | Document | What it is |
 |---|---|---|
 | 1 | [`package/01_EXECUTIVE_BRIEF.md`](package/01_EXECUTIVE_BRIEF.md) | One-page brief: why, for whom, why separate, the 14-day plan, what is true today |
-| 2 | [`articles/ARTICLES_DRAFT.md`](articles/ARTICLES_DRAFT.md) | Articles of incorporation fill-in sheet. **Not updated in this pass.** It predates the statute read; see section A of document 13 |
+| 2 | [`articles/ARTICLES_DRAFT.md`](articles/ARTICLES_DRAFT.md) | Articles of incorporation fill-in sheet. Brought into line with the register on 2026-11-14; still a draft until counsel answers section A of document 13 |
 | 3 | [`package/03_BYLAWS.md`](package/03_BYLAWS.md) | By-law No. 1, first draft, with drafting notes tied to the Act |
 | 4 | [`package/04_CONFLICT_AND_RELATED_PARTY_POLICY.md`](package/04_CONFLICT_AND_RELATED_PARTY_POLICY.md) | One-page policy covering every dealing with ClearGlass Inc. |
 | 5 | [`package/05_FOUNDING_BOARD_PACKAGE.md`](package/05_FOUNDING_BOARD_PACKAGE.md) | Consent, disclosure, notice, agenda, resolutions, minutes, registers, compliance calendar |
@@ -20,7 +20,7 @@ Current state: [`STATUS.md`](STATUS.md). How far each legal rule was verified: [
 | 8 | [`package/08_FIRST_PUBLIC_BRIEF_OUTLINE.md`](package/08_FIRST_PUBLIC_BRIEF_OUTLINE.md) | Outline, standards and checklists for the first public brief |
 | 9 | [`package/09_14_DAY_EXECUTION_PLAN.md`](package/09_14_DAY_EXECUTION_PLAN.md) | Each step with owner, dates, dependency, evidence, risk and escalation |
 | 10 | [`package/10_90_DAY_OPERATING_PLAN.md`](package/10_90_DAY_OPERATING_PLAN.md) | Twelve measurable outcomes |
-| 11 | [`package/11_RISK_AND_COMPLIANCE_REGISTER.md`](package/11_RISK_AND_COMPLIANCE_REGISTER.md) | Twenty risks with mitigation, owner, monitoring and evidence |
+| 11 | [`package/11_RISK_AND_COMPLIANCE_REGISTER.md`](package/11_RISK_AND_COMPLIANCE_REGISTER.md) | Twenty-two risks with mitigation, owner, monitoring and evidence |
 | 12 | [`package/12_VALIDATION_CHECKLIST.md`](package/12_VALIDATION_CHECKLIST.md) | The ten go/no-go conditions |
 | 13 | [`package/13_OPEN_QUESTIONS.md`](package/13_OPEN_QUESTIONS.md) | Legal, tax and founder decisions still to be made |
 
