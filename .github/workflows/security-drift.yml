@@ -1,0 +1,128 @@
+# Security Drift: re-checks what can go bad after a merge without any commit.
+#
+# - New advisories published against locked dependencies. The per-package CI
+#   workflows are path-filtered, so a CVE disclosed after merge stays invisible
+#   until someone next touches that package. This runs every week regardless.
+# - The live site: status, same-host redirects, a real 404, TLS expiry.
+#
+# Alerting: a failed scheduled run triggers GitHub's own failed-workflow
+# notification to the account that last changed the schedule. Nothing here
+# opens issues, comments, or writes anywhere.
+#
+# Security posture: read-only token, no secrets, no deploy, no writes,
+# credentials not persisted, no dependency caches (nothing to poison). Action
+# SHAs are the pins already used in this repository. Tool versions are pinned.
+name: Security Drift
+
+on:
+  schedule:
+    - cron: "17 9 * * 1" # Mondays 09:17 UTC
+  pull_request:
+    paths:
+      - "**requirements*.txt"
+      - "**package-lock.json"
+      - "Cargo.lock"
+      - ".cargo/audit.toml"
+      - ".github/workflows/security-drift.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-drift-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python-deps:
+    name: Python advisories (pip-audit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.13"
+      - name: Install pip-audit
+        run: python -m pip install pip-audit==2.10.1
+      - name: Audit every tracked requirements file
+        run: |
+          status=0
+          while IFS= read -r -d '' file; do
+            echo "::group::$file"
+            pip-audit --progress-spinner off -r "$file" || status=1
+            echo "::endgroup::"
+          done < <(git ls-files -z '*requirements*.txt')
+          exit "$status"
+
+  node-deps:
+    name: npm advisories (high and critical)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+      - name: Audit every tracked package-lock.json
+        run: |
+          status=0
+          while IFS= read -r -d '' lock; do
+            dir=$(dirname "$lock")
+            echo "::group::$lock"
+            (cd "$dir" && npm audit --package-lock-only --audit-level=high) || status=1
+            echo "::endgroup::"
+          done < <(git ls-files -z '*package-lock.json')
+          exit "$status"
+
+  rust-deps:
+    name: Rust advisories (cargo-audit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      RUSTUP_TOOLCHAIN: "1.97.0"
+      CARGO_TERM_COLOR: always
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - name: Install toolchain
+        run: rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal
+      - name: Install cargo-audit
+        run: cargo install cargo-audit --locked --version 0.23.0
+      # Exceptions live in .cargo/audit.toml, each with its evidence and a
+      # removal trigger. Unmaintained-crate warnings are reported, not fatal.
+      - name: Audit Cargo.lock
+        run: cargo audit
+
+  site-health:
+    name: Live site health
+    # Probing production on a pull request would let an unrelated outage block
+    # dependency changes; the checker's own tests run in Baseline CI.
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.13"
+      - name: Check pages, redirects, 404 handling, and TLS expiry
+        run: |
+          status=0
+          python tools/site_health.py --json "$RUNNER_TEMP/site-health.json" \
+            > "$RUNNER_TEMP/site-health.txt" || status=$?
+          cat "$RUNNER_TEMP/site-health.txt"
+          {
+            echo '### Live site health'
+            echo '```'
+            cat "$RUNNER_TEMP/site-health.txt"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
