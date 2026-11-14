@@ -236,4 +236,19 @@ mod tests {
         let oversized = vec![0_u8; MAX_ARTIFACT_BYTES + 1];
         assert!(encrypt_bytes(&recipient, &oversized).is_err());
     }
+
+    /// Pins the premise of the RUSTSEC-2026-0387 exception in `.cargo/audit.toml`.
+    ///
+    /// The advisory's non-constant-time code (crypto-bigint 0.5, via p256) runs
+    /// only for P-256 "tag" recipients. This runtime accepts X25519 recipients
+    /// only. The fixture is a well-formed bech32 `age1tag` recipient whose payload
+    /// is the compressed P-256 generator point, so it is refused for its type,
+    /// not for a malformed encoding. If this test ever fails, the exception is
+    /// no longer valid: remove it and resolve the advisory.
+    #[test]
+    fn p256_tag_recipients_are_refused() {
+        const P256_TAG_RECIPIENT: &str =
+            "age1tag1qd43050juykyy3lchnnw2caygre8wqmasyk7kvaq7jsnj3wcnrpfvt5hxye";
+        assert!(encrypt_bytes(P256_TAG_RECIPIENT, b"restricted").is_err());
+    }
 }
