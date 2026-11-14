@@ -28,7 +28,7 @@ RESOLVED that:
 3. A payment of $500 or less may be authorized by one signing officer, and is reported to the board in the Treasurer's next report.
 4. No signing officer authorizes a payment to themselves, to a member of their family or household, or to a party related to them. Such a payment is authorized by two other signing officers, or by one other signing officer and a director who has no interest in it.
 5. A payment may not be split into smaller amounts to avoid the limit in paragraph 2.
-6. Online banking access is set up so that the two-person rule in paragraph 2 is enforced by the Bank's system where the Bank offers that feature. [CONFIRM] with the Bank.
+6. Online banking access is set up so that the two-person rule in paragraph 2 is enforced by the Bank's system where the Bank offers that feature. [CONFIRM] with the Bank. Online access is limited to the signing officers, each with their own login and with multifactor authentication where the Bank offers it. No login is shared, and none is held by ClearGlass Inc. or its staff.
 7. The Secretary notify the Bank in writing within 5 business days of any change in the signing officers.
 
 ## 6.3 Expense-approval policy

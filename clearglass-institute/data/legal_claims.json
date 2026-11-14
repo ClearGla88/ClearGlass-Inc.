@@ -293,7 +293,7 @@
           "url": "https://www.ontario.ca/laws/statute/10n15"
         }
       ],
-      "note": "The owner's first draft sent the property to 'qualified donees'. That class is wider than the Act allows a charitable corporation. The clause in the articles sheet now follows the Act's wording.",
+      "note": "The owner's first draft, and the owner's kit of 2026-11-14, sent the property to 'qualified donees'. That class is wider than the Act allows a charitable corporation. Until 2026-11-14 the articles sheet still used that wording. It now names only Canadian bodies corporate that are registered charities with similar purposes, the first group on the Act's list. The Crown, its agents and municipalities are left out until counsel confirms them.",
       "action": "Have counsel confirm that the clause in the articles sheet also meets the CRA's requirements for a registered charity."
     },
     {
@@ -393,11 +393,21 @@
     {
       "id": "L-26",
       "topic": "Tax and charity",
-      "claim": "It was not confirmed whether a CRA business number is issued automatically when an Ontario not-for-profit is incorporated.",
+      "claim": "The CRA states that a business incorporated in Ontario is automatically assigned a business number and a corporation income tax program account. It was not confirmed whether this covers a not-for-profit corporation incorporated under ONCA: the CRA pages read do not mention not-for-profit corporations.",
       "authority": "CRA and Ontario Business Registry practice",
       "status": "UNVERIFIED",
-      "checked": "2026-11-11",
-      "sources": [],
+      "checked": "2026-11-14",
+      "sources": [
+        {
+          "title": "Canada Revenue Agency, Corporation income tax program account",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/business-registration/business-number-program-account/need-program-accounts/corporation-income-tax.html"
+        },
+        {
+          "title": "Canada Revenue Agency, When you need a BN",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/business-registration/business-number-program-account/need-bn.html"
+        }
+      ],
+      "note": "Both pages were read on 2026-11-14 through a fetch tool that returns quoted text; a direct download of the pages from this environment timed out. Both show a page date of 2026-06-30. The general rule is stated plainly; only its application to ONCA corporations is open. The owner's kit of 2026-11-14 schedules a business number application on day 8; under this rule that step is likely a confirmation, not an application.",
       "action": "Check the incorporation confirmation for a business number. If there is none, register through CRA Business Registration Online."
     },
     {

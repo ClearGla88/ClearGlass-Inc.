@@ -112,7 +112,7 @@ Checked on the dates shown. Rules marked PRIMARY_TEXT_READ were read in the curr
 |---|---|---|---|---|---|
 | L-19 | On dissolution or winding up, a charitable corporation's remaining property must go to a Canadian body corporate that is a registered charity under the Income Tax Act with purposes similar to its own, the Crown in right of Ontario or of Canada or an agent of either, or a municipality in Canada. A non-charitable public benefit corporation may also give it to another public benefit corporation with similar purposes. Any other corporation follows its articles, or if they are silent distributes rateably to its members. A corporation that was a public benefit corporation in any of its three financial years before filing articles of dissolution is treated as one. | ONCA ss. 150(1), 167(1), (6) | PRIMARY_TEXT_READ | 2026-11-11 | [1](https://www.ontario.ca/laws/statute/10n15) |
 
-- L-19 note: The owner's first draft sent the property to 'qualified donees'. That class is wider than the Act allows a charitable corporation. The clause in the articles sheet now follows the Act's wording.
+- L-19 note: The owner's first draft, and the owner's kit of 2026-11-14, sent the property to 'qualified donees'. That class is wider than the Act allows a charitable corporation. Until 2026-11-14 the articles sheet still used that wording. It now names only Canadian bodies corporate that are registered charities with similar purposes, the first group on the Act's list. The Crown, its agents and municipalities are left out until counsel confirms them.
 
 - L-19 action: Have counsel confirm that the clause in the articles sheet also meets the CRA's requirements for a registered charity.
 
@@ -126,7 +126,7 @@ Checked on the dates shown. Rules marked PRIMARY_TEXT_READ were read in the curr
 | L-23 | The income tax exemption for a non-profit organization covers a club, society or association that, in the opinion of the Minister, was not a charity, and that was organized and operated exclusively for social welfare, civic improvement, pleasure or recreation or for any other purpose except profit, with no part of its income available for the personal benefit of a member. | Income Tax Act s. 149(1)(l) | PRIMARY_TEXT_READ | 2026-11-11 | [1](https://laws-lois.justice.gc.ca/eng/acts/i-3.3/section-149.html) |
 | L-24 | A non-profit organization exempt under s. 149(1)(l) must file an information return within six months after the end of a fiscal period if its taxable dividends, interest, rentals and royalties in the period exceed $10,000, or its total assets at the end of the preceding period exceeded $200,000, or it had to file one for an earlier period. | Income Tax Act s. 149(12) | PRIMARY_TEXT_READ | 2026-11-11 | [1](https://laws-lois.justice.gc.ca/eng/acts/i-3.3/section-149.html) [2](https://www.millerthomson.com/en/insights/social-impact/npo-reporting-rules-recalibrated-what-all-organizations-need-to-know-about-ottawas-latest-proposed-changes/) |
 | L-25 | A corporation resident in Canada must file an income tax return within six months after the end of each taxation year, whether or not tax is payable. The requirement does not apply to a corporation that was a registered charity throughout the year. | Income Tax Act s. 150(1)(a), (1.1)(a) | PRIMARY_TEXT_READ | 2026-11-11 | [1](https://laws-lois.justice.gc.ca/eng/acts/i-3.3/section-150.html) |
-| L-26 | It was not confirmed whether a CRA business number is issued automatically when an Ontario not-for-profit is incorporated. | CRA and Ontario Business Registry practice | UNVERIFIED | 2026-11-11 | none |
+| L-26 | The CRA states that a business incorporated in Ontario is automatically assigned a business number and a corporation income tax program account. It was not confirmed whether this covers a not-for-profit corporation incorporated under ONCA: the CRA pages read do not mention not-for-profit corporations. | CRA and Ontario Business Registry practice | UNVERIFIED | 2026-11-14 | [1](https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/business-registration/business-number-program-account/need-program-accounts/corporation-income-tax.html) [2](https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/business-registration/business-number-program-account/need-bn.html) |
 
 - L-21 note: The online route is confirmed by a search extract. The date the paper form was withdrawn was not confirmed.
 
@@ -139,6 +139,8 @@ Checked on the dates shown. Rules marked PRIMARY_TEXT_READ were read in the curr
 - L-24 note: The return is Form T1044. Law firm summaries report draft federal legislation, released in January 2026, that would widen non-profit reporting and add a short return for organizations with receipts over $10,000. Whether it has been enacted, and from when, was not confirmed.
 
 - L-25 note: The return is the T2. A registered charity files a T3010 instead; that form name was not checked here.
+
+- L-26 note: Both pages were read on 2026-11-14 through a fetch tool that returns quoted text; a direct download of the pages from this environment timed out. Both show a page date of 2026-06-30. The general rule is stated plainly; only its application to ONCA corporations is open. The owner's kit of 2026-11-14 schedules a business number application on day 8; under this rule that step is likely a confirmation, not an application.
 
 - L-26 action: Check the incorporation confirmation for a business number. If there is none, register through CRA Business Registration Online.
 
@@ -189,6 +191,8 @@ Checked on the dates shown. Rules marked PRIMARY_TEXT_READ were read in the curr
 - L-24 [1] Income Tax Act, s. 149 (Justice Laws): <https://laws-lois.justice.gc.ca/eng/acts/i-3.3/section-149.html>
 - L-24 [2] Miller Thomson, NPO reporting rules recalibrated (2026): <https://www.millerthomson.com/en/insights/social-impact/npo-reporting-rules-recalibrated-what-all-organizations-need-to-know-about-ottawas-latest-proposed-changes/>
 - L-25 [1] Income Tax Act, s. 150 (Justice Laws): <https://laws-lois.justice.gc.ca/eng/acts/i-3.3/section-150.html>
+- L-26 [1] Canada Revenue Agency, Corporation income tax program account: <https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/business-registration/business-number-program-account/need-program-accounts/corporation-income-tax.html>
+- L-26 [2] Canada Revenue Agency, When you need a BN: <https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/business-registration/business-number-program-account/need-bn.html>
 - L-27 [1] Ontario, Guide to the Not-for-Profit Corporations Act, 2010: <https://www.ontario.ca/page/guide-not-profit-corporations-act-2010>
 - L-28 [1] Not-for-Profit Corporations Act, 2010, S.O. 2010, c. 15 (e-Laws): <https://www.ontario.ca/laws/statute/10n15>
 - L-29 [1] Not-for-Profit Corporations Act, 2010, S.O. 2010, c. 15 (e-Laws): <https://www.ontario.ca/laws/statute/10n15>

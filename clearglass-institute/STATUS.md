@@ -56,6 +56,7 @@ Each tag marks something a person still has to confirm, review or decide. The de
 
 | Document | CONFIRM | LEGAL REVIEW | DECISION REQUIRED |
 |---|---|---|---|
+| `articles/ARTICLES_DRAFT.md` | 1 | 3 | 2 |
 | `package/01_EXECUTIVE_BRIEF.md` | 1 | 1 | 1 |
 | `package/03_BYLAWS.md` | 0 | 5 | 4 |
 | `package/04_CONFLICT_AND_RELATED_PARTY_POLICY.md` | 0 | 4 | 1 |
@@ -66,8 +67,8 @@ Each tag marks something a person still has to confirm, review or decide. The de
 | `package/09_14_DAY_EXECUTION_PLAN.md` | 1 | 0 | 2 |
 | `package/10_90_DAY_OPERATING_PLAN.md` | 0 | 1 | 2 |
 | `package/11_RISK_AND_COMPLIANCE_REGISTER.md` | 0 | 3 | 2 |
-| `package/13_OPEN_QUESTIONS.md` | 12 | 15 | 17 |
-| **Total** | **29** | **34** | **40** |
+| `package/13_OPEN_QUESTIONS.md` | 12 | 16 | 18 |
+| **Total** | **30** | **38** | **43** |
 
 ## Compliance dates
 

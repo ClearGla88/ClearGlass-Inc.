@@ -17,7 +17,7 @@ Order matters. Section A blocks filing. Sections B and C block the first meeting
 | A3 | [LEGAL REVIEW] What is the Institute's income tax status between incorporation and any CRA registration? | The non-profit exemption is for organizations the Minister does not consider charities. An unregistered organization with charitable purposes may be outside it | Tax adviser | [L-23] [L-25] |
 | A4 | [LEGAL REVIEW] Can "ClearGlass Institute" be registered? Does "Institute" need the consent of the Minister of Colleges and Universities for an educational body? | The word is restricted where it suggests a post-secondary institution. A refusal costs the search fee and time | Counsel | [L-09] |
 | A5 | [CONFIRM] Is ClearGlass Inc. a registered corporation, and will it consent in writing to the Institute's name? | A name sharing another body's distinctive element is allowed with that body's consent and a differentiating word | Founder | [L-10] |
-| A6 | [DECISION REQUIRED] Which alternate name is used if the first is refused? | A number name is not available on incorporation, so a word name that clears the search is required | Founders | [L-11] [L-37] |
+| A6 | [DECISION REQUIRED] Which alternate name is used if the first is refused? | A number name is not available on incorporation, so a word name that clears the search is required. The owner's kit of 2026-11-14 proposes ClearGlass Public Interest Institute again. It keeps both words that put the first name at risk, so it helps only against a search conflict; see field 1 of the articles sheet | Founders | [L-09] [L-10] [L-11] [L-37] |
 | A7 | [LEGAL REVIEW] Are purposes 4 and 5 purposes, or activities and powers that belong in a separate clause? | The CRA tests each purpose on its own if registration is sought | Counsel | [L-43] |
 | A8 | [LEGAL REVIEW] What dissolution wording satisfies both the Act and the CRA? | The founders asked for distribution to qualified donees. The Act limits a charitable corporation to a narrower group of recipients | Counsel | [L-19] |
 | A9 | [LEGAL REVIEW] Which special provisions must a charitable corporation's articles contain in Ontario? | Not verified for this package | Counsel | [L-30] |
@@ -25,7 +25,7 @@ Order matters. Section A blocks filing. Sections B and C block the first meeting
 | A11 | [CONFIRM] The registered office address in Burlington, and whether the registry accepts that type of address | Needed for the articles | Founder | [L-43] |
 | A12 | [CONFIRM] The filing form, the fee and the current processing time | The form number and fee come from private guides; processing time is not settled | Secretary | [L-07] |
 
-**Deliverable 2, the articles content, is not finished.** The second document in this package was not completed in this pass. The earlier fill-in sheet remains at `articles/ARTICLES_DRAFT.md`. It was written before the statute was read and is out of date on the points covered by A4 to A9 above. Where that sheet and `LEGAL_VERIFICATION.md` disagree, the register governs, in particular [L-11], [L-19] and [L-29]. The sheet should be redrafted with counsel once A1 to A9 are answered.
+**Deliverable 2, the articles content, is a draft.** `articles/ARTICLES_DRAFT.md` was brought into line with the register on 2026-11-14. The number-name fallback was removed [L-11], the dissolution clause was redrafted [L-19], and the purposes were aligned with the mission. It is not final. Where the sheet and `LEGAL_VERIFICATION.md` disagree, the register governs. Counsel finalizes the sheet once A1 to A9 are answered.
 
 ## B. Before the first meeting
 
@@ -42,7 +42,7 @@ Order matters. Section A blocks filing. Sections B and C block the first meeting
 | B9 | [DECISION REQUIRED] The spending limit above which the board must approve even budgeted payments, and the first-year budget | The $500 two-signature rule is set; the upper limit and the budget are not | Board | doc 6 |
 | B10 | [DECISION REQUIRED] Who pays the name-search and filing fees before a bank account exists? | Must not be ClearGlass Inc. funds without a documented, approved agreement | Founders | doc 6 |
 | B11 | [CONFIRM] Which documents the chosen bank requires, and whether its online banking enforces two-person approval | Needed for the banking resolutions | Treasurer | doc 6 |
-| B12 | [CONFIRM] Whether a CRA Business Number is issued with the incorporation | If not, the Treasurer registers for one | Treasurer | [L-26] |
+| B12 | [CONFIRM] Whether a CRA Business Number is issued with the incorporation | The CRA says an Ontario incorporation is assigned one automatically, but does not say whether that covers a not-for-profit corporation. Check the incorporation confirmation; if there is no number, the Treasurer registers for one | Treasurer | [L-26] |
 
 ## C. Before anything is published
 
@@ -57,6 +57,7 @@ Order matters. Section A blocks filing. Sections B and C block the first meeting
 | C7 | [LEGAL REVIEW] The rule for reusing images and longer excerpts | Third-party content | Counsel | doc 8 |
 | C8 | [DECISION REQUIRED] Whether and when the Institute will ask for money, and the wording | Any request must sit next to the charity disclaimer and promise no tax benefit | Board | [L-20] |
 | C9 | [DECISION REQUIRED] Who approaches prospective host organizations, and in whose name | No organization is named until it agrees in writing | Board | doc 10 |
+| C10 | [LEGAL REVIEW] Who owns work made for the Institute by contractors and volunteers who are not its employees, and what written assignment or licence is needed before that work is published? | Without a written agreement the Institute may not hold the rights it needs to publish the work under the licence chosen in C3. Raised in the owner's kit of 2026-11-14 | Counsel | doc 4 |
 
 ## D. To confirm as the plan runs
 
@@ -69,9 +70,10 @@ Order matters. Section A blocks filing. Sections B and C block the first meeting
 | D5 | [CONFIRM] How the Institute signs in to the Ontario Business Registry to file returns | Secretary | [L-13] |
 | D6 | [CONFIRM] The record-retention period for accounting records | Treasurer | [L-36] |
 | D7 | [DECISION REQUIRED] Day 0 of the execution plan | Founders | doc 9 |
+| D8 | [DECISION REQUIRED] The owner's kit of 2026-11-14 lists fifteen go/no-go conditions; the checker enforces ten. Of the five extra, three are already tracked: the first published brief and the separate domain and code host (milestones), and the separate bank account (condition 7). Separate accounting records are not tracked. Two are standing rules, not events: "no official donation receipt issued" has no record to check, and "no unsupported public claim" is checked on the public page at every `check` run. Decide whether any of them becomes a condition. Changing the gate changes `tools/institute_kit.py` and its tests | Founders | doc 12 |
 
 ## What is verified and what is not
 
-`LEGAL_VERIFICATION.md` lists every rule this package relies on. Most Ontario rules, and the federal tax provisions cited, were read in the current consolidated text. A few rest on secondary sources: the filing form and fee [L-07]. A few are unverified: the CRA's review timeline [L-22] and whether a business number is issued automatically [L-26]. The CRA's own pages could not be opened, so [L-20] and [L-21] rest on search extracts of those pages.
+`LEGAL_VERIFICATION.md` lists every rule this package relies on. Most Ontario rules, and the federal tax provisions cited, were read in the current consolidated text. A few rest on secondary sources: the filing form and fee [L-07]. A few are unverified: the CRA's review timeline [L-22], and whether the automatic business number the CRA describes for Ontario incorporations covers a not-for-profit corporation [L-26]. On 2026-11-11 the CRA's own pages could not be opened, so [L-20] and [L-21] rest on search extracts of those pages. On 2026-11-14 two CRA pages were read through a fetch tool for [L-26].
 
 Reading a provision is not the same as applying it. Every [LEGAL REVIEW] item above is a question about how the law applies to these facts, and none is answered by this package.
