@@ -8,7 +8,7 @@ ClearGlass Inc. is an Ontario-focused cybersecurity, AI-governance, OSINT, autom
 
 Verified against this tree on 2026-11-05.
 
-The repository was populated by "Add files via upload" commits, and almost every file sits at the repository root. Much of the original source tree is not in this repository: `scripts/`, `tools/` (apart from the hygiene check), `data/`, `assets/` (apart from the Neon Glass System stylesheets and scripts; see `DESIGN_SYSTEM.md`), `services/`, `sentinel/`, `clearglass-commerce/`, `.circleci/`, and the `artemis` Python package. The sections from **Governed Data Fabric** onward describe that original layout. Read them as design documentation, not as a description of what this tree contains or runs.
+The repository was populated by "Add files via upload" commits, and almost every file sits at the repository root. Much of the original source tree is not in this repository: `scripts/`, `tools/` (apart from the hygiene check and the site health checker), `data/`, `assets/` (apart from the Neon Glass System stylesheets and scripts; see `DESIGN_SYSTEM.md`), `services/`, `sentinel/`, `clearglass-commerce/`, `.circleci/`, and the `artemis` Python package. The sections from **Governed Data Fabric** onward describe that original layout. Read them as design documentation, not as a description of what this tree contains or runs.
 
 The website pages (`*.html`, `*.css`, `*.js`, `sitemap*.xml`, `CNAME`, `.nojekyll`) live at the root on purpose. GitHub Pages serves them from there.
 
@@ -21,6 +21,9 @@ The website pages (`*.html`, `*.css`, `*.js`, `sitemap*.xml`, `CNAME`, `.nojekyl
 | Auto-heal controller | `auto_heal.py`, `error-patterns.json`, `healing-strategies.json` | `tests/test_auto_heal.py`. It expects its state in `.github/auto-heal/` and exits with status 2, before any API call, when that directory is missing (as it is now). |
 | Agent crypto runtime (Rust, `age`) | `Cargo.toml`, `Cargo.lock`, `src/` | `cargo test --locked`; `.github/workflows/agent-army-crypto.yml` also builds the release binary and checks the CLI encrypt/decrypt round trip and tamper rejection |
 | Repository hygiene gate | `tools/repo_hygiene.py`, `tools/repo_hygiene_baseline.json` | `tests/test_repo_hygiene.py`, CI |
+| Workflow security gate | Baseline CI job `workflow-security` | zizmor 1.32.0 (offline) over `.github/workflows/`; fails on unpinned actions, broad token permissions, template injection, persisted credentials |
+| Security drift checks (weekly, read-only) | `.github/workflows/security-drift.yml`, `.cargo/audit.toml` | pip-audit on every requirements file, `npm audit --audit-level=high` on every `package-lock.json`, `cargo audit`, and the live site check. Also runs on PRs that change a lockfile. Exceptions in `.cargo/audit.toml` carry their evidence and a removal trigger |
+| Live site health checker | `tools/site_health.py` | `tests/test_site_health.py` (local HTTP server); run against the live site by `security-drift.yml` on schedule |
 | Legal intelligence modules | `legal_intelligence_core.py`, `artemis_legal_agent_mvp.py` | Their tests are kept outside this repository |
 | Aegis Glass platform (Next.js, PostgreSQL) | `aegis-glass-platform/` | `npm test` (62 tests, incl. a PostgreSQL 16 server) and `npm run build` via `.github/workflows/aegis-glass-ci.yml`. Production sign-in is blocked until an OIDC adapter exists; see `aegis-glass-platform/docs/ARCHITECTURE.md` |
 | ClearGlass Agent Office (governed multi-agent operations: FastAPI, Next.js console, PostgreSQL schema) | `clearglass-agent-office/` | `pytest` (176 tests, 11 of them against a PostgreSQL 16 server), a Daily Operations Loop smoke run, and the console's `npm run build` via `.github/workflows/agent-office-ci.yml`. External connectors are dry-run; see `clearglass-agent-office/README.md` |
@@ -29,7 +32,7 @@ The website pages (`*.html`, `*.css`, `*.js`, `sitemap*.xml`, `CNAME`, `.nojekyl
 
 **Does not run in this tree**
 
-- **Workflows:** about 77 workflow files sit at the root instead of in `.github/workflows/`, so GitHub never runs them. The active workflows are `baseline-ci.yml`, `jekyll-gh-pages.yml`, `agent-army-crypto.yml`, `aegis-glass-ci.yml`, `agent-office-ci.yml`, and `clearshield-ci.yml` in `.github/workflows/`. Many root workflows run on a schedule, write to the repository, deploy, or read secrets, and many call scripts that are missing. Review each one before moving it into `.github/workflows/`; don't move them in bulk.
+- **Workflows:** about 77 workflow files sit at the root instead of in `.github/workflows/`, so GitHub never runs them. The active workflows are `baseline-ci.yml`, `jekyll-gh-pages.yml`, `agent-army-crypto.yml`, `aegis-glass-ci.yml`, `agent-office-ci.yml`, `clearshield-ci.yml`, and `security-drift.yml` in `.github/workflows/`. Many root workflows run on a schedule, write to the repository, deploy, or read secrets, and many call scripts that are missing. Review each one before moving it into `.github/workflows/`; don't move them in bulk.
 - **Node tooling:** `npm run typecheck`, `npm test`, `npm run sync:stripe`, and `npm run provenance` fail because their TypeScript sources under `scripts/` are missing. `npm ci` does install the locked dependencies.
 - **`agent-office/`:** an earlier agent-office kernel (merged in #19, commits marked wip) that overlaps `clearglass-agent-office/`. It runs once `cedarpy` is installed (`requirements.txt` does not install it): `python -m agent_office daily-ops` completed and its ledger verified on 2026-11-08. It has no tests, README, or CI workflow, so nothing gates it. The owner chose `clearglass-agent-office/` as the canonical implementation (2026-11-08). The legacy kernel's grant limits, risk escalation, deploy test gate, mission lifecycle, intent record, approval integrity, shadow policies, and idempotency keys are ported there as tested JSON rules, without Cedar. `agent-office/` stays in the tree until the owner approves its removal; don't extend it.
 - **Python package:** `pyproject.toml` declares an `artemis` package, console scripts, and test paths that are absent. `pip install .` produces no usable package.
@@ -42,6 +45,9 @@ python3 -m pytest -q
 python3 tools/repo_hygiene.py
 ruff check --select E9,F .
 cargo test --locked
+zizmor --offline .github/workflows/   # pip install zizmor==1.32.0
+cargo audit                           # cargo install cargo-audit --locked --version 0.23.0
+python3 tools/site_health.py          # live site; needs network access to it
 ```
 
 See `CONTRIBUTING.md` for the full workflow.
