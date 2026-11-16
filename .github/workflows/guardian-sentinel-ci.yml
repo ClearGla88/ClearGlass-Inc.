@@ -1,0 +1,60 @@
+# Guardian Sentinel CI: lint, the test suite on every supported Python, the
+# template lint, and an install check. The package has no dependencies, runs
+# nothing in the background and needs no secrets.
+#
+# Security posture: read-only token, no secrets, no deploy, no writes,
+# credentials not persisted. Action SHAs are the pins already used in this
+# repository (checkout v6.0.3, setup-python v6.2.0).
+name: Guardian Sentinel CI
+
+on:
+  pull_request:
+    paths:
+      - "guardian-sentinel/**"
+      - ".github/workflows/guardian-sentinel-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "guardian-sentinel/**"
+      - ".github/workflows/guardian-sentinel-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: guardian-sentinel-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    defaults:
+      run:
+        working-directory: guardian-sentinel
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install test tools (the package itself has no dependencies)
+        run: python -m pip install pytest==9.1.1 ruff==0.16.9
+      - name: Lint (syntax errors and pyflakes)
+        run: ruff check --select E9,F .
+      - name: Tests
+        run: python -m pytest -q -p no:cacheprovider
+      - name: Alert templates pass the language lint
+        run: python -m guardian_core lint-templates
+      - name: Package builds and installs with no dependencies
+        run: |
+          python -m pip install .
+          guardian-sentinel --version
+          guardian-sentinel startup | grep -F "Design mode only. No live monitoring or headphone alerting is active."
