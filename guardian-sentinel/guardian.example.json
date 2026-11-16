@@ -1,0 +1,101 @@
+{
+  "policy_version": "example-1",
+  "approved_at": "2026-11-01T00:00:00Z",
+  "approved_by": "replace with the approving person's role",
+  "enrolled_devices": [
+    {
+      "device_id": "phone-1",
+      "kind": "phone"
+    },
+    {
+      "device_id": "watch-1",
+      "kind": "watch"
+    }
+  ],
+  "sensor_scopes": [
+    {
+      "device_id": "phone-1",
+      "sensor": "camera",
+      "scope": "foreground_only"
+    },
+    {
+      "device_id": "watch-1",
+      "sensor": "accelerometer",
+      "scope": "always_on_when_worn"
+    }
+  ],
+  "external_services": [
+    "official-alerts-feed"
+  ],
+  "contacts": [
+    {
+      "contact_id": "partner",
+      "channel": "sms",
+      "recipient_ref": "host-app-contact-reference"
+    }
+  ],
+  "permitted_actions": [
+    {
+      "action_id": "notify_partner_help",
+      "kind": "notify_contact",
+      "trigger": {
+        "hazard": "help_request",
+        "min_priority": "CRITICAL"
+      },
+      "recipient": "partner",
+      "data_fields": [
+        "display_name",
+        "hazard_kind",
+        "event_time"
+      ],
+      "countdown_s": 30,
+      "retry_limit": 1,
+      "requires_host_confirmation": false,
+      "expires_after_s": 900
+    },
+    {
+      "action_id": "notify_partner_fall",
+      "kind": "notify_contact",
+      "trigger": {
+        "hazard": "fall",
+        "min_priority": "WARNING"
+      },
+      "recipient": "partner",
+      "data_fields": [
+        "hazard_kind",
+        "event_time"
+      ],
+      "countdown_s": 0,
+      "retry_limit": 0,
+      "requires_host_confirmation": true,
+      "expires_after_s": 600
+    },
+    {
+      "action_id": "share_location_help",
+      "kind": "share_location",
+      "trigger": {
+        "hazard": "help_request",
+        "min_priority": "CRITICAL"
+      },
+      "recipient": "partner",
+      "data_fields": [
+        "approximate_location"
+      ],
+      "countdown_s": 30,
+      "retry_limit": 0,
+      "requires_host_confirmation": false,
+      "expires_after_s": 900
+    }
+  ],
+  "shared_data_fields": [
+    "display_name",
+    "approximate_location",
+    "hazard_kind",
+    "event_time"
+  ],
+  "consent_expires_at": "2027-11-01T00:00:00Z",
+  "cancellation": {
+    "method": "both",
+    "recovery": "re-enroll from the app settings"
+  }
+}
