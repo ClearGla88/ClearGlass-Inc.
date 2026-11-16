@@ -67,8 +67,13 @@ Each tag marks something a person still has to confirm, review or decide. The de
 | `package/09_14_DAY_EXECUTION_PLAN.md` | 1 | 0 | 2 |
 | `package/10_90_DAY_OPERATING_PLAN.md` | 0 | 1 | 2 |
 | `package/11_RISK_AND_COMPLIANCE_REGISTER.md` | 0 | 3 | 2 |
-| `package/13_OPEN_QUESTIONS.md` | 12 | 16 | 18 |
-| **Total** | **30** | **38** | **43** |
+| `package/13_OPEN_QUESTIONS.md` | 15 | 20 | 20 |
+| `package/14_STRUCTURE_AND_CHARITY_DESIGNATION.md` | 0 | 11 | 1 |
+| `package/15_DOCUMENT_AND_POLICY_INVENTORY.md` | 5 | 1 | 1 |
+| `package/16_REGISTRATIONS_PEOPLE_AND_FUNDRAISING.md` | 13 | 3 | 2 |
+| `package/17_COMPLIANCE_DASHBOARD.md` | 13 | 0 | 0 |
+| `package/18_FIRST_POLICY_DRAFTS.md` | 0 | 4 | 2 |
+| **Total** | **64** | **61** | **51** |
 
 ## Compliance dates
 

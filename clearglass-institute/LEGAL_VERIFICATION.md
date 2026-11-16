@@ -4,15 +4,15 @@
 
 Every legal rule the kit relies on is listed here with its sources and how far it was verified. Documents cite rules by id, for example `[L-01]`.
 
-Checked on the dates shown. Rules marked PRIMARY_TEXT_READ were read in the current consolidated text on e-Laws (Not-for-Profit Corporations Act, 2010, consolidation from October 1, 2025; O. Reg. 394/21, from October 19, 2021; Corporations Information Act, from November 27, 2025; R.R.O. 1990, Reg. 182; Charities Accounting Act, from December 4, 2023) or on the Justice Laws site (Income Tax Act, ss. 149 and 150). Canada Revenue Agency pages on canada.ca could not be opened, so the rules that rest on them stay at a lower level. Reading a provision is not the same as applying it: where a note says a reading is this kit's interpretation, a lawyer has to confirm it.
+Checked on the dates shown. Rules marked PRIMARY_TEXT_READ were read in the current consolidated text on e-Laws (Not-for-Profit Corporations Act, 2010, consolidation from October 1, 2025; O. Reg. 394/21, from October 19, 2021; Corporations Information Act, from November 27, 2025; R.R.O. 1990, Reg. 182; Charities Accounting Act, from December 4, 2023) or on the Justice Laws site (Income Tax Act, ss. 149 and 150). Canada Revenue Agency pages on canada.ca could not be opened, so the rules that rest on them stay at a lower level. Reading a provision is not the same as applying it: where a note says a reading is this kit's interpretation, a lawyer has to confirm it. Rules L-44 to L-52 were added on 2026-11-15 for the owner's prompt of that date: the Income Tax Act s. 149.1, Canada's anti-spam legislation, the Electronic Commerce Protection Regulations and s. 2(5.1) of the Canada Not-for-profit Corporations Act were read on Justice Laws; Ontario and CRA guidance pages were read through a fetch tool that returns quoted text, so the rules resting on them stay at OFFICIAL_EXTRACT; the Privacy Commissioner's and Corporations Canada's sites could not be opened from this environment.
 
 ## Verification levels
 
 | Level | Meaning | Rules |
 |---|---|---|
-| PRIMARY_TEXT_READ | The provision was read on the official page. | 37 |
-| OFFICIAL_EXTRACT | The wording was seen in a search extract of an official government source. The page itself was not opened. | 3 |
-| SECONDARY | Supported only by law firm or legal clinic publications. | 1 |
+| PRIMARY_TEXT_READ | The provision was read on the official page. | 41 |
+| OFFICIAL_EXTRACT | The wording was seen in a search extract of an official government source. The page itself was not opened. | 7 |
+| SECONDARY | Supported only by law firm or legal clinic publications. | 2 |
 | UNVERIFIED | Not confirmed. Do not rely on it until the listed action is done. | 2 |
 
 ## Directors and members
@@ -53,12 +53,15 @@ Checked on the dates shown. Rules marked PRIMARY_TEXT_READ were read in the curr
 | L-27 | ONCA has been in force since October 19, 2021. | ONCA; proclamation | OFFICIAL_EXTRACT | 2026-11-11 | [1](https://www.ontario.ca/page/guide-not-profit-corporations-act-2010) |
 | L-38 | After incorporation a first meeting of the directors must be held, at which they may make by-laws, appoint officers, appoint an auditor to hold office until the first meeting of members, make banking arrangements and issue memberships. An incorporator or a director calls it on at least five days' notice. Unless the articles or by-laws say otherwise, a quorum of directors is a majority. | ONCA ss. 32(1), (2), 34(2) | PRIMARY_TEXT_READ | 2026-11-11 | [1](https://www.ontario.ca/laws/statute/10n15) |
 | L-43 | Articles of incorporation must set out the corporation's name, its purposes, and any other information the Act, the regulations or the Director requires. If any purpose is of a commercial nature, the articles must state that it is intended only to advance or support the non-profit purposes. Where the articles are inconsistent with the Act, the Act prevails. A corporation under the Act is a body corporate without share capital. | ONCA ss. 1(1), 8(1), (3), (5) | PRIMARY_TEXT_READ | 2026-11-11 | [1](https://www.ontario.ca/laws/statute/10n15) |
+| L-52 | A not-for-profit corporation may instead be incorporated federally under the Canada Not-for-profit Corporations Act. Corporations Canada lists a fee of $200 to file articles online, presents federal incorporation as suited to name protection across Canada or to operating internationally, and states that a federal corporation must also register in each province or territory where it carries on activities, usually for a further fee. Under that Act a corporation becomes a soliciting corporation, with added requirements, when its funding from public sources passes a prescribed amount in a prescribed period. | Canada Not-for-profit Corporations Act, S.C. 2009, c. 23, s. 2(5.1); Corporations Canada | OFFICIAL_EXTRACT | 2026-11-15 | [1](https://laws-lois.justice.gc.ca/eng/acts/C-7.75/page-1.html) [2](https://ised-isde.canada.ca/site/corporations-canada/en/services-fees-and-processing-times) [3](https://ised-isde.canada.ca/site/corporations-canada/en/register-federal-corporation-province-or-territory) |
 
 - L-07 note: Who may incorporate was read in the Act. The form number and fee come from private guides. Processing time is not settled: sources give five business days, seven business days, and two to three weeks. Confirm the fee on the registry's payment screen.
 
 - L-27 note: Consistent with the Act's amendment history, which shows its 2017 amendments in force on that date.
 
 - L-43 note: The exact fields on the registry's incorporation form were not seen. The articles document marks them for confirmation.
+
+- L-52 note: Section 2(5.1) was read on Justice Laws; it refers to a prescribed amount, set by regulation, which was not read. The fee and the provincial registration rule come from search extracts of Corporations Canada pages, which could not be opened from this environment. What Ontario requires of a federal not-for-profit corporation carrying on activities in Ontario was not checked.
 
 ## Name
 
@@ -127,6 +130,9 @@ Checked on the dates shown. Rules marked PRIMARY_TEXT_READ were read in the curr
 | L-24 | A non-profit organization exempt under s. 149(1)(l) must file an information return within six months after the end of a fiscal period if its taxable dividends, interest, rentals and royalties in the period exceed $10,000, or its total assets at the end of the preceding period exceeded $200,000, or it had to file one for an earlier period. | Income Tax Act s. 149(12) | PRIMARY_TEXT_READ | 2026-11-11 | [1](https://laws-lois.justice.gc.ca/eng/acts/i-3.3/section-149.html) [2](https://www.millerthomson.com/en/insights/social-impact/npo-reporting-rules-recalibrated-what-all-organizations-need-to-know-about-ottawas-latest-proposed-changes/) |
 | L-25 | A corporation resident in Canada must file an income tax return within six months after the end of each taxation year, whether or not tax is payable. The requirement does not apply to a corporation that was a registered charity throughout the year. | Income Tax Act s. 150(1)(a), (1.1)(a) | PRIMARY_TEXT_READ | 2026-11-11 | [1](https://laws-lois.justice.gc.ca/eng/acts/i-3.3/section-150.html) |
 | L-26 | The CRA states that a business incorporated in Ontario is automatically assigned a business number and a corporation income tax program account. It was not confirmed whether this covers a not-for-profit corporation incorporated under ONCA: the CRA pages read do not mention not-for-profit corporations. | CRA and Ontario Business Registry practice | UNVERIFIED | 2026-11-14 | [1](https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/business-registration/business-number-program-account/need-program-accounts/corporation-income-tax.html) [2](https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/business-registration/business-number-program-account/need-bn.html) |
+| L-44 | A registered charity is either a charitable organization or a charitable foundation. A charitable organization is constituted and operated exclusively for charitable purposes; devotes all its resources to charitable activities it carries on itself or to qualifying disbursements; has more than 50 per cent of its directors, officers and like officials dealing at arm's length with each other and with any person, or non-arm's-length group, that has contributed more than 50 per cent of its capital; and is not controlled, directly or indirectly in any manner whatever, by such a person or group. A charitable foundation is a corporation or trust constituted and operated exclusively for charitable purposes that is not a charitable organization. | Income Tax Act s. 149.1(1), definitions of charitable organization and charitable foundation | PRIMARY_TEXT_READ | 2026-11-15 | [1](https://laws-lois.justice.gc.ca/eng/acts/I-3.3/section-149.1.html) |
+| L-45 | A public foundation is a charitable foundation that meets the same two tests as a charitable organization: more than 50 per cent of its directors and officers deal at arm's length with each other and with any person or non-arm's-length group that has contributed more than 50 per cent of its capital, and it is not controlled by such a person or group. A private foundation is a charitable foundation that is not a public foundation. | Income Tax Act s. 149.1(1), definitions of public foundation and private foundation | PRIMARY_TEXT_READ | 2026-11-15 | [1](https://laws-lois.justice.gc.ca/eng/acts/I-3.3/section-149.1.html) |
+| L-46 | Every registered charity must file an information return and a public information return, in prescribed form, within six months after the end of each taxation year, without notice or demand. | Income Tax Act s. 149.1(14) | PRIMARY_TEXT_READ | 2026-11-15 | [1](https://laws-lois.justice.gc.ca/eng/acts/I-3.3/section-149.1.html) |
 
 - L-21 note: The online route is confirmed by a search extract. The date the paper form was withdrawn was not confirmed.
 
@@ -144,6 +150,12 @@ Checked on the dates shown. Rules marked PRIMARY_TEXT_READ were read in the curr
 
 - L-26 action: Check the incorporation confirmation for a business number. If there is none, register through CRA Business Registration Online.
 
+- L-44 note: Read in the text current to 2026-10-19. The tests are summarized; the definition has further detail on who counts as a contributor and on government and other charities, which are not counted. How 'capital' and 'control in any manner whatever' apply to the founder and ClearGlass Inc. is a question for counsel (doc 13, A14).
+
+- L-45 note: Read in the text current to 2026-10-19. The additional rules that apply to private foundations were not read for this package.
+
+- L-46 note: The provision does not name the form. The CRA form is commonly referred to as the T3010; confirm the form name and filing route with the CRA.
+
 ## Charitable status in Ontario
 
 | Id | Rule | Authority | Level | Checked | Sources |
@@ -158,6 +170,46 @@ Checked on the dates shown. Rules marked PRIMARY_TEXT_READ were read in the curr
 - L-30 note: Ontario charity law also limits paying directors of a charity. That rule was not read here.
 
 - L-30 action: Ask counsel what the Charities Accounting Act and its regulations require of the Institute from the day it is incorporated, including on paying directors and buying insurance.
+
+## Sales tax
+
+| Id | Rule | Authority | Level | Checked | Sources |
+|---|---|---|---|---|---|
+| L-47 | A charity does not have to register for GST/HST if it is a small supplier. A charity is a small supplier if its gross revenue for a fiscal year is $250,000 or less, or if its revenue from taxable supplies in the current calendar quarter and in the last four calendar quarters is $50,000 or less. Most supplies made by charities are exempt, and a charity that makes only exempt supplies cannot register. | Excise Tax Act; CRA GST/HST Info Sheet GI-067 | OFFICIAL_EXTRACT | 2026-11-15 | [1](https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/gi-067/basic-gst-hst-guidelines-charities.html) |
+
+- L-47 note: The CRA page was read through a fetch tool that returns quoted text; the Excise Tax Act itself was not read. The info sheet is dated June 2015 and the page was last modified 2018-05-29, so the amounts must be rechecked. It covers registered charities: the test for the Institute before any registration, as a non-profit that is not yet a charity, was not checked.
+
+## Electronic messages
+
+| Id | Rule | Authority | Level | Checked | Sources |
+|---|---|---|---|---|---|
+| L-48 | A commercial electronic message is one that, having regard to its content, its hyperlinks or its contact information, it would be reasonable to conclude has as its purpose, or one of its purposes, to encourage participation in a commercial activity. The consent rules in section 6 of the Canada Anti-Spam Legislation do not apply to such a message if it is sent by or on behalf of a registered charity and its primary purpose is raising funds for the charity. The exclusion names registered charities only. | S.C. 2010, c. 23, s. 1(2); Electronic Commerce Protection Regulations, SOR/2013-221, s. 3(g) | PRIMARY_TEXT_READ | 2026-11-15 | [1](https://laws-lois.justice.gc.ca/eng/acts/E-1.6/page-1.html) [2](https://laws-lois.justice.gc.ca/eng/regulations/SOR-2013-221/page-1.html) |
+
+- L-48 note: Both read in the text current to 2026-10-19. Whether a particular newsletter or event invitation from the Institute is a commercial electronic message at all is a question for counsel (doc 13, C11).
+
+## Accessibility
+
+| Id | Rule | Authority | Level | Checked | Sources |
+|---|---|---|---|---|---|
+| L-49 | Ontario's accessibility rules for businesses and non-profits apply to every organization outside the designated public sector that has employees in Ontario; an organization with no employees in Ontario is exempt. An organization with 1 to 19 employees must create accessibility policies, train all employees and volunteers on the Human Rights Code, accessible customer service and the accessibility requirements of their roles, and provide accessible customer service, information and employment practices. Educational and training organizations must also train educators on accessibility. An organization with 20 or more employees must file an accessibility compliance report every three years. | Accessibility for Ontarians with Disabilities Act, 2005, and its regulations; Ontario guidance | OFFICIAL_EXTRACT | 2026-11-15 | [1](https://www.ontario.ca/page/accessibility-rules-businesses-and-non-profits) |
+
+- L-49 note: The government guidance page (updated 2026-06-16) was read through a fetch tool that returns quoted text. The Act and O. Reg. 191/11 were not read. On this guidance the rules start with the Institute's first employee in Ontario, and the training duty then extends to its volunteers.
+
+## Employment
+
+| Id | Rule | Authority | Level | Checked | Sources |
+|---|---|---|---|---|---|
+| L-50 | Under Ontario's Employment Standards Act, 2000, volunteers are not employees, but calling a person a volunteer does not settle it; the main factors are how much the organization benefits from the work and whether the person sees it as a way to make a living. A person trained by an employer in a skill the employer's employees use is generally an employee. The Act does not apply to a secondary school student in a work experience program authorized by the school board, or to a person working under a program approved by a college, university or registered career college. An independent contractor is in business for themselves, and an employer may not treat an employee covered by the Act as if they were not an employee. | Employment Standards Act, 2000, S.O. 2000, c. 41; Ontario guidance | OFFICIAL_EXTRACT | 2026-11-15 | [1](https://www.ontario.ca/document/your-guide-employment-standards-act-0/employee-status) |
+
+- L-50 note: The guide (updated 2024-06-26) was read through a fetch tool that returns quoted text; the Act itself was not read for this rule. Whether a particular person is an employee turns on the facts.
+
+## Privacy
+
+| Id | Rule | Authority | Level | Checked | Sources |
+|---|---|---|---|---|---|
+| L-51 | The federal private-sector privacy law (PIPEDA) applies to personal information collected, used or disclosed in the course of commercial activity. Non-profit status does not by itself take an organization outside it, and there is no fixed test of what counts as commercial activity for a non-profit. | Personal Information Protection and Electronic Documents Act, S.C. 2000, c. 5 | SECONDARY | 2026-11-15 | [1](https://www.cba.org/Sections/Charities-and-Not-for-Profit-Law/Articles/2019/comply-with-PIPEDA) [2](https://www.charitylawgroup.ca/charity-law-questions/compliance-obligations-for-privacy-legislation-charities-and-not-for-profits) |
+
+- L-51 note: The Privacy Commissioner's site could not be opened from this environment, and the Act was not read. Which privacy law reaches the Institute's activities stays open (doc 13, C6).
 
 ## Source list
 
@@ -211,5 +263,18 @@ Checked on the dates shown. Rules marked PRIMARY_TEXT_READ were read in the curr
 - L-41 [1] Not-for-Profit Corporations Act, 2010, S.O. 2010, c. 15 (e-Laws): <https://www.ontario.ca/laws/statute/10n15>
 - L-42 [1] Not-for-Profit Corporations Act, 2010, S.O. 2010, c. 15 (e-Laws): <https://www.ontario.ca/laws/statute/10n15>
 - L-43 [1] Not-for-Profit Corporations Act, 2010, S.O. 2010, c. 15 (e-Laws): <https://www.ontario.ca/laws/statute/10n15>
+- L-44 [1] Income Tax Act, R.S.C. 1985, c. 1 (5th Supp.), s. 149.1 (Justice Laws): <https://laws-lois.justice.gc.ca/eng/acts/I-3.3/section-149.1.html>
+- L-45 [1] Income Tax Act, R.S.C. 1985, c. 1 (5th Supp.), s. 149.1 (Justice Laws): <https://laws-lois.justice.gc.ca/eng/acts/I-3.3/section-149.1.html>
+- L-46 [1] Income Tax Act, R.S.C. 1985, c. 1 (5th Supp.), s. 149.1 (Justice Laws): <https://laws-lois.justice.gc.ca/eng/acts/I-3.3/section-149.1.html>
+- L-47 [1] Canada Revenue Agency, GI-067 Basic GST/HST Guidelines for Charities: <https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/gi-067/basic-gst-hst-guidelines-charities.html>
+- L-48 [1] An Act to promote the efficiency and adaptability of the Canadian economy (Canada's anti-spam legislation), S.C. 2010, c. 23 (Justice Laws): <https://laws-lois.justice.gc.ca/eng/acts/E-1.6/page-1.html>
+- L-48 [2] Electronic Commerce Protection Regulations, SOR/2013-221 (Justice Laws): <https://laws-lois.justice.gc.ca/eng/regulations/SOR-2013-221/page-1.html>
+- L-49 [1] Ontario, Accessibility rules for businesses and non-profits: <https://www.ontario.ca/page/accessibility-rules-businesses-and-non-profits>
+- L-50 [1] Ontario, Your guide to the Employment Standards Act: Employee status: <https://www.ontario.ca/document/your-guide-employment-standards-act-0/employee-status>
+- L-51 [1] Canadian Bar Association, Charities and Not-for-Profit Law Section, comply with PIPEDA: <https://www.cba.org/Sections/Charities-and-Not-for-Profit-Law/Articles/2019/comply-with-PIPEDA>
+- L-51 [2] Charity Law Group, Privacy law compliance obligations for Canadian charities and not-for-profits: <https://www.charitylawgroup.ca/charity-law-questions/compliance-obligations-for-privacy-legislation-charities-and-not-for-profits>
+- L-52 [1] Canada Not-for-profit Corporations Act, S.C. 2009, c. 23 (Justice Laws): <https://laws-lois.justice.gc.ca/eng/acts/C-7.75/page-1.html>
+- L-52 [2] Corporations Canada, Services, fees and processing times: <https://ised-isde.canada.ca/site/corporations-canada/en/services-fees-and-processing-times>
+- L-52 [3] Corporations Canada, Register a federal corporation in a province or territory: <https://ised-isde.canada.ca/site/corporations-canada/en/register-federal-corporation-province-or-territory>
 
 _Generated by `tools/institute_kit.py render`. Edit the file under `data/`, then render again. Do not edit this file by hand._
