@@ -4,7 +4,7 @@
 
 An execution-ready package for incorporating ClearGlass Institute as an Ontario not-for-profit corporation, and a checker that stops these files from claiming more than has happened.
 
-Current state: [`STATUS.md`](STATUS.md). How far each legal rule was verified: [`LEGAL_VERIFICATION.md`](LEGAL_VERIFICATION.md). What is still open: [`package/13_OPEN_QUESTIONS.md`](package/13_OPEN_QUESTIONS.md). What was taken from the owner's kit of 2026-11-14, and what was not: [`OWNER_KIT_2026-11-14.md`](OWNER_KIT_2026-11-14.md).
+Current state: [`STATUS.md`](STATUS.md). How far each legal rule was verified: [`LEGAL_VERIFICATION.md`](LEGAL_VERIFICATION.md). What is still open: [`package/13_OPEN_QUESTIONS.md`](package/13_OPEN_QUESTIONS.md). What was taken from the owner's kit of 2026-11-14, and what was not: [`OWNER_KIT_2026-11-14.md`](OWNER_KIT_2026-11-14.md). Where each phase of the owner's prompt of 2026-11-15 went: [`OWNER_PROMPT_2026-11-15.md`](OWNER_PROMPT_2026-11-15.md).
 
 ## The package, in order
 
@@ -23,6 +23,11 @@ Current state: [`STATUS.md`](STATUS.md). How far each legal rule was verified: [
 | 11 | [`package/11_RISK_AND_COMPLIANCE_REGISTER.md`](package/11_RISK_AND_COMPLIANCE_REGISTER.md) | Twenty-two risks with mitigation, owner, monitoring and evidence |
 | 12 | [`package/12_VALIDATION_CHECKLIST.md`](package/12_VALIDATION_CHECKLIST.md) | The ten go/no-go conditions |
 | 13 | [`package/13_OPEN_QUESTIONS.md`](package/13_OPEN_QUESTIONS.md) | Legal, tax and founder decisions still to be made |
+| 14 | [`package/14_STRUCTURE_AND_CHARITY_DESIGNATION.md`](package/14_STRUCTURE_AND_CHARITY_DESIGNATION.md) | Ontario or federal; the forms the owner's prompt names; which charity category the founder's control could produce; the ten proposed activities |
+| 15 | [`package/15_DOCUMENT_AND_POLICY_INVENTORY.md`](package/15_DOCUMENT_AND_POLICY_INVENTORY.md) | Every document and policy asked for, whether the law requires it, when it is needed, and where it stands |
+| 16 | [`package/16_REGISTRATIONS_PEOPLE_AND_FUNDRAISING.md`](package/16_REGISTRATIONS_PEOPLE_AND_FUNDRAISING.md) | Registrations by trigger; directors, volunteers, interns, contractors and staff; rules for each source of money |
+| 17 | [`package/17_COMPLIANCE_DASHBOARD.md`](package/17_COMPLIANCE_DASHBOARD.md) | Every obligation with its authority, due date, risk, evidence and owner |
+| 18 | [`package/18_FIRST_POLICY_DRAFTS.md`](package/18_FIRST_POLICY_DRAFTS.md) | Privacy, gift acceptance, and AI use and transparency policies |
 
 Supporting files: `data/status.json` (the record of what has happened), `data/legal_claims.json` (the source register), `tools/institute_kit.py` (the checker and generator, Python standard library only), `tests/test_institute_kit.py`.
 

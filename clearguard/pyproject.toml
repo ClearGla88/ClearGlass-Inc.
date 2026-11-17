@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "clearguard"
+version = "0.1.0.dev0"
+description = "ClearGuard: the Guardian Sentinel personal-safety design as a deterministic, evidence-gated core. Design mode only; no live sensors, audio output or emergency integration."
+readme = "README.md"
+requires-python = ">=3.10"
+# Licensing follows the repository LICENSE (ClearGlass Inc. proprietary).
+dependencies = []  # standard library only
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.scripts]
+clearguard = "clearguard_core.cli:main"
+
+[tool.setuptools]
+packages = ["clearguard_core"]
+
+[tool.setuptools.package-data]
+clearguard_core = ["data/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--import-mode=importlib"

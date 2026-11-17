@@ -1,0 +1,399 @@
+{
+  "schema": "clearguard.capabilities/1",
+  "as_of": "2026-11-16",
+  "_comment": "VERIFIED here means unit-tested against a stated requirement in this repository. Nothing is VALIDATED (fit for real use) and nothing can be ACTIVE: there is no live host integration.",
+  "capabilities": [
+    {
+      "id": "trusted_config",
+      "title": "Signed configuration with a closed schema",
+      "level": "VERIFIED",
+      "evidence": [
+        {
+          "kind": "requirement",
+          "reference": "TRACEABILITY.md#3",
+          "recorded_on": "2026-11-16"
+        },
+        {
+          "kind": "implementation",
+          "reference": "clearguard_core/config.py",
+          "recorded_on": "2026-11-16"
+        },
+        {
+          "kind": "test",
+          "reference": "tests/unit/test_config.py",
+          "recorded_on": "2026-11-16"
+        }
+      ],
+      "limits": [
+        "Unit-tested against its stated requirement only; not validated in real use.",
+        "HMAC key protection depends on the host's file permissions."
+      ]
+    },
+    {
+      "id": "observation_gate",
+      "title": "Observation integrity gate (stale, replay, duplicate, order, clock, jump, lineage)",
+      "level": "VERIFIED",
+      "evidence": [
+        {
+          "kind": "requirement",
+          "reference": "TRACEABILITY.md#5",
+          "recorded_on": "2026-11-16"
+        },
+        {
+          "kind": "implementation",
+          "reference": "clearguard_core/observation.py",
+          "recorded_on": "2026-11-16"
+        },
+        {
+          "kind": "test",
+          "reference": "tests/unit/test_observation.py",
+          "recorded_on": "2026-11-16"
+        }
+      ],
+      "limits": [
+        "Unit-tested against its stated requirement only; not validated in real use.",
+        "Implausible-jump checks need a reviewed rate limit per input; none is set."
+      ]
+    },
+    {
+      "id": "hazard_events",
+      "title": "Hazard events with facts, inferences, unknowns and alternatives kept apart",
+      "level": "VERIFIED",
+      "evidence": [
+        {
+          "kind": "requirement",
+          "reference": "TRACEABILITY.md#6",
+          "recorded_on": "2026-11-16"
+        },
+        {
+          "kind": "implementation",
+          "reference": "clearguard_core/events.py",
+          "recorded_on": "2026-11-16"
+        },
+        {
+          "kind": "test",
+          "reference": "tests/unit/test_policy.py",
+          "recorded_on": "2026-11-16"
+        }
+      ],
+      "limits": [
+        "Unit-tested against its stated requirement only; not validated in real use.",
+        "Prohibited-claim screening is a fixed word list, not language understanding."
+      ]
+    },
+    {
+      "id": "policy_engine",
+      "title": "Deterministic safety-policy engine",
+      "level": "VERIFIED",
+      "evidence": [
+        {
+          "kind": "requirement",
+          "reference": "TRACEABILITY.md#4",
+          "recorded_on": "2026-11-16"
+        },
+        {
+          "kind": "implementation",
+          "reference": "clearguard_core/policy.py",
+          "recorded_on": "2026-11-16"
+        },
+        {
+          "kind": "test",
+          "reference": "tests/unit/test_policy.py",
+          "recorded_on": "2026-11-16"
+        }
+      ],
+      "limits": [
+        "Unit-tested against its stated requirement only; not validated in real use."
+      ]
+    },
+    {
+      "id": "alert_templates",
+      "title": "Pre-approved alert templates, fallback order and delivery tracking",
+      "level": "VERIFIED",
+      "evidence": [
+        {
+          "kind": "requirement",
+          "reference": "TRACEABILITY.md#9",
+          "recorded_on": "2026-11-16"
+        },
+        {
+          "kind": "implementation",
+          "reference": "clearguard_core/alerts.py",
+          "recorded_on": "2026-11-16"
+        },
+        {
+          "kind": "test",
+          "reference": "tests/unit/test_alerts.py",
+          "recorded_on": "2026-11-16"
+        }
+      ],
+      "limits": [
+        "Unit-tested against its stated requirement only; not validated in real use.",
+        "No channel can deliver anything: no host output integration exists."
+      ]
+    },
+    {
+      "id": "emergency_workflow",
+      "title": "Emergency action matrix: consent, confirmation, countdown, de-duplication, cancellation",
+      "level": "VERIFIED",
+      "evidence": [
+        {
+          "kind": "requirement",
+          "reference": "TRACEABILITY.md#11",
+          "recorded_on": "2026-11-16"
+        },
+        {
+          "kind": "implementation",
+          "reference": "clearguard_core/emergency.py",
+          "recorded_on": "2026-11-16"
+        },
+        {
+          "kind": "test",
+          "reference": "tests/unit/test_emergency.py",
+          "recorded_on": "2026-11-16"
+        }
+      ],
+      "limits": [
+        "Unit-tested against its stated requirement only; not validated in real use.",
+        "Every attempt fails in this build: no emergency interface exists."
+      ]
+    },
+    {
+      "id": "readiness",
+      "title": "Lifecycle, coverage and readiness assessment",
+      "level": "VERIFIED",
+      "evidence": [
+        {
+          "kind": "requirement",
+          "reference": "TRACEABILITY.md#8",
+          "recorded_on": "2026-11-16"
+        },
+        {
+          "kind": "implementation",
+          "reference": "clearguard_core/health.py",
+          "recorded_on": "2026-11-16"
+        },
+        {
+          "kind": "test",
+          "reference": "tests/unit/test_health.py",
+          "recorded_on": "2026-11-16"
+        }
+      ],
+      "limits": [
+        "Unit-tested against its stated requirement only; not validated in real use."
+      ]
+    },
+    {
+      "id": "audit_trail",
+      "title": "Hash-chained audit trail without location or media",
+      "level": "VERIFIED",
+      "evidence": [
+        {
+          "kind": "requirement",
+          "reference": "TRACEABILITY.md#12",
+          "recorded_on": "2026-11-16"
+        },
+        {
+          "kind": "implementation",
+          "reference": "clearguard_core/audit.py",
+          "recorded_on": "2026-11-16"
+        },
+        {
+          "kind": "test",
+          "reference": "tests/unit/test_audit.py",
+          "recorded_on": "2026-11-16"
+        }
+      ],
+      "limits": [
+        "Unit-tested against its stated requirement only; not validated in real use.",
+        "Tamper-evident, not tamper-proof."
+      ]
+    },
+    {
+      "id": "voice_commands",
+      "title": "Closed command grammar (typed text)",
+      "level": "VERIFIED",
+      "evidence": [
+        {
+          "kind": "requirement",
+          "reference": "TRACEABILITY.md#16",
+          "recorded_on": "2026-11-16"
+        },
+        {
+          "kind": "implementation",
+          "reference": "clearguard_core/session.py",
+          "recorded_on": "2026-11-16"
+        },
+        {
+          "kind": "test",
+          "reference": "tests/unit/test_session.py",
+          "recorded_on": "2026-11-16"
+        }
+      ],
+      "limits": [
+        "Unit-tested against its stated requirement only; not validated in real use.",
+        "Text input only; there is no speech recognition."
+      ]
+    },
+    {
+      "id": "capability_registry",
+      "title": "Evidence-gated capability states",
+      "level": "VERIFIED",
+      "evidence": [
+        {
+          "kind": "requirement",
+          "reference": "TRACEABILITY.md#1",
+          "recorded_on": "2026-11-16"
+        },
+        {
+          "kind": "implementation",
+          "reference": "clearguard_core/capability.py",
+          "recorded_on": "2026-11-16"
+        },
+        {
+          "kind": "test",
+          "reference": "tests/unit/test_capability.py",
+          "recorded_on": "2026-11-16"
+        }
+      ],
+      "limits": [
+        "Unit-tested against its stated requirement only; not validated in real use."
+      ]
+    },
+    {
+      "id": "headphone_output",
+      "title": "Headphone audio alerts",
+      "level": "SPECIFIED",
+      "evidence": [
+        {
+          "kind": "requirement",
+          "reference": "TRACEABILITY.md#9",
+          "recorded_on": "2026-11-16"
+        }
+      ],
+      "limits": [
+        "No host audio integration."
+      ]
+    },
+    {
+      "id": "watch_haptics",
+      "title": "Watch haptic fallback",
+      "level": "SPECIFIED",
+      "evidence": [
+        {
+          "kind": "requirement",
+          "reference": "TRACEABILITY.md#10",
+          "recorded_on": "2026-11-16"
+        }
+      ],
+      "limits": [
+        "No watch integration."
+      ]
+    },
+    {
+      "id": "phone_notifications",
+      "title": "Phone notification fallback",
+      "level": "SPECIFIED",
+      "evidence": [
+        {
+          "kind": "requirement",
+          "reference": "TRACEABILITY.md#10",
+          "recorded_on": "2026-11-16"
+        }
+      ],
+      "limits": [
+        "No notification integration."
+      ]
+    },
+    {
+      "id": "speech_recognition",
+      "title": "Spoken commands",
+      "level": "SPECIFIED",
+      "evidence": [
+        {
+          "kind": "requirement",
+          "reference": "TRACEABILITY.md#16",
+          "recorded_on": "2026-11-16"
+        }
+      ],
+      "limits": [
+        "No speech input."
+      ]
+    },
+    {
+      "id": "background_execution",
+      "title": "Monitoring while the app is in the background",
+      "level": "SPECIFIED",
+      "evidence": [
+        {
+          "kind": "requirement",
+          "reference": "TRACEABILITY.md#2",
+          "recorded_on": "2026-11-16"
+        }
+      ],
+      "limits": [
+        "Depends on operating-system limits; nothing is integrated."
+      ]
+    },
+    {
+      "id": "fall_detection_relay",
+      "title": "Platform fall-event relay",
+      "level": "SPECIFIED",
+      "evidence": [
+        {
+          "kind": "requirement",
+          "reference": "clearguard_core/data/detector_contracts.json#platform-fall-detection",
+          "recorded_on": "2026-11-16"
+        }
+      ],
+      "limits": [
+        "Not implemented; contract has no review or evidence."
+      ]
+    },
+    {
+      "id": "official_warning_relay",
+      "title": "Official emergency-warning relay",
+      "level": "SPECIFIED",
+      "evidence": [
+        {
+          "kind": "requirement",
+          "reference": "clearguard_core/data/detector_contracts.json#official-warning-relay",
+          "recorded_on": "2026-11-16"
+        }
+      ],
+      "limits": [
+        "Not implemented; contract has no review or evidence."
+      ]
+    },
+    {
+      "id": "camera_obstacle_detection",
+      "title": "Camera obstacle warnings",
+      "level": "SPECIFIED",
+      "evidence": [
+        {
+          "kind": "requirement",
+          "reference": "clearguard_core/data/detector_contracts.json#camera-obstacle",
+          "recorded_on": "2026-11-16"
+        }
+      ],
+      "limits": [
+        "Not implemented; trigger rule undecided."
+      ]
+    },
+    {
+      "id": "emergency_interface",
+      "title": "Emergency calling and messaging interface",
+      "level": "SPECIFIED",
+      "evidence": [
+        {
+          "kind": "requirement",
+          "reference": "TRACEABILITY.md#11",
+          "recorded_on": "2026-11-16"
+        }
+      ],
+      "limits": [
+        "Not implemented. Real emergency services are never contacted in design or test use."
+      ]
+    }
+  ]
+}
