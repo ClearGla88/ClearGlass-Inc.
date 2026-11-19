@@ -1,0 +1,7 @@
+# ClearGlass Active Defense runtime dependencies.
+# fastapi and uvicorn match the pins already verified in clearglass-agent-office/requirements.txt;
+# pydantic and PyYAML are the versions installed and tested in this session.
+fastapi==0.162.0
+pydantic==2.13.5
+PyYAML==6.0.3
+uvicorn==0.54.0

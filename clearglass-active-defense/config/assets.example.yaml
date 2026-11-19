@@ -1,0 +1,130 @@
+# Synthetic lab inventory. Every name, owner and address is invented.
+# Addresses are private (10.66.0.0/16); hostnames use the reserved .example domain.
+# Replace this file with your verified inventory before any non-lab use.
+schema_version: 1
+inventory_version: inv-2026-11-17.1
+dhcp_binding_max_age_seconds: 3600
+
+# Many hosts can appear as one of these addresses (VPN egress, proxies, NAT).
+# An address here never resolves to a single asset.
+shared_address_ranges:
+  - 10.66.200.0/24
+
+# Scheduled, authorized scanning. Their decoy hits are stored, not raised as signals.
+authorized_scanners:
+  - cidr: 10.66.0.50/32
+    owner: lab vulnerability scanner (synthetic)
+    note: weekly authenticated scan
+
+assets:
+  - asset_id: lab-ws-001
+    hostname: ws-001.lab.example
+    owner: lab-endpoint-team (synthetic)
+    environment: lab
+    criticality: low
+    authorized_for_containment: true
+    adapter: mock
+    ip_bindings:
+      - {ip: 10.66.10.21, kind: static}
+    management_paths: ["10.66.0.10/32:22", "10.66.0.11/32:443"]
+
+  - asset_id: lab-ws-002
+    hostname: ws-002.lab.example
+    owner: lab-endpoint-team (synthetic)
+    environment: lab
+    criticality: low
+    authorized_for_containment: true
+    adapter: mock
+    ip_bindings:
+      - {ip: 10.66.10.40, kind: dhcp, observed_at: "2026-11-17T12:00:00Z"}
+    management_paths: ["10.66.0.10/32:22"]
+
+  # Two inventory records claim the same address: resolution must say AMBIGUOUS.
+  - asset_id: lab-ws-003
+    hostname: ws-003.lab.example
+    owner: lab-endpoint-team (synthetic)
+    environment: lab
+    criticality: low
+    authorized_for_containment: true
+    adapter: mock
+    ip_bindings:
+      - {ip: 10.66.10.99, kind: static}
+    management_paths: ["10.66.0.10/32:22"]
+
+  - asset_id: lab-ws-004
+    hostname: ws-004.lab.example
+    owner: lab-endpoint-team (synthetic)
+    environment: lab
+    criticality: low
+    authorized_for_containment: true
+    adapter: mock
+    ip_bindings:
+      - {ip: 10.66.10.99, kind: static}
+    management_paths: ["10.66.0.10/32:22"]
+
+  - asset_id: lab-app-001
+    hostname: app-001.lab.example
+    owner: lab-apps-team (synthetic)
+    environment: lab
+    criticality: critical
+    authorized_for_containment: true
+    adapter: mock
+    ip_bindings:
+      - {ip: 10.66.20.10, kind: static}
+    management_paths: ["10.66.0.10/32:22"]
+    dependents: [lab-ws-001, lab-ws-002]
+
+  - asset_id: lab-dc-001
+    hostname: dc-001.lab.example
+    owner: lab-identity-team (synthetic)
+    environment: lab
+    criticality: critical
+    protected_class: identity
+    authorized_for_containment: false
+    adapter: none
+    ip_bindings:
+      - {ip: 10.66.1.10, kind: static}
+
+  - asset_id: lab-bkp-001
+    hostname: bkp-001.lab.example
+    owner: lab-infra-team (synthetic)
+    environment: lab
+    criticality: high
+    protected_class: backup
+    authorized_for_containment: false
+    adapter: none
+    ip_bindings:
+      - {ip: 10.66.1.20, kind: static}
+
+  - asset_id: lab-fw-001
+    hostname: fw-001.lab.example
+    owner: lab-network-team (synthetic)
+    environment: lab
+    criticality: critical
+    protected_class: network_control
+    authorized_for_containment: false
+    adapter: none
+    ip_bindings:
+      - {ip: 10.66.0.1, kind: static}
+
+  - asset_id: lab-soc-001
+    hostname: soc-001.lab.example
+    owner: lab-security-team (synthetic)
+    environment: lab
+    criticality: critical
+    protected_class: response_platform
+    authorized_for_containment: false
+    adapter: none
+    ip_bindings:
+      - {ip: 10.66.0.10, kind: static}
+
+  - asset_id: lab-plc-001
+    hostname: plc-001.lab.example
+    owner: lab-facilities-team (synthetic)
+    environment: lab
+    criticality: critical
+    protected_class: safety_ot
+    authorized_for_containment: false
+    adapter: none
+    ip_bindings:
+      - {ip: 10.66.50.5, kind: static}

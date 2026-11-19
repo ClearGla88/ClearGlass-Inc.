@@ -1,0 +1,128 @@
+# Detection and correlation rules. Matching is exact on typed attribute values;
+# no rule reads free text. Bump a rule's version when you change it: every
+# signal records the rule id and version that raised it.
+schema_version: 1
+ruleset_version: rs-2026-11-17.1
+
+rules:
+  - id: DEC-HTTP-001
+    version: 1
+    description: Any request to the low-interaction HTTP decoy.
+    match: {category: honeypot.http.request}
+    signal: decoy_interaction
+
+  - id: DEC-TCP-001
+    version: 1
+    description: A completed TCP connection to a tripwire port.
+    match: {category: tripwire.tcp.connect}
+    signal: decoy_interaction
+
+  - id: DEC-FILE-001
+    version: 1
+    description: A decoy file was opened or read (inotify sensors only).
+    match: {category: honeyfile.access}
+    signal: decoy_interaction
+
+  - id: DEC-FILE-002
+    version: 1
+    description: A decoy file was modified, moved or deleted.
+    match: {category: honeyfile.modify}
+    signal: decoy_interaction
+
+  - id: DEC-TOKEN-001
+    version: 1
+    description: A registered honeytoken was presented to the HTTP decoy (server-side fingerprint match).
+    match:
+      category: honeypot.http.request
+      derived: {honeytoken_match: [true]}
+    signal: honeytoken_use
+
+  - id: DEC-TOKEN-002
+    version: 1
+    description: A registered honeytoken was seen by a honeytoken detector (server-side fingerprint match).
+    match:
+      category: honeytoken.use
+      derived: {honeytoken_match: [true]}
+    signal: honeytoken_use
+
+  - id: EDR-001
+    version: 1
+    description: Endpoint sensor reports suspicious or malicious behaviour on its asset.
+    match:
+      category: endpoint.alert
+      attributes:
+        verdict: [suspicious, malicious]
+        behavior: [suspicious_process, credential_access, persistence]
+    signal: endpoint_compromise_indicator
+
+  - id: EDR-RANSOM-001
+    version: 1
+    description: Endpoint sensor reports ransomware-like behaviour (mass rename, shadow copy deletion).
+    match:
+      category: endpoint.alert
+      attributes:
+        behavior: [mass_file_rename, shadow_copy_deletion]
+    signal: ransomware_indicator
+
+  - id: EDR-LAT-001
+    version: 1
+    description: Endpoint sensor reports lateral-movement behaviour from its asset.
+    match:
+      category: endpoint.alert
+      attributes:
+        behavior: [internal_fanout, remote_service_creation]
+    signal: lateral_movement_indicator
+
+  - id: NET-LAT-001
+    version: 1
+    description: Flow monitor sees one internal source fan out to many internal hosts.
+    match:
+      category: network.flow
+      attributes:
+        pattern: [internal_fanout]
+    signal: lateral_movement_indicator
+
+  - id: INT-001
+    version: 1
+    description: Integrity monitor reports suspected tampering with a sensor.
+    match:
+      category: sensor.health
+      attributes:
+        status: [tamper_suspected]
+    signal: sensor_integrity
+
+correlations:
+  - id: COR-COMPROMISE-001
+    version: 1
+    description: Endpoint compromise indicator corroborated by an independent deception signal on the same verified asset.
+    all_of: [endpoint_compromise_indicator]
+    any_of: [decoy_interaction, honeytoken_use]
+    min_distinct_sensors: 2
+    window_seconds: 3600
+    requires_verified_asset: true
+    playbook: PB-03-isolate-corroborated-host
+
+  - id: COR-RANSOM-001
+    version: 1
+    description: Ransomware-like behaviour reported by an identity-asserting endpoint sensor.
+    all_of: [ransomware_indicator]
+    min_distinct_sensors: 1
+    window_seconds: 3600
+    requires_verified_asset: true
+    playbook: PB-05-ransomware-containment
+
+  - id: COR-LATERAL-001
+    version: 1
+    description: Lateral-movement indicator plus an independent signal on the same verified asset.
+    all_of: [lateral_movement_indicator]
+    any_of: [endpoint_compromise_indicator, decoy_interaction, honeytoken_use]
+    min_distinct_sensors: 2
+    window_seconds: 3600
+    requires_verified_asset: true
+    playbook: PB-04-lateral-movement-scope
+
+# Single-signal playbooks. Configuration validation refuses any that would propose containment.
+signal_playbooks:
+  decoy_interaction: PB-01-decoy-interaction
+  honeytoken_use: PB-02-honeytoken-use
+  sensor_integrity: PB-08-sensor-distrust

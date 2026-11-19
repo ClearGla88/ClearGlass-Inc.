@@ -1,0 +1,58 @@
+id: PB-05-ransomware-containment
+version: 1
+owner: security-operations (lab)
+purpose: >-
+  Ransomware-like behaviour reported by an identity-asserting endpoint sensor. Escalate at once
+  and propose bounded single-asset isolation with a short approval window. Backups, identity and
+  network control assets are never isolated by this playbook.
+trigger: {kind: correlation, ref: COR-RANSOM-001}
+required_evidence:
+  all_of: [ransomware_indicator]
+  min_distinct_sensors: 1
+preconditions:
+  - no_emergency_stop
+  - circuit_closed
+  - identity_verified
+  - asset_in_inventory
+  - environment_in_scope
+  - not_protected
+  - asset_authorized_for_containment
+  - adapter_available
+  - evidence_corroborated
+  - sensor_trusted
+  - not_already_contained
+  - within_rate_limits
+authorization_scope: inventoried lab assets with authorized_for_containment true
+asset_exclusions: [identity, network_control, response_platform, backup, safety_ot]
+approval: {required: true, approver_role: approver, ttl_seconds: 900, distinct_from_requester: true}
+actions:
+  - {id: escalate, type: escalate, description: Flag the case as urgent before anything else.}
+  - {id: alert, type: record_alert, description: Record the critical alert.}
+  - {id: preserve, type: preserve_evidence, description: Snapshot the evidence manifest.}
+  - {id: propose, type: propose_isolation, timeout_seconds: 30, description: Propose single-asset isolation with a 15-minute approval window.}
+  - {id: notify, type: notify, description: Record the urgent notification.}
+retry: {max_attempts: 3, backoff_seconds: 10}
+idempotency_key_fields: [kind, case_id, target_asset_id, plan_hash]
+verification:
+  - Adapter reports every isolation rule tagged with this action's key.
+  - Every preserved management path has an allow rule.
+failure_paths:
+  on_timeout: Reconcile against adapter state; retry only if nothing was applied.
+  on_partial: Leave applied rules in place, mark partially_completed, escalate to the incident lead.
+  on_error: Retry with short backoff, then fail and escalate.
+escalation:
+  - Incident lead confirms backups are isolated from the affected host by existing controls.
+  - Wider containment (subnets, shares) is a human decision outside this system.
+compensating_actions:
+  - Release through PB-07, removing only rules tagged with this action's key.
+  - Manual network or storage containment by the incident lead, recorded in the case.
+recovery_criteria:
+  - {id: root_cause_identified, description: Initial access and the encryption process are identified.}
+  - {id: host_remediated, description: The host is reimaged from a known-good image.}
+  - {id: credentials_rotated, description: Credentials used on the host are rotated.}
+  - {id: monitoring_confirmed, description: Telemetry is flowing and clean since rebuild.}
+evidence_requirements:
+  - Proposal lists authorizing signal ids and artifact hashes.
+notifications:
+  - incident lead (urgent)
+  - approver queue
