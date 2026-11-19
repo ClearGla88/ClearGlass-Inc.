@@ -11,6 +11,7 @@ Everything lives in the state directory (default `~/.local/state/clearshield`, o
 | Watched paths and their metadata | `/etc/hosts`, SHA-256, size, mode, uid, gid, inode | `state.json`, `audit.jsonl` | Integrity comparison | Until the baseline is replaced or the state directory is deleted |
 | Symlink targets of watched symlinks | `/run/systemd/resolve/stub-resolv.conf` | same | Detect retargeting | same |
 | TCP listener identities | `tcp4/0.0.0.0:22`, uid, PID, executable path, process name (up to 64 characters) | same | Detect new listeners | Per scan record |
+| Executable paths of approved listeners | `tcp4/0.0.0.0:22` → `/usr/sbin/sshd` | `state.json` (baseline) | Detect a different program on an approved port | Until the baseline is replaced |
 | Failed SSH logins: source IP address, timestamps, counts | `203.0.113.9`, 10 failures in 600 s | same | Threshold alerts | Timestamps in `state.json` are pruned after one window; alerts stay in the audit log until purged |
 | Names of **existing local accounts** targeted | `root` | `audit.jsonl` | Show which real accounts were attacked | Until purged |
 | Names tried against **non-existent** accounts | — | **not stored by default** | People type passwords into the username prompt; such a name can be a credential | Only if `auth.record_invalid_usernames` is set to true; then up to 5 escaped samples per alert |

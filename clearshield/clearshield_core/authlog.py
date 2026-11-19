@@ -114,10 +114,61 @@ def parse_syslog_line(line: str, now: datetime) -> dict | None:
 
 # ------------------------------------------------------------------ sources
 
+def _parse_lines(data: bytes, now: datetime, cutoff: float | None, skip_first: bool) -> tuple[list[dict], int]:
+    """Parse the complete lines in ``data``. Returns (events, bytes consumed)."""
+    end = data.rfind(b"\n")
+    if end < 0:
+        return [], 0
+    lines = data[: end + 1].split(b"\n")[:-1]
+    if skip_first and lines:
+        lines = lines[1:]  # first line is probably partial
+    events = []
+    for raw in lines:
+        if len(raw) > MAX_LINE:
+            continue
+        event = parse_syslog_line(raw.decode("utf-8", "replace"), now)
+        if event is None or (cutoff is not None and event["ts"] < cutoff):
+            continue
+        events.append(event)
+    return events, end + 1
+
+
+def _read_rotated_tail(path: str, cursor: dict, limit: int, now: datetime) -> tuple[list[dict], str]:
+    """After rotation, read what was appended to the old file since the last scan.
+
+    logrotate (create mode) renames ``auth.log`` to ``auth.log.1``; lines written
+    between the previous scan and the rotation are only there. The renamed file
+    is used only if its device and inode match the cursor, so an unrelated file
+    is never read. Compressed or differently named rotations cannot be followed
+    and are reported as a possible gap.
+    """
+    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_CLOEXEC", 0)
+    try:
+        fd = os.open(path + ".1", flags)
+    except OSError:
+        return [], "not_found"
+    with os.fdopen(fd, "rb") as fh:
+        st = os.fstat(fh.fileno())
+        if (st.st_ino, st.st_dev) != (cursor.get("inode"), cursor.get("dev")):
+            return [], "not_found"
+        offset = cursor.get("offset", 0)
+        if offset > st.st_size:
+            return [], "not_found"
+        fh.seek(offset)
+        data = fh.read(limit + 1)
+    truncated = len(data) > limit
+    events, _ = _parse_lines(data[:limit], now, None, False)
+    return events, "partial" if truncated else "read"
+
+
 def read_file_source(path: str, cursor: dict | None, cfg: dict, now: datetime) -> tuple[list[dict], dict, dict]:
-    """Read new lines since ``cursor``. Returns (events, new_cursor, status)."""
+    """Read new lines since ``cursor``. Returns (events, new_cursor, status).
+
+    ``status["rotation_gap"]`` is True when the file was rotated or truncated and
+    lines written just before that could not be read; those failures were missed.
+    """
     status: dict[str, Any] = {"source": f"file:{path}", "status": "ok", "events": 0,
-                              "truncated": False, "rotation_detected": False}
+                              "truncated": False, "rotation_detected": False, "rotation_gap": False}
     flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_CLOEXEC", 0)
     try:
         fd = os.open(path, flags)
@@ -127,42 +178,34 @@ def read_file_source(path: str, cursor: dict | None, cfg: dict, now: datetime) -
         return [], cursor or {}, {**status, "status": "permission_denied"}
     except OSError as exc:
         return [], cursor or {}, {**status, "status": f"error: {exc.strerror}"}
+    limit = cfg["max_bytes_per_scan"]
+    events: list[dict] = []
     with os.fdopen(fd, "rb") as fh:
         st = os.fstat(fh.fileno())
         offset = 0
         first_read = not cursor
         if cursor and cursor.get("inode") == st.st_ino and cursor.get("dev") == st.st_dev:
             offset = cursor.get("offset", 0)
-            if offset > st.st_size:  # truncated in place (copytruncate)
+            if offset > st.st_size:  # truncated in place (copytruncate): the tail went to the copy
                 offset = 0
                 status["rotation_detected"] = True
+                status["rotation_gap"] = True
         elif cursor:
             status["rotation_detected"] = True
-        limit = cfg["max_bytes_per_scan"]
+            tail, how = _read_rotated_tail(path, cursor, limit, now)
+            events.extend(tail)
+            status["rotated_tail"] = how
+            status["rotation_gap"] = how != "read"
         if st.st_size - offset > limit:
             offset = st.st_size - limit
             status["truncated"] = True
         fh.seek(offset)
         data = fh.read(limit)
-    end = data.rfind(b"\n")
-    if end < 0:
-        return [], {"inode": st.st_ino, "dev": st.st_dev, "offset": offset}, status
-    complete = data[: end + 1]
-    new_offset = offset + end + 1
-    lines = complete.split(b"\n")[:-1]
-    if status["truncated"] and lines:
-        lines = lines[1:]  # first line is probably partial
     cutoff = now.timestamp() - cfg["initial_lookback_seconds"] if first_read else None
-    events = []
-    for raw in lines:
-        if len(raw) > MAX_LINE:
-            continue
-        event = parse_syslog_line(raw.decode("utf-8", "replace"), now)
-        if event is None or (cutoff is not None and event["ts"] < cutoff):
-            continue
-        events.append(event)
+    fresh, consumed = _parse_lines(data, now, cutoff, status["truncated"])
+    events.extend(fresh)
     status["events"] = len(events)
-    return events, {"inode": st.st_ino, "dev": st.st_dev, "offset": new_offset}, status
+    return events, {"inode": st.st_ino, "dev": st.st_dev, "offset": offset + consumed}, status
 
 
 JournalRunner = Callable[[list[str], int, int], tuple[int, bytes, str]]
@@ -421,4 +464,11 @@ def source_findings(statuses: list[dict]) -> list[dict]:
         if s.get("truncated"):
             findings.append({"layer": "auth", "kind": "auth_read_truncated", "severity": "low",
                              "source_ip": None, "detail": {"source": s["source"]}})
+        if s.get("rotation_gap"):
+            findings.append({"layer": "auth", "kind": "auth_rotation_gap", "severity": "low",
+                             "source_ip": None,
+                             "detail": {"source": s["source"],
+                                        "note": "the log was rotated or truncated and lines written just "
+                                                "before that could not be read; failures in that gap were "
+                                                "not counted"}})
     return findings
