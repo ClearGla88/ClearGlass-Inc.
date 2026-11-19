@@ -1,0 +1,35 @@
+id: PB-02-honeytoken-use
+version: 1
+owner: security-operations (lab)
+purpose: >-
+  A registered synthetic honeytoken was presented somewhere. Validate the match (fingerprint,
+  server-side), open a case, escalate, and preserve evidence. The token grants no access anywhere.
+trigger: {kind: signal, ref: honeytoken_use}
+required_evidence:
+  all_of: [honeytoken_use]
+  min_distinct_sensors: 1
+preconditions: []
+authorization_scope: inventoried lab assets and decoys listed in the deployment configuration
+asset_exclusions: [identity, network_control, response_platform, backup, safety_ot]
+approval: {required: false}
+actions:
+  - {id: alert, type: record_alert, description: Record a high-severity alert naming the matched token id.}
+  - {id: preserve, type: preserve_evidence, description: Snapshot the case evidence manifest.}
+  - {id: escalate, type: escalate, description: Flag the case for senior analyst review.}
+  - {id: notify, type: notify, description: Record the notification (no outbound channel in this build).}
+retry: {max_attempts: 1, backoff_seconds: 0}
+idempotency_key_fields: [case_id, playbook_id]
+verification:
+  - The derived honeytoken_match field is true and lists a registered token id.
+failure_paths:
+  on_timeout: Not applicable; every step is local.
+  on_partial: Not applicable; steps run in one database transaction.
+  on_error: The transaction rolls back and the sensor's retry is deduplicated by event_id.
+escalation:
+  - Senior analyst decides where the token was placed and whether the placement leaked.
+  - Rotate the token (mint a new one, retire the old placement) once the case is understood.
+evidence_requirements:
+  - Fingerprint only; the token value is never stored or logged by the server.
+notifications:
+  - security-operations queue
+  - token owner recorded at mint time

@@ -1,0 +1,74 @@
+# Local-only lab stack. Nothing is published beyond 127.0.0.1, and the decoys are
+# reachable only from the internal "sensors" network unless you publish them yourself.
+#
+#   python3 defense.py init-secrets deploy/compose.secrets.yaml   # writes ./secrets/*
+#   sudo chown 10001 secrets/*        # Linux: compose file secrets keep host ownership
+#   docker compose up --build
+#
+# Status: validated with `docker compose config`; not built or run in the authoring session.
+name: clearglass-active-defense
+
+x-hardening: &hardening
+  build: .
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  pids_limit: 128
+  mem_limit: 256m
+  cpus: 0.5
+  tmpfs: ["/tmp:size=16m"]
+  restart: unless-stopped
+
+services:
+  api:
+    <<: *hardening
+    command: ["serve", "deploy/compose.defense.yaml", "--host", "0.0.0.0", "--port", "8088",
+              "--plaintext-on-isolated-network"]
+    ports: ["127.0.0.1:8088:8088"]          # operators on this machine only
+    networks: [operator, sensors]
+    volumes: ["defense-data:/data"]
+    secrets: [sensor-http-01.key, sensor-tcp-01.key, sensor-file-01.key, sensor-edr-01.key,
+              sensor-flow-01.key, sensor-integrity-01.key,
+              analyst-1.token, approver-1.token, approver-2.token, admin-1.token]
+
+  worker:
+    <<: *hardening
+    command: ["worker", "deploy/compose.defense.yaml", "--interval", "5"]
+    network_mode: "none"                      # the mock adapter is a file; the worker needs no network
+    volumes: ["defense-data:/data"]           # holds no sensor key and no API token
+
+  decoy-http:
+    <<: *hardening
+    command: ["sensor", "http", "--sensor-id", "sensor-http-01", "--key-file", "/run/secrets/sensor-http-01.key",
+              "--api", "http://api:8088", "--scope", "clearglass-lab-01", "--bind", "0.0.0.0", "--port", "8080"]
+    networks: [sensors]
+    secrets: [sensor-http-01.key]
+    # To expose the decoy to a lab segment on purpose, publish it on that interface only, e.g.
+    # ports: ["10.66.0.20:80:8080"]
+
+  tripwire:
+    <<: *hardening
+    command: ["sensor", "tcp", "--sensor-id", "sensor-tcp-01", "--key-file", "/run/secrets/sensor-tcp-01.key",
+              "--api", "http://api:8088", "--scope", "clearglass-lab-01", "--bind", "0.0.0.0", "--port", "2222"]
+    networks: [sensors]
+    secrets: [sensor-tcp-01.key]
+
+networks:
+  operator: {}
+  sensors:
+    internal: true                            # no route out of the host
+
+volumes:
+  defense-data: {}
+
+secrets:
+  sensor-http-01.key: {file: ./secrets/sensor-http-01.key}
+  sensor-tcp-01.key: {file: ./secrets/sensor-tcp-01.key}
+  sensor-file-01.key: {file: ./secrets/sensor-file-01.key}
+  sensor-edr-01.key: {file: ./secrets/sensor-edr-01.key}
+  sensor-flow-01.key: {file: ./secrets/sensor-flow-01.key}
+  sensor-integrity-01.key: {file: ./secrets/sensor-integrity-01.key}
+  analyst-1.token: {file: ./secrets/analyst-1.token}
+  approver-1.token: {file: ./secrets/approver-1.token}
+  approver-2.token: {file: ./secrets/approver-2.token}
+  admin-1.token: {file: ./secrets/admin-1.token}

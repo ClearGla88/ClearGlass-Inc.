@@ -1,0 +1,58 @@
+id: PB-03-isolate-corroborated-host
+version: 1
+owner: security-operations (lab)
+purpose: >-
+  An identity-asserting endpoint sensor and an independent deception signal agree about one
+  verified asset. Propose isolating that single asset, with an exact plan, for human approval.
+trigger: {kind: correlation, ref: COR-COMPROMISE-001}
+required_evidence:
+  all_of: [endpoint_compromise_indicator]
+  any_of: [decoy_interaction, honeytoken_use]
+  min_distinct_sensors: 2
+preconditions: &containment_preconditions
+  - no_emergency_stop
+  - circuit_closed
+  - identity_verified
+  - asset_in_inventory
+  - environment_in_scope
+  - not_protected
+  - asset_authorized_for_containment
+  - adapter_available
+  - evidence_corroborated
+  - sensor_trusted
+  - not_already_contained
+  - within_rate_limits
+authorization_scope: inventoried lab assets with authorized_for_containment true
+asset_exclusions: [identity, network_control, response_platform, backup, safety_ot]
+approval: {required: true, approver_role: approver, ttl_seconds: 3600, distinct_from_requester: true}
+actions:
+  - {id: alert, type: record_alert, description: Record the corroborated alert.}
+  - {id: preserve, type: preserve_evidence, description: Snapshot the evidence manifest before any change.}
+  - {id: propose, type: propose_isolation, timeout_seconds: 30, description: Evaluate policy and write a hash-bound single-asset isolation proposal.}
+  - {id: notify, type: notify, description: Record the approver notification (no outbound channel in this build).}
+retry: {max_attempts: 3, backoff_seconds: 30}
+idempotency_key_fields: [kind, case_id, target_asset_id, plan_hash]
+verification:
+  - Adapter reports every isolation rule tagged with this action's key.
+  - Every preserved management path has an allow rule.
+failure_paths:
+  on_timeout: Reconcile against adapter state; retry only if nothing was applied.
+  on_partial: Leave applied rules in place, mark partially_completed, escalate.
+  on_error: Retry with backoff up to max_attempts, then fail and escalate; the circuit breaker counts failures.
+escalation:
+  - Approver reviews the plan, expected impact and preserved paths.
+  - On partial or failed containment, incident lead decides between completing, releasing, or manual action.
+compensating_actions:
+  - Release through PB-07, which removes only rules tagged with this action's idempotency key.
+  - Manual containment outside this system when the adapter cannot complete (documented in the case).
+recovery_criteria: &recovery_criteria
+  - {id: root_cause_identified, description: The cause of the compromise indicator is identified and recorded.}
+  - {id: host_remediated, description: The host is reimaged or remediated and the change is recorded.}
+  - {id: credentials_rotated, description: Credentials used on or exposed by the host are rotated.}
+  - {id: monitoring_confirmed, description: Endpoint telemetry from the host is flowing and clean since remediation.}
+evidence_requirements:
+  - Proposal lists every authorizing signal id and artifact SHA-256.
+  - Approval, action, verification and recovery are each an audit record.
+notifications:
+  - approver queue
+  - asset owner from inventory
