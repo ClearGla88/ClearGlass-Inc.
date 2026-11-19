@@ -27,6 +27,7 @@ from .errors import (
     ClearShieldError,
     ConfigError,
     IntegrityFailure,
+    RetiredKeyState,
 )
 from .report import (
     actionable,
@@ -99,10 +100,19 @@ class Session:
         fsutil.check_private_dir(self.state_dir)
         self._lock.__enter__()
         try:
-            self.keyring = audit.load_keyring(self.state_dir)
-            self.state = load_state(self.state_dir, self.keyring)
+            self.keyring = audit.load_keyring(self.state_dir, repair=True)
+            retired_state = False
+            try:
+                self.state = load_state(self.state_dir, self.keyring)
+            except RetiredKeyState:
+                # Legitimate only if 'rotate --new-key' stopped after swapping the key
+                # and before signing state with the new one; checked below.
+                if os.path.lexists(audit.log_path(self.state_dir)):
+                    raise
+                self.state = load_state(self.state_dir, self.keyring, allow_retired=True)
+                retired_state = True
             self.cfg, self.cfg_sha = config.load_config(self.state_dir)
-            self._finish_interrupted_rotation()
+            self._finish_interrupted_rotation(retired_state)
             head, recovered = audit.reconcile_head(self.state_dir, self.keyring, self.state["audit_head"])
             self.log = audit.AuditLog(self.state_dir, self.keyring, head)
             if recovered:
@@ -117,21 +127,37 @@ class Session:
     def __exit__(self, *exc: object) -> None:
         self._lock.__exit__(*exc)
 
-    def _finish_interrupted_rotation(self) -> None:
+    def _finish_interrupted_rotation(self, retired_state: bool) -> None:
         head = self.state["audit_head"]
+        unexplained = IntegrityFailure(
+            "state.json is signed with a retired key and no interrupted key rotation explains it. "
+            "Run 'verify --all' and preserve the state directory.")
         if os.path.lexists(audit.log_path(self.state_dir)):
             return
         archived = audit.archive_path(self.state_dir, head["segment"])
         if not os.path.isfile(archived):
+            if retired_state:
+                raise unexplained
             return  # reconcile_head reports the missing log
         last = audit.read_last_record(archived)
-        if (audit.check_record_tag(self.keyring, last) is None and last["type"] == "segment_end"
+        if not (audit.check_record_tag(self.keyring, last) is None and last["type"] == "segment_end"
                 and last["seq"] == head["seq"] and last["tag"] == head["tag"]):
-            previous = audit.head_of(last, head["segment"])
-            self.state["audit_head"] = audit.AuditLog.start_segment(
-                self.state_dir, self.keyring, head["segment"] + 1, previous)
-            self.save()
-            self.notes.append(f"completed an interrupted rotation (started segment {head['segment'] + 1})")
+            if retired_state:
+                raise unexplained
+            return
+        wants_new_key = isinstance(last["data"], dict) and bool(last["data"].get("new_key"))
+        if retired_state:
+            # The key was already swapped: the segment must have asked for that, and been
+            # closed with the key that is now retired.
+            if not wants_new_key or last["kid"] == self.keyring.active_kid:
+                raise unexplained
+        elif wants_new_key and last["kid"] == self.keyring.active_kid:
+            self.keyring = audit.rotate_key(self.state_dir, self.keyring)
+        previous = audit.head_of(last, head["segment"])
+        self.state["audit_head"] = audit.AuditLog.start_segment(
+            self.state_dir, self.keyring, head["segment"] + 1, previous)
+        self.save()
+        self.notes.append(f"completed an interrupted rotation (started segment {head['segment'] + 1})")
 
     def record(self, rtype: str, data: dict) -> dict:
         rec = self.log.append(rtype, data)
@@ -239,7 +265,8 @@ def cmd_baseline(args: argparse.Namespace) -> int:
         diff: list[dict] = []
         if args.replace:
             diff = (integrity.compare(old["files"], watch, files)
-                    + listeners.compare(old["listeners"], current_listeners, []))
+                    + listeners.compare(old["listeners"], current_listeners, [],
+                                        old.get("listener_owners")))
             lines.append(f"Differences from baseline {old['id']}: {len(diff)}")
             lines += render_findings(diff) or ["  (none)"]
         lines.append("Approve only if this host is in a known-good state: ClearShield cannot tell "
@@ -248,7 +275,8 @@ def cmd_baseline(args: argparse.Namespace) -> int:
             emit_lines(lines)
         if args.replace:
             _confirm(args, "REPLACE", "replace the approved baseline")
-        new = {"files": files, "listeners": listener_ids, "config_sha256": s.cfg_sha,
+        new = {"files": files, "listeners": listener_ids,
+               "listener_owners": listeners.owner_map(current_listeners), "config_sha256": s.cfg_sha,
                "approved_at": audit.utc_now(), "approved_uid": os.geteuid()}
         new["id"] = _baseline_id(files, listener_ids)
         s.state["previous_baseline"] = old
@@ -294,7 +322,7 @@ def cmd_scan(args: argparse.Namespace) -> int:
             except ValueError as exc:
                 raise ConfigError(str(exc)) from None
             current_l = _collect_listeners(cfg)
-            found = listeners.compare(base["listeners"], current_l, allow)
+            found = listeners.compare(base["listeners"], current_l, allow, base.get("listener_owners"))
             findings += found
             layers["listeners"] = {"count": len(current_l["listeners"]), "sources": current_l["sources"],
                                    "attribution": current_l["attribution"],
@@ -379,6 +407,85 @@ def _find_record(path: str, seq: int) -> tuple[dict | None, int]:
     return None, last
 
 
+def _segment_end_new_key(record: dict | None) -> bool:
+    return bool(record and record.get("type") == "segment_end" and isinstance(record.get("data"), dict)
+                and record["data"].get("new_key"))
+
+
+def _chain_checks(sd: str, keyring: audit.Keyring, state: dict | None,
+                  include_archived: bool) -> tuple[list[dict], dict, int | None]:
+    """Verify the active segment and, optionally, every archived segment before it.
+
+    Besides each segment's own chain, this enforces key succession: a segment keeps
+    the previous segment's key unless that segment ended with a recorded key
+    rotation; a retired key never signs a later segment; the active segment uses the
+    active key. Without these rules, anyone holding a retired (leaked) key could
+    forge segments written after the rotation.
+    """
+    checks: list[dict] = []
+
+    def check(name: str, ok: bool, detail: str) -> None:
+        checks.append({"check": name, "ok": ok, "detail": detail})
+
+    active = audit.log_path(sd)
+    result = audit.verify_file(active, keyring)
+    active_segment = None
+    if result["first"] is not None:
+        active_segment = (result["first"].get("data") or {}).get("segment")
+    prev_kid: str | None = None
+    prev_new_key = False
+    retired_kids: set[str] = set()
+
+    def succession(kid: str) -> str | None:
+        if prev_kid is not None and prev_new_key:
+            retired_kids.add(prev_kid)
+        if kid in retired_kids:
+            return f"signed with key {kid}, which an earlier segment retired"
+        if prev_kid is not None and not prev_new_key and kid != prev_kid:
+            return f"key changed from {prev_kid} to {kid} without a recorded key rotation"
+        return None
+
+    if include_archived:
+        archived = _archived_segments(sd)
+        purged = {p["segment"]: p for p in (state or {}).get("purged_segments", [])}
+        last_seg = active_segment or (max(archived) + 1 if archived else 1)
+        expect_prev: str | None = audit.GENESIS
+        for seg in range(1, last_seg):
+            if seg in archived:
+                r = audit.verify_file(archived[seg], keyring, expect_prev)
+                ok = r["ok"]
+                detail = f"ok, {r['records']} records" if ok else f"line {r['error']['line']}: {r['error']['reason']}"
+                if ok:
+                    problem = succession(r["first"]["kid"])
+                    if problem:
+                        ok, detail = False, problem
+                    prev_kid, prev_new_key = r["last"]["kid"], _segment_end_new_key(r["last"])
+                else:
+                    prev_kid, prev_new_key = None, False
+                check(f"archived segment {seg}", ok, detail)
+                expect_prev = r["last"]["tag"] if r["ok"] else None
+            elif seg in purged:
+                check(f"archived segment {seg}", True, f"purged by operator at {purged[seg].get('purged_at')}")
+                expect_prev = purged[seg]["last_tag"]
+                prev_kid, prev_new_key = purged[seg].get("kid"), bool(purged[seg].get("new_key"))
+            else:
+                check(f"archived segment {seg}", False, "missing and not recorded as purged")
+                expect_prev, prev_kid, prev_new_key = None, None, False
+        result = audit.verify_file(active, keyring, expect_prev)
+    ok = result["ok"]
+    detail = (f"ok, {result['records']} records" if ok
+              else f"line {result['error']['line']}: {result['error']['reason']}")
+    if ok:
+        kid = result["first"]["kid"]
+        problem = succession(kid) if include_archived else None
+        if problem:
+            ok, detail = False, problem
+        elif kid != keyring.active_kid:
+            ok, detail = False, f"signed with key {kid}, not the active key {keyring.active_kid}"
+    check(f"active segment {active_segment if active_segment is not None else '?'} (audit.jsonl)", ok, detail)
+    return checks, result, active_segment
+
+
 def cmd_verify(args: argparse.Namespace) -> int:
     sd = args.state_dir
     fsutil.check_private_dir(sd)
@@ -396,34 +503,9 @@ def cmd_verify(args: argparse.Namespace) -> int:
         except IntegrityFailure as exc:
             check("state file authentication", False, str(exc))
 
+        chain, result, active_segment = _chain_checks(sd, keyring, state, args.all)
+        checks += chain
         active = audit.log_path(sd)
-        result = audit.verify_file(active, keyring)
-        active_segment = None
-        if result["first"] is not None:
-            active_segment = (result["first"].get("data") or {}).get("segment")
-        if args.all:
-            archived = _archived_segments(sd)
-            purged = {p["segment"]: p for p in (state or {}).get("purged_segments", [])}
-            last_seg = active_segment or (max(archived) + 1 if archived else 1)
-            expect_prev: str | None = audit.GENESIS
-            for seg in range(1, last_seg):
-                if seg in archived:
-                    r = audit.verify_file(archived[seg], keyring, expect_prev)
-                    ok = r["ok"]
-                    detail = f"ok, {r['records']} records" if ok else f"line {r['error']['line']}: {r['error']['reason']}"
-                    check(f"archived segment {seg}", ok, detail)
-                    expect_prev = r["last"]["tag"] if ok else None
-                elif seg in purged:
-                    check(f"archived segment {seg}", True, f"purged by operator at {purged[seg].get('purged_at')}")
-                    expect_prev = purged[seg]["last_tag"]
-                else:
-                    check(f"archived segment {seg}", False, "missing and not recorded as purged")
-                    expect_prev = None
-            result = audit.verify_file(active, keyring, expect_prev)
-        ok = result["ok"]
-        detail = (f"ok, {result['records']} records" if ok
-                  else f"line {result['error']['line']}: {result['error']['reason']}")
-        check(f"active segment {active_segment if active_segment is not None else '?'} (audit.jsonl)", ok, detail)
 
         if state is not None and result["last"] is not None:
             head = state["audit_head"]
@@ -538,12 +620,21 @@ def cmd_purge(args: argparse.Namespace) -> int:
         targets = sorted(seg for seg in archived if seg < args.before_segment)
         if not targets:
             raise ClearShieldError("no archived segments match.")
+        chain, _, _ = _chain_checks(s.state_dir, s.keyring, s.state, True)
+        failed = [c for c in chain if not c["ok"]]
+        if failed:
+            # Deleting a segment that fails verification would destroy the evidence.
+            raise IntegrityFailure(
+                "refusing to purge: the audit chain does not verify ("
+                + "; ".join(f"{c['check']}: {c['detail']}" for c in failed[:3])
+                + "). Preserve a copy of the state directory and investigate with 'verify --all'.")
         entries = []
         for seg in targets:
             r = audit.verify_file(archived[seg], s.keyring)
-            last = r["last"] or {}
-            entries.append({"segment": seg, "last_seq": last.get("seq"), "last_tag": last.get("tag"),
-                            "verified_before_purge": r["ok"], "purged_at": audit.utc_now()})
+            last = r["last"]
+            entries.append({"segment": seg, "last_seq": last["seq"], "last_tag": last["tag"],
+                            "kid": last["kid"], "new_key": _segment_end_new_key(last),
+                            "verified_before_purge": True, "purged_at": audit.utc_now()})
         if not args.json:
             emit_lines([f"About to delete archived segment(s) {', '.join(map(str, targets))}. Their records "
                         "become unrecoverable; their final tags stay in the audit log."])

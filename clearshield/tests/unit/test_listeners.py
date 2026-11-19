@@ -168,3 +168,29 @@ def test_live_kernel_listener_is_seen():
             assert os.getpid() in [p["pid"] for p in entry["processes"]]
     finally:
         sock.close()
+
+
+def _current(exe, attribution="ok"):
+    return {"listeners": [{"id": "tcp4/0.0.0.0:22", "address": "0.0.0.0", "port": 22,
+                           "scope": "all_interfaces", "uid": 0, "attribution": attribution,
+                           "processes": [{"pid": 7, "exe": exe, "comm": "x"}] if exe else []}],
+            "sources": {"tcp4": "ok"}}
+
+
+def test_different_program_on_an_approved_port_is_reported():
+    owners = listeners.owner_map(_current("/usr/sbin/sshd"))
+    assert owners == {"tcp4/0.0.0.0:22": ["/usr/sbin/sshd"]}
+    found = listeners.compare(["tcp4/0.0.0.0:22"], _current("/tmp/.x/backdoor"), [], owners)
+    assert [(f["kind"], f["severity"]) for f in found] == [("listener_owner_changed", "medium")]
+    assert found[0]["detail"]["current_executables"] == ["/tmp/.x/backdoor"]
+
+
+def test_upgrade_deleted_binary_and_unknown_owner_are_not_owner_changes():
+    owners = {"tcp4/0.0.0.0:22": ["/usr/sbin/sshd"]}
+    for cur in (_current("/usr/sbin/sshd (deleted)"), _current(None, "unattributed: insufficient permission"),
+                _current(None)):
+        assert listeners.compare(["tcp4/0.0.0.0:22"], cur, [], owners) == []
+    # A baseline without owner data (older baselines, unprivileged runs) never reports.
+    assert listeners.compare(["tcp4/0.0.0.0:22"], _current("/tmp/x"), [], None) == []
+    # The allowlist applies here too.
+    assert listeners.compare(["tcp4/0.0.0.0:22"], _current("/tmp/x"), [("*", 22)], owners) == []
