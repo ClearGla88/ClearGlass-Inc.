@@ -39,6 +39,11 @@ REQUIRED = {
         "Proposal Writer",
         "Customer Success Agent",
         "Pricing Analyst",
+        # Added 2026-11-19 for the Revenue Floor (docs/REVENUE_OPERATIONS.md).
+        "Revenue Director",
+        "Opportunity Agent",
+        "Qualification Agent",
+        "Revenue and Delivery Agent",
     },
     "intel": {"Research Agent", "Market Analyst", "Competitive Intelligence Agent", "Knowledge Curator"},
     "sim": {"Scenario Designer", "Red Team Agent", "Blue Team Agent", "Business War-Gamer", "Outcome Analyst"},

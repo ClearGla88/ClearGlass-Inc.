@@ -15,6 +15,17 @@ and the database itself refuses to break their rules:
 ``idempotency_keys`` maps a caller's key to the request digest and its result,
 so a retried request replays the stored result instead of acting twice.
 
+The Revenue Floor adds four append-only tables with the same guarantees:
+
+- ``revenue_offer_decisions``: each operator decision on an offer, with the digest
+  of the exact content it approved.
+- ``revenue_suppressions``: addresses and domains no message may be sent to.
+- ``revenue_money_events``: every fact about money. A unique index on
+  (provider, record type, external reference, kind) makes importing the same
+  provider record twice a no-op instead of a double count.
+- ``revenue_receipts``: one row per external reference a person recorded after
+  executing a released ticket, so one message or invoice id cannot be claimed twice.
+
 The normalized production schema is ``infra/db/postgres/001_init.sql``. The
 document store keeps the MVP dependency-free; the PostgreSQL adapter is on the
 roadmap (docs/ROADMAP.md, week 2).
@@ -29,9 +40,92 @@ from collections.abc import Callable, Iterable
 from pathlib import Path
 from typing import Any, TypeVar
 
-from agent_core.models import Record
+from agent_core.models import MoneyEvent, OfferDecision, Record, Suppression
 
 R = TypeVar("R", bound=Record)
+
+REVENUE_SCHEMA = """
+CREATE TABLE IF NOT EXISTS revenue_offer_decisions (
+    seq          INTEGER PRIMARY KEY AUTOINCREMENT,
+    sku          TEXT NOT NULL,
+    decision     TEXT NOT NULL CHECK (decision IN ('approve', 'reject', 'retire')),
+    offer        TEXT NOT NULL,
+    offer_digest TEXT NOT NULL,
+    reason       TEXT NOT NULL,
+    decided_by   TEXT NOT NULL,
+    decided_at   TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS revenue_offer_decisions_sku ON revenue_offer_decisions(sku);
+
+CREATE TABLE IF NOT EXISTS revenue_suppressions (
+    seq         INTEGER PRIMARY KEY AUTOINCREMENT,
+    address     TEXT NOT NULL,
+    reason      TEXT NOT NULL,
+    source_ref  TEXT NOT NULL,
+    recorded_by TEXT NOT NULL,
+    recorded_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS revenue_suppressions_address ON revenue_suppressions(address);
+
+CREATE TABLE IF NOT EXISTS revenue_money_events (
+    seq             INTEGER PRIMARY KEY AUTOINCREMENT,
+    event_id        TEXT NOT NULL UNIQUE,
+    opportunity_id  TEXT NOT NULL,
+    kind            TEXT NOT NULL,
+    amount_cents    INTEGER NOT NULL CHECK (amount_cents >= 0),
+    currency        TEXT NOT NULL,
+    provider        TEXT NOT NULL,
+    record_type     TEXT NOT NULL,
+    external_ref    TEXT NOT NULL CHECK (length(external_ref) > 0),
+    provider_status TEXT NOT NULL,
+    verification    TEXT NOT NULL,
+    evidence        TEXT NOT NULL,
+    raw_digest      TEXT,
+    rehearsal       INTEGER NOT NULL,
+    occurred_at     TEXT NOT NULL,
+    recorded_by     TEXT NOT NULL,
+    recorded_at     TEXT NOT NULL
+);
+CREATE UNIQUE INDEX IF NOT EXISTS revenue_money_events_once
+    ON revenue_money_events(provider, record_type, external_ref, kind);
+CREATE INDEX IF NOT EXISTS revenue_money_events_opportunity ON revenue_money_events(opportunity_id);
+
+CREATE TABLE IF NOT EXISTS revenue_receipts (
+    connector    TEXT NOT NULL,
+    external_ref TEXT NOT NULL,
+    action_id    TEXT NOT NULL,
+    recorded_at  TEXT NOT NULL,
+    PRIMARY KEY (connector, external_ref)
+);
+"""
+
+for _t in ("revenue_offer_decisions", "revenue_suppressions", "revenue_money_events", "revenue_receipts"):
+    REVENUE_SCHEMA += (
+        f"CREATE TRIGGER IF NOT EXISTS {_t}_no_update BEFORE UPDATE ON {_t}"
+        f" BEGIN SELECT RAISE(ABORT, '{_t} is append-only'); END;\n"
+        f"CREATE TRIGGER IF NOT EXISTS {_t}_no_delete BEFORE DELETE ON {_t}"
+        f" BEGIN SELECT RAISE(ABORT, '{_t} is append-only'); END;\n"
+    )
+
+MONEY_COLUMNS = (
+    "seq",
+    "event_id",
+    "opportunity_id",
+    "kind",
+    "amount_cents",
+    "currency",
+    "provider",
+    "record_type",
+    "external_ref",
+    "provider_status",
+    "verification",
+    "evidence",
+    "raw_digest",
+    "rehearsal",
+    "occurred_at",
+    "recorded_by",
+    "recorded_at",
+)
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS records (
@@ -115,6 +209,7 @@ class Store:
             self.conn.execute("PRAGMA journal_mode=WAL")
         self.conn.execute("PRAGMA foreign_keys=ON")
         self.conn.executescript(SCHEMA)
+        self.conn.executescript(REVENUE_SCHEMA)
         self.conn.commit()
 
     # -- records --------------------------------------------------------------
@@ -313,6 +408,124 @@ class Store:
                 (status, json.dumps(result, sort_keys=True, default=str) if result is not None else None, now, key),
             )
             self.conn.commit()
+
+    # -- revenue (append-only) -------------------------------------------------------
+
+    def append_offer_decision(
+        self,
+        *,
+        sku: str,
+        decision: str,
+        offer: dict[str, Any],
+        offer_digest: str,
+        reason: str,
+        decided_by: str,
+        decided_at: str,
+    ) -> OfferDecision:
+        with self.lock:
+            cur = self.conn.execute(
+                "INSERT INTO revenue_offer_decisions (sku, decision, offer, offer_digest, reason, decided_by,"
+                " decided_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (sku, decision, json.dumps(offer, sort_keys=True), offer_digest, reason, decided_by, decided_at),
+            )
+            self.conn.commit()
+            seq = int(cur.lastrowid or 0)
+        return OfferDecision(seq, sku, decision, offer, offer_digest, reason, decided_by, decided_at)
+
+    def offer_decisions(self, sku: str | None = None) -> list[OfferDecision]:
+        sql = (
+            "SELECT seq, sku, decision, offer, offer_digest, reason, decided_by, decided_at"
+            " FROM revenue_offer_decisions"
+        )
+        args: tuple[Any, ...] = ()
+        if sku is not None:
+            sql, args = sql + " WHERE sku = ?", (sku,)
+        with self.lock:
+            rows = self.conn.execute(sql + " ORDER BY seq", args).fetchall()
+        return [OfferDecision(r[0], r[1], r[2], json.loads(r[3]), r[4], r[5], r[6], r[7]) for r in rows]
+
+    def append_suppression(
+        self, *, address: str, reason: str, source_ref: str, recorded_by: str, recorded_at: str
+    ) -> Suppression:
+        with self.lock:
+            cur = self.conn.execute(
+                "INSERT INTO revenue_suppressions (address, reason, source_ref, recorded_by, recorded_at)"
+                " VALUES (?, ?, ?, ?, ?)",
+                (address, reason, source_ref, recorded_by, recorded_at),
+            )
+            self.conn.commit()
+            seq = int(cur.lastrowid or 0)
+        return Suppression(seq, address, reason, source_ref, recorded_by, recorded_at)
+
+    def suppressions(self) -> list[Suppression]:
+        with self.lock:
+            rows = self.conn.execute(
+                "SELECT seq, address, reason, source_ref, recorded_by, recorded_at FROM revenue_suppressions"
+                " ORDER BY seq"
+            ).fetchall()
+        return [Suppression(*r) for r in rows]
+
+    def append_money_event(self, event: MoneyEvent) -> tuple[MoneyEvent, bool]:
+        """Insert one money fact. Returns (event, created); a duplicate provider record returns the stored one."""
+        row = event.to_dict()
+        cols = [c for c in MONEY_COLUMNS if c != "seq"]
+        values = [int(row[c]) if c == "rehearsal" else row[c] for c in cols]
+        with self.lock:
+            try:
+                cur = self.conn.execute(
+                    f"INSERT INTO revenue_money_events ({', '.join(cols)}) VALUES ({', '.join('?' for _ in cols)})",
+                    values,
+                )
+                self.conn.commit()
+                event.seq = int(cur.lastrowid or 0)
+                return event, True
+            except sqlite3.IntegrityError:
+                self.conn.rollback()
+                existing = self.conn.execute(
+                    f"SELECT {', '.join(MONEY_COLUMNS)} FROM revenue_money_events"
+                    " WHERE provider = ? AND record_type = ? AND external_ref = ? AND kind = ?",
+                    (event.provider, event.record_type, event.external_ref, event.kind),
+                ).fetchone()
+        if existing is None:
+            raise sqlite3.IntegrityError("money event rejected by the database")
+        return self._money(existing), False
+
+    def money_events(self, opportunity_id: str | None = None) -> list[MoneyEvent]:
+        sql = f"SELECT {', '.join(MONEY_COLUMNS)} FROM revenue_money_events"
+        args: tuple[Any, ...] = ()
+        if opportunity_id is not None:
+            sql, args = sql + " WHERE opportunity_id = ?", (opportunity_id,)
+        with self.lock:
+            rows = self.conn.execute(sql + " ORDER BY seq", args).fetchall()
+        return [self._money(r) for r in rows]
+
+    @staticmethod
+    def _money(row: Iterable[Any]) -> MoneyEvent:
+        data = dict(zip(MONEY_COLUMNS, row, strict=True))
+        data["rehearsal"] = bool(data["rehearsal"])
+        return MoneyEvent(**data)
+
+    def record_receipt(self, *, connector: str, external_ref: str, action_id: str, recorded_at: str) -> None:
+        """Raises sqlite3.IntegrityError if the reference was already recorded for any action."""
+        with self.lock:
+            try:
+                self.conn.execute(
+                    "INSERT INTO revenue_receipts (connector, external_ref, action_id, recorded_at)"
+                    " VALUES (?, ?, ?, ?)",
+                    (connector, external_ref, action_id, recorded_at),
+                )
+                self.conn.commit()
+            except sqlite3.IntegrityError:
+                self.conn.rollback()
+                raise
+
+    def receipt_owner(self, connector: str, external_ref: str) -> str | None:
+        with self.lock:
+            row = self.conn.execute(
+                "SELECT action_id FROM revenue_receipts WHERE connector = ? AND external_ref = ?",
+                (connector, external_ref),
+            ).fetchone()
+        return row[0] if row else None
 
     # -- office state -------------------------------------------------------------
 

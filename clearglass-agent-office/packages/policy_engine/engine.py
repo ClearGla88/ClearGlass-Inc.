@@ -31,7 +31,7 @@ from typing import Any
 
 from agent_core.models import LEVEL_ORDER, TIER_ORDER, Agent, Tool, bump_tier, max_tier
 from agent_core.util import parse_iso
-from audit_ledger.canonical import digest
+from audit_ledger.canonical import canonical_json, digest, find_secrets
 from policy_engine.policy import Policy, ShadowRule
 
 STEP_NAMES = (
@@ -328,6 +328,14 @@ class PolicyEngine:
                 policy_problems.append("sandbox-only action requested outside the sandbox")
             if request.sandbox and spec.external:
                 policy_problems.append("the sandbox cannot reach external systems")
+            if spec.external:
+                # A credential must never leave in an outbound payload. Redacting it from the trail is
+                # not enough for an action whose parameters are the thing sent. Rule ids only, never values.
+                hits = find_secrets(canonical_json(request.params))
+                if hits:
+                    policy_problems.append(
+                        f"credential-shaped value in an external action's parameters ({', '.join(hits)})"
+                    )
             if state.mission is not None and state.mission.mode == "simulation" and acting:
                 targets_prod = any(request.params.get(k) == "production" for k in PRODUCTION_PARAMS)
                 if spec.external or targets_prod:
