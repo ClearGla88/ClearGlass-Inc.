@@ -36,6 +36,7 @@ from apps.api.security import RateLimiter, Settings, require_operator, require_v
 from apps.api.snapshot import build_snapshot  # noqa: E402
 from memory_vault.vault import MemoryError_  # noqa: E402
 from policy_engine.engine import ActionRequest  # noqa: E402
+from revenue_ops.desk import RevenueConflict, RevenueError, RevenueNotFound  # noqa: E402
 from simulation.sandbox import SCENARIOS, SimulationError  # noqa: E402
 
 log = logging.getLogger("office.api")
@@ -165,6 +166,126 @@ class EvaluateBody(Body):
     sandbox: bool = False
 
 
+# -- Revenue Floor bodies. The desk validates every field again; these only refuse unknown fields early. --
+
+
+class OfferTerms(Body):
+    exclusions: list[str] = Field(min_length=1, max_length=20)
+    delivery_capacity_per_week: int = Field(ge=1, le=50)
+    turnaround_business_days: int = Field(ge=1, le=60)
+    payment_due_days: int = Field(ge=0, le=60)
+    tax_basis_points: int = Field(ge=0, le=2500)
+    terms_ref: str = Field(min_length=3, max_length=300)
+
+
+class OfferDecisionBody(Body):
+    decision: Literal["approve", "reject", "retire"]
+    reason: str = Field(min_length=1, max_length=2000)
+    terms: OfferTerms | None = None
+
+
+class RevenueSettingsBody(Body):
+    business_name: str = Field(max_length=120)
+    mailing_address: str = Field(max_length=300)
+    email: str = Field(max_length=254)
+    website: str | None = Field(default=None, max_length=300)
+    booking_url: str | None = Field(default=None, max_length=300)
+    email_connector: Literal["gmail", "microsoft_365"]
+    own_payer_emails: list[str] = Field(default_factory=list, max_length=10)
+    rehearsal_recipients: list[str] = Field(default_factory=list, max_length=10)
+
+
+class LeadBody(Body):
+    contact_name: str = Field(max_length=120)
+    contact_email: str = Field(max_length=254)
+    contact_role: str | None = Field(default=None, max_length=120)
+    organization: str = Field(max_length=160)
+    region: str | None = Field(default=None, max_length=60)
+    city: str | None = Field(default=None, max_length=60)
+    sector: str | None = Field(default=None, max_length=60)
+    employees: int | None = Field(default=None, ge=1, le=1_000_000)
+    stated_need: str | None = Field(default=None, max_length=2000)
+    source: str = Field(max_length=40)
+    source_ref: str = Field(max_length=300)
+    consent_basis: str = Field(max_length=40)
+    consent_evidence: str | None = Field(default=None, max_length=300)
+    consent_date: str | None = Field(default=None, max_length=10)
+    rehearsal: bool = False
+
+
+class FactsBody(Body):
+    contact_role: str | None = Field(default=None, max_length=120)
+    region: str | None = Field(default=None, max_length=60)
+    city: str | None = Field(default=None, max_length=60)
+    sector: str | None = Field(default=None, max_length=60)
+    employees: int | None = Field(default=None, ge=1, le=1_000_000)
+    stated_need: str | None = Field(default=None, max_length=2000)
+
+
+class ResearchFact(Body):
+    text: str = Field(max_length=500)
+    source: str | None = Field(default=None, max_length=300)
+
+
+class ResearchBody(Body):
+    facts: list[ResearchFact] = Field(min_length=1, max_length=20)
+
+
+class AdvanceBody(Body):
+    offer_sku: str | None = Field(default=None, max_length=40)
+
+
+class CustomerEventBody(Body):
+    kind: Literal["reply_received", "meeting_booked", "quote_requested", "opt_out"]
+    external_ref: str = Field(max_length=300)
+    occurred_at: str = Field(max_length=40)
+    note: str = Field(default="", max_length=500)
+
+
+class AcceptanceBody(Body):
+    evidence_ref: str = Field(max_length=300)
+    accepted_at: str = Field(max_length=40)
+    quoted_total_cents: int = Field(ge=1)
+
+
+class ReceiptBody(Body):
+    external_ref: str = Field(max_length=200)
+    executed_at: str = Field(max_length=40)
+    payload_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
+class VerifyBody(Body):
+    record: dict[str, Any]
+
+
+class PaymentBody(Body):
+    record: dict[str, Any]
+    raw_record: dict[str, Any]
+
+
+class HandoffBody(Body):
+    authorization_ref: str = Field(max_length=300)
+
+
+class AbandonBody(Body):
+    reason: str = Field(min_length=1, max_length=2000)
+    reconciliation: str = Field(default="", max_length=2000)
+
+
+class SuppressionBody(Body):
+    address: str = Field(max_length=254)
+    reason: str = Field(max_length=300)
+    source_ref: str = Field(max_length=300)
+
+
+class CostBody(Body):
+    description: str = Field(max_length=200)
+    amount_cents: int = Field(ge=1)
+    currency: str = Field(max_length=3)
+    evidence_ref: str = Field(max_length=300)
+    occurred_at: str = Field(max_length=40)
+
+
 def _office(request: Request) -> Office:
     return request.app.state.office
 
@@ -229,6 +350,11 @@ def create_app(office: Office | None = None, settings: Settings | None = None) -
     @app.exception_handler(SimulationError)
     async def sim_error(_: Request, exc: SimulationError) -> JSONResponse:
         return JSONResponse({"detail": str(exc)}, status_code=400)
+
+    @app.exception_handler(RevenueError)
+    async def revenue_error(_: Request, exc: RevenueError) -> JSONResponse:
+        status = 404 if isinstance(exc, RevenueNotFound) else 409 if isinstance(exc, RevenueConflict) else 400
+        return JSONResponse({"detail": str(exc)}, status_code=status)
 
     @app.exception_handler(Exception)
     async def unhandled(_: Request, exc: Exception) -> JSONResponse:
@@ -531,6 +657,115 @@ def create_app(office: Office | None = None, settings: Settings | None = None) -
     @app.post("/emergency-stop/release", tags=["emergency"])
     def emergency_release(body: ReasonBody, request: Request, p: Principal = Operator) -> dict[str, Any]:
         return _office(request).release_emergency_stop(p, body.reason)
+
+    # -- revenue floor ------------------------------------------------------------------------------
+    # Every write is an operator act. The office never contacts a provider: external steps are
+    # released as tickets a person executes through the connector, then recorded and verified here.
+
+    def _desk(request: Request):  # noqa: ANN202 - RevenueDesk
+        return _office(request).revenue
+
+    @app.get("/revenue", tags=["revenue"])
+    def revenue(request: Request, _: Principal = Viewer) -> dict[str, Any]:
+        return _desk(request).snapshot()
+
+    @app.get("/revenue/opportunities/{opp_id}", tags=["revenue"])
+    def revenue_opportunity(opp_id: str, request: Request, _: Principal = Viewer) -> dict[str, Any]:
+        return _desk(request).detail(opp_id)
+
+    @app.post("/revenue/offers/{sku}/decision", tags=["revenue"])
+    def revenue_offer_decision(
+        sku: str, body: OfferDecisionBody, request: Request, p: Principal = Operator
+    ) -> dict[str, Any]:
+        terms = body.terms.model_dump() if body.terms else None
+        return _desk(request).decide_offer(p, sku, body.decision, body.reason, terms)
+
+    @app.post("/revenue/settings", tags=["revenue"])
+    def revenue_settings(body: RevenueSettingsBody, request: Request, p: Principal = Operator) -> dict[str, Any]:
+        return _desk(request).set_settings(p, body.model_dump(exclude_none=True)) or {}
+
+    @app.post("/revenue/opportunities", tags=["revenue"], status_code=201)
+    def revenue_intake(body: LeadBody, request: Request, p: Principal = Operator) -> dict[str, Any]:
+        return _desk(request).intake(p, body.model_dump(exclude_none=True)).to_dict()
+
+    @app.post("/revenue/opportunities/{opp_id}/facts", tags=["revenue"])
+    def revenue_facts(opp_id: str, body: FactsBody, request: Request, p: Principal = Operator) -> dict[str, Any]:
+        return _desk(request).update_facts(p, opp_id, body.model_dump(exclude_none=True)).to_dict()
+
+    @app.post("/revenue/opportunities/{opp_id}/research", tags=["revenue"])
+    def revenue_research(opp_id: str, body: ResearchBody, request: Request, p: Principal = Operator) -> dict[str, Any]:
+        facts = [f.model_dump(exclude_none=True) for f in body.facts]
+        return _desk(request).add_research(p, opp_id, facts).to_dict()
+
+    @app.post("/revenue/opportunities/{opp_id}/advance", tags=["revenue"])
+    def revenue_advance(opp_id: str, body: AdvanceBody, request: Request, p: Principal = Operator) -> dict[str, Any]:
+        return _desk(request).advance(p, opp_id, body.offer_sku)
+
+    @app.post("/revenue/opportunities/{opp_id}/events", tags=["revenue"])
+    def revenue_event(
+        opp_id: str, body: CustomerEventBody, request: Request, p: Principal = Operator
+    ) -> dict[str, Any]:
+        return (
+            _desk(request).record_event(p, opp_id, body.kind, body.external_ref, body.occurred_at, body.note).to_dict()
+        )
+
+    @app.post("/revenue/opportunities/{opp_id}/acceptance", tags=["revenue"])
+    def revenue_acceptance(
+        opp_id: str, body: AcceptanceBody, request: Request, p: Principal = Operator
+    ) -> dict[str, Any]:
+        desk = _desk(request)
+        return desk.record_acceptance(p, opp_id, body.evidence_ref, body.accepted_at, body.quoted_total_cents).to_dict()
+
+    @app.post("/revenue/opportunities/{opp_id}/payments", tags=["revenue"])
+    def revenue_payment(opp_id: str, body: PaymentBody, request: Request, p: Principal = Operator) -> dict[str, Any]:
+        return _desk(request).import_payment(p, opp_id, body.record, body.raw_record)
+
+    @app.post("/revenue/opportunities/{opp_id}/handoff", tags=["revenue"])
+    def revenue_handoff(opp_id: str, body: HandoffBody, request: Request, p: Principal = Operator) -> dict[str, Any]:
+        return _desk(request).handoff(p, opp_id, body.authorization_ref).to_dict()
+
+    @app.post("/revenue/opportunities/{opp_id}/close", tags=["revenue"])
+    def revenue_close(opp_id: str, body: ReasonBody, request: Request, p: Principal = Operator) -> dict[str, Any]:
+        return _desk(request).close(p, opp_id, body.reason).to_dict()
+
+    @app.post("/revenue/actions/{action_id}/release", tags=["revenue"])
+    def revenue_release(action_id: str, request: Request, p: Principal = Operator) -> dict[str, Any]:
+        return _desk(request).release(p, action_id).to_dict()
+
+    @app.post("/revenue/actions/{action_id}/receipt", tags=["revenue"])
+    def revenue_receipt(action_id: str, body: ReceiptBody, request: Request, p: Principal = Operator) -> dict[str, Any]:
+        desk = _desk(request)
+        return desk.record_receipt(p, action_id, body.external_ref, body.executed_at, body.payload_digest).to_dict()
+
+    @app.post("/revenue/actions/{action_id}/verify", tags=["revenue"])
+    def revenue_verify(action_id: str, body: VerifyBody, request: Request, p: Principal = Operator) -> dict[str, Any]:
+        return _desk(request).verify(p, action_id, body.record).to_dict()
+
+    @app.post("/revenue/actions/{action_id}/abandon", tags=["revenue"])
+    def revenue_abandon(action_id: str, body: AbandonBody, request: Request, p: Principal = Operator) -> dict[str, Any]:
+        return _desk(request).abandon(p, action_id, body.reason, body.reconciliation).to_dict()
+
+    @app.post("/revenue/suppressions", tags=["revenue"], status_code=201)
+    def revenue_suppression(body: SuppressionBody, request: Request, p: Principal = Operator) -> dict[str, Any]:
+        return _desk(request).add_suppression(p, body.address, body.reason, body.source_ref)
+
+    @app.post("/revenue/costs", tags=["revenue"], status_code=201)
+    def revenue_cost(body: CostBody, request: Request, p: Principal = Operator) -> dict[str, Any]:
+        return _desk(request).record_cost(
+            p, body.description, body.amount_cents, body.currency, body.evidence_ref, body.occurred_at
+        )
+
+    @app.post("/revenue/cycle", tags=["revenue"])
+    def revenue_cycle(request: Request, p: Principal = Operator) -> dict[str, Any]:
+        return _desk(request).cycle(p)
+
+    @app.post("/revenue/pause", tags=["revenue"])
+    def revenue_pause(body: ReasonBody, request: Request, p: Principal = Operator) -> dict[str, Any]:
+        return _desk(request).pause(p, body.reason)
+
+    @app.post("/revenue/resume", tags=["revenue"])
+    def revenue_resume(body: ReasonBody, request: Request, p: Principal = Operator) -> dict[str, Any]:
+        return _desk(request).resume(p, body.reason)
 
     return app
 
