@@ -17,7 +17,7 @@ at the same three points every time:
 
 ## What the Agent Office does
 
-- **Runs the company as departments.** 35 agents in 7 departments (Executive Suite, Engineering Lab, Cyber Operations
+- **Runs the company as departments.** 39 agents in 7 departments (Executive Suite, Engineering Lab, Cyber Operations
   Center, Growth & Marketing Studio, Revenue Floor, Intelligence Library, Simulation War Room), each with an identity,
   a reporting line, an objective, granted tools, permission levels, memory scopes, and written boundaries.
 - **Runs work as missions.** A mission is a dependency graph of tasks. Independent tasks share a wave; outputs flow

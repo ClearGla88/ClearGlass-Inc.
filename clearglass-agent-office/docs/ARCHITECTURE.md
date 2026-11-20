@@ -153,17 +153,17 @@ clearglass-agent-office/
 ├── requirements.txt / -dev.txt        runtime / test pins
 ├── config/
 │   ├── company.json                   objectives, ICP, approved sources, brand guidelines
-│   ├── org.json                       12 rooms, 7 departments, 35 agents, base grants
+│   ├── org.json                       12 rooms, 7 departments, 39 agents, base grants
 │   ├── policy.json                    tiers, 42-action catalog, hard blocks, department rules, modifiers
 │   ├── policy.shadow.json             candidate rules: evaluated and reported, never enforced
 │   ├── sandbox.json                   allow-listed test suites for tests.run_sandbox
-│   └── tools.json                     19 tools, connectors, risk ceilings, secret references
+│   └── tools.json                     22 tools, connectors, risk ceilings, secret references
 ├── demo/
 │   ├── missions.json                  the four demo missions
 │   └── prospects.sample.json          fictional prospects, one with an injected instruction
 ├── packages/
 │   ├── agent_core/
-│   │   ├── models.py                  17 record types
+│   │   ├── models.py                  22 record types
 │   │   ├── config.py                  config loading + org validation (fails closed)
 │   │   ├── office.py                  runtime hub, operator actions, emergency stop
 │   │   ├── governance.py              GovernedExecutor: steps 6-9
@@ -181,11 +181,12 @@ clearglass-agent-office/
 │   ├── memory_vault/                  vault.py
 │   ├── tool_registry/                 registry.py (dry-run connector), vault.py (secret refs)
 │   ├── simulation/                    sandbox.py (pricing, campaign, incident, rollout)
+│   ├── revenue_ops/                   Revenue Floor: rules, catalog, compose, skills, desk (docs/REVENUE_OPERATIONS.md)
 │   └── ui/                            tokens.json
 ├── apps/
 │   ├── api/                           main.py, security.py, snapshot.py
 │   ├── worker/                        daily_loop.py
-│   └── web/                           Next.js 16 console (src/app: 9 views + 2 route handlers)
+│   └── web/                           Next.js 16 console (src/app: 10 views + 2 route handlers)
 ├── infra/
 │   ├── db/postgres/001_init.sql, 002_governance_controls.sql
 │   ├── docker/{api,web}.Dockerfile

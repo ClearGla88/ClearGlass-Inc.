@@ -27,6 +27,11 @@ TABLE = {
     "report": "reports",
     "risk_assessment": "risk_assessments",
     "shadow_divergence": "shadow_divergences",
+    "opportunity": "opportunities",
+    "external_action": "external_actions",
+    "money_event": "money_events",
+    "suppression": "suppressions",
+    "offer_decision": "offer_decisions",
 }
 
 # Fields stored outside their own table, with where they live.
@@ -94,6 +99,10 @@ def test_append_only_tables_are_guarded():
         "risk_assessments",
         "approval_executions",
         "shadow_divergences",
+        "money_events",
+        "suppressions",
+        "offer_decisions",
+        "external_action_receipts",
     ):
         assert f"'{table}'" in SQL
     assert "'approve'" not in SQL.split("CREATE TABLE permissions")[1].split(");")[0]

@@ -1,5 +1,5 @@
 {
-  "policy_version": "2026.11.13-1",
+  "policy_version": "2026.11.19-1",
   "description": "ClearGlass Agent Office policy-as-code. Every agent action is evaluated against this file by packages/policy_engine. Change it through review, then bump policy_version.",
   "permission_levels": ["none", "read", "propose", "write", "execute"],
   "tiers": {
@@ -65,8 +65,16 @@
     "content.schedule":          {"domain": "content",    "level": "write",   "tier": "medium",   "verify": "artifact"},
     "content.publish":           {"domain": "social",     "level": "execute", "tier": "high",     "verify": "receipt", "external": true},
     "outreach.draft":            {"domain": "outreach",   "level": "propose", "tier": "low",      "verify": "artifact"},
+    "outreach.compose":          {"domain": "outreach",   "level": "propose", "tier": "low",      "verify": "artifact"},
     "outreach.send":             {"domain": "outreach",   "level": "execute", "tier": "high",     "verify": "receipt", "external": true},
+    "proposal.send":             {"domain": "outreach",   "level": "execute", "tier": "high",     "verify": "receipt", "external": true},
     "email.send":                {"domain": "email",      "level": "execute", "tier": "high",     "verify": "receipt", "external": true},
+    "crm.record_lead":           {"domain": "crm",        "level": "write",   "tier": "medium",   "verify": "artifact", "untrusted_input": true},
+    "crm.update_opportunity":    {"domain": "crm",        "level": "write",   "tier": "medium",   "verify": "artifact"},
+    "leads.qualify":             {"domain": "analysis",   "level": "propose", "tier": "low",      "verify": "artifact"},
+    "payment.reconcile":         {"domain": "crm",        "level": "read",    "tier": "low",      "verify": "artifact"},
+    "fulfillment.handoff":       {"domain": "crm",        "level": "write",   "tier": "medium",   "verify": "artifact"},
+    "invoice.send":              {"domain": "finance",    "level": "execute", "tier": "critical", "verify": "receipt", "external": true},
     "finance.purchase":          {"domain": "finance",    "level": "execute", "tier": "critical", "verify": "receipt", "external": true},
     "finance.move_money":        {"domain": "finance",    "level": "execute", "tier": "critical", "verify": "receipt", "external": true},
     "pricing.change_live":       {"domain": "finance",    "level": "execute", "tier": "critical", "verify": "receipt", "external": true},

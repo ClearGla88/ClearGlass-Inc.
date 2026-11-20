@@ -9,6 +9,7 @@ export const NAV = [
   { href: "/missions", label: "Mission Control", code: "MC" },
   { href: "/floor", label: "Collaboration Floor", code: "CF" },
   { href: "/approvals", label: "Approval Desk", code: "AD" },
+  { href: "/revenue", label: "Revenue Floor", code: "RF" },
   { href: "/vault", label: "Knowledge Vault", code: "KV" },
   { href: "/simulations", label: "Simulation Chamber", code: "SC" },
   { href: "/briefing", label: "Briefing Room", code: "BR" },

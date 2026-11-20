@@ -59,15 +59,16 @@ propose-level grant never files an approval for a higher-level action: the reque
 | Domain | Actions (level needed, tier) |
 |---|---|
 | research | `research.collect` (read, low), `research.summarize` (propose, low), `osint.public_research` (read, low; approved source + authorized scope), `leads.research` (read, low; approved source) |
-| analysis | `analysis.run` (read, low), `leads.score` (propose, low), `pricing.model` (propose, low) |
+| analysis | `analysis.run` (read, low), `leads.score` (propose, low), `leads.qualify` (propose, low), `pricing.model` (propose, low) |
 | docs | `docs.draft` (propose, low), `docs.update` (write, medium), `proposal.draft` (propose, low) |
 | reports | `briefing.compile`, `report.compile` (propose, low) |
 | code / tests | `code.draft_patch`, `code.review`, `tests.plan` (propose, low); `code.commit_branch` (write, medium); `tests.run_sandbox` (execute, medium) |
 | deploy | `deploy.plan` (propose, low); `deploy.staging` (execute, high); `deploy.production` (execute, critical; needs `test_evidence` naming a passed `tests.run_sandbox` task in the same mission) |
 | content / social | `content.draft` (propose, low); `content.schedule` (write, medium); `content.publish` (execute, high) |
-| outreach / email | `outreach.draft` (propose, low); `outreach.send`, `email.send` (execute, high) |
+| outreach / email | `outreach.draft`, `outreach.compose` (propose, low); `outreach.send`, `proposal.send`, `email.send` (execute, high) |
+| crm | `crm.record_lead`, `crm.update_opportunity`, `fulfillment.handoff` (write, medium); `payment.reconcile` (read, low). Revenue Floor records only |
 | data | `data.update_internal` (write, medium); `data.export` (execute, high); `data.delete` (execute, critical) |
-| finance / contracts | `finance.purchase`, `finance.move_money`, `pricing.change_live`, `contract.sign` (execute, critical). The loader refuses a policy with a finance action below critical |
+| finance / contracts | `finance.purchase`, `finance.move_money`, `pricing.change_live`, `invoice.send`, `contract.sign` (execute, critical). The loader refuses a policy with a finance action below critical |
 | security / secrets | `security.audit_config` (read, low); `security.incident_draft` (propose, low); `security.modify_config`, `secrets.access` (execute, critical) |
 | workflow, memory, messaging, simulation | `workflow.create` (write, medium); `memory.write_task` (write, low); `memory.propose_long_term` (propose, low); `message.internal` (write, low); `simulation.run` (execute, low, sandbox only) |
 
@@ -85,7 +86,7 @@ Department rules: the Simulation War Room may only run sandbox actions; Cyber Op
 | Engineering Lab | Software Architect (EN-01), Frontend (EN-02), Backend (EN-03), DevOps (EN-04), QA (EN-05), Code Review (EN-06) | critical (DevOps: production deploy, always approval-gated) |
 | Cyber Operations Center | Threat Analyst (CY-01), Security Auditor (CY-02), Incident Response (CY-03), OSINT Research (CY-04), Compliance Monitor (CY-05) | low |
 | Growth & Marketing Studio | Brand Strategist (GM-01), Content Writer (GM-02), SEO (GM-03), Social Media (GM-04), Video Concept (GM-05), Campaign Analyst (GM-06) | high (Social Media: publish) |
-| Revenue Floor | Lead Research (RV-01), Sales Strategist (RV-02), Proposal Writer (RV-03), Customer Success (RV-04), Pricing Analyst (RV-05) | high (outreach and email sends) |
+| Revenue Floor | Lead Research (RV-01), Sales Strategist (RV-02), Proposal Writer (RV-03), Customer Success (RV-04), Pricing Analyst (RV-05), Revenue Director (RV-06), Opportunity Agent (RV-07), Qualification Agent (RV-08), Revenue and Delivery Agent (RV-09) | critical (Revenue and Delivery: invoices, always approval-gated, PayPal and CAD only). See `docs/REVENUE_OPERATIONS.md` for the desk each agent staffs |
 | Intelligence Library | Research (IL-01), Market Analyst (IL-02), Competitive Intelligence (IL-03), Knowledge Curator (IL-04) | medium (Knowledge Curator: document updates) |
 | Simulation War Room | Scenario Designer (SW-01), Red Team (SW-02), Blue Team (SW-03), Business War-Gamer (SW-04), Outcome Analyst (SW-05) | low (sandbox only) |
 

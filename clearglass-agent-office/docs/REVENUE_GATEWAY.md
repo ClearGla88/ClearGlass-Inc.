@@ -2,7 +2,8 @@
 
 How the ClearGlassInc revenue validation plan is held in the Agent Office, what it is allowed to do, and which of the requested gateway controls exist today.
 
-Verified 2026-11-13 against this tree. Nothing in the plan has run. No research has been done, no message drafted for a recipient, no record written, no money spent.
+Verified 2026-11-13 against this tree; the gateway tables updated 2026-11-20 for the Revenue Floor
+([REVENUE_OPERATIONS.md](REVENUE_OPERATIONS.md)), which is separate from this plan. Nothing in the plan has run. No research has been done, no message drafted for a recipient, no record written, no money spent.
 
 ## State
 
@@ -82,12 +83,12 @@ Each row says where the control lives and which test pins it. Tests named `test_
 
 | Check | State | Note |
 |---|---|---|
-| Schema validation | **Plan: built. Action parameters: not built** | The plan contract rejects unknown and missing fields. Action requests are not validated against a per-action schema, so an unexpected parameter is not refused at the gate |
+| Schema validation | **Plan: built. Revenue Floor: built at the desk. Other actions: not built** | The plan contract rejects unknown and missing fields. The Revenue Floor validates leads, settings, offer terms, receipts and provider records against strict schemas, and checks each send's recipients and amounts against the record at request and at release. Other action requests are not validated against a per-action schema at the gate |
 | Authorization | **Built** | Row 5 above |
-| Consent and suppression | **Not built** | The kernel has no contact, consent or suppression model. Nothing checks opt-out status before a send |
+| Consent and suppression | **Built for the Revenue Floor** | Each opportunity carries a consent basis with its evidence and date (CASL rules in `config/revenue.json`). An append-only suppression list and a contact cap are checked at request and again at release. Outbound actions outside the Revenue Floor have no consent model |
 | Budget ledger with reservation | **Not built** | A grant carries a per-request spend cap. There is no ledger that reserves against a remaining approved budget across requests |
-| Idempotency | **Built for approvals and workflow tasks** | Reconciling with a destination system before a retry is not built, because no live destination exists |
-| Content policy | **Partly built** | Research output must cite a source or carry an `unverified` flag. Nothing checks outbound copy for unsubstantiated claims or deceptive urgency |
+| Idempotency | **Built for approvals, workflow tasks and revenue steps** | A released Revenue Floor ticket that was never recorded as sent can be abandoned only after the operator records what they found at the destination; one external reference belongs to one action. A live adapter still needs its own reconciliation |
+| Content policy | **Built for the Revenue Floor** | Revenue Floor copy is template-only and checked for unapproved figures, links and claims, and for the CASL identification and unsubscribe lines, when drafted and again at release. Research output must cite a source or carry an `unverified` flag |
 | Injection isolation | **Partly built** | Row 4 above. Scraped content is not yet passed as an opaque, field-validated object |
 | Immutable audit log | **Built** | Hash-chained, append-only at the database level, with the policy version, digest, approver, decision, result and time on every record |
 
@@ -95,12 +96,16 @@ Each row says where the control lives and which test pins it. Tests named `test_
 
 These are the gaps above, in the order they matter. None of them can cause harm today because every external tool returns a dry-run receipt. Each has to exist before a reviewed adapter for email, a CRM or an ad platform is registered.
 
-1. Consent and suppression check immediately before every send.
-2. Recipient-domain and parameter schemas per action, with unknown fields refused.
-3. A budget ledger that reserves spend and refuses a request that would exceed what was approved.
-4. Destination reconciliation before a retry, keyed by the idempotency key.
-5. A content check for outbound copy against the plan's claim boundary.
-6. Scanning action parameters for credentials at the gate, not only redacting them in the trail.
+1. Consent and suppression check immediately before every send. *Built for the Revenue Floor's sends.*
+2. Recipient-domain and parameter schemas per action, with unknown fields refused. *Built at the Revenue Floor;
+   not at the kernel gate.*
+3. A budget ledger that reserves spend and refuses a request that would exceed what was approved. *Not built; no
+   Revenue Floor action spends.*
+4. Destination reconciliation before a retry, keyed by the idempotency key. *A recorded destination check for
+   relayed tickets; a live adapter still needs its own.*
+5. A content check for outbound copy against the plan's claim boundary. *Built for the Revenue Floor.*
+6. Scanning action parameters for credentials at the gate, not only redacting them in the trail. *Built for
+   external actions.*
 7. Operator sign-in that identifies a person (OIDC is on the roadmap); today the operator is whoever holds the operator token.
 
 ## Checks
