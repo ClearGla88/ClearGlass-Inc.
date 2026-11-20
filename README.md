@@ -31,6 +31,7 @@ The website pages (`*.html`, `*.css`, `*.js`, `sitemap*.xml`, `CNAME`, `.nojekyl
 | ClearShield (local defensive monitoring: file integrity, TCP listeners, SSH auth failures, WAV and opt-in microphone dBFS levels, HMAC-chained audit log). Clean-room `1.0.0.dev0`, unreleased; not the original v1 code | `clearshield/` | `clearshield/tests/` (run by Baseline CI) and `.github/workflows/clearshield-ci.yml` (Python 3.10-3.13 plus a Linux smoke run). Limits and evidence: `clearshield/SECURITY.md`, `clearshield/RELEASE_CHECKLIST.md` |
 | Guardian Sentinel core (design mode only: trusted configuration, observation integrity, hazard events and detector contracts, alert and emergency state machines, health supervisor, commands, audit log). No sensors, outputs, monitoring or emergency dispatch | `guardian-sentinel/` | `guardian-sentinel/tests/` (108 tests, run by Baseline CI) and `.github/workflows/guardian-sentinel-ci.yml` (Python 3.10-3.13, template lint, install check). Capability states and open items: `guardian-sentinel/README.md`, `guardian-sentinel/TRACEABILITY.md` |
 | ClearGlass Active Defense (lab only: HTTP decoy, TCP tripwire, honeyfiles, honeytokens; signed ingestion, identity resolution, correlation, eight YAML playbooks, deterministic policy, hash-bound approvals, leased executor with reconciliation, circuit breaker and emergency stop, evidence manifests, hash-chained audit). The only isolation adapter is a mock; nothing touches a real network. The "CA ART" requirement is undefined and not built | `clearglass-active-defense/` | `clearglass-active-defense/tests/` (119 tests, including an end-to-end loopback demo) and `.github/workflows/active-defense-ci.yml` (Python 3.11 and 3.13, demo, compose validation). Limits and readiness stages: `clearglass-active-defense/README.md`, `docs/PRODUCTION_READINESS.md` |
+| Sentinel Workspace (static, browser-only investigation tool) | `sentinel-workspace.html`, `sentinel-workspace/` | `node --test tests/sentinel_workspace/core.test.mjs` in CI (`baseline-ci.yml`); the browser journey `tests/sentinel_workspace/e2e.browser.cjs` runs locally with Playwright. See `sentinel-workspace/README.md`. |
 
 **Does not run in this tree**
 
@@ -50,6 +51,7 @@ cargo test --locked
 zizmor --offline .github/workflows/   # pip install zizmor==1.32.0
 cargo audit                           # cargo install cargo-audit --locked --version 0.23.0
 python3 tools/site_health.py          # live site; needs network access to it
+node --test tests/sentinel_workspace/core.test.mjs
 ```
 
 See `CONTRIBUTING.md` for the full workflow.
