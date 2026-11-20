@@ -1,5 +1,25 @@
 # ClearShield release checklist
 
+## Decision (2026-11-19)
+
+**Still evaluation-ready, not production-ready.** The 2026-11-19 audit ([AUDIT-2026-11-19.md](AUDIT-2026-11-19.md)) found that `1.0.0.dev0` let a retired key forge state and records. Anyone running `1.0.0.dev0` who has rotated a key with `rotate --new-key` should run `verify --all` with `1.0.0.dev1`. `1.0.0.dev1` fixes that and the other defects listed in the audit. The production blockers below are unchanged.
+
+### Evidence captured 2026-11-19
+
+Same container as below (Ubuntu 24.04.5 LTS, kernel 6.18.44, x86-64, no IPv6, no journal, no `sshd`, no audio hardware), pytest 9.1.1, run from `clearshield/`.
+
+| Check | Command | Result |
+|---|---|---|
+| Unit and integration, Python 3.13.18, root | `python3 -m pytest tests -q -p no:cacheprovider` | 204 passed, 2 skipped (real-permission test under root; live IPv6) |
+| Same, Python 3.11.18 and 3.12.3 (venvs), root | same | 204 passed, 2 skipped on each |
+| Same, Python 3.13.18, uid 65534 | `setpriv --reuid=65534 --regid=65534 --clear-groups python3 -m pytest tests -q` | 205 passed, 1 skipped (live IPv6) |
+| Linux smoke, root and uid 65534 | `python3 tests/smoke/linux_smoke.py` | PASS for both |
+| Whole repository suite, 3.13 | `python3 -m pytest -q` from the repository root | 433 passed, 2 skipped |
+| Lint, compile, hygiene | `ruff check --select E9,F clearshield`; `py_compile` on every tracked ClearShield file; `python3 tools/repo_hygiene.py` | pass; pass; 0 findings |
+| Package install, Python 3.11 venv | `pip install ./clearshield && clearshield --version` | `ClearShield 1.0.0.dev1`, no dependencies installed |
+| New tests catch the defects they cover (fault injection) | Each fix reverted one at a time: state key check, one-key-per-segment, purge refusal, rotated-tail read, owner comparison | 4, 2, 2, 2 and 2 failures; the restored code passes |
+| Python 3.10 | — | Not installed locally; CI covers it. Not yet run for this change |
+
 ## Decision (2026-11-13)
 
 **Evaluation-ready for testing on hosts you own.** ClearShield CI passed on Python 3.10, 3.11, 3.12 and 3.13 on 2026-11-13 (pull request ClearGla88/ClearGlass-Inc.#28, head `0a770fd`), alongside every Baseline CI job. **Not production-ready.**
@@ -49,10 +69,11 @@ Environment: Ubuntu 24.04.5 LTS container, kernel 6.18.44, x86-64 (little-endian
 ## Unresolved blockers for production
 
 1. **[DECISION REQUIRED]** A private vulnerability-reporting channel (SECURITY.md).
-2. **[LEGAL REVIEW]** The privacy notice, before monitoring any system other people use (PRIVACY.md).
-3. Independent security review of the audit chain, the state handling and the parsers.
-4. Real-host validation of every item under "Not yet verified".
-5. Off-host evidence storage that doesn't depend on a person copying files (roadmap stage 1).
+2. Authenticate `config.json` (or raise the severity when a change disables a layer or widens the allowlist), and add domain separation between state and record tags. Found in the 2026-11-19 audit, not yet fixed.
+3. **[LEGAL REVIEW]** The privacy notice, before monitoring any system other people use (PRIVACY.md).
+4. Independent security review of the audit chain, the state handling and the parsers.
+5. Real-host validation of every item under "Not yet verified".
+6. Off-host evidence storage that doesn't depend on a person copying files (roadmap stage 1).
 
 ## Production roadmap
 

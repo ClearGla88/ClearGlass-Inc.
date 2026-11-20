@@ -236,12 +236,52 @@ def _allowed(entry: dict, allow: list[tuple[str, int]]) -> bool:
 
 
 SCOPE_SEVERITY = {"all_interfaces": "high", "specific_address": "medium", "loopback": "low"}
+_DELETED = " (deleted)"
 
 
-def compare(baseline_ids: list[str], current: dict, allow: list[tuple[str, int]]) -> list[dict]:
+def _exes(entry: dict) -> list[str]:
+    """Executable paths of the processes holding a listener, when attribution succeeded.
+
+    The kernel appends " (deleted)" to the exe link of a process whose binary was
+    replaced on disk after it started, which is routine after a package upgrade.
+    It is stripped here so an upgrade alone does not read as a different owner.
+    """
+    if entry.get("attribution") != "ok":
+        return []
+    out = set()
+    for proc in entry.get("processes") or []:
+        exe = proc.get("exe")
+        if isinstance(exe, str) and exe:
+            out.add(exe[: -len(_DELETED)] if exe.endswith(_DELETED) else exe)
+    return sorted(out)
+
+
+def owner_map(current: dict) -> dict[str, list[str]]:
+    """{listener id: executable paths} for listeners whose owner could be read."""
+    return {e["id"]: exes for e in current["listeners"] if (exes := _exes(e))}
+
+
+def compare(baseline_ids: list[str], current: dict, allow: list[tuple[str, int]],
+            baseline_owners: dict[str, list[str]] | None = None) -> list[dict]:
     base = set(baseline_ids)
     now = {e["id"]: e for e in current["listeners"]}
     findings: list[dict] = []
+    for lid in sorted(set(now) & base):
+        before = (baseline_owners or {}).get(lid)
+        after = _exes(now[lid])
+        if before and after and set(before) != set(after) and not _allowed(now[lid], allow):
+            findings.append({
+                "layer": "listeners",
+                "kind": "listener_owner_changed",
+                "severity": "medium",
+                "listener": lid,
+                "detail": {
+                    "baseline_executables": before,
+                    "current_executables": after,
+                    "processes": now[lid]["processes"],
+                    "note": "a different program now holds this approved port; confirm it was intended",
+                },
+            })
     for lid in sorted(set(now) - base):
         entry = now[lid]
         if _allowed(entry, allow):

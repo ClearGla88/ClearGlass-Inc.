@@ -310,6 +310,9 @@ UNITS_NOTE = ("dBFS relative to digital full scale (full-scale sine RMS = -3.01 
 
 def findings_from(summary: dict, subject: str) -> list[dict]:
     findings: list[dict] = []
+    if summary.get("frames_present") == 0:
+        findings.append({"layer": "audio", "kind": "no_audio_data", "severity": "low", "file": subject,
+                         "detail": {"note": "the data chunk holds no complete frame; nothing was measured"}})
     sustained = summary["sustained_high"]
     if sustained["segments"]:
         findings.append({"layer": "audio", "kind": "sustained_high_level", "severity": "medium",

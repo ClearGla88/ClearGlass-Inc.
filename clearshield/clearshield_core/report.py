@@ -69,6 +69,10 @@ def _summary(f: dict) -> str:
         procs = d.get("processes") or []
         who = ", ".join(sanitize(p.get("exe") or p.get("comm") or p.get("pid"), 80) for p in procs)
         return f"scope={d.get('scope')} uid={d.get('uid')} {who or d.get('attribution')}"
+    if kind == "listener_owner_changed":
+        before = ", ".join(sanitize(x, 80) for x in d.get("baseline_executables", []))
+        after = ", ".join(sanitize(x, 80) for x in d.get("current_executables", []))
+        return f"owner {before} -> {after}"
     if kind == "repeated_auth_failures":
         return (f"{d.get('failures_in_window')} failures in {d.get('window_seconds')}s "
                 f"(threshold {d.get('threshold')}); suspicious, not a confirmed intrusion")

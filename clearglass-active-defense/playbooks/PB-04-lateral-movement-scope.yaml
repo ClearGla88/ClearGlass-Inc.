@@ -1,0 +1,57 @@
+id: PB-04-lateral-movement-scope
+version: 1
+owner: security-operations (lab)
+purpose: >-
+  Suspected lateral movement from a verified asset. List other assets with recent signals for
+  analyst review, and propose isolating only the source asset, for approval.
+trigger: {kind: correlation, ref: COR-LATERAL-001}
+required_evidence:
+  all_of: [lateral_movement_indicator]
+  any_of: [endpoint_compromise_indicator, decoy_interaction, honeytoken_use]
+  min_distinct_sensors: 2
+preconditions:
+  - no_emergency_stop
+  - circuit_closed
+  - identity_verified
+  - asset_in_inventory
+  - environment_in_scope
+  - not_protected
+  - asset_authorized_for_containment
+  - adapter_available
+  - evidence_corroborated
+  - sensor_trusted
+  - not_already_contained
+  - within_rate_limits
+authorization_scope: inventoried lab assets with authorized_for_containment true
+asset_exclusions: [identity, network_control, response_platform, backup, safety_ot]
+approval: {required: true, approver_role: approver, ttl_seconds: 3600, distinct_from_requester: true}
+actions:
+  - {id: alert, type: record_alert, description: Record the lateral-movement alert.}
+  - {id: scope, type: scope_assets, description: List other assets with signals in the last hour; never actioned automatically.}
+  - {id: preserve, type: preserve_evidence, description: Snapshot the evidence manifest.}
+  - {id: escalate, type: escalate, description: Flag the case for incident-lead review of the scope list.}
+  - {id: propose, type: propose_isolation, timeout_seconds: 30, description: Propose isolating the source asset only.}
+  - {id: notify, type: notify, description: Record the approver notification.}
+retry: {max_attempts: 3, backoff_seconds: 30}
+idempotency_key_fields: [kind, case_id, target_asset_id, plan_hash]
+verification:
+  - Adapter reports every isolation rule tagged with this action's key.
+  - Every preserved management path has an allow rule.
+failure_paths:
+  on_timeout: Reconcile against adapter state; retry only if nothing was applied.
+  on_partial: Leave applied rules in place, mark partially_completed, escalate.
+  on_error: Retry with backoff, then fail and escalate.
+escalation:
+  - Incident lead reviews related assets; each needs its own corroborated case to be proposed.
+compensating_actions:
+  - Release through PB-07, removing only rules tagged with this action's key.
+recovery_criteria:
+  - {id: root_cause_identified, description: The cause is identified and recorded.}
+  - {id: host_remediated, description: The host is reimaged or remediated.}
+  - {id: credentials_rotated, description: Exposed credentials are rotated.}
+  - {id: monitoring_confirmed, description: Telemetry is flowing and clean since remediation.}
+evidence_requirements:
+  - Proposal lists authorizing signal ids, artifact hashes, and the related-asset list.
+notifications:
+  - approver queue
+  - incident lead

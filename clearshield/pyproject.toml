@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "clearshield"
-version = "1.0.0.dev0"
+version = "1.0.0.dev1"
 description = "Local, defensive monitoring for Linux hosts you own: file integrity, TCP listeners, SSH authentication failures, WAV and opt-in microphone digital levels, HMAC-chained audit log."
 readme = "README.md"
 requires-python = ">=3.10"

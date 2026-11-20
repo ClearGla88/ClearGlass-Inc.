@@ -2,6 +2,31 @@
 
 Versions follow [PEP 440](https://peps.python.org/pep-0440/). Dates are UTC.
 
+## 1.0.0.dev1 — 2026-11-19 (unreleased)
+
+Changes from the 2026-11-19 audit ([AUDIT-2026-11-19.md](AUDIT-2026-11-19.md)). Each fix has a regression test that fails when the fix is reverted.
+
+### Security
+
+- **Retired keys were accepted everywhere.** After `rotate --new-key`, anyone holding the old key could do two things. They could sign `state.json`, for example a baseline with a changed file's new hash, which made `scan` report nothing. And they could append records to the active segment, or rebuild later segments, and `verify --all` still passed. State must now carry the active key. A segment uses one key. Key changes between segments must follow a recorded `new_key` rotation. A retired key never signs a later segment, and the active segment must use the active key.
+- `purge` deleted segments that failed verification, destroying the evidence of tampering. It now refuses unless the whole chain verifies.
+
+### Fixed
+
+- `rotate --new-key` could crash between retiring the old key and writing the new one, leaving no active key. The new key is now written first (`keys/hmac.key.next`), and every crash point is recovered by the next writing command. A rotation interrupted before the key swap now still swaps the key.
+- SSH failures written between the previous scan and a log rotation were silently lost. They are now read from `<log>.1` when its inode matches the cursor. Rotations that can't be followed, including `copytruncate`, are reported as `auth_rotation_gap`.
+
+### Added
+
+- `listener_owner_changed` (medium): a different executable now holds an approved port. The baseline gains a `listener_owners` map. Baselines without it, and unattributed listeners, never trigger the finding.
+- `no_audio_data` (low): a WAV file whose data chunk has no complete frame.
+- Purge records now carry each segment's key id and rotation flag, so `verify --all` checks key succession across purged segments.
+
+### Compatibility
+
+- State and audit formats are unchanged. A `1.0.0.dev0` state directory loads, unless it was already signed with a retired key, which now fails closed (exit 3).
+- Scripts that rely on `purge` succeeding over a broken chain will now get exit 3.
+
 ## 1.0.0.dev0 — 2026-11-13 (unreleased)
 
 A clean-room implementation of the ClearShield v1 specification. The original v1 source, tests and smoke-test record were not available, so nothing here is derived from them, and their reported results ("nine tests passing", "Linux smoke test passed") do not apply to this code.
@@ -17,7 +42,7 @@ A clean-room implementation of the ClearShield v1 specification. The original v1
 - Opt-in live microphone analysis (two-step consent, in memory, sessions logged).
 - An HMAC-SHA256 chained audit log, HMAC-authenticated state, key rotation, segment archive and purge, and off-host checkpoints.
 - The README, SECURITY.md, PRIVACY.md, a sample configuration, and the release checklist.
-- 192 tests (unit and integration), a Linux smoke script, and a CI workflow for Python 3.10–3.13.
+- 192 tests at that version (unit and integration), a Linux smoke script, and a CI workflow for Python 3.10–3.13.
 
 ### Fixed during development (found by testing, before any release)
 

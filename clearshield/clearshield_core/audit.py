@@ -113,9 +113,31 @@ def _read_key(path: str) -> bytes:
     return data
 
 
-def load_keyring(state_dir: str) -> Keyring:
+def next_key_path(state_dir: str) -> str:
+    return os.path.join(keys_dir(state_dir), "hmac.key.next")
+
+
+def load_keyring(state_dir: str, repair: bool = False) -> Keyring:
+    """Load the active key and every retired key.
+
+    ``rotate_key`` writes the new key to ``hmac.key.next`` before it retires the
+    old one. If a crash leaves no ``hmac.key`` but a ``hmac.key.next``, the swap
+    was interrupted after the old key was retired. With ``repair`` (set by
+    commands that hold the lock and may write), the swap is completed; read-only
+    commands report it instead.
+    """
     fsutil.check_private_dir(keys_dir(state_dir))
-    active = _read_key(active_key_path(state_dir))
+    active_path, next_path = active_key_path(state_dir), next_key_path(state_dir)
+    if not os.path.lexists(active_path) and os.path.lexists(next_path):
+        if not repair:
+            raise KeyFileError(
+                f"{active_path} is missing but {next_path} exists: a key rotation was interrupted. "
+                "Run any command that writes (for example 'scan') to complete it, then 'verify'."
+            )
+        _read_key(next_path)  # validates ownership, mode and length before promoting it
+        os.replace(next_path, active_path)
+        fsutil.fsync_dir(keys_dir(state_dir))
+    active = _read_key(active_path)
     retired: dict[str, bytes] = {}
     rdir = retired_dir(state_dir)
     if os.path.lexists(rdir):
@@ -128,17 +150,26 @@ def load_keyring(state_dir: str) -> Keyring:
 
 
 def rotate_key(state_dir: str, keyring: Keyring) -> Keyring:
-    """Retire the active key (kept for verifying old segments) and create a new one."""
+    """Retire the active key (kept for verifying old segments) and create a new one.
+
+    Order: write the new key to ``hmac.key.next``; move the old key to
+    ``retired/``; rename ``hmac.key.next`` to ``hmac.key``. At every point a
+    crash leaves either the old active key, or a retired old key plus a
+    complete new key that ``load_keyring(repair=True)`` promotes.
+    """
     rdir = retired_dir(state_dir)
     fsutil.make_private_dir(rdir)
-    old_path = active_key_path(state_dir)
-    os.replace(old_path, os.path.join(rdir, f"{keyring.active_kid}.key"))
-    fsutil.fsync_dir(rdir)
-    fsutil.fsync_dir(keys_dir(state_dir))
+    active_path, next_path = active_key_path(state_dir), next_key_path(state_dir)
+    if os.path.lexists(next_path):
+        # Left by a crash before the old key was retired, so it never signed anything.
+        os.unlink(next_path)
     new = secrets.token_bytes(KEY_BYTES)
-    fsutil.create_exclusive(old_path, new, 0o600)
-    retired = {k: v for k, v in keyring.keys.items()}
-    return Keyring(new, retired)
+    fsutil.create_exclusive(next_path, new, 0o600)
+    os.replace(active_path, os.path.join(rdir, f"{keyring.active_kid}.key"))
+    fsutil.fsync_dir(rdir)
+    os.replace(next_path, active_path)
+    fsutil.fsync_dir(keys_dir(state_dir))
+    return Keyring(new, dict(keyring.keys))
 
 
 # ------------------------------------------------------------------------ records
@@ -282,6 +313,13 @@ def verify_file(path: str, keyring: Keyring, expect_prev: str | None = None) -> 
                 "(records deleted, inserted, replayed, or reordered)",
             }
             return result
+        if result["first"] is not None and record["kid"] != result["first"]["kid"]:
+            result["error"] = {
+                "line": number,
+                "reason": f"key id changes inside the segment ({result['first']['kid']} -> "
+                f"{record['kid']}); a segment is always written with one key",
+            }
+            return result
         if prev_tag is not None and record["prev"] != prev_tag:
             result["error"] = {
                 "line": number,
@@ -349,6 +387,11 @@ def reconcile_head(state_dir: str, keyring: Keyring, state_head: dict) -> tuple[
     problem = check_record_tag(keyring, last)
     if problem:
         raise IntegrityFailure(f"final audit record failed verification: {problem}. Run 'verify'.")
+    if last["kid"] != keyring.active_kid:
+        raise IntegrityFailure(
+            f"final audit record is signed with key {last['kid']}, not the active key "
+            f"{keyring.active_kid}. Run 'verify'."
+        )
     segment = state_head["segment"]
     if last["seq"] == state_head["seq"] and hmac.compare_digest(last["tag"], state_head["tag"]):
         return head_of(last, segment), False
