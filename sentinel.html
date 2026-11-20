@@ -109,7 +109,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:61;bac
 .stage{position:relative;border-radius:13px;overflow:hidden;border:1px solid var(--line);background:#0a0309}
 #map{position:absolute;inset:0;width:100%;height:100%;background:#0a0309}
 .fusion{position:absolute;inset:0;z-index:850;display:grid;place-items:center;padding:22px;background:radial-gradient(circle at 50% 45%,rgba(54,182,255,.16),transparent 34%),rgba(3,6,16,.88);backdrop-filter:blur(9px);transition:opacity .28s ease,visibility .28s ease}
-.fusion[hidden]{display:none}.fusion-grid{position:relative;display:grid;grid-template-columns:repeat(2,minmax(150px,210px));gap:42px 74px}.fusion-grid::before{content:"";position:absolute;inset:50% -9%;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),var(--violet),transparent);box-shadow:0 0 18px var(--cyan);animation:fusion-flow 3s linear infinite}.fusion-core{position:absolute;left:50%;top:50%;z-index:2;display:grid;place-items:center;width:82px;height:82px;border:1px solid var(--cyan);border-radius:50%;background:#071326;transform:translate(-50%,-50%);box-shadow:0 0 0 10px rgba(54,182,255,.05),0 0 35px rgba(54,182,255,.3);font:800 10px/1.35 var(--display);letter-spacing:.12em;text-align:center}.fusion-core::after{content:"";position:absolute;inset:-12px;border:1px dashed rgba(167,139,250,.55);border-radius:50%;animation:fusion-orbit 10s linear infinite}.fusion-node{position:relative;z-index:3;padding:13px;border:1px solid rgba(124,150,255,.27);border-radius:11px;background:linear-gradient(145deg,rgba(18,29,56,.96),rgba(10,12,31,.96));box-shadow:0 12px 28px rgba(0,0,0,.25)}.fusion-node b{display:block;color:#fff;font:700 11px var(--display);letter-spacing:.08em}.fusion-node span{display:block;margin-top:5px;color:var(--dim);font:9px/1.45 var(--mono)}.fusion-node i{position:absolute;right:10px;top:10px;width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 9px var(--ok)}.fusion-badge{position:absolute;left:12px;bottom:10px;color:#8ca1c5;font:8px var(--mono);letter-spacing:.1em;text-transform:uppercase}.fusion-close{position:absolute;right:12px;top:10px;z-index:4;border:1px solid var(--line-2);border-radius:8px;background:rgba(7,10,23,.9);color:#fff;padding:7px 10px;cursor:pointer}.fusion-close:focus-visible{outline:3px solid #fff;outline-offset:2px}@keyframes fusion-orbit{to{transform:rotate(360deg)}}@keyframes fusion-flow{50%{filter:brightness(1.9);transform:scaleX(.92)}}
+.fusion[hidden]{display:none}.fusion-grid{position:relative;display:grid;grid-template-columns:repeat(2,minmax(150px,210px));gap:42px 74px}.fusion-grid::before{content:"";position:absolute;inset:50% -9%;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),var(--violet),transparent);box-shadow:0 0 18px var(--cyan);animation:fusion-flow 3s linear infinite}.fusion-core{position:absolute;left:50%;top:50%;z-index:2;display:grid;place-items:center;width:82px;height:82px;border:1px solid var(--cyan);border-radius:50%;background:#071326;transform:translate(-50%,-50%);box-shadow:0 0 0 10px rgba(54,182,255,.05),0 0 35px rgba(54,182,255,.3);font:800 10px/1.35 var(--display);letter-spacing:.12em;text-align:center}.fusion-core::after{content:"";position:absolute;inset:-12px;border:1px dashed rgba(167,139,250,.55);border-radius:50%;animation:fusion-orbit 10s linear infinite}.fusion-node{position:relative;z-index:3;padding:13px;border:1px solid rgba(124,150,255,.27);border-radius:11px;background:linear-gradient(145deg,rgba(18,29,56,.96),rgba(10,12,31,.96));box-shadow:0 12px 28px rgba(0,0,0,.25)}.fusion-node b{display:block;color:#fff;font:700 11px var(--display);letter-spacing:.08em}.fusion-node span{display:block;margin-top:5px;color:var(--dim);font:9px/1.45 var(--mono)}.fusion-node i{position:absolute;right:10px;top:10px;width:6px;height:6px;border-radius:50%;background:transparent;border:1px solid var(--dim-2)}.fusion-badge{position:absolute;left:12px;bottom:10px;color:#8ca1c5;font:8px var(--mono);letter-spacing:.1em;text-transform:uppercase}.fusion-close{position:absolute;right:12px;top:10px;z-index:4;border:1px solid var(--line-2);border-radius:8px;background:rgba(7,10,23,.9);color:#fff;padding:7px 10px;cursor:pointer}.fusion-close:focus-visible{outline:3px solid #fff;outline-offset:2px}@keyframes fusion-orbit{to{transform:rotate(360deg)}}@keyframes fusion-flow{50%{filter:brightness(1.9);transform:scaleX(.92)}}
 .leaflet-container{background:#0a0309!important;font-family:var(--mono)!important}
 .mtag{position:absolute;z-index:800;font-family:var(--mono);font-size:9px;letter-spacing:.13em;color:rgba(188,212,255,.75);text-transform:uppercase;background:rgba(7,9,20,.6);padding:3px 7px;border-radius:5px;pointer-events:none}
 .mtag.tl{top:11px;left:11px;line-height:1.7}.mtag.br{bottom:11px;right:11px;text-align:right}
@@ -200,7 +200,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:61;bac
       <div><div class="b-name">SENTINEL<b>·</b>LIVE</div><div class="b-sub">Live Geospatial Command Center</div></div></div>
     <div class="spacer"></div>
     <div class="pill juris" id="jurisPill" title="Enable device location">⬢ LOCATION · NOT SET</div>
-    <div class="pill armed"><span class="dot"></span>FAIL-CLOSED · ARMED</div>
+    <div class="pill armed" title="A rule in this page refuses requests to identify, locate or track people. It runs in your browser.">POLICY GATE · FAIL-CLOSED</div>
     <div class="clock"><div class="t" id="clk">--:--:--</div><div class="d" id="cdate">—</div></div>
   </div>
   <div class="main">
@@ -211,6 +211,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:61;bac
       <button class="btn amber" id="btnCam">📷 Connect owned camera</button>
       <button class="btn" id="btnPfas">⬡ PERCIVAL · PFAS (Burlington)</button>
       <button class="btn" id="btnRefresh">↻ Refresh live feeds</button>
+      <a class="btn" href="sentinel-workspace.html">◇ Investigation workspace</a>
       <button class="btn amber" id="btnFusion" aria-controls="fusionLayer" aria-expanded="false">◈ Artemis agent mesh</button>
       <div class="railsub">Map layers</div>
       <div id="layers"></div>
@@ -234,7 +235,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:61;bac
             <article class="fusion-node"><i></i><b>AIP</b><span>Governed copilots<br>evals · agent workflows</span></article>
             <article class="fusion-node"><i></i><b>APOLLO</b><span>Controlled delivery<br>health · rollback · policy</span></article>
           </div>
-          <div class="fusion-badge">Target-state blueprint · consequential actions require human approval</div>
+          <div class="fusion-badge">Target-state blueprint · not provisioned · consequential actions require human approval</div>
         </section>
       </div>
       <div class="panel console">
@@ -494,12 +495,12 @@ function downloadPfasPack(s){
              detected_analytes:[],exceedance_ratio:+(s.sum_25_ngL/30).toFixed(2),
              matrix:s.matrix||'drinking_water',source_category_hints:[]},
     next_actions:nextActions,resample_after_days:resample,
-    treatment_options:treatment,references:refs,audit_ref:aref,generated_utc:nowZ,
+    treatment_options:treatment,references:refs,audit_ref:aref,audit_ref_note:'Random identifier generated in the browser; not recorded in any audit log.',generated_utc:nowZ,
   };
   const md=[
     '# PERCIVAL · PFAS Compliance Package','',
     '- **Generated (UTC):** '+nowZ,
-    '- **Audit ref:** `'+aref+'`',
+    '- **Reference:** `'+aref+'` (random identifier for this export; not an audit-log entry)',
     '- **Sample / site:** `'+(s.site_id||'site')+'`',
     '- **Threshold:** 30 ng/L (sum of 25 PFAS, Health Canada interim)','',
     '## Top line','',
@@ -519,7 +520,7 @@ function downloadPfasPack(s){
   const base='pfas-'+(s.site_id||'site')+'-'+aref;
   dl(base+'.md','text/markdown',md);
   dl(base+'.json','application/json',JSON.stringify(pkg,null,2));
-  addTL('ok','Evidence pack exported — <b>'+s.risk+'</b> · audit '+aref,'PERCIVAL/PFAS');
+  addTL('ok','Evidence pack exported — <b>'+s.risk+'</b> · ref '+aref,'PERCIVAL/PFAS');
   toast('⬇','Evidence pack','Markdown + JSON downloaded');
 }
 
@@ -634,7 +635,7 @@ const DENY=/\b(who is|who'?s|identif|recogni[sz]e|facial|face recognition|de-?an
 
 function handle(raw){const q=raw.trim();if(!q)return;userSay(q);const t=q.toLowerCase();
   if(DENY.test(t)){const r=aref();
-    say(`<div class="deny"><div class="h">⛔ DENIED · fail-closed</div>Request would identify, locate, track, or re-identify a private individual — prohibited by SENTINEL hard rules (no person identification, no biometric re-identification, no de-anonymization).<br><b>Redirect:</b> lawful asset protection only — live hazard feeds, perimeter/occupancy presence, or asset-scoped OSINT.<div class="aref" style="margin-top:7px">audit ref ${r} · logged · escalated to human review</div></div>`);
+    say(`<div class="deny"><div class="h">⛔ DENIED · fail-closed</div>Request would identify, locate, track, or re-identify a private individual — prohibited by SENTINEL hard rules (no person identification, no biometric re-identification, no de-anonymization).<br><b>Redirect:</b> lawful asset protection only — live hazard feeds, perimeter/occupancy presence, or asset-scoped OSINT.<div class="aref" style="margin-top:7px">ref ${r} · shown in this page's timeline only · not sent or stored anywhere</div></div>`);
     addTL('bad','Policy DENY — person-identification request blocked','policy-gate');toast('⛔','Denied','Person identification prohibited');return;}
 
   if(/locat|where am|my position|gps|jurisd/.test(t)){if(state.pos)say(`<b>Device location (live).</b> ${state.pos.lat.toFixed(4)}, ${state.pos.lon.toFixed(4)} ±${Math.round(state.pos.acc)}m. Jurisdiction: <b>${state.juris||'lat/lon only'}</b>. Source: device Geolocation API.`);else{say('Location not enabled. Requesting now (consent required)…');enableLocation();}return;}
@@ -662,12 +663,12 @@ function handle(raw){const q=raw.trim();if(!q)return;userSay(q);const t=q.toLowe
       <div class="ln"><span class="k">Feeds</span><span>USGS ${state.feeds.quakes.toUpperCase()} · NWS ${state.feeds.weather.toUpperCase()} · camera ${state.feeds.camera.toUpperCase()}</span></div>
       <div class="ln"><span class="k">Timeline</span><span>${q0?`nearest M${q0.mag.toFixed(1)} ${q0.place}`:'—'}${a0?`; alert: ${a0.event}`:''}</span></div>
       <div class="ln"><span class="k">Evidence</span><span>USGS GeoJSON + NWS alerts + device GPS · timestamps live.</span></div>
-      <div class="ln"><span class="k">Confidence</span><span>HIGH (authoritative public feeds).</span></div>
+      <div class="ln"><span class="k">Basis</span><span>Public USGS and NWS feeds as retrieved in this session. No confidence score is computed.</span></div>
       <div class="ln"><span class="k">Risk</span><span>${a0?(a0.sev||'weather')+' — '+a0.event:(q0&&q0.mag>=4?'significant seismic activity':'nominal')}</span></div>
       <div class="ln"><span class="k">Next step</span><span>${a0?'brief site teams on '+a0.event:'monitor; no action required'}.</span></div>
-      <div class="ln"><span class="k">Audit</span><span>${r}</span></div></div>`);toast('🧾','Live report','Real feeds, timestamped');return;}
+      <div class="ln"><span class="k">Ref</span><span>${r} (session reference; not stored in an audit log)</span></div></div>`);toast('🧾','Live report','Real feeds, timestamped');return;}
   if(/artemis|agent mesh|palantir|gotham|foundry|aip|apollo|self.?improv/.test(t)){openArtemisBlueprint();say('<b>ClearGlassInc Artemis blueprint opened.</b> The mesh separates operational intelligence, ontology, governed AI, and deployment control. Improvements remain proposals until evaluation and explicit human approval.');return;}
-  if(/status|health|online/.test(t)){say(`<b>Status: ARMED · fail-closed.</b> Location ${state.feeds.location.toUpperCase()}, USGS ${state.feeds.quakes.toUpperCase()}, NWS ${state.feeds.weather.toUpperCase()}, camera ${state.feeds.camera.toUpperCase()}. ${state.juris?('Jurisdiction '+state.juris+'.'):''} All sources live + public; no person identification active.`);return;}
+  if(/status|health|online/.test(t)){say(`<b>Status: policy gate on (fail-closed).</b> Location ${state.feeds.location.toUpperCase()}, USGS ${state.feeds.quakes.toUpperCase()}, NWS ${state.feeds.weather.toUpperCase()}, camera ${state.feeds.camera.toUpperCase()}. ${state.juris?('Jurisdiction '+state.juris+'.'):''} All sources live + public; no person identification active.`);return;}
   if(/help|what can|capab/.test(t)){say(`I run on <b>live public data</b>: device location, real map tiles, live <b>USGS</b> quakes + <b>NWS</b> alerts, and on-device <b>anonymous</b> camera presence. Try: <i>enable location</i> · <i>quakes near me</i> · <i>weather alerts</i> · <i>connect camera</i> · <i>report</i>. I never identify or track people.`);return;}
   say(`Acknowledged. I operate on <b>live, lawful, asset-focused sources</b> only. Try: <i>status</i> · <i>quakes</i> · <i>weather alerts</i> · <i>report</i>. Person identification is denied by design.`);
 }
