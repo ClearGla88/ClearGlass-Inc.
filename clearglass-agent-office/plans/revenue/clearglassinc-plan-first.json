@@ -1,0 +1,278 @@
+{
+  "meta": {
+    "company": "ClearGlassInc",
+    "product": "Commercial & Residential Smart-Glass Maintenance and Retrofit Packages",
+    "market": "Commercial real estate facilities management, commercial property operations, luxury residential development",
+    "geography": "United States and Canada",
+    "revenue_model": "B2B productized service with maintenance subscription",
+    "analysis_date": "2026-11-06",
+    "next_review_date": "2026-12-06",
+    "overall_confidence": "INSUFFICIENT",
+    "evidence_quality_score": 0
+  },
+  "decision_frame": {
+    "decision_statement": "Determine whether ClearGlassInc should prioritize facility managers and commercial-real-estate operators over luxury residential developers for the initial 90-day go-to-market cycle.",
+    "decision_owner": "SIR, Software Architect / COO / Technology Strategist, ClearGlassInc",
+    "decision_deadline": "2026-12-06",
+    "success_metric": "Qualified sales opportunities that meet the ideal-customer profile and progress to a discovery call",
+    "baseline": "UNKNOWN — ESTABLISH BASELINE",
+    "target_threshold": "To be defined after baseline establishment; do not assume a target",
+    "reversibility": "REVERSIBLE",
+    "risk_tolerance": "LOW",
+    "exclusions": [
+      "No outreach to consumers without an approved residential offer",
+      "No paid advertising until unit economics and compliance review pass",
+      "No CRM writes without human approval",
+      "No public pricing commitments without human approval",
+      "No claims of energy savings, ROI, or performance without substantiation"
+    ],
+    "kill_criteria": [
+      "CAC exceeds $1,200 without a credible path to improvement",
+      "Gross margin remains below 65% after fulfillment and acquisition costs",
+      "Payback period exceeds 3 months after a valid cohort measurement",
+      "No repeatable qualified-opportunity source emerges after the test period",
+      "Compliance, consent, or platform-policy blocker cannot be resolved"
+    ]
+  },
+  "executive_brief": {
+    "bottom_line": "INSUFFICIENT EVIDENCE: ClearGlassInc should not yet commit to a primary segment, channel mix, or scaling decision.",
+    "recommended_decision": "Run a 90-day, budget-capped validation program across facility managers, commercial-real-estate operators, and luxury residential developers; establish baselines before prioritization.",
+    "why_now": "The supplied parameters define the commercial thesis, but do not yet establish demand evidence, competitor positioning, channel economics, fulfillment capacity, or baseline conversion performance.",
+    "confidence": "INSUFFICIENT",
+    "expected_impact": "UNKNOWN — requires baseline demand, conversion, fulfillment-cost, and channel-cost data",
+    "downside_if_wrong": "Misallocating the $3,000 monthly budget, damaging sender reputation through premature outreach, or committing to a price that cannot sustain the 65% gross-margin target.",
+    "what_would_change_this_recommendation": "Verified demand signals, at least two credible sources for segment prioritization, validated unit economics, and a successful pilot meeting its predefined conversion and CAC thresholds.",
+    "next_checkpoint": "Weekly review; formal decision review on 2026-12-06"
+  },
+  "market_state": {
+    "market_definition": "Commercial and residential building owners, operators, facility managers, and developers seeking smart-glass maintenance, seal remediation, retrofit, or performance-improvement services.",
+    "demand_direction": "UNKNOWN",
+    "growth_drivers": [],
+    "constraints": [],
+    "regulatory_risks": [],
+    "market_sizing": {
+      "estimate": "NOT ESTABLISHED",
+      "method": "NOT ESTABLISHED",
+      "range": "NOT ESTABLISHED",
+      "confidence": "INSUFFICIENT",
+      "limitations": [
+        "No verified market definition",
+        "No verified serviceable-addressable-market method",
+        "No verified pricing, conversion, retention, or fulfillment-cost baseline"
+      ]
+    }
+  },
+  "competitive_landscape": [],
+  "buyer_intelligence": {
+    "segments": [
+      {
+        "segment": "Commercial facility managers and real-estate operations leaders",
+        "hypothesis": "High HVAC load, tenant comfort complaints, energy-cost pressure, and glass seal degradation create recurring maintenance and retrofit demand.",
+        "evidence_quality": "INSUFFICIENT"
+      },
+      {
+        "segment": "Commercial property owners and asset managers",
+        "hypothesis": "Asset-preservation, tenant experience, operating-cost reduction, and capital-planning needs create retrofit demand.",
+        "evidence_quality": "INSUFFICIENT"
+      },
+      {
+        "segment": "Luxury residential developers and high-end property managers",
+        "hypothesis": "Premium glazing performance, aesthetics, privacy, and maintenance expectations create a differentiated service opportunity.",
+        "evidence_quality": "INSUFFICIENT"
+      }
+    ],
+    "jobs_to_be_done": [],
+    "triggers": [],
+    "decision_criteria": [],
+    "objections": [],
+    "alternatives": [],
+    "buying_committee": []
+  },
+  "strategic_options": [
+    {
+      "option": "Facilities-led pilot",
+      "thesis": "Prioritize VP Facilities and Director of Real Estate Operations contacts at mid-to-large commercial properties, using an operations-and-cost diagnostic as the initial offer.",
+      "evidence": [],
+      "expected_impact": "UNKNOWN",
+      "confidence": "LOW",
+      "effort": "MEDIUM",
+      "time_to_value": "UNKNOWN",
+      "downside_if_wrong": "Facilities contacts may lack budget authority or may require an asset-management sponsor before purchase.",
+      "kill_criteria": [
+        "No qualified opportunities after the predefined test volume",
+        "CAC exceeds $1,200",
+        "Gross margin remains below 65%"
+      ],
+      "owner": "SIR",
+      "next_action": "Approve research plan and define qualified-opportunity criteria",
+      "deadline": "2026-11-13"
+    },
+    {
+      "option": "Asset-owner-led pilot",
+      "thesis": "Prioritize commercial property owners and asset managers through capital-planning and asset-preservation messaging.",
+      "evidence": [],
+      "expected_impact": "UNKNOWN",
+      "confidence": "LOW",
+      "effort": "MEDIUM",
+      "time_to_value": "UNKNOWN",
+      "downside_if_wrong": "Longer sales cycles and higher requirement for proof, references, and financial modeling.",
+      "kill_criteria": [
+        "No qualified opportunities after the predefined test volume",
+        "Sales cycle exceeds the 90-day decision horizon without a credible path"
+      ],
+      "owner": "SIR",
+      "next_action": "Approve research plan and define qualified-opportunity criteria",
+      "deadline": "2026-11-13"
+    },
+    {
+      "option": "Luxury-residential pilot",
+      "thesis": "Prioritize luxury residential developers and premium property managers with a maintenance-and-retrofit package.",
+      "evidence": [],
+      "expected_impact": "UNKNOWN",
+      "confidence": "LOW",
+      "effort": "MEDIUM",
+      "time_to_value": "UNKNOWN",
+      "downside_if_wrong": "Project-based demand may be episodic and less compatible with a recurring $450-per-month maintenance model.",
+      "kill_criteria": [
+        "No repeatable recurring-revenue conversion after the predefined test volume",
+        "CAC exceeds $1,200"
+      ],
+      "owner": "SIR",
+      "next_action": "Approve research plan and define qualified-opportunity criteria",
+      "deadline": "2026-11-13"
+    }
+  ],
+  "red_team": {
+    "strongest_counterargument": "The proposed buyer may not be the economic buyer; facility managers may identify the problem, while ownership, asset management, or development leadership controls capital approval.",
+    "weak_evidence": [
+      "No verified demand evidence",
+      "No verified competitor landscape",
+      "No verified pricing benchmark",
+      "No verified fulfillment-cost model",
+      "No verified channel-cost model"
+    ],
+    "alternative_explanations": [
+      "Demand may be project-based rather than subscription-based",
+      "The $450 monthly maintenance price may not match buyer willingness to pay",
+      "The $2,500 setup price may be too low or too high depending on scope and geography",
+      "HVAC-load reduction may not be a credible or measurable outcome without an engineering methodology"
+    ],
+    "bias_risks": [
+      "Confirmation bias toward the existing offer",
+      "Survivorship bias from selecting only visible competitors",
+      "Recency bias from over-weighting recent online signals",
+      "Selection bias from relying on outbound-response data alone"
+    ],
+    "falsification_tests": [
+      "Test whether target buyers recognize the problem and express willingness to evaluate a paid diagnostic or assessment",
+      "Test whether the proposed recurring price survives a structured pricing conversation",
+      "Test whether fulfillment cost supports a 65% gross margin",
+      "Test whether a low-cost channel produces qualified opportunities below the $1,200 CAC ceiling"
+    ],
+    "minimum_evidence_needed": [
+      "At least two independent sources per high-impact market claim",
+      "A defined ideal-customer profile and disqualification criteria",
+      "A baseline conversion rate and CAC by channel",
+      "A fulfillment-cost model including labor, travel, materials, subcontractors, warranty reserve, and overhead allocation",
+      "A compliance review of outreach, privacy, claims, and platform policies"
+    ],
+    "decision_risk_if_wrong": "Wasted budget, damaged domain reputation, non-compliant outreach, unprofitable pricing, and inability to fulfill demand at the promised standard."
+  },
+  "evidence_ledger": [
+    {
+      "claim": "Facility managers and commercial-real-estate operators experience high HVAC load or glass seal degradation that creates demand for smart-glass maintenance and retrofit services.",
+      "classification": "ASSUMPTION",
+      "source_ids": [],
+      "supporting_excerpt": "",
+      "conflict_resolution": "",
+      "confidence": "INSUFFICIENT"
+    },
+    {
+      "claim": "The $2,500 setup plus $450 monthly per-property price can achieve a 65% gross margin.",
+      "classification": "ASSUMPTION",
+      "source_ids": [],
+      "supporting_excerpt": "",
+      "conflict_resolution": "",
+      "confidence": "INSUFFICIENT"
+    },
+    {
+      "claim": "LinkedIn outbound, B2B email, SEO, and commercial-real-estate communities can acquire customers at or below a $1,200 CAC.",
+      "classification": "ASSUMPTION",
+      "source_ids": [],
+      "supporting_excerpt": "",
+      "conflict_resolution": "",
+      "confidence": "INSUFFICIENT"
+    }
+  ],
+  "source_register": [],
+  "market_state_updates": [
+    {
+      "entity": "ClearGlassInc revenue engine",
+      "field": "baseline",
+      "prior_value": "",
+      "new_value": "BASELINE ESTABLISHMENT REQUIRED",
+      "change_type": "NEW",
+      "materiality": "HIGH",
+      "evidence": []
+    }
+  ],
+  "proposed_actions": [
+    {
+      "action": "Create a research and validation plan",
+      "channel": "Internal",
+      "recipient_or_platform": "ClearGlassInc decision owner",
+      "draft_content": "Approve a 90-day, budget-capped validation program across facilities, asset-owner, and luxury-residential segments before committing to a primary segment or channel.",
+      "estimated_cost": "$0",
+      "approval_required": true,
+      "approver": "SIR",
+      "rollback_plan": "No external effect; discard research plan if rejected."
+    },
+    {
+      "action": "Draft a compliant discovery sequence",
+      "channel": "Email drafting environment",
+      "recipient_or_platform": "Not sent",
+      "draft_content": "PENDING — create only after ideal-customer profile, value hypothesis, and claims-substantiation review are approved.",
+      "estimated_cost": "$0",
+      "approval_required": true,
+      "approver": "SIR",
+      "rollback_plan": "Do not send; retain draft in internal review queue."
+    },
+    {
+      "action": "Establish KPI and unit-economics baseline",
+      "channel": "Internal analytics and finance model",
+      "recipient_or_platform": "GA4, CRM, finance model",
+      "draft_content": "Define qualified opportunity, SQL, win rate, CAC, contribution margin, payback period, and fulfillment-cost allocation before any campaign launch.",
+      "estimated_cost": "$0",
+      "approval_required": true,
+      "approver": "SIR",
+      "rollback_plan": "No external effect; retain definitions and calculation workbook internally."
+    }
+  ],
+  "data_gaps": [
+    "Verified buyer demand and willingness to pay",
+    "Verified competitor pricing, positioning, and service scope",
+    "Verified fulfillment cost per property and per service visit",
+    "Verified channel acquisition cost and conversion rate",
+    "Verified legal basis and consent process for B2B email outreach in the U.S. and Canada",
+    "Verified claims substantiation for any energy, HVAC, comfort, or cost-savings benefit",
+    "Verified service capacity, geographic coverage, warranty exposure, and subcontractor availability"
+  ],
+  "open_questions": [
+    "Which segment has the clearest budget authority and shortest path to a paid pilot?",
+    "What measurable outcome can ClearGlass substantiate without overclaiming performance?",
+    "What is the actual fully loaded fulfillment cost per property and per maintenance visit?",
+    "Which channel can generate qualified opportunities below the $1,200 CAC ceiling?",
+    "What proof, case study, or diagnostic offer is needed before a prospect will engage?"
+  ],
+  "audit": {
+    "agents_executed": [
+      "DECISION_ARCHITECT",
+      "RISK_AND_COMPLIANCE_GUARDIAN"
+    ],
+    "tools_used": [],
+    "spend_to_date": "$0",
+    "human_review_required": true,
+    "reviewer": "SIR",
+    "approval_status": "PENDING"
+  }
+}

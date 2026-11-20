@@ -1,0 +1,23 @@
+# cargo-audit policy for clearglass-agent-crypto. Every exception needs a reason,
+# the evidence that supports it, and a review trigger.
+
+[advisories]
+ignore = [
+    # RUSTSEC-2026-0387 (crypto-bigint 0.5.5: timing variability in operations
+    # meant to be constant-time). Path: age 0.12.1 -> hpke / p256 0.13 ->
+    # elliptic-curve 0.13 -> crypto-bigint 0.5. Recorded 2026-11-14.
+    #
+    # Why it is not reachable here: the affected arithmetic runs only for P-256
+    # "tag" recipients. This crate parses every recipient into
+    # age::x25519::Recipient and every identity into age::x25519::Identity
+    # (src/lib.rs), so P-256 recipients are refused before any curve operation.
+    # The test `p256_tag_recipients_are_refused` pins that premise.
+    #
+    # Why it is not fixed: age 0.12.1 is the newest release on crates.io, and
+    # elliptic-curve 0.13 requires crypto-bigint 0.5, so no lockfile update can
+    # pull the patched >=0.7.6.
+    #
+    # Remove this entry when an age release drops elliptic-curve 0.13, or at
+    # once if the crate ever accepts a non-X25519 recipient or identity.
+    "RUSTSEC-2026-0387",
+]

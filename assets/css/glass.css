@@ -1,0 +1,133 @@
+/* ClearGlass · Glass surfaces (v1.0)
+   ───────────────────────────────────────────────────────────────────────────
+   Opt-in glass panels for the Neon Glass System. Every token is read with a
+   fallback, so this file also works on a page that loads it without
+   cg-design-system.css.
+
+   Hierarchy, from quietest to loudest:
+     .cg-glass              resting card or panel
+     .cg-glass-elevated     nav, modal, raised module
+     .is-active / [aria-current] / [aria-selected="true"]   selected
+     .is-disabled / [aria-disabled="true"]                   unavailable
+
+   The surface gets a thin top-light edge, not a full-card glow. Interactive
+   glass (links, buttons, [tabindex], .is-interactive) brightens its border
+   and lifts 2px on hover. Blur stays at 18px or less, and the solid
+   fallback below is what engines without backdrop-filter draw. Nothing here
+   sets overflow, so dropdowns and tooltips inside a panel are never clipped. */
+
+.cg-glass,
+.cg-glass-elevated {
+  position: relative;
+  isolation: isolate;
+  color: var(--cg-text, #e9eeff);
+  background: var(--cg-glass-bg-solid, rgba(11, 15, 32, .95));
+  border: 1px solid var(--cg-glass-border, rgba(150, 175, 255, .16));
+  border-radius: var(--cg-r-md, 18px);
+  box-shadow: var(--cg-glass-highlight, inset 0 1px 0 rgba(255, 255, 255, .07)), var(--cg-shadow-md, 0 14px 36px -12px rgba(0, 0, 0, .55));
+  transition:
+    border-color var(--cg-dur-1, .2s) var(--cg-ease, ease),
+    transform var(--cg-dur-2, .35s) var(--cg-spring, ease),
+    box-shadow var(--cg-dur-2, .35s) var(--cg-ease, ease);
+}
+.cg-glass-elevated {
+  border-color: var(--cg-glass-border-strong, rgba(150, 175, 255, .32));
+  border-radius: var(--cg-r-lg, 24px);
+  box-shadow: var(--cg-glass-highlight, inset 0 1px 0 rgba(255, 255, 255, .07)), var(--cg-shadow-lg, 0 28px 70px -22px rgba(2, 4, 12, .85));
+}
+
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .cg-glass {
+    background: var(--cg-glass-bg, rgba(14, 19, 40, .58));
+    -webkit-backdrop-filter: blur(var(--cg-blur-md, 12px)) saturate(140%);
+    backdrop-filter: blur(var(--cg-blur-md, 12px)) saturate(140%);
+  }
+  .cg-glass-elevated {
+    background: var(--cg-glass-bg-elevated, rgba(20, 26, 54, .74));
+    -webkit-backdrop-filter: blur(var(--cg-blur-lg, 18px)) saturate(150%);
+    backdrop-filter: blur(var(--cg-blur-lg, 18px)) saturate(150%);
+  }
+}
+
+/* Top-light edge. Uses ::before so it can stack with .cg-neon-border (::after). */
+.cg-glass::before,
+.cg-glass-elevated::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 14%;
+  right: 14%;
+  height: 1px;
+  background: var(--cg-glass-edge, linear-gradient(90deg, transparent, rgba(34, 211, 238, .7), rgba(167, 139, 250, .6), transparent));
+  opacity: .5;
+  pointer-events: none;
+  transition: opacity var(--cg-dur-2, .35s) var(--cg-ease, ease), left var(--cg-dur-3, .5s) var(--cg-spring, ease), right var(--cg-dur-3, .5s) var(--cg-spring, ease);
+}
+.cg-glass-elevated::before { opacity: .75; }
+
+/* Interactive glass. */
+:is(.cg-glass, .cg-glass-elevated):is(a, button, [tabindex], .is-interactive) {
+  cursor: pointer;
+  text-decoration: none;
+}
+:is(.cg-glass, .cg-glass-elevated):is(a, button, [tabindex], .is-interactive):hover {
+  transform: translateY(-2px);
+  border-color: var(--cg-glass-border-strong, rgba(150, 175, 255, .32));
+  box-shadow:
+    var(--cg-glass-highlight, inset 0 1px 0 rgba(255, 255, 255, .07)),
+    var(--cg-shadow-lg, 0 28px 70px -22px rgba(2, 4, 12, .85)),
+    0 0 24px -6px rgba(var(--cg-neon-primary, 34, 211, 238), .35);
+}
+:is(.cg-glass, .cg-glass-elevated):is(a, button, [tabindex], .is-interactive):hover::before {
+  opacity: 1;
+  left: 6%;
+  right: 6%;
+}
+:is(.cg-glass, .cg-glass-elevated):focus-visible {
+  outline: var(--cg-focus-width, 2px) solid var(--cg-focus-color, #22d3ee);
+  outline-offset: var(--cg-focus-offset, 3px);
+}
+
+/* Selected. */
+:is(.cg-glass, .cg-glass-elevated):is(.is-active, [aria-current]:not([aria-current="false"]), [aria-selected="true"]) {
+  border-color: rgba(var(--cg-neon-primary, 34, 211, 238), .55);
+  box-shadow:
+    var(--cg-glass-highlight, inset 0 1px 0 rgba(255, 255, 255, .07)),
+    inset 0 0 0 1px rgba(var(--cg-neon-primary, 34, 211, 238), .18),
+    0 0 22px -8px rgba(var(--cg-neon-primary, 34, 211, 238), .5);
+}
+:is(.cg-glass, .cg-glass-elevated):is(.is-active, [aria-current]:not([aria-current="false"]), [aria-selected="true"])::before { opacity: 1; }
+
+/* Unavailable. */
+:is(.cg-glass, .cg-glass-elevated):is(.is-disabled, [aria-disabled="true"]) {
+  opacity: .55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: var(--cg-glass-highlight, inset 0 1px 0 rgba(255, 255, 255, .07));
+}
+:is(.cg-glass, .cg-glass-elevated):is(.is-disabled, [aria-disabled="true"])::before { opacity: 0; }
+
+/* Optional padding helper so adopters don't hand-roll it. */
+.cg-glass--pad { padding: clamp(16px, 2.4vw, 28px); }
+
+/* Preferences. */
+@media (prefers-reduced-transparency: reduce) {
+  .cg-glass, .cg-glass-elevated {
+    background: var(--cg-glass-bg-solid, rgba(11, 15, 32, .95));
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+@media (prefers-contrast: more) {
+  .cg-glass, .cg-glass-elevated {
+    background: var(--cg-glass-bg-solid, rgba(11, 15, 32, .95));
+    border-color: rgba(233, 238, 255, .7);
+  }
+}
+@media (forced-colors: active) {
+  .cg-glass, .cg-glass-elevated { border: 1px solid CanvasText; box-shadow: none; }
+  .cg-glass::before, .cg-glass-elevated::before { display: none; }
+}
+@media (hover: none) {
+  :is(.cg-glass, .cg-glass-elevated):is(a, button, [tabindex], .is-interactive):hover { transform: none; }
+}

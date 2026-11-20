@@ -1,0 +1,9 @@
+# A real configuration names real contacts; a key file authenticates it.
+# Neither belongs in this public repository.
+*.key
+*.key.hex
+guardian.json
+guardian.signed.json
+*.local.json
+build/
+*.egg-info/

@@ -185,7 +185,7 @@
   ".cgcs-dr a:hover{background:rgba(124,150,255,.12);border-color:rgba(124,150,255,.26);color:#fff}" +
   ".cgcs-dr a.cur{background:linear-gradient(100deg,rgba(96,165,250,.18),rgba(167,139,250,.05));border-color:rgba(124,150,255,.45);color:#fff}" +
   ".cgcs-dr a .ic{width:24px;height:24px;border-radius:6px;display:grid;place-items:center;font-size:13px;background:rgba(124,150,255,.1);border:1px solid rgba(124,150,255,.2)}" +
-  "@media(max-width:720px){.cgcs-bar .cgcs-chip .cgcs-st{display:none}.cgcs-bar{top:8px;right:max(8px,env(safe-area-inset-right))}}" +
+  "@media(max-width:720px){.cgcs-bar .cgcs-chip .cgcs-st{display:none}.cgcs-bar{top:8px;right:max(8px,env(safe-area-inset-right));gap:6px}.cgcs-bar .cgcs-cmd .cgcs-cmdlbl,.cgcs-bar .cgcs-cmd kbd{display:none}}@media(hover:none){.cgcs-bar .cgcs-cmd kbd{display:none}}" +
   "@media(prefers-reduced-motion:reduce){#cgcs *{transition:none!important;animation:none!important}}";
 
   // ── helpers ───────────────────────────────────────────────────────────────

@@ -1,0 +1,68 @@
+# ClearGuard CI: lint, the unit and integration suite on every supported Python
+# (3.10 is the declared minimum and is not available in the authoring
+# environment, so this job is its only test), the alert-template lint, and the
+# design-mode simulation, whose audit chain must verify.
+#
+# Security posture: read-only token, no secrets, no deploy, no writes,
+# credentials not persisted. Action SHAs are the pins already used in this
+# repository (checkout v6.0.3, setup-python v6.2.0).
+name: ClearGuard CI
+
+on:
+  pull_request:
+    paths:
+      - "clearguard/**"
+      - ".github/workflows/clearguard-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "clearguard/**"
+      - ".github/workflows/clearguard-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: clearguard-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    defaults:
+      run:
+        working-directory: clearguard
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install test tools (the package itself has no dependencies)
+        run: python -m pip install pytest==9.1.1 ruff==0.16.9
+      - name: Lint (syntax errors and pyflakes)
+        run: ruff check --select E9,F .
+      - name: Unit and integration tests
+        run: python -m pytest -q -p no:cacheprovider
+      - name: Alert templates pass the lint
+        run: python clearguard.py lint-templates
+      - name: Capability registry is consistent with its evidence
+        run: python clearguard.py capabilities
+      - name: Design-mode simulation runs and its audit chain verifies
+        run: |
+          python clearguard.py simulate examples/scenario_design_walkthrough.json --audit-out "$RUNNER_TEMP/clearguard-audit.jsonl"
+          python clearguard.py verify-audit "$RUNNER_TEMP/clearguard-audit.jsonl"
+      - name: Package builds and installs with no dependencies
+        run: |
+          python -m pip install .
+          clearguard --version

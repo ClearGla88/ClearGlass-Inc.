@@ -1,0 +1,337 @@
+{
+  "description": "Template for the first cycle of the ClearGlassInc revenue validation plan. Not loaded or run automatically. The operator creates it through the authenticated API or CLI after approving the plan and deciding the four items in clearglassinc-plan-first.approvals.json.",
+  "plan": "clearglassinc-plan-first.json",
+  "mission": {
+    "key": "revenue-market-validation-brief",
+    "title": "Market Validation Brief for the smart-glass maintenance and retrofit offer",
+    "department": "revenue",
+    "owner": "revenue.sales-strategist",
+    "mode": "plan_first",
+    "priority": 2,
+    "deadline_days": 14,
+    "objective": "Produce the Market Validation Brief the plan names as its first deliverable, so the decision owner can choose a primary segment on evidence.",
+    "deliverables": [
+      "Segment ranking with evidence quality",
+      "Competitor map with pricing and positioning evidence",
+      "Buyer-trigger and objection map",
+      "Channel-level CAC hypothesis",
+      "Fulfillment-cost model",
+      "Compliance and claims-substantiation checklist",
+      "One 14-day, low-cost validation experiment",
+      "Kill criteria and human approval requirements",
+      "Assemble the Market Validation Brief"
+    ],
+    "constraints": [
+      "Plan-first mode: research, analysis and drafts only",
+      "No email, no publishing, no CRM writes, no spending",
+      "No claims of energy savings, ROI or performance without substantiation"
+    ],
+    "approval_rules": [
+      "Any outreach, publication, CRM write or spend needs a separate production mission and operator approval of the exact payload"
+    ],
+    "tasks": [
+      {
+        "key": "segments",
+        "title": "Segment ranking with evidence quality",
+        "assignee": "exec.strategy",
+        "action": {
+          "type": "docs.draft",
+          "params": {
+            "title": "Segment ranking with evidence quality",
+            "purpose": "Rank the three candidate segments by the evidence available for each, not by preference.",
+            "required_content": [
+              "Facilities managers and real-estate operations leaders",
+              "Commercial property owners and asset managers",
+              "Luxury residential developers and premium property managers",
+              "For each: budget authority, problem recognition, path to a paid pilot, evidence quality",
+              "Ranking method and what would change the ranking"
+            ],
+            "evidence_rules": [
+              "Every market claim is tagged VERIFIED, INFERENCE or ASSUMPTION",
+              "A VERIFIED claim cites at least two independent sources from the source register",
+              "No figure is stated without its source, date and the population it describes",
+              "Unknowns are written as UNKNOWN or NOT ESTABLISHED, never estimated"
+            ],
+            "not_permitted_in_this_cycle": [
+              "Contacting any prospect, customer or third party",
+              "Writing to the CRM",
+              "Publishing anything",
+              "Spending any budget",
+              "Claiming energy savings, ROI or performance"
+            ],
+            "status_note": "Outline only. Findings are added after the operator approves the research sources."
+          }
+        }
+      },
+      {
+        "key": "competitors",
+        "title": "Competitor map with pricing and positioning evidence",
+        "assignee": "revenue.sales-strategist",
+        "action": {
+          "type": "docs.draft",
+          "params": {
+            "title": "Competitor map with pricing and positioning evidence",
+            "purpose": "Record who else serves these buyers and what they charge, from sources only.",
+            "required_content": [
+              "Named competitors, each with at least one source",
+              "Service scope, pricing and positioning as published",
+              "Gaps in the map, stated as gaps"
+            ],
+            "evidence_rules": [
+              "Every market claim is tagged VERIFIED, INFERENCE or ASSUMPTION",
+              "A VERIFIED claim cites at least two independent sources from the source register",
+              "No figure is stated without its source, date and the population it describes",
+              "Unknowns are written as UNKNOWN or NOT ESTABLISHED, never estimated"
+            ],
+            "not_permitted_in_this_cycle": [
+              "Contacting any prospect, customer or third party",
+              "Writing to the CRM",
+              "Publishing anything",
+              "Spending any budget",
+              "Claiming energy savings, ROI or performance"
+            ],
+            "status_note": "Outline only. Findings are added after the operator approves the research sources."
+          }
+        }
+      },
+      {
+        "key": "buyers",
+        "title": "Buyer-trigger and objection map",
+        "assignee": "revenue.proposal-writer",
+        "action": {
+          "type": "docs.draft",
+          "params": {
+            "title": "Buyer-trigger and objection map",
+            "purpose": "Set out what makes each buyer look for this service and what stops them buying.",
+            "required_content": [
+              "Triggers by segment",
+              "Objections by segment",
+              "Economic buyer versus problem owner",
+              "Each entry marked as observed or assumed"
+            ],
+            "evidence_rules": [
+              "Every market claim is tagged VERIFIED, INFERENCE or ASSUMPTION",
+              "A VERIFIED claim cites at least two independent sources from the source register",
+              "No figure is stated without its source, date and the population it describes",
+              "Unknowns are written as UNKNOWN or NOT ESTABLISHED, never estimated"
+            ],
+            "not_permitted_in_this_cycle": [
+              "Contacting any prospect, customer or third party",
+              "Writing to the CRM",
+              "Publishing anything",
+              "Spending any budget",
+              "Claiming energy savings, ROI or performance"
+            ],
+            "status_note": "Outline only. Findings are added after the operator approves the research sources."
+          }
+        }
+      },
+      {
+        "key": "channels",
+        "title": "Channel-level CAC hypothesis",
+        "assignee": "revenue.sales-strategist",
+        "action": {
+          "type": "docs.draft",
+          "params": {
+            "title": "Channel-level CAC hypothesis",
+            "purpose": "State a testable cost hypothesis for each channel against the $1,200 ceiling.",
+            "required_content": [
+              "LinkedIn outbound, B2B email, SEO, commercial-real-estate communities",
+              "For each: assumed cost per qualified opportunity, the assumption behind it, how it would be measured",
+              "No channel is launched by this document"
+            ],
+            "evidence_rules": [
+              "Every market claim is tagged VERIFIED, INFERENCE or ASSUMPTION",
+              "A VERIFIED claim cites at least two independent sources from the source register",
+              "No figure is stated without its source, date and the population it describes",
+              "Unknowns are written as UNKNOWN or NOT ESTABLISHED, never estimated"
+            ],
+            "not_permitted_in_this_cycle": [
+              "Contacting any prospect, customer or third party",
+              "Writing to the CRM",
+              "Publishing anything",
+              "Spending any budget",
+              "Claiming energy savings, ROI or performance"
+            ],
+            "status_note": "Outline only. Findings are added after the operator approves the research sources."
+          }
+        }
+      },
+      {
+        "key": "fulfilment",
+        "title": "Fulfillment-cost model",
+        "assignee": "exec.operations",
+        "action": {
+          "type": "docs.draft",
+          "params": {
+            "title": "Fulfillment-cost model",
+            "purpose": "Define the cost model that decides whether the 65% gross-margin target is reachable.",
+            "required_content": [
+              "Labor, travel, materials, subcontractors, warranty reserve, overhead allocation",
+              "Cost per property and per maintenance visit, each marked as measured or assumed",
+              "Inputs still missing"
+            ],
+            "evidence_rules": [
+              "Every market claim is tagged VERIFIED, INFERENCE or ASSUMPTION",
+              "A VERIFIED claim cites at least two independent sources from the source register",
+              "No figure is stated without its source, date and the population it describes",
+              "Unknowns are written as UNKNOWN or NOT ESTABLISHED, never estimated"
+            ],
+            "not_permitted_in_this_cycle": [
+              "Contacting any prospect, customer or third party",
+              "Writing to the CRM",
+              "Publishing anything",
+              "Spending any budget",
+              "Claiming energy savings, ROI or performance"
+            ],
+            "status_note": "Outline only. Findings are added after the operator approves the research sources."
+          }
+        }
+      },
+      {
+        "key": "compliance",
+        "title": "Compliance and claims-substantiation checklist",
+        "assignee": "exec.risk-compliance",
+        "action": {
+          "type": "docs.draft",
+          "params": {
+            "title": "Compliance and claims-substantiation checklist",
+            "purpose": "List what must be true before any outreach or public claim.",
+            "required_content": [
+              "Legal basis and consent process for B2B email in the United States and Canada, for counsel to confirm",
+              "Suppression and opt-out handling",
+              "Platform policies for each channel",
+              "Each claim ClearGlass wants to make, with the evidence that would substantiate it",
+              "Items that need a lawyer"
+            ],
+            "evidence_rules": [
+              "Every market claim is tagged VERIFIED, INFERENCE or ASSUMPTION",
+              "A VERIFIED claim cites at least two independent sources from the source register",
+              "No figure is stated without its source, date and the population it describes",
+              "Unknowns are written as UNKNOWN or NOT ESTABLISHED, never estimated"
+            ],
+            "not_permitted_in_this_cycle": [
+              "Contacting any prospect, customer or third party",
+              "Writing to the CRM",
+              "Publishing anything",
+              "Spending any budget",
+              "Claiming energy savings, ROI or performance"
+            ],
+            "status_note": "Outline only. Findings are added after the operator approves the research sources."
+          }
+        }
+      },
+      {
+        "key": "experiment",
+        "title": "One 14-day, low-cost validation experiment",
+        "assignee": "exec.strategy",
+        "action": {
+          "type": "docs.draft",
+          "params": {
+            "title": "One 14-day, low-cost validation experiment",
+            "purpose": "Design a single experiment that could falsify the leading option at low cost.",
+            "required_content": [
+              "Hypothesis",
+              "Method",
+              "Sample and volume",
+              "Budget cap",
+              "Success and failure thresholds set in advance",
+              "Approvals needed before it starts"
+            ],
+            "evidence_rules": [
+              "Every market claim is tagged VERIFIED, INFERENCE or ASSUMPTION",
+              "A VERIFIED claim cites at least two independent sources from the source register",
+              "No figure is stated without its source, date and the population it describes",
+              "Unknowns are written as UNKNOWN or NOT ESTABLISHED, never estimated"
+            ],
+            "not_permitted_in_this_cycle": [
+              "Contacting any prospect, customer or third party",
+              "Writing to the CRM",
+              "Publishing anything",
+              "Spending any budget",
+              "Claiming energy savings, ROI or performance"
+            ],
+            "status_note": "Outline only. Findings are added after the operator approves the research sources."
+          }
+        }
+      },
+      {
+        "key": "controls",
+        "title": "Kill criteria and human approval requirements",
+        "assignee": "exec.risk-compliance",
+        "action": {
+          "type": "docs.draft",
+          "params": {
+            "title": "Kill criteria and human approval requirements",
+            "purpose": "Restate when to stop and what a person must approve.",
+            "required_content": [
+              "Kill criteria from the plan",
+              "Every action that needs operator approval",
+              "What this mission cannot do, and which mission mode would be needed for it"
+            ],
+            "evidence_rules": [
+              "Every market claim is tagged VERIFIED, INFERENCE or ASSUMPTION",
+              "A VERIFIED claim cites at least two independent sources from the source register",
+              "No figure is stated without its source, date and the population it describes",
+              "Unknowns are written as UNKNOWN or NOT ESTABLISHED, never estimated"
+            ],
+            "not_permitted_in_this_cycle": [
+              "Contacting any prospect, customer or third party",
+              "Writing to the CRM",
+              "Publishing anything",
+              "Spending any budget",
+              "Claiming energy savings, ROI or performance"
+            ],
+            "status_note": "Outline only. Findings are added after the operator approves the research sources."
+          }
+        }
+      },
+      {
+        "key": "brief",
+        "title": "Assemble the Market Validation Brief",
+        "assignee": "revenue.proposal-writer",
+        "depends_on": [
+          "segments",
+          "competitors",
+          "buyers",
+          "channels",
+          "fulfilment",
+          "compliance",
+          "experiment",
+          "controls"
+        ],
+        "action": {
+          "type": "docs.draft",
+          "params": {
+            "title": "Market Validation Brief",
+            "purpose": "Bring the eight sections together for the decision owner's review.",
+            "sections": [
+              "Segment ranking with evidence quality",
+              "Competitor map with pricing and positioning evidence",
+              "Buyer-trigger and objection map",
+              "Channel-level CAC hypothesis",
+              "Fulfillment-cost model",
+              "Compliance and claims-substantiation checklist",
+              "One 14-day, low-cost validation experiment",
+              "Kill criteria and human approval requirements"
+            ],
+            "evidence_rules": [
+              "Every market claim is tagged VERIFIED, INFERENCE or ASSUMPTION",
+              "A VERIFIED claim cites at least two independent sources from the source register",
+              "No figure is stated without its source, date and the population it describes",
+              "Unknowns are written as UNKNOWN or NOT ESTABLISHED, never estimated"
+            ],
+            "not_permitted_in_this_cycle": [
+              "Contacting any prospect, customer or third party",
+              "Writing to the CRM",
+              "Publishing anything",
+              "Spending any budget",
+              "Claiming energy savings, ROI or performance"
+            ],
+            "status_note": "Draft for operator review. Nothing in it is approved, sent or published."
+          }
+        }
+      }
+    ]
+  }
+}

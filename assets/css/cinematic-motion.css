@@ -1,0 +1,47 @@
+/* ClearGlass · Cinematic motion (v1.0)
+   ───────────────────────────────────────────────────────────────────────────
+   Loaded by platform.js on every page it runs on. Two jobs:
+
+   1. Entrance motion for opt-in elements: add .cg-reveal (or
+      data-cg-reveal) to a card, panel or dashboard module. Nothing is hidden
+      until cinematic-motion.js sets html.cg-reveal-ready, so without the
+      script, or before it runs, content stays visible. Only opacity and
+      transform animate.
+   2. The low-power contract platform.js relies on: when it marks the page
+      cg-low-power / cg-motion-reduced, decorative CSS motion stops and
+      reveals render in place. */
+
+html.cg-reveal-ready :is(.cg-reveal, [data-cg-reveal]):not(.is-revealed) {
+  opacity: 0;
+  transform: translate3d(0, 14px, 0);
+}
+html.cg-reveal-ready :is(.cg-reveal, [data-cg-reveal]) {
+  transition:
+    opacity .6s var(--cg-ease, ease) var(--cg-reveal-delay, 0ms),
+    transform .7s var(--cg-spring, ease) var(--cg-reveal-delay, 0ms);
+}
+html.cg-reveal-ready [data-cg-reveal="fade"]:not(.is-revealed) { transform: none; }
+html.cg-reveal-ready [data-cg-reveal="scale"]:not(.is-revealed) { transform: scale(.97); }
+
+/* Low-power and reduced motion: show everything, animate nothing. */
+html:is(.cg-low-power, .cg-motion-reduced) :is(.cg-reveal, [data-cg-reveal]) {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+html:is(.cg-low-power, .cg-motion-reduced) *,
+html:is(.cg-low-power, .cg-motion-reduced) *::before,
+html:is(.cg-low-power, .cg-motion-reduced) *::after {
+  animation-duration: .001ms !important;
+  animation-iteration-count: 1 !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  html.cg-reveal-ready :is(.cg-reveal, [data-cg-reveal]) {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+@media print {
+  :is(.cg-reveal, [data-cg-reveal]) { opacity: 1 !important; transform: none !important; }
+}

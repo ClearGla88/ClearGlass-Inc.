@@ -1,0 +1,40 @@
+{
+  "_comment": "Example only, unsigned. Replace every bracketed value, then sign it with 'clearguard sign-config'. Never commit a filled-in copy: contacts are personal data and this repository is public.",
+  "schema": "clearguard.config/1",
+  "policy_version": "[CONFIRM: e.g. 2026-11-16.1]",
+  "approved_at": "2026-11-16T00:00:00+00:00",
+  "approved_by": "[CONFIRM: owner]",
+  "principal_address": "SIR",
+  "mode": "design",
+  "devices": [
+    {"device_id": "phone-1", "kind": "phone"},
+    {"device_id": "watch-1", "kind": "watch"},
+    {"device_id": "headphones-1", "kind": "headphones"}
+  ],
+  "sensor_scopes": [
+    {"device_id": "watch-1", "sensor": "platform_fall_detection", "purpose": "relay the platform's own fall events"},
+    {"device_id": "phone-1", "sensor": "platform_emergency_alerts", "purpose": "relay official localized warnings"},
+    {"device_id": "headphones-1", "sensor": "headphone_route", "purpose": "detect a lost audio route"}
+  ],
+  "allowed_services": [],
+  "contacts": [
+    {"contact_id": "primary", "label": "Primary contact", "channel": "sms", "recipient_ref": "[CONFIRM: set in the app, not in this file]", "is_emergency_service": false}
+  ],
+  "actions": [
+    {
+      "action_id": "notify-primary-on-help",
+      "trigger": "explicit_help_request",
+      "recipient": "primary",
+      "disclose": ["help_request", "event_time"],
+      "countdown_s": 10,
+      "cancellable": true,
+      "max_retries": 2,
+      "expires_after_s": 900,
+      "requires_confirmation_at_execution": true
+    }
+  ],
+  "shared_fields_allowed": ["help_request", "event_time", "event_category"],
+  "consent": {"granted_at": "2026-11-16T00:00:00+00:00", "expires_at": "2027-02-14T00:00:00+00:00", "revoked": false},
+  "alerting": {"channels": ["headphones", "watch_haptic", "phone_notification"], "max_volume_pct": 60, "directional_audio": false},
+  "retention": {"event_hours": 24, "raw_media": "none", "location_in_logs": false, "training_use": false}
+}

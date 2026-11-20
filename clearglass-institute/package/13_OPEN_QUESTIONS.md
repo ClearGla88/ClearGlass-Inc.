@@ -1,0 +1,88 @@
+# 13. Open questions: legal, tax and founder decisions
+
+> **Status notice.** ClearGlass Institute is a proposed organization. It has not been incorporated. ClearGlass Institute is not currently a registered charity with the Canada Revenue Agency. Donations are not eligible for official charitable tax receipts. Documents in this folder are drafts and templates, not legal advice. Signed originals belong in the minute book, not in this repository.
+
+Everything this package could not settle. Each item is tagged with who has to settle it: [DECISION REQUIRED] for the founders or the board, [LEGAL REVIEW] for a lawyer or tax adviser, [CONFIRM] for a fact to check with its source. `STATUS.md` counts the same tags document by document.
+
+Order matters. Section A blocks filing. Sections B and C block the first meeting. Section D can be closed as the plan runs.
+
+---
+
+## A. Before anything is filed
+
+| # | Question | Why it matters | Who | Rule |
+|---|---|---|---|---|
+| A1 | [LEGAL REVIEW] Would the Institute, with the proposed educational purposes, be a charitable corporation under the Act from the day it is incorporated? | If yes, charity law, public benefit corporation rules and the restricted dissolution rule apply from day one, and "non-profit now, charity later" is not an available route | Counsel | [L-29] [L-30] |
+| A2 | [DECISION REQUIRED] Path A (keep the purposes, accept charity-law duties, apply to the CRA early) or Path B (rewrite the purposes as non-charitable and stay an ordinary non-profit)? | Decides the purposes, the dissolution clause, the tax filings and the funding strategy. This package is drafted for Path A | Founders, on advice | [L-29] |
+| A3 | [LEGAL REVIEW] What is the Institute's income tax status between incorporation and any CRA registration? | The non-profit exemption is for organizations the Minister does not consider charities. An unregistered organization with charitable purposes may be outside it | Tax adviser | [L-23] [L-25] |
+| A4 | [LEGAL REVIEW] Can "ClearGlass Institute" be registered? Does "Institute" need the consent of the Minister of Colleges and Universities for an educational body? | The word is restricted where it suggests a post-secondary institution. A refusal costs the search fee and time | Counsel | [L-09] |
+| A5 | [CONFIRM] Is ClearGlass Inc. a registered corporation, and will it consent in writing to the Institute's name? | A name sharing another body's distinctive element is allowed with that body's consent and a differentiating word | Founder | [L-10] |
+| A6 | [DECISION REQUIRED] Which alternate name is used if the first is refused? | A number name is not available on incorporation, so a word name that clears the search is required. The owner's kit of 2026-11-14 proposes ClearGlass Public Interest Institute again. It keeps both words that put the first name at risk, so it helps only against a search conflict; see field 1 of the articles sheet | Founders | [L-09] [L-10] [L-11] [L-37] |
+| A7 | [LEGAL REVIEW] Are purposes 4 and 5 purposes, or activities and powers that belong in a separate clause? | The CRA tests each purpose on its own if registration is sought | Counsel | [L-43] |
+| A8 | [LEGAL REVIEW] What dissolution wording satisfies both the Act and the CRA? | The founders asked for distribution to qualified donees. The Act limits a charitable corporation to a narrower group of recipients | Counsel | [L-19] |
+| A9 | [LEGAL REVIEW] Which special provisions must a charitable corporation's articles contain in Ontario? | Not verified for this package | Counsel | [L-30] |
+| A10 | [DECISION REQUIRED] Who are the three directors, and which holds each office? | Three individuals are required. At most one may be an employee. The founder's dual role needs independent directors | Founders | [L-01] [L-05] |
+| A11 | [CONFIRM] The registered office address in Burlington, and whether the registry accepts that type of address | Needed for the articles | Founder | [L-43] |
+| A12 | [CONFIRM] The filing form, the fee and the current processing time | The form number and fee come from private guides; processing time is not settled | Secretary | [L-07] |
+| A13 | [DECISION REQUIRED] Incorporate in Ontario, as this package assumes, or federally? | Doc 14.1 recommends Ontario: the activities are local, the package is built on the Ontario Act, and a federal corporation would also have to register in Ontario. Raised by the owner's prompt of 2026-11-15 | Founders | [L-52] |
+| A14 | [LEGAL REVIEW] Applied to the founder and ClearGlass Inc., would the Institute meet the board test and the control test for a charitable organization, and how is "capital" measured when ClearGlass Inc. pays early costs? | Failing either test makes a registered Institute a private foundation (doc 14.3) | Counsel | [L-44] [L-45] |
+
+**Deliverable 2, the articles content, is a draft.** `articles/ARTICLES_DRAFT.md` was brought into line with the register on 2026-11-14. The number-name fallback was removed [L-11], the dissolution clause was redrafted [L-19], and the purposes were aligned with the mission. It is not final. Where the sheet and `LEGAL_VERIFICATION.md` disagree, the register governs. Counsel finalizes the sheet once A1 to A9 are answered.
+
+## B. Before the first meeting
+
+| # | Question | Why it matters | Who | Rule |
+|---|---|---|---|---|
+| B1 | [LEGAL REVIEW] Adopt By-law No. 1 as drafted, or the Ministry's standard by-laws with a short second by-law? | The standard by-laws apply by default after 60 days; either route works if chosen on purpose | Counsel | [L-18] |
+| B2 | [DECISION REQUIRED] Permit proxy voting by members? | The draft says no. The Act leaves it to the by-laws | Board | [L-34] |
+| B3 | [DECISION REQUIRED] Must a majority of directors be independent of ClearGlass Inc., or only one? | With three directors and one founder, two independent directors are needed for the conflict rules to work comfortably | Founders | [L-32] |
+| B4 | [DECISION REQUIRED] Does the bar on one person being both Chair and Executive Director apply from the first meeting? | The draft by-law applies it from the start | Board | by-law 8.6 |
+| B5 | [DECISION REQUIRED] The financial year end | Sets every annual deadline | Board | [L-13] [L-16] |
+| B6 | [DECISION REQUIRED] Audit, review engagement, or the permitted resolution to dispense with both in year one | Open only within the revenue limit for the Institute's type; lasts one year | Members | [L-06] [L-28] |
+| B7 | [LEGAL REVIEW] Is ClearGlass Inc. an "affiliate" of the Institute under the Act? | The Act's conflict exception for affiliates, and the one-third limit on employee-directors, both turn on it | Counsel | [L-05] [L-32] |
+| B8 | [LEGAL REVIEW] What do the Charities Accounting Act and its regulations require of the Institute from day one, including on paying directors, insurance, investment and borrowing? | Applies to a corporation incorporated for an educational or charitable purpose | Counsel | [L-30] |
+| B9 | [DECISION REQUIRED] The spending limit above which the board must approve even budgeted payments, and the first-year budget | The $500 two-signature rule is set; the upper limit and the budget are not | Board | doc 6 |
+| B10 | [DECISION REQUIRED] Who pays the name-search and filing fees before a bank account exists? | Must not be ClearGlass Inc. funds without a documented, approved agreement | Founders | doc 6 |
+| B11 | [CONFIRM] Which documents the chosen bank requires, and whether its online banking enforces two-person approval | Needed for the banking resolutions | Treasurer | doc 6 |
+| B12 | [CONFIRM] Whether a CRA Business Number is issued with the incorporation | The CRA says an Ontario incorporation is assigned one automatically, but does not say whether that covers a not-for-profit corporation. Check the incorporation confirmation; if there is no number, the Treasurer registers for one | Treasurer | [L-26] |
+| B13 | [DECISION REQUIRED] A supporter list, or a class of members? | Members under the Act vote, and the by-laws set who is a member. The prompt's "membership programs" should be a supporter list unless the board wants supporters to vote (doc 16.3) | Board | [L-35] [L-41] |
+
+## C. Before anything is published
+
+| # | Question | Why it matters | Who | Rule |
+|---|---|---|---|---|
+| C1 | [DECISION REQUIRED] The Institute's own domain and code host | The public page cannot go live on a ClearGlass Inc. address | Founders | doc 7 |
+| C2 | [LEGAL REVIEW] Does the style name "ClearGlass Institute (Public Interest)" need registration, and do the name rules restrict it? | A public name that differs from the corporate name | Counsel | [L-09] |
+| C3 | [DECISION REQUIRED] The open licence for published material | CC BY 4.0 is proposed | Board | doc 4 |
+| C4 | [LEGAL REVIEW] Who owns work made by a person who serves both the Institute and ClearGlass Inc.? | Public-education material must stay available for public-benefit use | Counsel | doc 4 |
+| C5 | [DECISION REQUIRED] Author and source checker for the first brief, and whether drafting assistance is disclosed | Two different named people are required | Board | doc 8 |
+| C6 | [LEGAL REVIEW] Which privacy law applies to the Institute's activities, and when formal research-ethics review is needed | Workshops and research may involve personal information | Counsel | doc 11 |
+| C7 | [LEGAL REVIEW] The rule for reusing images and longer excerpts | Third-party content | Counsel | doc 8 |
+| C8 | [DECISION REQUIRED] Whether and when the Institute will ask for money, and the wording | Any request must sit next to the charity disclaimer and promise no tax benefit | Board | [L-20] |
+| C9 | [DECISION REQUIRED] Who approaches prospective host organizations, and in whose name | No organization is named until it agrees in writing | Board | doc 10 |
+| C10 | [LEGAL REVIEW] Who owns work made for the Institute by contractors and volunteers who are not its employees, and what written assignment or licence is needed before that work is published? | Without a written agreement the Institute may not hold the rights it needs to publish the work under the licence chosen in C3. Raised in the owner's kit of 2026-11-14 | Counsel | doc 4 |
+| C11 | [LEGAL REVIEW] Which of the Institute's planned messages (newsletters, workshop invitations, fee-charging programs) are commercial electronic messages, and what consent each needs before registration as a charity | The fundraising exclusion covers registered charities only | Counsel | [L-48] |
+| C12 | [LEGAL REVIEW] Activities outside Canada: CRA rules for a charity working abroad; US state registration before asking US residents for money; whether US donors get any tax benefit | The prompt names US and international programs. None of this was verified (doc 14.5) | Counsel | doc 14 |
+| C13 | [LEGAL REVIEW] Can the Institute charge fees for training, and on what terms, without conferring private benefit on ClearGlass Inc., whose buyers overlap? | The activity most likely to be read as serving ClearGlass Inc. (doc 14.4, risk 26) | Counsel | [L-30] |
+
+## D. To confirm as the plan runs
+
+| # | Question | Who | Rule |
+|---|---|---|---|
+| D1 | [CONFIRM] How long the CRA takes to review an application for registration. CRA registration timelines vary and should be confirmed with the CRA or qualified counsel | Counsel | [L-22] |
+| D2 | [CONFIRM] Whether the proposed federal changes to non-profit reporting have been enacted, and from when | Tax adviser | [L-24] |
+| D3 | [CONFIRM] The current dollar limits for audit and review engagement, before each annual meeting | Treasurer | [L-06] |
+| D4 | [CONFIRM] Every due date in the compliance calendar, with the Institute's accountant, once the year end is chosen | Treasurer | doc 5 |
+| D5 | [CONFIRM] How the Institute signs in to the Ontario Business Registry to file returns | Secretary | [L-13] |
+| D6 | [CONFIRM] The record-retention period for accounting records | Treasurer | [L-36] |
+| D7 | [DECISION REQUIRED] Day 0 of the execution plan | Founders | doc 9 |
+| D8 | [DECISION REQUIRED] The owner's kit of 2026-11-14 lists fifteen go/no-go conditions; the checker enforces ten. Of the five extra, three are already tracked: the first published brief and the separate domain and code host (milestones), and the separate bank account (condition 7). Separate accounting records are not tracked. Two are standing rules, not events: "no official donation receipt issued" has no record to check, and "no unsupported public claim" is checked on the public page at every `check` run. Decide whether any of them becomes a condition. Changing the gate changes `tools/institute_kit.py` and its tests | Founders | doc 12 |
+| D9 | [CONFIRM] The GST/HST position before the first fee or ticket: the small-supplier test for a non-profit that is not yet a registered charity | Treasurer | [L-47] |
+| D10 | [CONFIRM] Payroll deductions account, workplace safety insurance and Employer Health Tax, before the first employee | Treasurer | doc 16 |
+| D11 | [CONFIRM] The accounting standard for the Institute's statements, and a chart of accounts with restricted-fund and contribution tracking to match | Treasurer | doc 15 |
+
+## What is verified and what is not
+
+`LEGAL_VERIFICATION.md` lists every rule this package relies on. Most Ontario rules, and the federal tax provisions cited, were read in the current consolidated text. A few rest on secondary sources: the filing form and fee [L-07]. A few are unverified: the CRA's review timeline [L-22], and whether the automatic business number the CRA describes for Ontario incorporations covers a not-for-profit corporation [L-26]. On 2026-11-11 the CRA's own pages could not be opened, so [L-20] and [L-21] rest on search extracts of those pages. On 2026-11-14 two CRA pages were read through a fetch tool for [L-26]. On 2026-11-15 nine rules were added for the owner's prompt of that date: the charity designation tests [L-44] [L-45] and the charity return [L-46] were read in the Income Tax Act, and the anti-spam rules [L-48] in the Act and regulations. The sales tax [L-47], accessibility [L-49] and employment status [L-50] rules rest on government guidance read through a fetch tool, the privacy rule [L-51] on legal publications, and the federal route [L-52] partly on search extracts.
+
+Reading a provision is not the same as applying it. Every [LEGAL REVIEW] item above is a question about how the law applies to these facts, and none is answered by this package.
