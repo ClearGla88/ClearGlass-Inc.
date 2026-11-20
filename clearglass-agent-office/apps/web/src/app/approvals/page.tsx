@@ -23,13 +23,15 @@ export default async function ApprovalsPage() {
           const agent = agents[a.requested_by];
           const task = a.task_id ? tasks[a.task_id] : undefined;
           const notes = snap.messages.filter((m) => m.kind === "review" && m.subject.includes(a.id));
-          const text = typeof a.action.params.text === "string" ? a.action.params.text : null;
+          const params = a.action.params;
+          const text = typeof params.text === "string" ? params.text : typeof params.body === "string" ? params.body : null;
+          const sends = typeof params.body === "string";
           return (
             <Panel key={a.id} kicker={`${a.id} · requested ${when(a.created_at)} · expires ${when(a.expires_at)}`}
               title={<span className="mono">{a.action_type}</span>}
               actions={<><TierChip tier={a.risk_tier} /><StatusChip status={a.status} /></>}>
-              <div className="grid gap-5 lg:grid-cols-2">
-                <div className="space-y-3">
+              <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+                <div className="min-w-0 space-y-3">
                   <p className="text-sm">
                     <span className="text-dim">Requested by </span>{agent ? `${agent.callsign} ${agent.name}` : a.requested_by}
                     <span className="text-dim"> via </span><span className="mono">{a.action.tool_id}</span>
@@ -41,7 +43,7 @@ export default async function ApprovalsPage() {
                   </div>
                   {text && (
                     <div>
-                      <p className="label">Exact text that would be published</p>
+                      <p className="label">{sends ? `Exact email that would be sent: ${String(params.subject ?? "")}` : "Exact text that would be published"}</p>
                       <blockquote className="mt-1 whitespace-pre-line rounded-lg border border-line bg-black/30 p-3 text-sm">{text}</blockquote>
                     </div>
                   )}
@@ -57,7 +59,7 @@ export default async function ApprovalsPage() {
                     </dl>
                   )}
                 </div>
-                <div className="space-y-4">
+                <div className="min-w-0 space-y-4">
                   {notes.map((n) => (
                     <div key={n.id} className="rounded-lg border border-info/30 bg-info/5 p-3 text-sm">
                       <p className="label">Risk &amp; Compliance note</p>

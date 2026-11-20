@@ -848,7 +848,7 @@ class RevenueDesk:
             last = max(times)
             replied = self._last_customer_event(opp)
             hours = (now - last).total_seconds() / 3600
-            if hours < gap and not (replied and replied > last):
+            if hours < gap and not (replied and replied >= last):
                 return (
                     f"the last message went out {hours:.0f} hours ago; the minimum gap is {gap} hours"
                     " unless the client replies"

@@ -157,4 +157,104 @@ export interface Snapshot {
     secret_ref: string | null }[];
   vault: { ref: string; configured: boolean; owners: string[] }[];
   emergency: { halted: boolean; reason?: string; engaged_at?: string; incident_id?: string };
+  revenue?: Revenue;
+}
+
+// -- Revenue Floor (packages/revenue_ops/desk.py, RevenueDesk.snapshot) --------------------------------------
+
+export type DeskState =
+  | "idle" | "queued" | "working" | "awaiting_approval" | "waiting_for_customer" | "waiting_for_payment"
+  | "blocked" | "completed" | "failed" | "paused";
+
+export interface RevenuePlan {
+  kind: "do" | "wait" | "blocked" | "done"; role: string | null; step: string | null; label: string; state: string;
+  detail?: string; operator_step?: string;
+}
+
+export interface RevenueOffer {
+  sku: string; name: string; summary: string; scope: string[]; price_cents: number; currency: string; price_text: string;
+  price_type: string; published_at: string[]; published_checked: string; assessment: boolean;
+  fulfillment_requirements: string[]; status: string; approved_digest: string | null;
+  decision: Record<string, unknown> | null; total_cents: number | null; missing_decisions: string[];
+  last_decision: { seq: number; decision: string; reason: string; decided_by: string; decided_at: string } | null;
+}
+
+export interface TimelineEntry { at: string; kind: string; detail: string; by: string; ref: string | null }
+
+export interface Opportunity {
+  id: string; stage: string; rehearsal: boolean; source: string; source_ref: string;
+  contact: { name: string; email: string; role: string | null; organization: string };
+  consent: { basis: string; evidence: string | null; date: string | null; quote_requested_at?: string };
+  lead_facts: {
+    region?: string | null; city?: string | null; sector?: string | null; employees?: number | null;
+    stated_need?: string | null; stated_need_present?: boolean; stated_need_quarantined?: boolean;
+  };
+  offer_sku: string | null; priority: number;
+  qualification: {
+    outcome?: string; score?: number; threshold?: number; why?: string; missing_evidence?: string[];
+    rubric?: { id: string; label: string; result: string; points: number; required: boolean }[];
+  };
+  research: { items?: { text: string; source: string | null; unverified: boolean }[]; quarantined?: { text: string }[] };
+  drafts: Record<string, { subject?: string; body?: string } | undefined>;
+  terms: { accepted_at?: string; evidence_ref?: string; quoted_total_cents?: number };
+  fulfillment: { handoff_at?: string; authorization_ref?: string; checklist?: string[] };
+  timeline: TimelineEntry[]; flags: string[]; lost_reason: string | null; content_version: number;
+  created_at: string; plan: RevenuePlan; offer_name: string | null; actions: string[]; money: Record<string, number>;
+}
+
+export interface TicketStep { connector: string; tool: string; fields: Record<string, unknown>; note?: string }
+
+export interface ExternalAction {
+  id: string; opportunity_id: string; kind: string; action_type: string; agent_id: string; connector: string;
+  payload: Record<string, unknown>; payload_digest: string; status: string; approval_id: string | null; rehearsal: boolean;
+  ticket: { steps: TicketStep[]; record: string; warning: string; released_at: string; released_by: string } | null;
+  receipt: { external_ref: string; executed_at: string; connector: string; recorded_by: string } | null;
+  verification: { method: string; mismatches?: string[]; checked_at?: string; checked?: string | null } | null;
+  error: string | null; created_at: string;
+}
+
+export interface Desk {
+  role: string; agent_id: string; title: string; callsign: string; state: DeskState; counts: Record<string, number>;
+  current: { opportunity_id: string; organization: string; stage: string; step: string; detail: string } | null;
+  approvals: { action_id: string; approval_id: string | null; status: string; kind: string }[];
+  last_activity: {
+    at: string; action_type: string; opportunity_id: string; status: string; detail: string | null; tier: string;
+    approval_id: string | null; replayed: boolean;
+  } | null;
+  last_connector_execution: {
+    action_id: string; kind: string; connector: string; external_ref: string; executed_at: string; status: string;
+  } | null;
+  errors: string[]; usage: { measured: boolean; note: string };
+}
+
+export interface MoneyCategory {
+  id: string; label: string; value_cents: number | null; count: number | null; currency: string; definition: string;
+}
+
+export interface MetricItem {
+  id: string; label: string; value: number | null; unit: string; definition: string;
+  numerator: number | null; denominator: number | null;
+}
+
+export interface ReadinessItem { id: string; severity: "blocker" | "check"; title: string; detail: string; owner_action: string }
+
+export interface ConnectorEntry { id: string; name: string; status: string; used_for: string[]; can: string[]; limits: string[] }
+
+export interface Revenue {
+  config_version: string; execution_model: string;
+  paused: { paused: boolean; reason?: string; by?: string; at?: string };
+  readiness: { ready_for_first_send: boolean; blockers: number; items: ReadinessItem[] };
+  settings: { values: Record<string, unknown>; updated_by: string; updated_at: string; digest: string } | null;
+  offers: RevenueOffer[]; team: Desk[]; opportunities: Opportunity[]; actions: ExternalAction[];
+  money: {
+    currency: string; categories: MoneyCategory[]; revenue_recognition: { available: boolean; reason: string };
+    rehearsal_events_excluded: number;
+  };
+  metrics: { window_days: number; from: string; to: string; excludes: string; items: MetricItem[] };
+  suppressions: { count: number; recent: { seq: number; address: string; reason: string; recorded_at: string }[] };
+  lead_sources: Record<string, { label: string; connector: string | null; ref_hint: string }>;
+  consent_bases: Record<string, { label: string; law: string; max_age_days: number | null; allows_first_contact: boolean }>;
+  consent_note: string; contact_rules: Record<string, number>;
+  connectors: { checked_at: string; method: string; connectors: ConnectorEntry[] };
+  desk_states: DeskState[];
 }

@@ -821,3 +821,21 @@ def test_the_revenue_api_is_operator_only_and_strict():
     snap = client.get("/revenue", headers=h_vw).json()
     assert snap["opportunities"][0]["stage"] == "qualified"
     assert client.get("/snapshot", headers=h_vw).json()["revenue"]["config_version"] == snap["config_version"]
+
+
+def test_a_reply_recorded_in_the_same_second_as_the_send_lifts_the_gap():
+    from datetime import UTC, datetime
+
+    from agent_core.util import Clock
+
+    class Frozen(Clock):
+        def now(self):
+            return datetime(2026, 11, 9, 13, 0, tzinfo=UTC)
+
+    office = make_office(clock=Frozen())
+    office.revenue.decide_offer(OP, "quick-audit", "approve", "Owner approved these terms for launch.", TERMS)
+    office.revenue.set_settings(OP, SETTINGS)
+    opp = office.revenue.intake(OP, lead())
+    execute(office, until_request(office, opp.id), "msg-out")
+    office.revenue.record_event(OP, opp.id, "reply_received", "msg-reply", office.clock.iso())
+    assert until_request(office, opp.id, "proposal_email").kind == "proposal_email"
