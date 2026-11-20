@@ -16,7 +16,7 @@
    Bump VERSION to invalidate all caches on deploy. */
 "use strict";
 
-var VERSION = "cg-v65";
+var VERSION = "cg-v66";
 var PRECACHE = [
   "/",
   "/index.html",
@@ -117,7 +117,11 @@ self.addEventListener("fetch", function (e) {
     url.pathname === "/security-stack-fusion.css" ||
     url.pathname === "/assets/css/neon-practical.css" ||
     url.pathname === "/assets/js/cinematic-motion.js" ||
-    url.pathname === "/assets/js/future-buttons.js";
+    url.pathname === "/assets/js/future-buttons.js" ||
+    // Sentinel Workspace: core.js, app.js, its stylesheet and dataset files
+    // must come from the same deploy. Mixing a cached core.js with a newer
+    // app.js (or a stale fixture) would break analysis silently.
+    url.pathname.indexOf("/sentinel-workspace/") === 0;
 
   if (isHTML || isFeed || isCriticalVisual || isCriticalRuntime) {
     // network-first: fresh page/data/critical asset/runtime when online

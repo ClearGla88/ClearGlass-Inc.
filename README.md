@@ -23,6 +23,7 @@ The website pages (`*.html`, `*.css`, `*.js`, `sitemap*.xml`, `CNAME`, `.nojekyl
 | Repository hygiene gate | `tools/repo_hygiene.py`, `tools/repo_hygiene_baseline.json` | `tests/test_repo_hygiene.py`, CI |
 | Legal intelligence modules | `legal_intelligence_core.py`, `artemis_legal_agent_mvp.py` | Their tests are kept outside this repository |
 | Aegis Glass platform (Next.js, PostgreSQL) | `aegis-glass-platform/` | `npm test` (62 tests, incl. a PostgreSQL 16 server) and `npm run build` via `.github/workflows/aegis-glass-ci.yml`. Production sign-in is blocked until an OIDC adapter exists; see `aegis-glass-platform/docs/ARCHITECTURE.md` |
+| Sentinel Workspace (static, browser-only investigation tool) | `sentinel-workspace.html`, `sentinel-workspace/` | `node --test tests/sentinel_workspace/core.test.mjs` in CI (`baseline-ci.yml`); the browser journey `tests/sentinel_workspace/e2e.browser.cjs` runs locally with Playwright. See `sentinel-workspace/README.md`. |
 
 **Does not run in this tree**
 
@@ -38,6 +39,7 @@ python3 -m pytest -q
 python3 tools/repo_hygiene.py
 ruff check --select E9,F .
 cargo test --locked
+node --test tests/sentinel_workspace/core.test.mjs
 ```
 
 See `CONTRIBUTING.md` for the full workflow.

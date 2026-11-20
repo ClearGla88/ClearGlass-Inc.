@@ -1,0 +1,1338 @@
+{
+  "schema": "clearglass.sentinel/1",
+  "dataset": {
+    "id": "ds-lookalike-domain-exercise",
+    "title": "Lookalike billing domain — training exercise",
+    "version": "1.1.0",
+    "synthetic": true,
+    "as_of": "2026-10-15T00:00:00Z",
+    "description": "SYNTHETIC TRAINING FIXTURE. Every organisation, record, hash and time is fictional. Domains use the reserved .example TLD (RFC 2606) and addresses use documentation ranges (RFC 5737), so nothing here refers to a real party. Question: is the lookalike domain run by the same operator as an earlier campaign, or is the overlap explained by shared hosting and a publicly sold phishing kit?",
+    "export_policy": {
+      "restricted_attribute_keys": [
+        "internal_case_owner"
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "src-pdns-a",
+      "title": "Passive DNS export — Provider A (fictional)",
+      "kind": "passive-dns",
+      "uri": "https://pdns-a.example/exports/2026-09-30",
+      "independence_group": "grp-pdns-a",
+      "collected_at": "2026-09-30T22:00:00Z",
+      "assessment": {
+        "reliability": "B",
+        "basis": "Commercial sensor network. Accurate for A-record resolutions in earlier fictional exercises; does not see every resolver."
+      }
+    },
+    {
+      "id": "src-pdns-a-mirror",
+      "title": "Threat-feed aggregator mirror of Provider A (fictional)",
+      "kind": "passive-dns",
+      "uri": "https://aggregator.example/feeds/pdns-a",
+      "independence_group": "grp-pdns-a",
+      "collected_at": "2026-09-30T23:30:00Z",
+      "assessment": {
+        "reliability": "C",
+        "basis": "Republishes Provider A records with no collection of its own. Not independent of Provider A."
+      }
+    },
+    {
+      "id": "src-pdns-b",
+      "title": "Passive DNS export — Provider B (fictional)",
+      "kind": "passive-dns",
+      "uri": "https://pdns-b.example/exports/2026-09-30",
+      "independence_group": "grp-pdns-b",
+      "collected_at": "2026-09-30T21:00:00Z",
+      "assessment": {
+        "reliability": "B",
+        "basis": "Sensor network separate from Provider A."
+      }
+    },
+    {
+      "id": "src-rdap",
+      "title": "RDAP registration lookups (fictional capture)",
+      "kind": "registration",
+      "uri": "https://rdap.example/",
+      "independence_group": "grp-rdap",
+      "collected_at": "2026-09-30T12:10:00Z",
+      "assessment": {
+        "reliability": "B",
+        "basis": "Registry-operated data. Registrant fields may be redacted by policy."
+      }
+    },
+    {
+      "id": "src-ipreg",
+      "title": "IP registry allocation records (fictional)",
+      "kind": "ip-registry",
+      "uri": "https://ipreg.example/",
+      "independence_group": "grp-ipreg",
+      "collected_at": "2026-09-30T12:00:00Z",
+      "assessment": {
+        "reliability": "B",
+        "basis": "Allocation data names the address-block holder, not the operator of each website hosted there."
+      }
+    },
+    {
+      "id": "src-ct",
+      "title": "Certificate Transparency log query (fictional)",
+      "kind": "ct-log",
+      "uri": "https://ct.example/search",
+      "independence_group": "grp-ct",
+      "collected_at": "2026-09-30T12:20:00Z",
+      "assessment": {
+        "reliability": "A",
+        "basis": "Append-only public log. Records certificate issuance, not who controls a server."
+      }
+    },
+    {
+      "id": "src-report",
+      "title": "Employee phishing report PR-0142 (fictional)",
+      "kind": "user-report",
+      "uri": null,
+      "independence_group": "grp-report",
+      "collected_at": "2026-09-15T13:20:00Z",
+      "assessment": {
+        "reliability": "C",
+        "basis": "Single report; headers were copied by the reporter."
+      }
+    },
+    {
+      "id": "src-gw",
+      "title": "Mail gateway log export (fictional)",
+      "kind": "system-log",
+      "uri": null,
+      "independence_group": "grp-gw",
+      "collected_at": "2026-09-16T00:00:00Z",
+      "assessment": {
+        "reliability": "B",
+        "basis": "Internal system log; gateway clock is NTP-synchronised per the (fictional) ops runbook."
+      }
+    },
+    {
+      "id": "src-sandbox",
+      "title": "Sandbox capture SBX-88 of utilityco-billing.example (fictional)",
+      "kind": "sandbox",
+      "uri": null,
+      "independence_group": "grp-sandbox",
+      "collected_at": "2026-09-16T10:30:00Z",
+      "assessment": {
+        "reliability": "B",
+        "basis": "Internal detonation that recorded page resources and their hashes."
+      }
+    },
+    {
+      "id": "src-archive",
+      "title": "Third-party web archive record of uc-paycenter.example (fictional)",
+      "kind": "web-archive",
+      "uri": "https://archive.example/record/uc-paycenter",
+      "independence_group": "grp-archive",
+      "collected_at": "2026-09-20T09:00:00Z",
+      "assessment": {
+        "reliability": "C",
+        "basis": "Capture date is known; capture completeness is not."
+      }
+    },
+    {
+      "id": "src-kit-note",
+      "title": "Analyst note citing a vendor phishing-kit report (fictional)",
+      "kind": "analyst-note",
+      "uri": null,
+      "independence_group": "grp-vendor-x",
+      "collected_at": "2026-09-22T14:00:00Z",
+      "assessment": {
+        "reliability": "C",
+        "basis": "Secondary summary of a vendor report that is not held in this dataset."
+      }
+    },
+    {
+      "id": "src-vendor-doc",
+      "title": "Vendor contract summary VC-22 (fictional internal document)",
+      "kind": "internal-document",
+      "uri": null,
+      "independence_group": "grp-procurement",
+      "collected_at": "2026-09-18T10:00:00Z",
+      "assessment": {
+        "reliability": "B",
+        "basis": "Procurement record that lists the approved billing-vendor domain."
+      }
+    }
+  ],
+  "entities": [
+    {
+      "id": "ent-org-utilityco",
+      "type": "organization",
+      "label": "Utility Co. (fictional)",
+      "aliases": [],
+      "attributes": {
+        "sector": "energy distribution (fictional)"
+      },
+      "source_ids": [
+        "src-rdap",
+        "src-vendor-doc"
+      ],
+      "original_ids": []
+    },
+    {
+      "id": "ent-org-hosta",
+      "type": "organization",
+      "label": "Bulk Hosting Provider A (fictional)",
+      "aliases": [],
+      "attributes": {},
+      "source_ids": [
+        "src-ipreg"
+      ],
+      "original_ids": []
+    },
+    {
+      "id": "ent-org-registrar",
+      "type": "organization",
+      "label": "Registrar R1 (fictional)",
+      "aliases": [],
+      "attributes": {
+        "registrar_id": "9999 (fictional)"
+      },
+      "source_ids": [
+        "src-rdap"
+      ],
+      "original_ids": [
+        "rdap:entity:R1-9999"
+      ]
+    },
+    {
+      "id": "ent-org-registrar-llc",
+      "type": "organization",
+      "label": "Registrar R1 LLC (fictional)",
+      "aliases": [],
+      "attributes": {
+        "registrar_id": "9999 (fictional)"
+      },
+      "source_ids": [
+        "src-rdap"
+      ],
+      "original_ids": [
+        "rdap:entity:R1LLC-9999"
+      ]
+    },
+    {
+      "id": "ent-org-vendor",
+      "type": "organization",
+      "label": "Billing Vendor V (fictional)",
+      "aliases": [],
+      "attributes": {},
+      "source_ids": [
+        "src-vendor-doc",
+        "src-ipreg"
+      ],
+      "original_ids": []
+    },
+    {
+      "id": "ent-dom-utilityco",
+      "type": "domain",
+      "label": "utilityco.example",
+      "aliases": [],
+      "attributes": {},
+      "source_ids": [
+        "src-rdap"
+      ],
+      "original_ids": []
+    },
+    {
+      "id": "ent-dom-billing",
+      "type": "domain",
+      "label": "utilityco-billing.example",
+      "aliases": [],
+      "attributes": {},
+      "source_ids": [
+        "src-pdns-a",
+        "src-pdns-b",
+        "src-rdap",
+        "src-ct",
+        "src-report",
+        "src-sandbox"
+      ],
+      "original_ids": []
+    },
+    {
+      "id": "ent-dom-paycenter",
+      "type": "domain",
+      "label": "uc-paycenter.example",
+      "aliases": [],
+      "attributes": {},
+      "source_ids": [
+        "src-pdns-a",
+        "src-rdap",
+        "src-ct",
+        "src-archive"
+      ],
+      "original_ids": []
+    },
+    {
+      "id": "ent-dom-vendor",
+      "type": "domain",
+      "label": "billing-vendor.example",
+      "aliases": [],
+      "attributes": {},
+      "source_ids": [
+        "src-pdns-b",
+        "src-vendor-doc"
+      ],
+      "original_ids": []
+    },
+    {
+      "id": "ent-ip-shared",
+      "type": "ip",
+      "label": "203.0.113.10",
+      "aliases": [],
+      "attributes": {},
+      "source_ids": [
+        "src-pdns-a",
+        "src-pdns-b",
+        "src-ipreg"
+      ],
+      "original_ids": []
+    },
+    {
+      "id": "ent-ip-vendor",
+      "type": "ip",
+      "label": "198.51.100.24",
+      "aliases": [],
+      "attributes": {},
+      "source_ids": [
+        "src-pdns-b",
+        "src-ipreg"
+      ],
+      "original_ids": []
+    },
+    {
+      "id": "ent-ip-sender",
+      "type": "ip",
+      "label": "192.0.2.55",
+      "aliases": [],
+      "attributes": {},
+      "source_ids": [
+        "src-report",
+        "src-gw"
+      ],
+      "original_ids": []
+    },
+    {
+      "id": "ent-cert-billing",
+      "type": "certificate",
+      "label": "Certificate C1 — utilityco-billing.example (fictional)",
+      "aliases": [],
+      "attributes": {
+        "ct_id": "880012 (fictional)",
+        "issuer": "Free CA X (fictional)"
+      },
+      "source_ids": [
+        "src-ct"
+      ],
+      "original_ids": []
+    },
+    {
+      "id": "ent-cert-paycenter",
+      "type": "certificate",
+      "label": "Certificate C2 — uc-paycenter.example (fictional)",
+      "aliases": [],
+      "attributes": {
+        "ct_id": "610455 (fictional)",
+        "issuer": "Free CA X (fictional)"
+      },
+      "source_ids": [
+        "src-ct"
+      ],
+      "original_ids": []
+    },
+    {
+      "id": "ent-doc-pr0142",
+      "type": "document",
+      "label": "Phishing report PR-0142 (fictional)",
+      "aliases": [],
+      "attributes": {
+        "received_channel": "report-phish button",
+        "internal_case_owner": "SOC queue 2 (fictional)"
+      },
+      "source_ids": [
+        "src-report"
+      ],
+      "original_ids": []
+    },
+    {
+      "id": "ent-doc-vc22",
+      "type": "document",
+      "label": "Vendor contract summary VC-22 (fictional)",
+      "aliases": [],
+      "attributes": {},
+      "source_ids": [
+        "src-vendor-doc"
+      ],
+      "original_ids": []
+    },
+    {
+      "id": "ent-sys-gateway",
+      "type": "system",
+      "label": "UC mail gateway (fictional)",
+      "aliases": [],
+      "attributes": {},
+      "source_ids": [
+        "src-gw"
+      ],
+      "original_ids": []
+    },
+    {
+      "id": "ent-acct-reg7731",
+      "type": "account",
+      "label": "Registrant handle REG-7731 (fictional)",
+      "aliases": [],
+      "attributes": {},
+      "source_ids": [
+        "src-rdap"
+      ],
+      "original_ids": []
+    },
+    {
+      "id": "ent-topic-kit",
+      "type": "topic",
+      "label": "Phishing kit “uc-kit-v2” (fictional)",
+      "aliases": [],
+      "attributes": {},
+      "source_ids": [
+        "src-sandbox",
+        "src-archive",
+        "src-kit-note"
+      ],
+      "original_ids": []
+    },
+    {
+      "id": "ent-topic-credphish",
+      "type": "topic",
+      "label": "Credential phishing",
+      "aliases": [],
+      "attributes": {},
+      "source_ids": [],
+      "original_ids": []
+    },
+    {
+      "id": "ent-ip-new",
+      "type": "ip",
+      "label": "203.0.113.77",
+      "aliases": [],
+      "attributes": {},
+      "source_ids": [
+        "src-pdns-a"
+      ],
+      "original_ids": []
+    }
+  ],
+  "observations": [
+    {
+      "id": "obs-pdnsa-billing-01",
+      "source_id": "src-pdns-a",
+      "location": "export row 1182",
+      "excerpt": "utilityco-billing.example A 203.0.113.10 first_seen=2026-09-03T08:14:00Z last_seen=2026-09-29T19:02:00Z",
+      "about": [
+        "ent-dom-billing",
+        "ent-ip-shared"
+      ],
+      "observed_at": "2026-09-03T08:14:00Z",
+      "collected_at": "2026-09-30T22:00:00Z",
+      "ingested_at": "2026-10-01T09:00:00Z",
+      "extraction": {
+        "method": "parser",
+        "version": "pdns-csv 0.4",
+        "confidence": null
+      }
+    },
+    {
+      "id": "obs-mirror-billing-01",
+      "source_id": "src-pdns-a-mirror",
+      "location": "feed item 55190",
+      "excerpt": "[mirror of Provider A] utilityco-billing.example -> 203.0.113.10 (first_seen 2026-09-03)",
+      "about": [
+        "ent-dom-billing",
+        "ent-ip-shared"
+      ],
+      "observed_at": "2026-09-03T08:14:00Z",
+      "collected_at": "2026-09-30T23:30:00Z",
+      "ingested_at": "2026-10-01T09:00:00Z",
+      "extraction": {
+        "method": "parser",
+        "version": "feed-json 1.2",
+        "confidence": null
+      }
+    },
+    {
+      "id": "obs-pdnsb-billing-01",
+      "source_id": "src-pdns-b",
+      "location": "export row 77",
+      "excerpt": "utilityco-billing.example,A,203.0.113.10,2026-09-04T11:40:00Z,2026-09-28T06:15:00Z",
+      "about": [
+        "ent-dom-billing",
+        "ent-ip-shared"
+      ],
+      "observed_at": "2026-09-04T11:40:00Z",
+      "collected_at": "2026-09-30T21:00:00Z",
+      "ingested_at": "2026-10-01T09:00:00Z",
+      "extraction": {
+        "method": "parser",
+        "version": "pdns-csv 0.4",
+        "confidence": null
+      }
+    },
+    {
+      "id": "obs-pdnsa-paycenter-01",
+      "source_id": "src-pdns-a",
+      "location": "export row 1190",
+      "excerpt": "uc-paycenter.example A 203.0.113.10 first_seen=2026-03-11T02:20:00Z last_seen=2026-04-02T17:45:00Z",
+      "about": [
+        "ent-dom-paycenter",
+        "ent-ip-shared"
+      ],
+      "observed_at": "2026-03-11T02:20:00Z",
+      "collected_at": "2026-09-30T22:00:00Z",
+      "ingested_at": "2026-10-01T09:00:00Z",
+      "extraction": {
+        "method": "parser",
+        "version": "pdns-csv 0.4",
+        "confidence": null
+      }
+    },
+    {
+      "id": "obs-pdnsa-ip-volume",
+      "source_id": "src-pdns-a",
+      "location": "aggregate query Q-17",
+      "excerpt": "203.0.113.10: 1,140 distinct domains resolved to this address between 2026-01-01 and 2026-09-30. (Aggregate over a period, so there is no single observation time.)",
+      "about": [
+        "ent-ip-shared"
+      ],
+      "observed_at": null,
+      "collected_at": "2026-09-30T22:00:00Z",
+      "ingested_at": "2026-10-01T09:00:00Z",
+      "extraction": {
+        "method": "manual",
+        "version": null,
+        "confidence": null
+      }
+    },
+    {
+      "id": "obs-ipreg-shared",
+      "source_id": "src-ipreg",
+      "location": "allocation record 203.0.113.0/24",
+      "excerpt": "203.0.113.0/24 allocated to Bulk Hosting Provider A (fictional); allocation date 2019-05-14",
+      "about": [
+        "ent-ip-shared",
+        "ent-org-hosta"
+      ],
+      "observed_at": "2019-05-14",
+      "collected_at": "2026-09-30T12:00:00Z",
+      "ingested_at": "2026-10-01T09:00:00Z",
+      "extraction": {
+        "method": "parser",
+        "version": "rir-text 2.0",
+        "confidence": null
+      }
+    },
+    {
+      "id": "obs-rdap-billing",
+      "source_id": "src-rdap",
+      "location": "domain object utilityco-billing.example",
+      "excerpt": "utilityco-billing.example registered 2026-09-01T16:03:00Z via Registrar R1 (registrar ID 9999, fictional); registrant: REDACTED FOR PRIVACY",
+      "about": [
+        "ent-dom-billing",
+        "ent-org-registrar"
+      ],
+      "observed_at": "2026-09-01T16:03:00Z",
+      "collected_at": "2026-09-30T12:10:00Z",
+      "ingested_at": "2026-10-01T09:00:00Z",
+      "extraction": {
+        "method": "parser",
+        "version": "rdap-json 1.0",
+        "confidence": null
+      }
+    },
+    {
+      "id": "obs-rdap-paycenter",
+      "source_id": "src-rdap",
+      "location": "domain object uc-paycenter.example",
+      "excerpt": "uc-paycenter.example registered 2026-03-09T10:41:00Z via Registrar R1 LLC (registrar ID 9999, fictional); registrant handle REG-7731",
+      "about": [
+        "ent-dom-paycenter",
+        "ent-org-registrar-llc",
+        "ent-acct-reg7731"
+      ],
+      "observed_at": "2026-03-09T10:41:00Z",
+      "collected_at": "2026-09-30T12:10:00Z",
+      "ingested_at": "2026-10-01T09:00:00Z",
+      "extraction": {
+        "method": "parser",
+        "version": "rdap-json 1.0",
+        "confidence": null
+      }
+    },
+    {
+      "id": "obs-rdap-utilityco",
+      "source_id": "src-rdap",
+      "location": "domain object utilityco.example",
+      "excerpt": "utilityco.example registered 2009-06-30; registrant organisation Utility Co. (fictional)",
+      "about": [
+        "ent-dom-utilityco",
+        "ent-org-utilityco"
+      ],
+      "observed_at": "2009-06-30",
+      "collected_at": "2026-09-30T12:10:00Z",
+      "ingested_at": "2026-10-01T09:00:00Z",
+      "extraction": {
+        "method": "parser",
+        "version": "rdap-json 1.0",
+        "confidence": null
+      }
+    },
+    {
+      "id": "obs-ct-c1",
+      "source_id": "src-ct",
+      "location": "log entry 880012",
+      "excerpt": "Certificate 880012 (fictional): SAN utilityco-billing.example, www.utilityco-billing.example; issued 2026-09-02 by Free CA X (fictional)",
+      "about": [
+        "ent-cert-billing",
+        "ent-dom-billing"
+      ],
+      "observed_at": "2026-09-02",
+      "collected_at": "2026-09-30T12:20:00Z",
+      "ingested_at": "2026-10-01T09:00:00Z",
+      "extraction": {
+        "method": "parser",
+        "version": "ct-json 1.1",
+        "confidence": null
+      }
+    },
+    {
+      "id": "obs-ct-c2",
+      "source_id": "src-ct",
+      "location": "log entry 610455",
+      "excerpt": "Certificate 610455 (fictional): SAN uc-paycenter.example; issued 2026-03-10 by Free CA X (fictional)",
+      "about": [
+        "ent-cert-paycenter",
+        "ent-dom-paycenter"
+      ],
+      "observed_at": "2026-03-10",
+      "collected_at": "2026-09-30T12:20:00Z",
+      "ingested_at": "2026-10-01T09:00:00Z",
+      "extraction": {
+        "method": "parser",
+        "version": "ct-json 1.1",
+        "confidence": null
+      }
+    },
+    {
+      "id": "obs-report-header",
+      "source_id": "src-report",
+      "location": "message headers, From and Received lines",
+      "excerpt": "From: \"Utility Co Billing\" <billing@utilityco-billing.example> | Received: from 192.0.2.55",
+      "about": [
+        "ent-doc-pr0142",
+        "ent-dom-billing",
+        "ent-ip-sender"
+      ],
+      "observed_at": "2026-09-15T13:02:00Z",
+      "collected_at": "2026-09-15T13:20:00Z",
+      "ingested_at": "2026-10-01T09:00:00Z",
+      "extraction": {
+        "method": "manual",
+        "version": null,
+        "confidence": null
+      }
+    },
+    {
+      "id": "obs-gw-log",
+      "source_id": "src-gw",
+      "location": "gateway log line 40912",
+      "excerpt": "2026-09-15T13:01:58Z accept from=192.0.2.55 env_from=billing@utilityco-billing.example rcpt=1 spf=fail",
+      "about": [
+        "ent-sys-gateway",
+        "ent-ip-sender",
+        "ent-dom-billing"
+      ],
+      "observed_at": "2026-09-15T13:01:58Z",
+      "collected_at": "2026-09-16T00:00:00Z",
+      "ingested_at": "2026-10-01T09:00:00Z",
+      "extraction": {
+        "method": "parser",
+        "version": "gw-log 5.2",
+        "confidence": null
+      }
+    },
+    {
+      "id": "obs-sbx-kit",
+      "source_id": "src-sandbox",
+      "location": "SBX-88 resource list, item 14",
+      "excerpt": "Loaded /assets/js/uc-kit-v2.js sha256=9f2c…e41a (fictional); login form posts to /collect.php",
+      "about": [
+        "ent-dom-billing",
+        "ent-topic-kit",
+        "ent-topic-credphish"
+      ],
+      "observed_at": "2026-09-16T10:30:00Z",
+      "collected_at": "2026-09-16T10:30:00Z",
+      "ingested_at": "2026-10-01T09:00:00Z",
+      "extraction": {
+        "method": "parser",
+        "version": "sbx-report 3.2",
+        "confidence": null
+      }
+    },
+    {
+      "id": "obs-kitnote-public",
+      "source_id": "src-kit-note",
+      "location": "note KN-5, paragraph 2",
+      "excerpt": "Vendor report (not held here) says uc-kit-v2 has been sold on an open forum since 2025-11 and appears in 30+ unrelated campaigns.",
+      "about": [
+        "ent-topic-kit"
+      ],
+      "observed_at": null,
+      "collected_at": "2026-09-22T14:00:00Z",
+      "ingested_at": "2026-10-01T09:00:00Z",
+      "extraction": {
+        "method": "manual",
+        "version": null,
+        "confidence": null
+      }
+    },
+    {
+      "id": "obs-vc22-vendor",
+      "source_id": "src-vendor-doc",
+      "location": "VC-22 section 3",
+      "excerpt": "Approved billing portal: billing-vendor.example (contract VC-22, renewed 2026-01-10)",
+      "about": [
+        "ent-doc-vc22",
+        "ent-dom-vendor",
+        "ent-org-vendor",
+        "ent-org-utilityco"
+      ],
+      "observed_at": "2026-01-10",
+      "collected_at": "2026-09-18T10:00:00Z",
+      "ingested_at": "2026-10-01T09:00:00Z",
+      "extraction": {
+        "method": "manual",
+        "version": null,
+        "confidence": null
+      }
+    },
+    {
+      "id": "obs-pdnsb-vendor",
+      "source_id": "src-pdns-b",
+      "location": "export row 3",
+      "excerpt": "billing-vendor.example,A,198.51.100.24,2025-02-01T00:00:00Z,2026-09-30T00:00:00Z",
+      "about": [
+        "ent-dom-vendor",
+        "ent-ip-vendor"
+      ],
+      "observed_at": "2025-02-01T00:00:00Z",
+      "collected_at": "2026-09-30T21:00:00Z",
+      "ingested_at": "2026-10-01T09:00:00Z",
+      "extraction": {
+        "method": "parser",
+        "version": "pdns-csv 0.4",
+        "confidence": null
+      }
+    },
+    {
+      "id": "obs-ipreg-vendor",
+      "source_id": "src-ipreg",
+      "location": "allocation record 198.51.100.0/24",
+      "excerpt": "198.51.100.0/24 allocated to Billing Vendor V (fictional); allocation date 2021-02-01",
+      "about": [
+        "ent-ip-vendor",
+        "ent-org-vendor"
+      ],
+      "observed_at": "2021-02-01",
+      "collected_at": "2026-09-30T12:00:00Z",
+      "ingested_at": "2026-10-01T09:00:00Z",
+      "extraction": {
+        "method": "parser",
+        "version": "rir-text 2.0",
+        "confidence": null
+      }
+    },
+    {
+      "id": "obs-pdnsa-billing-02",
+      "source_id": "src-pdns-a",
+      "location": "export row 1301",
+      "excerpt": "utilityco-billing.example A 203.0.113.77 first_seen=2026-10-03T05:00:00Z last_seen=2026-10-14T22:10:00Z",
+      "about": [
+        "ent-dom-billing",
+        "ent-ip-new"
+      ],
+      "observed_at": "2026-10-03T05:00:00Z",
+      "collected_at": "2026-10-14T22:00:00Z",
+      "ingested_at": "2026-10-15T09:00:00Z",
+      "extraction": {
+        "method": "parser",
+        "version": "pdns-csv 0.4",
+        "confidence": null
+      }
+    },
+    {
+      "id": "obs-pdnsb-paycenter-late",
+      "source_id": "src-pdns-b",
+      "location": "backfill row 902",
+      "excerpt": "uc-paycenter.example,A,203.0.113.10,2026-03-12T00:00:00Z,2026-04-01T00:00:00Z (backfilled 2026-10-14)",
+      "about": [
+        "ent-dom-paycenter",
+        "ent-ip-shared"
+      ],
+      "observed_at": "2026-03-12T00:00:00Z",
+      "collected_at": "2026-10-14T21:00:00Z",
+      "ingested_at": "2026-10-15T09:00:00Z",
+      "extraction": {
+        "method": "parser",
+        "version": "pdns-csv 0.4",
+        "confidence": null
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "id": "rel-billing-resolves",
+      "type": "resolves_to",
+      "from": "ent-dom-billing",
+      "to": "ent-ip-shared",
+      "directed": true,
+      "semantics": "DNS A record seen by passive DNS sensors during the window.",
+      "review": "confirmed",
+      "evidence": {
+        "supporting": [
+          "obs-pdnsa-billing-01",
+          "obs-mirror-billing-01",
+          "obs-pdnsb-billing-01"
+        ],
+        "contradicting": []
+      },
+      "first_observed": "2026-09-03T08:14:00Z",
+      "last_observed": "2026-09-29T19:02:00Z"
+    },
+    {
+      "id": "rel-paycenter-resolves",
+      "type": "resolves_to",
+      "from": "ent-dom-paycenter",
+      "to": "ent-ip-shared",
+      "directed": true,
+      "semantics": "DNS A record seen by passive DNS sensors during the window.",
+      "review": "confirmed",
+      "evidence": {
+        "supporting": [
+          "obs-pdnsa-paycenter-01",
+          "obs-pdnsb-paycenter-late"
+        ],
+        "contradicting": []
+      },
+      "first_observed": "2026-03-11T02:20:00Z",
+      "last_observed": "2026-04-02T17:45:00Z"
+    },
+    {
+      "id": "rel-ip-allocated",
+      "type": "allocated_to",
+      "from": "ent-ip-shared",
+      "to": "ent-org-hosta",
+      "directed": true,
+      "semantics": "Address-block allocation holder. Does not identify who operates individual websites on the address. End of allocation unknown.",
+      "review": "confirmed",
+      "evidence": {
+        "supporting": [
+          "obs-ipreg-shared"
+        ],
+        "contradicting": []
+      },
+      "first_observed": "2019-05-14",
+      "last_observed": null
+    },
+    {
+      "id": "rel-billing-registrar",
+      "type": "registered_via",
+      "from": "ent-dom-billing",
+      "to": "ent-org-registrar",
+      "directed": true,
+      "semantics": "Registrar of record at registration time.",
+      "review": "confirmed",
+      "evidence": {
+        "supporting": [
+          "obs-rdap-billing"
+        ],
+        "contradicting": []
+      },
+      "first_observed": "2026-09-01T16:03:00Z",
+      "last_observed": "2026-09-01T16:03:00Z"
+    },
+    {
+      "id": "rel-paycenter-registrar",
+      "type": "registered_via",
+      "from": "ent-dom-paycenter",
+      "to": "ent-org-registrar-llc",
+      "directed": true,
+      "semantics": "Registrar of record at registration time.",
+      "review": "confirmed",
+      "evidence": {
+        "supporting": [
+          "obs-rdap-paycenter"
+        ],
+        "contradicting": []
+      },
+      "first_observed": "2026-03-09T10:41:00Z",
+      "last_observed": "2026-03-09T10:41:00Z"
+    },
+    {
+      "id": "rel-paycenter-registrant",
+      "type": "registrant_handle",
+      "from": "ent-dom-paycenter",
+      "to": "ent-acct-reg7731",
+      "directed": true,
+      "semantics": "Registrant handle published in RDAP. No comparable value exists for utilityco-billing.example (redacted).",
+      "review": "confirmed",
+      "evidence": {
+        "supporting": [
+          "obs-rdap-paycenter"
+        ],
+        "contradicting": []
+      },
+      "first_observed": "2026-03-09T10:41:00Z",
+      "last_observed": "2026-03-09T10:41:00Z"
+    },
+    {
+      "id": "rel-cert-c1",
+      "type": "names_domain",
+      "from": "ent-cert-billing",
+      "to": "ent-dom-billing",
+      "directed": true,
+      "semantics": "Certificate lists the domain as a subject alternative name.",
+      "review": "confirmed",
+      "evidence": {
+        "supporting": [
+          "obs-ct-c1"
+        ],
+        "contradicting": []
+      },
+      "first_observed": "2026-09-02",
+      "last_observed": "2026-09-02"
+    },
+    {
+      "id": "rel-cert-c2",
+      "type": "names_domain",
+      "from": "ent-cert-paycenter",
+      "to": "ent-dom-paycenter",
+      "directed": true,
+      "semantics": "Certificate lists the domain as a subject alternative name.",
+      "review": "confirmed",
+      "evidence": {
+        "supporting": [
+          "obs-ct-c2"
+        ],
+        "contradicting": []
+      },
+      "first_observed": "2026-03-10",
+      "last_observed": "2026-03-10"
+    },
+    {
+      "id": "rel-report-domain",
+      "type": "mentions",
+      "from": "ent-doc-pr0142",
+      "to": "ent-dom-billing",
+      "directed": true,
+      "semantics": "The reported message's From address uses this domain.",
+      "review": "confirmed",
+      "evidence": {
+        "supporting": [
+          "obs-report-header"
+        ],
+        "contradicting": []
+      },
+      "first_observed": "2026-09-15T13:02:00Z",
+      "last_observed": "2026-09-15T13:02:00Z"
+    },
+    {
+      "id": "rel-report-sender",
+      "type": "mentions",
+      "from": "ent-doc-pr0142",
+      "to": "ent-ip-sender",
+      "directed": true,
+      "semantics": "The Received header copied by the reporter names this address.",
+      "review": "unreviewed",
+      "evidence": {
+        "supporting": [
+          "obs-report-header"
+        ],
+        "contradicting": []
+      },
+      "first_observed": "2026-09-15T13:02:00Z",
+      "last_observed": "2026-09-15T13:02:00Z"
+    },
+    {
+      "id": "rel-gw-received",
+      "type": "received_from",
+      "from": "ent-sys-gateway",
+      "to": "ent-ip-sender",
+      "directed": true,
+      "semantics": "Gateway accepted a message from this address (SPF fail).",
+      "review": "confirmed",
+      "evidence": {
+        "supporting": [
+          "obs-gw-log"
+        ],
+        "contradicting": []
+      },
+      "first_observed": "2026-09-15T13:01:58Z",
+      "last_observed": "2026-09-15T13:01:58Z"
+    },
+    {
+      "id": "rel-billing-kit",
+      "type": "serves_kit_artifact",
+      "from": "ent-dom-billing",
+      "to": "ent-topic-kit",
+      "directed": true,
+      "semantics": "Page loaded a script whose hash matches the uc-kit-v2 reference.",
+      "review": "confirmed",
+      "evidence": {
+        "supporting": [
+          "obs-sbx-kit"
+        ],
+        "contradicting": []
+      },
+      "first_observed": "2026-09-16T10:30:00Z",
+      "last_observed": "2026-09-16T10:30:00Z"
+    },
+    {
+      "id": "rel-paycenter-kit",
+      "type": "serves_kit_artifact",
+      "from": "ent-dom-paycenter",
+      "to": "ent-topic-kit",
+      "directed": true,
+      "semantics": "The archive record that supported this link is no longer in the dataset (the third-party archive withdrew it). No current evidence.",
+      "review": "disputed",
+      "evidence": {
+        "supporting": [],
+        "contradicting": []
+      },
+      "first_observed": "2026-03-12",
+      "last_observed": "2026-03-12"
+    },
+    {
+      "id": "rel-billing-credphish",
+      "type": "associated_with",
+      "from": "ent-dom-billing",
+      "to": "ent-topic-credphish",
+      "directed": true,
+      "semantics": "Login form posting to a collection script, as captured in the sandbox.",
+      "review": "unreviewed",
+      "evidence": {
+        "supporting": [
+          "obs-sbx-kit"
+        ],
+        "contradicting": []
+      },
+      "first_observed": "2026-09-16T10:30:00Z",
+      "last_observed": "2026-09-16T10:30:00Z"
+    },
+    {
+      "id": "rel-billing-imitates",
+      "type": "imitates",
+      "from": "ent-dom-billing",
+      "to": "ent-dom-utilityco",
+      "directed": true,
+      "semantics": "Lookalike naming: shares the “utilityco” label and the display name “Utility Co Billing”.",
+      "review": "confirmed",
+      "evidence": {
+        "supporting": [
+          "obs-report-header"
+        ],
+        "contradicting": []
+      },
+      "first_observed": "2026-09-15T13:02:00Z",
+      "last_observed": "2026-09-15T13:02:00Z",
+      "derivation": "String comparison by the dataset author. This is a naming judgement, not a technical link."
+    },
+    {
+      "id": "rel-utilityco-operates",
+      "type": "operates",
+      "from": "ent-org-utilityco",
+      "to": "ent-dom-utilityco",
+      "directed": true,
+      "semantics": "Registrant organisation of the legitimate domain.",
+      "review": "confirmed",
+      "evidence": {
+        "supporting": [
+          "obs-rdap-utilityco"
+        ],
+        "contradicting": []
+      },
+      "first_observed": "2009-06-30",
+      "last_observed": null
+    },
+    {
+      "id": "rel-vendor-resolves",
+      "type": "resolves_to",
+      "from": "ent-dom-vendor",
+      "to": "ent-ip-vendor",
+      "directed": true,
+      "semantics": "DNS A record seen by passive DNS sensors during the window.",
+      "review": "confirmed",
+      "evidence": {
+        "supporting": [
+          "obs-pdnsb-vendor"
+        ],
+        "contradicting": []
+      },
+      "first_observed": "2025-02-01T00:00:00Z",
+      "last_observed": "2026-09-30T00:00:00Z"
+    },
+    {
+      "id": "rel-vendor-allocated",
+      "type": "allocated_to",
+      "from": "ent-ip-vendor",
+      "to": "ent-org-vendor",
+      "directed": true,
+      "semantics": "Address-block allocation holder.",
+      "review": "confirmed",
+      "evidence": {
+        "supporting": [
+          "obs-ipreg-vendor"
+        ],
+        "contradicting": []
+      },
+      "first_observed": "2021-02-01",
+      "last_observed": null
+    },
+    {
+      "id": "rel-vc22-domain",
+      "type": "mentions",
+      "from": "ent-doc-vc22",
+      "to": "ent-dom-vendor",
+      "directed": true,
+      "semantics": "Contract names this domain as the approved billing portal.",
+      "review": "confirmed",
+      "evidence": {
+        "supporting": [
+          "obs-vc22-vendor"
+        ],
+        "contradicting": []
+      },
+      "first_observed": "2026-01-10",
+      "last_observed": "2026-01-10"
+    },
+    {
+      "id": "rel-utilityco-contracts",
+      "type": "contracts_with",
+      "from": "ent-org-utilityco",
+      "to": "ent-org-vendor",
+      "directed": true,
+      "semantics": "Active billing contract (VC-22).",
+      "review": "confirmed",
+      "evidence": {
+        "supporting": [
+          "obs-vc22-vendor"
+        ],
+        "contradicting": []
+      },
+      "first_observed": "2026-01-10",
+      "last_observed": null
+    },
+    {
+      "id": "rel-domains-coresolved",
+      "type": "co_resolved",
+      "from": "ent-dom-billing",
+      "to": "ent-dom-paycenter",
+      "directed": false,
+      "semantics": "Both domains resolved to 203.0.113.10, in non-overlapping windows. Shared resolution is not evidence of common control.",
+      "derivation": "Derived by the dataset author from rel-billing-resolves and rel-paycenter-resolves.",
+      "review": "unreviewed",
+      "evidence": {
+        "supporting": [
+          "obs-pdnsa-billing-01",
+          "obs-pdnsa-paycenter-01"
+        ],
+        "contradicting": []
+      },
+      "first_observed": "2026-03-11T02:20:00Z",
+      "last_observed": "2026-09-29T19:02:00Z"
+    },
+    {
+      "id": "rel-billing-vendor-guess",
+      "type": "operated_by",
+      "from": "ent-dom-billing",
+      "to": "ent-org-vendor",
+      "directed": true,
+      "semantics": "Initial triage guess that the domain belonged to the billing vendor.",
+      "derivation": "Triage note based on the display name only.",
+      "review": "rejected",
+      "evidence": {
+        "supporting": [
+          "obs-report-header"
+        ],
+        "contradicting": [
+          "obs-vc22-vendor"
+        ]
+      },
+      "first_observed": null,
+      "last_observed": null
+    },
+    {
+      "id": "rel-billing-resolves-2",
+      "type": "resolves_to",
+      "from": "ent-dom-billing",
+      "to": "ent-ip-new",
+      "directed": true,
+      "semantics": "DNS A record seen by passive DNS sensors during the window.",
+      "review": "unreviewed",
+      "evidence": {
+        "supporting": [
+          "obs-pdnsa-billing-02"
+        ],
+        "contradicting": []
+      },
+      "first_observed": "2026-10-03T05:00:00Z",
+      "last_observed": "2026-10-14T22:10:00Z"
+    }
+  ],
+  "claims": [
+    {
+      "id": "clm-shared-address",
+      "statement": "utilityco-billing.example and uc-paycenter.example resolved to the same IPv4 address (203.0.113.10) in non-overlapping periods: March–April 2026 and September 2026.",
+      "kind": "derived",
+      "status": "supported",
+      "review": "confirmed",
+      "about": [
+        "ent-dom-billing",
+        "ent-dom-paycenter",
+        "ent-ip-shared"
+      ],
+      "evidence": {
+        "supporting": [
+          "obs-pdnsa-billing-01",
+          "obs-pdnsb-billing-01",
+          "obs-pdnsa-paycenter-01"
+        ],
+        "contradicting": []
+      },
+      "derivation": {
+        "method": "Comparison of resolves_to relationships",
+        "inputs": [
+          "rel-billing-resolves",
+          "rel-paycenter-resolves"
+        ]
+      }
+    },
+    {
+      "id": "clm-bulk-hosting",
+      "statement": "203.0.113.10 is a shared hosting address: at least 1,140 domains resolved to it in 2026.",
+      "kind": "observed",
+      "status": "supported",
+      "review": "confirmed",
+      "about": [
+        "ent-ip-shared",
+        "ent-org-hosta"
+      ],
+      "evidence": {
+        "supporting": [
+          "obs-pdnsa-ip-volume",
+          "obs-ipreg-shared"
+        ],
+        "contradicting": []
+      }
+    },
+    {
+      "id": "clm-same-kit",
+      "statement": "Both domains served a script with the same SHA-256 (uc-kit-v2).",
+      "kind": "observed",
+      "status": "unresolved",
+      "review": "unreviewed",
+      "about": [
+        "ent-dom-billing",
+        "ent-dom-paycenter",
+        "ent-topic-kit"
+      ],
+      "evidence": {
+        "supporting": [
+          "obs-sbx-kit"
+        ],
+        "contradicting": []
+      }
+    },
+    {
+      "id": "clm-same-operator",
+      "statement": "The same operator controls utilityco-billing.example and uc-paycenter.example.",
+      "kind": "hypothesized",
+      "status": "unresolved",
+      "review": "unreviewed",
+      "about": [
+        "ent-dom-billing",
+        "ent-dom-paycenter"
+      ],
+      "evidence": {
+        "supporting": [
+          "obs-sbx-kit",
+          "obs-pdnsa-billing-01",
+          "obs-pdnsa-paycenter-01"
+        ],
+        "contradicting": [
+          "obs-kitnote-public",
+          "obs-pdnsa-ip-volume"
+        ]
+      }
+    },
+    {
+      "id": "clm-registrant-redacted",
+      "statement": "The registrant of utilityco-billing.example is not available in this dataset (redacted), so registrant comparison with uc-paycenter.example is impossible.",
+      "kind": "observed",
+      "status": "supported",
+      "review": "confirmed",
+      "about": [
+        "ent-dom-billing"
+      ],
+      "evidence": {
+        "supporting": [
+          "obs-rdap-billing"
+        ],
+        "contradicting": []
+      }
+    },
+    {
+      "id": "clm-not-vendor-portal",
+      "statement": "utilityco-billing.example is not the approved billing-vendor portal.",
+      "kind": "analyst-assessed",
+      "status": "supported",
+      "review": "confirmed",
+      "about": [
+        "ent-dom-billing",
+        "ent-dom-vendor"
+      ],
+      "evidence": {
+        "supporting": [
+          "obs-vc22-vendor"
+        ],
+        "contradicting": []
+      }
+    }
+  ],
+  "merge_candidates": [
+    {
+      "id": "mc-registrar-r1",
+      "entities": [
+        "ent-org-registrar",
+        "ent-org-registrar-llc"
+      ],
+      "criteria": [
+        "Same registrar ID (9999, fictional) in both RDAP records.",
+        "Names differ only by the suffix “LLC”."
+      ]
+    },
+    {
+      "id": "mc-billing-name-only",
+      "entities": [
+        "ent-dom-billing",
+        "ent-dom-vendor"
+      ],
+      "criteria": [
+        "Both domain labels contain the word “billing” (name similarity only — no shared technical attribute)."
+      ]
+    }
+  ]
+}
