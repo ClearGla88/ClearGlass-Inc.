@@ -22,5 +22,11 @@ ledger. When there is nothing to measure, the value is `null` and the console sh
 | Risk reduction | Audit chain integrity | `verify()` over the full ledger | Always verified | `/audit/verify`, `/ready` |
 | Platform | Daily loop runs with a verified chain | End-of-day reports whose audit check passed | 30 by 2026-12-31 (`obj-platform`) | `reports` |
 
+The Revenue Floor reports its own measured results (`RevenueDesk.metrics`, shown in the console): leads, qualified
+opportunities, approved messages sent, replies, meetings, proposals issued and accepted, payments received, refunds,
+direct costs, reply and acceptance rates, lead-to-payment rate, and median days from lead to payment, over a stated
+window. A rate without a denominator is `null`, and return on investment is never computed. Money is reported by
+category, never as one total: see `docs/REVENUE_OPERATIONS.md`.
+
 Targets marked operator-set live in `config/company.json` and are the operator's to change. The demo snapshot's
 pipeline numbers come from a fictional sample list and are labelled as sample data in the console.

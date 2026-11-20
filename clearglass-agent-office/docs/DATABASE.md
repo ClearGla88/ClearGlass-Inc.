@@ -1,7 +1,9 @@
 # Database schema
 
 The production schema is [`infra/db/postgres/001_init.sql`](../infra/db/postgres/001_init.sql) followed by
-[`002_governance_controls.sql`](../infra/db/postgres/002_governance_controls.sql) (PostgreSQL 16).
+[`002_governance_controls.sql`](../infra/db/postgres/002_governance_controls.sql),
+[`003_plan_first_mode.sql`](../infra/db/postgres/003_plan_first_mode.sql) and
+[`004_revenue_operations.sql`](../infra/db/postgres/004_revenue_operations.sql) (PostgreSQL 16).
 `tests/test_schema_parity.py` fails if a model field has no column or a migration is misnumbered;
 `tests/test_postgres_schema.py` applies every migration to a real server and checks the constraints below.
 
@@ -55,6 +57,19 @@ erDiagram
 | ShadowDivergence | `shadow_divergences` | **append-only**; enforced and shadow outcomes must differ; at least one rule id |
 
 Append-only tables reject UPDATE, DELETE, and TRUNCATE with `insufficient_privilege`. Every foreign key has an index.
+
+## Revenue Floor (004)
+
+| Table | Holds | Rules the database enforces |
+|---|---|---|
+| `opportunities` | One sales opportunity: stage, contact, consent, facts, drafts, terms, timeline | Closed stage set; `(source, source_ref)` unique; a lost opportunity has a reason |
+| `external_actions` | An email, proposal or invoice from request to verification | One action per approval; a released action has its ticket, an executed one its receipt |
+| `external_action_receipts` | One row per provider reference a person recorded | Append-only; `(connector, external_ref)` unique |
+| `money_events` | Every fact about money, with the record behind it | Append-only; `(provider, record_type, external_ref, kind)` unique; `payment_received` only on a provider record; `payment_reported` only unverified |
+| `suppressions` | Addresses and @domains no message may reach | Append-only; lowercase |
+| `offer_decisions` | Each operator decision on an offer, with the digest of the content approved | Append-only; reason of 12+ characters; refused if recorded in an agent's name |
+
+The SQLite runtime keeps the same append-only tables (`packages/agent_core/store.py`).
 
 ## Migration notes
 
