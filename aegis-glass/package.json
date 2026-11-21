@@ -1,0 +1,31 @@
+{
+  "name": "aegis-glass",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Zero-trust protected media delivery for confidential concept work: per-view authorization, attributable watermarks, signed view receipts and a tamper-evident audit trail.",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test --test-reporter=spec \"tests/*.test.ts\"",
+    "schema:check": "bash scripts/check-schema.sh"
+  },
+  "dependencies": {
+    "next": "16.4.6",
+    "react": "19.2.9",
+    "react-dom": "19.2.9",
+    "server-only": "0.0.1",
+    "sharp": "0.35.5"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.7",
+    "typescript": "5.9.3"
+  }
+}
