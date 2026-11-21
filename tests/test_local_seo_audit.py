@@ -162,5 +162,6 @@ def test_cli_unreadable_homepage_is_a_usage_error(tmp_path: Path) -> None:
 def test_repository_checkout_audit_runs() -> None:
     root = Path(__file__).resolve().parents[1]
     report = audit_mod.audit(audit_mod.RepoSite(root, "https://www.clearglassinc.com"), check_links=False)
+    # Smoke test only: the homepage's content belongs to website/site_config.py and may change.
     assert report["counts"]["pages_audited"] > 0
-    assert report["canonical_nap"]["locality"] == "Burlington"
+    assert report["canonical_nap"]["source"] == "index.html JSON-LD"

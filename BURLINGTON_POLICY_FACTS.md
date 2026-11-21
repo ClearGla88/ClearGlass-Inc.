@@ -4,7 +4,7 @@ Every rule the Burlington plan relies on, quoted word for word from the primary 
 
 - **Retrieved:** 2026-11-21, by HTTPS GET from the research sandbox. The CRTC site refused automated requests, so the CASL rows quote the statute on laws-lois.justice.gc.ca instead.
 - **Re-check:** before any decision that rests on a row. Google edits these pages without notice.
-- **Not legal advice.** Rows F17 to F20 quote the Act. Whether a particular message is a commercial electronic message, and which consent basis applies, is `[LEGAL REVIEW]`.
+- **Not legal advice.** Rows F17 to F20 quote the Act, and F21 quotes the CRTC's regulation. Whether a particular message is a commercial electronic message, and which consent basis applies, is `[LEGAL REVIEW]`.
 
 ## Google Business Profile
 
