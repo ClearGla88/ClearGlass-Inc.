@@ -84,6 +84,8 @@ jobs:
         run: git ls-files -z '*.py' | xargs -0 python -m py_compile
       - name: Tests
         run: python -m pytest -q
+      - name: SEO validation (robots.txt, sitemaps, homepage metadata)
+        run: python tools/validate_seo.py
       - name: Content agent smoke run
         run: >-
           python content_agent.py --seed content_seed.example.json
