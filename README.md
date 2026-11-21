@@ -21,6 +21,7 @@ The website pages (`*.html`, `*.css`, `*.js`, `sitemap*.xml`, `CNAME`, `.nojekyl
 | Auto-heal controller | `auto_heal.py`, `error-patterns.json`, `healing-strategies.json` | `tests/test_auto_heal.py`. It expects its state in `.github/auto-heal/` and exits with status 2, before any API call, when that directory is missing (as it is now). |
 | Agent crypto runtime (Rust, `age`) | `Cargo.toml`, `Cargo.lock`, `src/` | `cargo test --locked`; `.github/workflows/agent-army-crypto.yml` also builds the release binary and checks the CLI encrypt/decrypt round trip and tamper rejection |
 | Repository hygiene gate | `tools/repo_hygiene.py`, `tools/repo_hygiene_baseline.json` | `tests/test_repo_hygiene.py`, CI |
+| Aegis Glass (protected previews, Next.js 16) | `aegis-glass/` | `npm test`, HTTP smoke test and schema check, all in the `Aegis Glass (Node)` CI job. Demo mode only: production adapters are not built and production mode refuses to start. See `aegis-glass/README.md` |
 | Legal intelligence modules | `legal_intelligence_core.py`, `artemis_legal_agent_mvp.py` | Their tests are kept outside this repository |
 
 **Does not run in this tree**

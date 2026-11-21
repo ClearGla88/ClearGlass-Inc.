@@ -90,6 +90,44 @@ jobs:
       - run: cargo clippy --locked --all-targets -- -D warnings
       - run: cargo test --locked
 
+  aegis-glass:
+    name: Aegis Glass (Node)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: aegis-glass
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          # 22.18+ runs the TypeScript tests directly (type stripping).
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: aegis-glass/package-lock.json
+      - run: npm ci
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+      - run: npx tsc --noEmit
+      - run: npm test
+      - run: npx next build
+      - name: HTTP smoke test against the demo server
+        run: |
+          AEGIS_MODE=demo npx next start -p 3100 > "$RUNNER_TEMP/aegis.log" 2>&1 &
+          for _ in $(seq 1 30); do curl -sf -o /dev/null http://localhost:3100/ && break; sleep 1; done
+          node scripts/smoke.ts http://localhost:3100 || { cat "$RUNNER_TEMP/aegis.log"; exit 1; }
+      - name: Production mode refuses to start without adapters
+        run: |
+          npx next start -p 3101 > "$RUNNER_TEMP/prod.log" 2>&1 &
+          for _ in $(seq 1 30); do curl -s -o /dev/null http://localhost:3101/ && break; sleep 1; done
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3101/api/media/x.y)" = "503"
+      - name: Schema guarantees (append-only, row-level security)
+        run: bash scripts/check-schema.sh
+
   dependency-review:
     name: Dependency review
     if: github.event_name == 'pull_request'

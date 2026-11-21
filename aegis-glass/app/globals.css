@@ -1,0 +1,604 @@
+/* Aegis Glass: calm glass by default; the mesh only lights up as risk rises. */
+
+:root {
+  --bg: #07131f;
+  --bg-2: #0b1f33;
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-strong: rgba(255, 255, 255, 0.09);
+  --line: rgba(160, 220, 240, 0.16);
+  --text: #e8f3f8;
+  --muted: #9fb7c4;
+  --accent: #7fd6e8;
+  --accent-ink: #04202b;
+  --ok: #7ee2a8;
+  --bad: #ff9a9a;
+  --guarded: #f2c46d;
+  --high: #ff9f5a;
+  --critical: #ff5f6d;
+  --radius: 14px;
+  --focus: 0 0 0 3px rgba(127, 214, 232, 0.55);
+  --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(127, 214, 232, 0.12), transparent 60%),
+    radial-gradient(900px 500px at 110% 10%, rgba(140, 120, 255, 0.1), transparent 60%),
+    linear-gradient(180deg, var(--bg), var(--bg-2));
+  background-attachment: fixed;
+  color: var(--text);
+  font: 15px/1.5 var(--font);
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.2;
+  margin: 0 0 0.5rem;
+}
+
+h1 {
+  font-size: 1.6rem;
+}
+
+h3 {
+  font-size: 1rem;
+}
+
+.glass {
+  background: var(--glass);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  backdrop-filter: blur(14px) saturate(130%);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.mono {
+  font-family: var(--mono);
+  font-size: 0.85em;
+}
+
+.ok {
+  color: var(--ok);
+}
+
+.bad {
+  color: var(--bad);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -3rem;
+  background: var(--accent);
+  color: var(--accent-ink);
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  z-index: 10;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus);
+}
+
+/* Buttons and inputs */
+
+.btn {
+  font: inherit;
+  color: var(--text);
+  background: var(--glass-strong);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.45rem 0.85rem;
+  cursor: pointer;
+  min-height: 2.25rem;
+}
+
+.btn:hover {
+  border-color: var(--accent);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.btn-small {
+  padding: 0.25rem 0.6rem;
+  min-height: 2rem;
+  font-size: 0.85rem;
+}
+
+input {
+  font: inherit;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.45rem 0.6rem;
+  min-height: 2.25rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.spread {
+  justify-content: space-between;
+}
+
+/* Brand */
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.brand-mark {
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 6px;
+  background: linear-gradient(135deg, rgba(127, 214, 232, 0.9), rgba(140, 120, 255, 0.7));
+  box-shadow: 0 0 16px rgba(127, 214, 232, 0.45);
+}
+
+/* Sign-in */
+
+.signin {
+  max-width: 40rem;
+  margin: 8vh auto;
+  padding: 2rem;
+}
+
+.signin h1 {
+  margin-top: 1.25rem;
+}
+
+.personas {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.persona {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: var(--text);
+  background: var(--glass);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  display: grid;
+  gap: 0.15rem;
+  cursor: pointer;
+}
+
+.persona:hover {
+  border-color: var(--accent);
+}
+
+.persona-label {
+  font-weight: 600;
+}
+
+/* App frame */
+
+.vault {
+  min-height: 100vh;
+  padding: 1rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-rows: auto 1fr;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 1rem;
+  flex-wrap: wrap;
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.chip {
+  font-size: 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  color: var(--muted);
+}
+
+.chip[data-risk="GUARDED"] {
+  color: var(--guarded);
+  border-color: var(--guarded);
+}
+
+.chip[data-risk="HIGH"] {
+  color: var(--high);
+  border-color: var(--high);
+}
+
+.chip[data-risk="CRITICAL"] {
+  color: var(--critical);
+  border-color: var(--critical);
+}
+
+.layout {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(14rem, 18rem) minmax(0, 1fr) minmax(16rem, 20rem);
+  align-items: start;
+}
+
+.layout:not(:has(.investigator)) {
+  grid-template-columns: minmax(14rem, 18rem) minmax(0, 1fr);
+}
+
+.panel-title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.asset-list,
+.investigator {
+  padding: 1rem;
+}
+
+.asset-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.asset-button {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 0.55rem 0.6rem;
+  display: grid;
+  gap: 0.25rem;
+  cursor: pointer;
+}
+
+.asset-button:hover {
+  background: var(--glass);
+}
+
+.asset-button[aria-current="true"] {
+  background: var(--glass-strong);
+  border-color: var(--line);
+}
+
+.asset-title {
+  font-weight: 600;
+}
+
+.asset-hint {
+  font-size: 0.8rem;
+  color: var(--guarded);
+}
+
+.badge {
+  justify-self: start;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  border-radius: 6px;
+  padding: 0.1rem 0.45rem;
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.badge[data-class="CONFIDENTIAL"] {
+  color: #b9e6f2;
+  border-color: rgba(127, 214, 232, 0.5);
+}
+
+.badge[data-class="RESTRICTED"] {
+  color: #ffd79a;
+  border-color: rgba(242, 196, 109, 0.6);
+}
+
+.badge[data-class="CROWN-JEWEL"] {
+  color: #ffc2c8;
+  border-color: rgba(255, 95, 109, 0.6);
+}
+
+/* Viewer */
+
+.stage {
+  padding: 1rem;
+  min-height: 24rem;
+}
+
+.viewer {
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.viewer-stage {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.3);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  transition: box-shadow 400ms ease, border-color 400ms ease;
+}
+
+/* The mesh: invisible at LOW, a hairline at GUARDED, a glow at HIGH, an alarm at CRITICAL. */
+.viewer[data-risk="GUARDED"] .viewer-stage {
+  border-color: rgba(242, 196, 109, 0.55);
+}
+
+.viewer[data-risk="HIGH"] .viewer-stage {
+  border-color: var(--high);
+  box-shadow: 0 0 0 1px var(--high), 0 0 28px rgba(255, 159, 90, 0.35);
+}
+
+.viewer[data-risk="CRITICAL"] .viewer-stage {
+  border-color: var(--critical);
+  box-shadow: 0 0 0 2px var(--critical), 0 0 36px rgba(255, 95, 109, 0.45);
+}
+
+.viewer-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+}
+
+.viewer-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-repeat: repeat;
+  transition: background-position 900ms ease;
+}
+
+.viewer-placeholder {
+  height: 16rem;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.viewer[data-shielded="true"] .viewer-image {
+  filter: blur(28px);
+}
+
+.viewer-shield {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--text);
+  background: rgba(7, 19, 31, 0.55);
+  font-weight: 600;
+}
+
+.viewer-blocked {
+  padding: 2rem;
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+}
+
+.viewer-blocked-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.viewer-blocked p {
+  margin: 0;
+}
+
+.viewer-caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.viewer-title {
+  font-weight: 600;
+}
+
+.viewer-meta,
+.viewer-notice {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.viewer-meta strong[data-risk="GUARDED"] {
+  color: var(--guarded);
+}
+
+.viewer-meta strong[data-risk="HIGH"] {
+  color: var(--high);
+}
+
+.viewer-meta strong[data-risk="CRITICAL"] {
+  color: var(--critical);
+}
+
+/* Investigator */
+
+.layout > * {
+  min-width: 0;
+}
+
+/* minmax(0, 1fr) stops an input's intrinsic width from widening the panel past its column. */
+.investigator {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.tool {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.5rem;
+}
+
+.tool input {
+  width: 100%;
+}
+
+.tool p {
+  margin: 0;
+}
+
+.tool label {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.evidence {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 0.75rem;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.evidence dt {
+  color: var(--muted);
+}
+
+.evidence dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.cases {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.cases li {
+  border-top: 1px solid var(--line);
+  padding-top: 0.6rem;
+  display: grid;
+  gap: 0.3rem;
+}
+
+/* Responsive */
+
+@media (max-width: 1100px) {
+  .layout,
+  .layout:not(:has(.investigator)) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .vault {
+    padding: 0.5rem;
+  }
+
+  .signin {
+    margin: 1rem;
+    padding: 1.25rem;
+  }
+}
+
+/* Motion and print */
+
+@media (prefers-reduced-motion: reduce) {
+  .viewer-overlay,
+  .viewer-stage {
+    transition: none;
+  }
+
+  .viewer-placeholder {
+    animation: none;
+  }
+}
+
+/* Friction only: printing from the browser omits protected previews. */
+@media print {
+  .viewer-stage {
+    display: none !important;
+  }
+}
