@@ -506,6 +506,13 @@ main:focus { outline: none; }
   text-wrap: balance;
 }
 .hero__title > span { display: block; }
+.hero__brand {
+  margin-bottom: 0.3em;
+  font-size: 0.36em;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--text-2);
+}
 .hero__title-accent {
   font-style: italic;
   color: #d9ccff;
@@ -939,6 +946,10 @@ main:focus { outline: none; }
 @media (min-width: 768px) {
   .footer__grid { grid-template-columns: auto 1fr; align-items: center; }
   .footer__grid .footer__nav ul { justify-content: flex-end; }
+  /* Extra link rows (Explore, Social, Legal) span the full width, so they
+     never widen the brand column and squeeze the main footer links. */
+  .footer__grid .footer__nav--extra { grid-column: 1 / -1; }
+  .footer__grid .footer__nav--extra ul { justify-content: flex-start; }
 }
 .footer__brand { display: flex; align-items: center; gap: 14px; }
 .footer__brand img { border-radius: 50%; }

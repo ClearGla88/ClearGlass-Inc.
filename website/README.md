@@ -46,6 +46,7 @@ build overwrites it, and `tests/test_homepage.py` fails while it is stale.
 python3 website/build.py --check              # index.html matches the config
 python3 -m pytest tests/test_homepage.py -q   # contract tests
 python3 tools/repo_hygiene.py                 # repository hygiene gate
+python3 tools/validate_seo.py                 # robots.txt, sitemaps, homepage indexing tags
 
 # Browser audit (server running as above). AXE is optional: point it at
 # axe-core's axe.min.js to add automated WCAG A/AA rules.
@@ -81,6 +82,7 @@ inventing one.
 | `people` | empty | No leadership block. Add `Person(name, role, bio)` entries to show one in About. |
 | `articles` | empty | Insights shows "No articles published yet". Add `Article(...)` only when the page at `href` exists; `build.py` refuses a local link to a missing file. |
 | `socials`, `legal` | empty | No social or legal links in the footer. Add `Link(label, href)` entries once the destinations exist. |
+| `explore` | 4 existing pages | Footer links to other public pages. `build.py` refuses a page that is missing or is not a canonical URL in `sitemap.xml`. |
 | `location` | `"Ontario, Canada"` | The "Based in" line in About. Set to `None` to hide it. |
 | `hero_image` | supplied skyline | Swap the files and `alt` text to replace the hero picture. Keep the 3:2 ratio or update `width`/`height`. |
 

@@ -201,7 +201,8 @@ def hero_section(site: SiteConfig) -> str:
         '<div class="container hero__grid">'
         '<div class="hero__copy">'
         f'<p class="eyebrow">{e(site.eyebrow)}</p>'
-        f'<h1 id="hero-title" class="hero__title"><span>{e(first)}</span>{rest_html}</h1>'
+        f'<h1 id="hero-title" class="hero__title"><span class="hero__brand">{e(site.headline_brand)}</span> '
+        f'<span>{e(first)}</span>{rest_html}</h1>'
         f'<p class="hero__lede">{e(site.supporting)}</p>'
         '<div class="hero__actions">'
         f'{button(site.primary_cta, "primary", with_arrow=True)}'
@@ -424,10 +425,10 @@ def contact_section(site: SiteConfig) -> str:
 def site_footer(site: SiteConfig, year: int) -> str:
     nav = "".join(f'<li><a href="{e(n.href)}">{e(n.label)}</a></li>' for n in site.nav)
     extra = ""
-    for label, links in (("Social", site.socials), ("Legal", site.legal)):
+    for label, links in (("Explore", site.explore), ("Social", site.socials), ("Legal", site.legal)):
         if links:
             items = "".join(f'<li><a href="{e(lk.href)}">{e(lk.label)}</a></li>' for lk in links)
-            extra += f'<nav class="footer__nav" aria-label="{label}"><ul role="list">{items}</ul></nav>'
+            extra += f'<nav class="footer__nav footer__nav--extra" aria-label="{label}"><ul role="list">{items}</ul></nav>'
     return (
         '<footer class="site-footer">'
         '<div class="container footer__grid">'
@@ -451,14 +452,39 @@ def head(site: SiteConfig) -> str:
     og_image = url + site.og_image
     hero = site.hero_image
     srcset = ", ".join(f"{path} {width}w" for path, width in hero.webp_sources)
-    org = {
+    website_id, org_id, page_id = url + "#website", url + "#organization", url + "#webpage"
+    website = {"@type": "WebSite", "@id": website_id, "name": site.name, "url": url,
+               "inLanguage": "en-CA", "publisher": {"@id": org_id}}
+    if site.alternate_name:
+        website["alternateName"] = site.alternate_name
+    graph = {
         "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": site.name,
-        "url": url,
-        "logo": url + "assets/site/img/icon-512.png",
-        "slogan": site.tagline,
+        "@graph": [
+            website,
+            {
+                "@type": "Organization",
+                "@id": org_id,
+                "name": site.name,
+                "url": url,
+                # The monogram shown in the header, footer and hero (512x512 PNG).
+                "logo": {"@type": "ImageObject", "url": url + "assets/site/img/icon-512.png",
+                         "width": 512, "height": 512},
+                "slogan": site.tagline,
+            },
+            {
+                "@type": "WebPage",
+                "@id": page_id,
+                "url": url,
+                "name": site.meta_title,
+                "description": site.meta_description,
+                "inLanguage": "en-CA",
+                "isPartOf": {"@id": website_id},
+                "about": {"@id": org_id},
+            },
+        ],
     }
+    # "</" cannot appear inside a <script> element; escape it in the JSON text.
+    jsonld = json.dumps(graph, ensure_ascii=False).replace("</", "<\\/")
     fonts = (
         "assets/site/fonts/cormorant-garamond-latin-500-normal.woff2",
         "assets/site/fonts/urbanist-latin-wght-normal.woff2",
@@ -499,7 +525,7 @@ def head(site: SiteConfig) -> str:
         '<link rel="stylesheet" href="assets/site/css/clearglass.css">'
         "<script>document.documentElement.classList.replace('no-js','js')</script>"
         '<script defer src="assets/site/js/clearglass.js"></script>'
-        f'<script type="application/ld+json">{json.dumps(org, ensure_ascii=False)}</script>'
+        f'<script type="application/ld+json">{jsonld}</script>'
         "</head>"
     )
 

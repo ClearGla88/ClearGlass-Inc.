@@ -91,6 +91,7 @@ class SiteConfig:
     utility_label: str
     eyebrow: str
     headline: tuple[str, ...]
+    headline_brand: str  # visible first line of the <h1>
     supporting: str
     primary_cta: Link
     secondary_cta: Link
@@ -110,10 +111,14 @@ class SiteConfig:
     contact: Contact
     socials: tuple[Link, ...]
     legal: tuple[Link, ...]
+    # Existing public pages linked from the homepage footer, for visitors and
+    # crawlers. build.py fails if one is missing or is not a canonical sitemap URL.
+    explore: tuple[Link, ...]
     hero_image: HeroImage
     monogram: str
     og_image: str
     meta_title: str
+    alternate_name: str | None  # JSON-LD WebSite.alternateName
     meta_description: str
     theme_color: str
     # Old homepage anchors that other pages still link to, mapped to the
@@ -133,6 +138,7 @@ SITE = SiteConfig(
     utility_label="CLEARGLASS / SYSTEMS & INTELLIGENCE",
     eyebrow="SOFTWARE ARCHITECTURE • AI AUTOMATION • CYBERSECURITY",
     headline=("Governed AI.", "Engineered Trust."),
+    headline_brand="ClearGlass Inc.",
     supporting=SUPPORTING,
     primary_cta=Link("Explore Capabilities", "#capabilities"),
     secondary_cta=Link("Discuss a Project", "#contact"),
@@ -269,6 +275,15 @@ SITE = SiteConfig(
     contact=Contact(email=None, form_endpoint=None),
     socials=(),
     legal=(),
+    # Chosen 2026-11-21 from sitemap pages that pass the homepage claim checks
+    # (tests/test_homepage.py FORBIDDEN). Passing is not a fact-check: review
+    # each page before relying on it, and edit this list freely.
+    explore=(
+        Link("Pricing and engagements", "pricing.html"),
+        Link("SMB Cyber Trust Kit", "smb-cyber-trust-kit.html"),
+        Link("Environmental cyber-risk", "environmental-cyber-risk.html"),
+        Link("Business email on your own domain", "workspace-email.html"),
+    ),
     hero_image=HeroImage(
         webp_sources=(
             ("assets/site/img/ontario-skyline-640.webp", 640),
@@ -286,8 +301,13 @@ SITE = SiteConfig(
     ),
     monogram="assets/site/img/monogram.svg",
     og_image="assets/site/img/og-card.png",
-    meta_title="ClearGlass Inc. — Governed AI. Engineered Trust.",
-    meta_description=SUPPORTING,
+    # Owner-supplied search title and description (2026-11-21).
+    meta_title="ClearGlass Inc. | AI Automation, Secure Software & Strategic Operations",
+    alternate_name="ClearGlass",
+    meta_description=(
+        "ClearGlass Inc. builds secure software, AI automation, cybersecurity, "
+        "and strategic operations systems."
+    ),
     theme_color="#09080c",
     anchor_aliases={
         "capabilities": ("services", "products"),

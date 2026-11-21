@@ -66,6 +66,12 @@ def check_config(site: SiteConfig) -> list[str]:
     for article in site.articles:
         if not article.href.startswith(("http://", "https://")) and not (ROOT / article.href).exists():
             problems.append(f"article {article.title!r} links to a page that does not exist")
+    sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8") if (ROOT / "sitemap.xml").exists() else ""
+    for link in site.explore:
+        if not (ROOT / link.href).is_file():
+            problems.append(f"explore link {link.label!r} points at a missing page: {link.href}")
+        elif f"<loc>{site.url.rstrip('/')}/{link.href}</loc>" not in sitemap:
+            problems.append(f"explore link {link.label!r} is not a canonical sitemap URL: {link.href}")
     if site.contact.form_endpoint and not site.contact.form_endpoint.startswith("https://"):
         problems.append("contact.form_endpoint must be an https:// URL")
     return problems
