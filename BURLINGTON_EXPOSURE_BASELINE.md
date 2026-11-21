@@ -1,6 +1,28 @@
 # ClearGlassInc Artemis — Burlington Exposure Baseline
 
-> **Evidence status (2026-07-30): baseline collection ready; live accounts not connected.** Zero is not substituted for unavailable data. No ranking, competitor, review, traffic, Palantir provisioning, or service-area claim in this brief is represented as verified.
+> **Evidence status (2026-11-21): live site audited; accounts still not connected.** The public site has now been measured. Google Business Profile, GA4, Search Console, CRM and social metrics are still null because no export exists. Zero is never substituted for missing data. Rankings, competitors, reviews, traffic, Palantir provisioning and service-area claims in this brief are unverified. Owner steps: `BURLINGTON_OWNER_ACTIONS.md`. Policy rules quoted from source: `BURLINGTON_POLICY_FACTS.md`.
+
+## Evidence collected 2026-11-21
+
+Source: `tools/local_seo_audit.py --live https://www.clearglassinc.com`, which makes read-only GET requests. The full report is `burlington-exposure/audits/2026-11-21-live.md`. The values are also recorded in `baseline_metrics.json` under `live_site_observations`.
+
+| Observation | Value | Why it matters |
+|---|---|---|
+| Publishing source | GitHub Pages, homepage Last-Modified 2026-10-28. Live sitemap has 176 URLs; this repository's has 172. The 17 URLs listed only here return 404 live. | This repository is not what Google crawls. Make site changes in the publishing repository (owner action 1). |
+| Sitemap health | 4 sitemaps, 177 URLs, all HTTP 200. No JSON-LD parse errors. | The technical base is sound. Nothing to fix before the local work. |
+| Burlington in a title | 1 page: `/seo-authority-hub.html` ("Cybersecurity & AI Automation in Burlington, Ontario \| ClearGlass Inc."). Its H1 is "Cybersecurity architecture and governed AI automation." | The only Burlington landing page is named after an SEO tactic and has no Burlington H1 (lever `burlington_page`). |
+| Burlington in an H1 | 2 product pages (`/clearglass-nexus.html`, `/ClearGlass-NEXUS-v12-FINAL.html`) | The service-intent page should carry it. |
+| Pages mentioning Burlington | 54 of 177, mostly in footers and legal pages | A mention is not relevance for "cybersecurity consultant Burlington". |
+| Business name in structured data | "ClearGlass Inc." 82 times, "ClearGlass Inc" 6 times. The homepage uses the minority spelling. | One real-world name everywhere (policy fact F5). |
+| Business email in structured data | A personal icloud.com address | Weakens trust for a cyber-risk advisory (lever `business_email`). |
+| Canonical tags pointing elsewhere | `/procurement-legal-tech.html` points to `clearglassinc.github.io`. `/smb.html` and `/apps/command-center/index.html` point to other internal pages. | The first one asks Google to index a different host's copy. |
+| Business Profile | None on record | No location to measure distance from. The geo-grid baseline can't start (policy fact F1). |
+
+The checkout audit (`burlington-exposure/audits/2026-11-21-checkout.md`) also found five pages with the fictional number (905) 555-0100 and a LinkedIn link misspelt `cleaglassinc` in this repository's `index.html`. Neither is on the live site.
+
+## Verified local organizations
+
+`local_opportunity_map.json` now records official URLs and evidence for these organizations. Verified from their own domains: Halton Region Small Business Centre, Burlington Public Library, Burlington Downtown Business Association, Innovation Factory, Burlington Gazette, Canada's Largest Ribfest. Partly verified, from secondary sources only: Burlington Chamber of Commerce, Burlington Economic Development (amalgamated with Tourism Burlington in March 2025, per a 2025 directory record), BurlingtonToday.com, Sound of Music Festival (reported to have left Spencer Smith Park after 2025). "Burlington 365" could not be verified; don't use it.
 
 ## Objective and 90-day targets
 

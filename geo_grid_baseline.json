@@ -1,7 +1,7 @@
 {
-  "schema_version": "1.0.0",
-  "brand": "ClearGlassInc Artemis",
-  "generated_at": "2026-07-30T00:00:00Z",
+  "schema_version": "1.1.0",
+  "brand": "ClearGlass Inc.",
+  "generated_at": "2026-11-21T18:00:00Z",
   "status": "not_collected",
   "provider": null,
   "run_id": null,
@@ -9,25 +9,71 @@
   "grid_definition": {
     "primary_market": "Burlington, ON",
     "secondary_markets": ["Oakville, ON", "Hamilton, ON", "Milton, ON", "Dundas, ON"],
-    "centre": null, "radius_km": null, "spacing_km": null, "point_count": null,
-    "note": "Coordinates and spacing require an approved provider and verified service-area design; no inferred points are presented as observations."
+    "name": null,
+    "centre": null,
+    "size": null,
+    "spacing_km": null,
+    "sha256": null,
+    "note": "No run exists yet. A run binds to one grid file by its sha256; tools/geo_grid.py refuses to compare runs taken on different grids, keyword sets, thresholds or providers."
   },
-  "keywords": [
-    "software architect Burlington", "AI automation Burlington",
-    "cybersecurity consultant Burlington", "ClearGlass Burlington"
+  "proposed_grids": [
+    {
+      "file": "burlington-exposure/grids/burlington-core-7x7-2km.json",
+      "sha256": "a5d08897abd23b48a714b5c21f7073a2accd6c5c3d2deba79bc3781b859b0052",
+      "status": "proposed_not_approved",
+      "purpose": "Planning and cost estimate for the Burlington core: 49 points, 12 km by 12 km.",
+      "caveats": [
+        "Centred on the service-area midpoint the live homepage declares (43.3255, -79.799), which is in downtown Burlington near the shore. The southern rows and the south-eastern corner fall over Lake Ontario or Hamilton Harbour [CONFIRM on a map]; drop or move those points before paying for them.",
+        "Google measures distance from the business location. For measurement, centre the grid on the Business Profile's location once it is verified, and keep that grid file and its runs out of this public repository if the location is a home address."
+      ]
+    },
+    {
+      "file": "burlington-exposure/grids/halton-hamilton-7x7-5km.json",
+      "sha256": "d21c25a31f132a074b4f4c828934c82dec7e95b49fa8e9624472b2eb1eb9a730",
+      "status": "proposed_not_approved",
+      "purpose": "Regional view of the secondary markets: 49 points, 30 km by 30 km.",
+      "caveats": [
+        "Coverage of Oakville, Hamilton, Milton and Dundas has not been checked against a map [CONFIRM].",
+        "Distance is one of the three main local ranking factors, so cells far from the business location may not respond to site or content work."
+      ]
+    }
   ],
+  "keywords": [
+    "software architect Burlington",
+    "AI automation Burlington",
+    "cybersecurity consultant Burlington",
+    "ClearGlass Burlington"
+  ],
+  "keyword_note": "Candidate set from the program prompt; not approved. 'ClearGlass Burlington' is a brand-control query, not a growth target.",
   "green_rank_threshold": 3,
-  "rank_semantics": {"green_max_position": 3, "red_min_position": 4, "not_found_value": null, "maximum_checked_position": null},
+  "rank_semantics": {
+    "green_max_position": 3,
+    "not_found_value": null,
+    "missing_reasons": ["not_found", "provider_error", "not_collected"],
+    "rate_definition": "green_cells / successful_cells, where successful = ranked + not_found; provider_error and not_collected cells are excluded from the denominator and never counted as red"
+  },
+  "collection_method": "Export from a geo-grid rank tracker the owner licenses, then: python3 tools/geo_grid.py import --grid GRID.json --csv EXPORT.csv --provider NAME --observed-at ISO8601 --run-id ID --out RUN.json. No scraping of Google Maps: the Places API policies say not to export, extract, or scrape Google Maps Content for use outside the Services.",
   "cells": [],
   "summary": {
     "total_cells": 0,
     "successful_cells": 0,
     "failed_cells": 0,
+    "ranked_cells": 0,
+    "not_found_cells": 0,
     "green_cells": 0,
     "green_cell_rate": null,
-    "green_cell_ratio": null,
-    "ranked_cells": 0
+    "rank_buckets": {"top_3": 0, "rank_4_10": 0, "rank_11_20": 0, "over_20_or_not_found": 0},
+    "median_rank": null,
+    "per_keyword": {
+      "software architect Burlington": {"total_cells": 0, "successful_cells": 0, "failed_cells": 0, "ranked_cells": 0, "not_found_cells": 0, "green_cells": 0, "green_cell_rate": null, "rank_buckets": {"top_3": 0, "rank_4_10": 0, "rank_11_20": 0, "over_20_or_not_found": 0}, "median_rank": null},
+      "AI automation Burlington": {"total_cells": 0, "successful_cells": 0, "failed_cells": 0, "ranked_cells": 0, "not_found_cells": 0, "green_cells": 0, "green_cell_rate": null, "rank_buckets": {"top_3": 0, "rank_4_10": 0, "rank_11_20": 0, "over_20_or_not_found": 0}, "median_rank": null},
+      "cybersecurity consultant Burlington": {"total_cells": 0, "successful_cells": 0, "failed_cells": 0, "ranked_cells": 0, "not_found_cells": 0, "green_cells": 0, "green_cell_rate": null, "rank_buckets": {"top_3": 0, "rank_4_10": 0, "rank_11_20": 0, "over_20_or_not_found": 0}, "median_rank": null},
+      "ClearGlass Burlington": {"total_cells": 0, "successful_cells": 0, "failed_cells": 0, "ranked_cells": 0, "not_found_cells": 0, "green_cells": 0, "green_cell_rate": null, "rank_buckets": {"top_3": 0, "rank_4_10": 0, "rank_11_20": 0, "over_20_or_not_found": 0}, "median_rank": null}
+    }
   },
-  "blocking_gaps": ["No geo-grid provider credentials, export, query results, or approved coordinates were available."],
-  "next_action": "Approve the keyword set, verified service area, grid resolution, provider, collection budget, and terms-compliant collection method before the first run."
+  "blocking_gaps": [
+    "No verified Google Business Profile is on record, so there is no business location to measure local-pack distance from.",
+    "No rank-tracker provider, export, keyword approval or grid approval exists."
+  ],
+  "next_action": "Owner decides Business Profile eligibility (in-person contact), approves the keyword set and one grid, and chooses a licensed rank tracker. Then run the first export through tools/geo_grid.py import."
 }

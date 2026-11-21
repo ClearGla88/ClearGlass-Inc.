@@ -37,6 +37,22 @@
 
 Explain cell movement only as observation unless a controlled experiment supports causality. Attach grid artifact checksum and keep centre/spacing unchanged.
 
+How to fill this section and the site rows. All three commands run without credentials.
+
+```bash
+python3 tools/geo_grid.py compare last-month-run.json this-month-run.json --markdown
+```
+
+```bash
+python3 tools/local_seo_audit.py --live https://www.clearglassinc.com --json burlington-exposure/audits/YYYY-MM-DD-live.json --markdown burlington-exposure/audits/YYYY-MM-DD-live.md
+```
+
+```bash
+python3 tools/exposure_contracts.py
+```
+
+`compare` counts only cells that succeeded in both runs. It reports a null relative change when the baseline rate is zero, and it refuses runs taken on different grids, keywords, thresholds or providers. Copy its table as-is; don't recompute by hand. Report the site's Burlington signals from the audit (pages with Burlington in the title or H1, name variants, canonical findings) next to the grid. They are the levers the plan can actually move.
+
 ## Monthly review
 
 ### Progress versus targets

@@ -1,27 +1,260 @@
 {
-  "schema_version": "1.0.0",
-  "brand": "ClearGlassInc Artemis",
-  "generated_at": "2026-07-30T00:00:00Z",
-  "status": "candidate_inventory_unverified",
+  "schema_version": "1.1.0",
+  "brand": "ClearGlass Inc.",
+  "generated_at": "2026-11-21T18:00:00Z",
+  "status": "partially_verified_inventory",
+  "verification_note": "Checked 2026-11-21 through web search results; the organizations' own pages were not fetched directly from the research sandbox. 'verified' means a result from the organization's own domain confirmed it exists and its official URL; 'partially_verified' means only directories, news, or other secondary sources did. Programs, dates, eligibility and contact routes must be read on the official page before any outreach. Contact details are deliberately not stored here.",
+  "fit_scale": "Fit for a cyber and AI-risk advisory selling to Burlington and Halton small and mid-sized organizations: high = the audience is business owners and the leverage is earned (workshop, listing, editorial); low = consumer audience or paid placement only.",
   "geographies": {
     "primary": ["Burlington, ON"],
     "secondary": ["Oakville, ON", "Hamilton, ON", "Milton, ON", "Dundas, ON"],
-    "burlington_neighbourhood_candidates": ["Aldershot", "Brant Hills", "Downtown Burlington", "Headon Forest", "Millcroft", "Orchard", "Roseland", "Tyandaga"]
+    "burlington_neighbourhood_candidates": ["Aldershot", "Brant Hills", "Downtown Burlington", "Headon Forest", "Millcroft", "Orchard", "Roseland", "Tyandaga"],
+    "neighbourhood_note": "Neighbourhood names are planning labels only; they were not re-verified and must not be used as page targets."
   },
   "opportunities": [
-    {"id":"sound-of-music","name":"Sound of Music","type":"event","geography":"Burlington, ON","audience":"Burlington residents and visitors","potential_leverage":["content","partnership","event participation"],"status":"requires_current_verification","source_ref":"user_prompt","verification_required":["official name","organizer","2026 dates","participation rules","sponsorship availability"]},
-    {"id":"ribfest-burlington","name":"Burlington Ribfest","type":"event","geography":"Burlington, ON","audience":"Burlington residents and visitors","potential_leverage":["content","partnership","event participation"],"status":"requires_current_verification","source_ref":"user_prompt","verification_required":["official name","organizer","2026 dates","participation rules","sponsorship availability"]},
-    {"id":"burlington-waterfront","name":"Burlington waterfront","type":"landmark","geography":"Burlington, ON","audience":"Residents, businesses, and visitors","potential_leverage":["locally relevant editorial context","rights-cleared original media"],"status":"candidate","source_ref":"user_prompt","verification_required":["specific subject","media rights","factual relevance"]},
-    {"id":"brant-street","name":"Brant Street","type":"district","geography":"Burlington, ON","audience":"Downtown residents and businesses","potential_leverage":["locally relevant editorial context","business partnership"],"status":"candidate","source_ref":"user_prompt","verification_required":["partner identity","genuine relationship","editorial relevance"]},
-    {"id":"burlington-365","name":"Burlington 365","type":"media","geography":"Burlington, ON","audience":"Local news readers","potential_leverage":["earned mention","expert contribution"],"status":"requires_current_verification","source_ref":"user_prompt","verification_required":["official URL","editorial contact","submission policy","audience fit"]},
-    {"id":"burlington-chamber","name":"Burlington chamber of commerce candidate","type":"business_association","geography":"Burlington, ON","audience":"Local businesses","potential_leverage":["membership","workshop","partnership","legitimate citation"],"status":"requires_current_verification","source_ref":"user_prompt","verification_required":["legal name","official URL","membership eligibility","listing terms"]},
-    {"id":"burlington-economic-development","name":"Burlington economic development organization candidate","type":"economic_development","geography":"Burlington, ON","audience":"Local businesses and investors","potential_leverage":["program participation","workshop","resource contribution"],"status":"requires_current_verification","source_ref":"user_prompt","verification_required":["legal name","official URL","program eligibility","contact policy"]},
-    {"id":"local-tech-meetups","name":"Burlington/Halton technology meetups","type":"community","geography":"Burlington/Halton, ON","audience":"Technology practitioners and business leaders","potential_leverage":["talk","workshop","co-created content"],"status":"not_collected","source_ref":"user_prompt","verification_required":["active groups","organizers","event schedule","speaker policy"]},
-    {"id":"local-coworking","name":"Burlington/Halton co-working spaces","type":"organization","geography":"Burlington/Halton, ON","audience":"Founders, professionals, and small businesses","potential_leverage":["workshop","partner event","expert content"],"status":"not_collected","source_ref":"user_prompt","verification_required":["active venues","official contact","event policy","audience fit"]}
+    {
+      "id": "halton-small-business-centre",
+      "name": "Halton Region Small Business Centre",
+      "type": "government_program",
+      "geography": "Burlington, Oakville, Milton and Halton Hills, ON",
+      "audience": "Entrepreneurs and small businesses in Halton",
+      "potential_leverage": ["guest workshop or seminar on cyber and AI risk basics", "referral resource for small-business clients"],
+      "fit": "high",
+      "status": "verified",
+      "official_url": "https://www.halton.ca/for-business/halton-region-small-business-centre",
+      "evidence": [
+        {"url": "https://www.halton.ca/for-business/halton-region-small-business-centre", "publisher": "first_party", "retrieved": "2026-11-21", "method": "web_search_result", "supports": "Regional small business centre serving Burlington, Milton, Halton Hills and Oakville; free one-hour consultations, workshops and networking"}
+      ],
+      "verification_required": ["current workshop and speaker intake process", "conflict-of-interest or vendor-neutrality rules for presenters"],
+      "source_ref": "research_2026-11-21"
+    },
+    {
+      "id": "burlington-public-library",
+      "name": "Burlington Public Library",
+      "type": "library",
+      "geography": "Burlington, ON",
+      "audience": "Burlington residents, solo founders and small business owners",
+      "potential_leverage": ["free public workshop proposed through the library's collaboration inquiry process", "local event listing on the library's calendar"],
+      "fit": "high",
+      "status": "verified",
+      "official_url": "https://www.bpl.on.ca",
+      "evidence": [
+        {"url": "https://www.bpl.on.ca/programs/partners", "publisher": "first_party", "retrieved": "2026-11-21", "method": "web_search_result", "supports": "Collaboration inquiry process for partner programs; the library plans programs three to four months ahead and its programs are free to attend"},
+        {"url": "https://bpl.on.ca/news/work-solo", "publisher": "first_party", "retrieved": "2026-11-21", "method": "web_search_result", "supports": "Library resources and networking aimed at small business owners"}
+      ],
+      "verification_required": ["current collaboration inquiry form and lead time", "rules on commercial presenters and sales content"],
+      "source_ref": "research_2026-11-21"
+    },
+    {
+      "id": "burlington-chamber",
+      "name": "Burlington Chamber of Commerce",
+      "type": "business_association",
+      "geography": "Burlington, ON",
+      "audience": "Member businesses in Burlington",
+      "potential_leverage": ["membership and member-directory listing (a legitimate local citation)", "member events", "speaking or workshop proposal"],
+      "fit": "high",
+      "status": "partially_verified",
+      "official_url": "https://www.burlingtonchamber.com",
+      "evidence": [
+        {"url": "https://halton.cioc.ca/record/BTN0478", "publisher": "secondary", "retrieved": "2026-11-21", "method": "web_search_result", "supports": "Halton community information directory record for the Burlington Chamber of Commerce, pointing to burlingtonchamber.com"},
+        {"url": "https://burlingtongazette.ca/there-is-more-to-the-chamber-of-commerce-than-many-realize", "publisher": "secondary", "retrieved": "2026-11-21", "method": "web_search_result", "supports": "January 2025 report of 812 members after 234 joined in 2024"}
+      ],
+      "verification_required": ["official site and membership fee schedule", "directory listing fields (name, website, service area)", "event speaker process"],
+      "source_ref": "user_prompt"
+    },
+    {
+      "id": "burlington-economic-development",
+      "name": "Burlington Economic Development (amalgamated with Tourism Burlington)",
+      "type": "economic_development",
+      "geography": "Burlington, ON",
+      "audience": "Burlington employers, start-ups and investors",
+      "potential_leverage": ["business resource listings", "program or event participation", "expert contribution to business-support content"],
+      "fit": "medium",
+      "status": "partially_verified",
+      "official_url": "https://investburlington.ca",
+      "evidence": [
+        {"url": "https://halton.cioc.ca/record/BTN0358", "publisher": "secondary", "retrieved": "2026-11-21", "method": "web_search_result", "supports": "2025 directory record: amalgamation of Burlington Economic Development and Tourism Burlington completed in March 2025; website investburlington.ca"},
+        {"url": "https://www.burlington.ca/en/news/burlington-economic-development-launches-new-investburlingtonca-website-to-better-serve-businesses-o.aspx", "publisher": "secondary", "retrieved": "2026-11-21", "method": "web_search_result", "supports": "City of Burlington news item on the investburlington.ca website launch"}
+      ],
+      "verification_required": ["current organization name and programs", "whether consultants can list services or present"],
+      "source_ref": "user_prompt"
+    },
+    {
+      "id": "innovation-factory",
+      "name": "Innovation Factory (reported amalgamation with HalTech on April 1, 2024)",
+      "type": "innovation_hub",
+      "geography": "Hamilton and Halton, ON",
+      "audience": "Start-ups and scaling technology companies",
+      "potential_leverage": ["expert or mentor network application", "workshop for founders on security and AI governance"],
+      "fit": "medium",
+      "status": "verified",
+      "official_url": "https://innovationfactory.ca",
+      "evidence": [
+        {"url": "https://innovationfactory.ca/discover-halton-region-business-and-startup-resources/", "publisher": "first_party", "retrieved": "2026-11-21", "method": "web_search_result", "supports": "Innovation Factory publishes Halton business and start-up resources"}
+      ],
+      "verification_required": ["the HalTech amalgamation date on the organization's own page", "expert or mentor intake process"],
+      "source_ref": "research_2026-11-21"
+    },
+    {
+      "id": "burlington-downtown-business-association",
+      "name": "Burlington Downtown Business Association",
+      "type": "bia",
+      "geography": "Downtown Burlington, ON",
+      "audience": "Commercial property owners and business tenants in the downtown boundary",
+      "potential_leverage": ["member-facing workshop or resource contribution"],
+      "fit": "medium",
+      "status": "verified",
+      "official_url": "https://burlingtondowntown.ca",
+      "evidence": [
+        {"url": "https://burlingtondowntown.ca/members/", "publisher": "first_party", "retrieved": "2026-11-21", "method": "web_search_result", "supports": "Membership and resources page; the association represents commercial property owners and tenants within a defined downtown boundary"},
+        {"url": "https://burlingtondowntown.ca/geographic-boundaries/", "publisher": "first_party", "retrieved": "2026-11-21", "method": "web_search_result", "supports": "Published geographic boundary of the business area"}
+      ],
+      "verification_required": ["whether a non-member, out-of-boundary business can contribute content", "member communications policy"],
+      "source_ref": "user_prompt"
+    },
+    {
+      "id": "burlington-gazette",
+      "name": "Burlington Gazette",
+      "type": "media",
+      "geography": "Burlington, ON",
+      "audience": "Burlington readers following local business and civic news",
+      "potential_leverage": ["expert commentary on local cyber incidents or scams when genuinely newsworthy"],
+      "fit": "medium",
+      "status": "verified",
+      "official_url": "https://burlingtongazette.ca",
+      "evidence": [
+        {"url": "https://burlingtongazette.ca/there-is-more-to-the-chamber-of-commerce-than-many-realize", "publisher": "first_party", "retrieved": "2026-11-21", "method": "web_search_result", "supports": "The outlet publishes local business coverage"}
+      ],
+      "verification_required": ["editorial contact route and submission policy"],
+      "source_ref": "research_2026-11-21"
+    },
+    {
+      "id": "burlington-today",
+      "name": "BurlingtonToday.com (Village Media)",
+      "type": "media",
+      "geography": "Burlington, ON",
+      "audience": "Burlington local news readers",
+      "potential_leverage": ["expert commentary when genuinely newsworthy"],
+      "fit": "medium",
+      "status": "partially_verified",
+      "official_url": "https://www.burlingtontoday.com",
+      "evidence": [
+        {"url": "https://www.thoroldtoday.ca/local-news/village-media-expands-again-this-time-to-burlington-6036030", "publisher": "secondary", "retrieved": "2026-11-21", "method": "web_search_result", "supports": "Village Media announcement of the BurlingtonToday.com launch"}
+      ],
+      "verification_required": ["site is active", "news tip and contributor policy"],
+      "source_ref": "research_2026-11-21"
+    },
+    {
+      "id": "canadas-largest-ribfest",
+      "name": "Canada's Largest Ribfest (Rotary Club of Burlington Lakeshore)",
+      "type": "event",
+      "geography": "Spencer Smith Park, Burlington, ON",
+      "audience": "Residents and visitors; consumer festival",
+      "potential_leverage": ["paid sponsorship only (a paid placement, not earned authority)", "volunteering"],
+      "fit": "low",
+      "status": "verified",
+      "official_url": "https://canadaslargestribfest.com",
+      "evidence": [
+        {"url": "https://canadaslargestribfest.com/FAQ", "publisher": "first_party", "retrieved": "2026-11-21", "method": "web_search_result", "supports": "Official festival site"},
+        {"url": "https://tourismburlington.ca/event/canadas-largest-ribfest-2026/", "publisher": "secondary", "retrieved": "2026-11-21", "method": "web_search_result", "supports": "2026 edition listed for Labour Day weekend, September 4 to 7, at Spencer Smith Park"}
+      ],
+      "verification_required": ["2027 dates", "sponsorship terms and disclosure of any sponsored link"],
+      "source_ref": "user_prompt"
+    },
+    {
+      "id": "sound-of-music-festival",
+      "name": "Burlington's Sound of Music Festival",
+      "type": "event",
+      "geography": "Burlington, ON",
+      "audience": "Residents and visitors; consumer music festival",
+      "potential_leverage": ["paid sponsorship only"],
+      "fit": "low",
+      "status": "partially_verified",
+      "official_url": "https://soundofmusic.ca",
+      "evidence": [
+        {"url": "https://soundofmusic.ca/pages/faq-accordion", "publisher": "first_party", "retrieved": "2026-11-21", "method": "web_search_result", "supports": "Official festival site (FAQ content describes an earlier edition)"},
+        {"url": "https://en.wikipedia.org/wiki/Sound_of_Music_Festival", "publisher": "secondary", "retrieved": "2026-11-21", "method": "web_search_result", "supports": "Reports that the festival left Spencer Smith Park after 2025 and that the city announced a new waterfront music festival"}
+      ],
+      "verification_required": ["whether and where the festival runs in 2027", "the city's replacement waterfront festival"],
+      "source_ref": "user_prompt"
+    },
+    {
+      "id": "burlington-365",
+      "name": "Burlington 365",
+      "type": "media",
+      "geography": "Burlington, ON",
+      "audience": "Unknown",
+      "potential_leverage": [],
+      "fit": "low",
+      "status": "unverified",
+      "official_url": null,
+      "evidence": [],
+      "notes": "Only an unverified forum mention was found on 2026-11-21. Do not pitch or cite it until an editorial page and submission policy are confirmed.",
+      "verification_required": ["existence", "official URL", "editorial policy"],
+      "source_ref": "user_prompt"
+    },
+    {
+      "id": "burlington-waterfront",
+      "name": "Burlington waterfront",
+      "type": "landmark",
+      "geography": "Burlington, ON",
+      "audience": "Residents, businesses and visitors",
+      "potential_leverage": ["rights-cleared original photography for local pages"],
+      "fit": "low",
+      "status": "candidate",
+      "official_url": null,
+      "evidence": [],
+      "verification_required": ["media rights", "factual relevance to a service page"],
+      "source_ref": "user_prompt"
+    },
+    {
+      "id": "brant-street",
+      "name": "Brant Street",
+      "type": "district",
+      "geography": "Burlington, ON",
+      "audience": "Downtown residents and businesses",
+      "potential_leverage": ["context for a genuine downtown client story, if one exists"],
+      "fit": "low",
+      "status": "candidate",
+      "official_url": null,
+      "evidence": [],
+      "verification_required": ["a real relationship or client story to reference"],
+      "source_ref": "user_prompt"
+    },
+    {
+      "id": "local-tech-meetups",
+      "name": "Burlington and Halton technology meetups",
+      "type": "community",
+      "geography": "Burlington and Halton, ON",
+      "audience": "Technology practitioners and business leaders",
+      "potential_leverage": ["talk", "workshop", "co-created content"],
+      "fit": "medium",
+      "status": "not_collected",
+      "official_url": null,
+      "evidence": [],
+      "verification_required": ["active groups", "event schedule", "speaker policy"],
+      "source_ref": "user_prompt"
+    },
+    {
+      "id": "local-coworking",
+      "name": "Burlington and Halton co-working spaces",
+      "type": "organization",
+      "geography": "Burlington and Halton, ON",
+      "audience": "Founders, professionals and small businesses",
+      "potential_leverage": ["workshop", "partner event"],
+      "fit": "medium",
+      "status": "not_collected",
+      "official_url": null,
+      "evidence": [],
+      "verification_required": ["active venues", "event policy"],
+      "source_ref": "user_prompt"
+    }
   ],
+  "priority_order": ["halton-small-business-centre", "burlington-public-library", "burlington-chamber", "innovation-factory", "burlington-economic-development"],
   "guardrails": [
-    "Verify every organization, date, eligibility rule, and contact channel from an official source before outreach or publication.",
-    "Pursue genuine editorial, membership, event, or partnership value; never exchange payment for undisclosed links or use directory spam.",
-    "Public outreach and sponsorship require named human approval; CASL and privacy checks apply before electronic messaging."
+    "Read the program, date, eligibility rule and contact route on the official page before any outreach or publication.",
+    "Pursue editorial, membership, workshop or partnership value; never pay for an undisclosed link and never use directory spam.",
+    "Sponsorships are paid placements: disclose them and do not count them as earned mentions.",
+    "Every outreach message needs named human approval and a CASL check before it is sent."
   ]
 }

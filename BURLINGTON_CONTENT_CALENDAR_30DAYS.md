@@ -1,6 +1,8 @@
 # ClearGlassInc Artemis — Burlington Content Calendar (30 Days)
 
 > Rolling calendar: schedule only after dates, local references, service truth, asset rights, and platform rules are verified. All items are drafts. Recommended cadence is Instagram 3–5/week, LinkedIn 1–2/week, TikTok 1–2/week, GBP 2/week; reuse the evidence, not identical copy.
+>
+> **2026-11-21:** The GBP posts (days 4, 10, 17 and 24) wait until a Business Profile is verified, which first needs the eligibility decision in `BURLINGTON_OWNER_ACTIONS.md`. Until then, publish those items on LinkedIn. Links to "the service page" point to the Burlington page once it is rebuilt from `/seo-authority-hub.html`. The day 13 Q&A is an Instagram Story sticker, not Business Profile Q&A, which no longer exists (`BURLINGTON_POLICY_FACTS.md`, F9).
 
 | Day | Channel / format | Idea and hook | CTA / evidence gate |
 |---:|---|---|---|
@@ -37,4 +39,4 @@
 
 ## Packaging standard
 
-Each package includes `asset_id`, objective, audience, locality relevance, source URLs, rights/consent, factual claims, channel copy, caption/alt text, aspect ratio, CTA with UTM, reviewer, expiry, risk flags, and SHA-256 digest. Hashtags are contextual and limited: test combinations such as `#BurlingtonON`, `#HaltonBusiness`, `#BurlingtonBusiness`, and `#HaltonTech`; never stuff unrelated tags or imply local affiliation. Use real, rights-cleared local imagery—never fabricate a customer, office, project, event attendance, or landmark relationship.
+Each package includes `asset_id`, objective, audience, locality relevance, source URLs, rights/consent, factual claims, channel copy, caption/alt text, aspect ratio, CTA with UTM, reviewer, expiry, risk flags, and SHA-256 digest. Hashtags are contextual and limited: test combinations such as `#BurlingtonON`, `#HaltonBusiness`, `#BurlingtonBusiness`, and `#HaltonTech`; never stuff unrelated tags or imply local affiliation. Use real, rights-cleared local imagery—never fabricate a customer, office, project, event attendance, or landmark relationship. Every post uses the one business name the owner picks (the live site uses "ClearGlass Inc." in 82 of 88 places) and closes with the brand line `CLEARGLASS: See Through Everything`.

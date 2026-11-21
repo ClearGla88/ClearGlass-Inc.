@@ -12,6 +12,8 @@ The repository was populated by "Add files via upload" commits, and almost every
 
 The website pages (`*.html`, `*.css`, `*.js`, `sitemap*.xml`, `CNAME`, `.nojekyll`) live at the root on purpose. GitHub Pages serves them from there.
 
+Checked 2026-11-21: www.clearglassinc.com is **not** built from this tree. Its sitemap (176 URLs) and homepage differ from the copies here, and the 17 sitemap URLs that exist only here return 404 on the live site. Evidence: `burlington-exposure/audits/2026-11-21-live.md`. Make changes meant for the public site in the repository that publishes it.
+
 **Runs in this tree**
 
 | Component | Files | Verified by |
@@ -24,6 +26,7 @@ The website pages (`*.html`, `*.css`, `*.js`, `sitemap*.xml`, `CNAME`, `.nojekyl
 | Workflow security gate | Baseline CI job `workflow-security` | zizmor 1.32.0 (offline) over `.github/workflows/`; fails on unpinned actions, broad token permissions, template injection, persisted credentials |
 | Security drift checks (weekly, read-only) | `.github/workflows/security-drift.yml`, `.cargo/audit.toml` | pip-audit on every requirements file, `npm audit --audit-level=high` on every `package-lock.json`, `cargo audit`, and the live site check. Also runs on PRs that change a lockfile. Exceptions in `.cargo/audit.toml` carry their evidence and a removal trigger |
 | Live site health checker | `tools/site_health.py` | `tests/test_site_health.py` (local HTTP server); run against the live site by `security-drift.yml` on schedule |
+| Burlington exposure tools (local SEO audit of the live site or a checkout; geo-grid plan, import, summarize and compare; honesty check of the six root `BURLINGTON` JSON contracts) | `tools/local_seo_audit.py`, `tools/geo_grid.py`, `tools/exposure_contracts.py`, `burlington-exposure/` | `tests/test_local_seo_audit.py`, `tests/test_geo_grid.py`, `tests/test_exposure_contracts.py` (Baseline CI). Read-only; standard library. Start with `BURLINGTON_OWNER_ACTIONS.md` |
 | Legal intelligence modules | `legal_intelligence_core.py`, `artemis_legal_agent_mvp.py` | Their tests are kept outside this repository |
 | Aegis Glass platform (Next.js, PostgreSQL) | `aegis-glass-platform/` | `npm test` (62 tests, incl. a PostgreSQL 16 server) and `npm run build` via `.github/workflows/aegis-glass-ci.yml`. Production sign-in is blocked until an OIDC adapter exists; see `aegis-glass-platform/docs/ARCHITECTURE.md` |
 | ClearGlass Agent Office (governed multi-agent operations: FastAPI, Next.js console, PostgreSQL schema) | `clearglass-agent-office/` | `pytest` (244 tests, 12 of them against a PostgreSQL 16 server), a Daily Operations Loop smoke run, and the console's `npm run build` via `.github/workflows/agent-office-ci.yml`. External connectors are dry-run: the Revenue Floor releases approved emails and invoices as tickets a person executes; see `clearglass-agent-office/docs/REVENUE_OPERATIONS.md` |
