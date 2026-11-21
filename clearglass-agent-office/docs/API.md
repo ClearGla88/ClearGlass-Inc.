@@ -69,6 +69,30 @@ and interactive docs at `/docs`. This page is the contract summary.
 | GET | `/emergency-stop` | viewer | Current stop state |
 | POST | `/emergency-stop` | operator | Engage (`{reason}`, 12+ characters) |
 | POST | `/emergency-stop/release` | operator | Release (`{reason}`) |
+| GET | `/revenue` | viewer | Revenue Floor read model: readiness, offers, desks, opportunities, actions, money, metrics, connectors |
+| GET | `/revenue/opportunities/{id}` | viewer | One opportunity with its actions, money events and audit events |
+| POST | `/revenue/offers/{sku}/decision` | operator | Approve with terms, reject, or retire an offer (`{decision, reason, terms}`) |
+| POST | `/revenue/settings` | operator | Sender identity for CASL s.6(2), mailbox connector, booking link |
+| POST | `/revenue/opportunities` | operator | Record a lead from an authorized source with its consent record (201) |
+| POST | `/revenue/opportunities/{id}/facts` | operator | Update facts before first contact; re-runs qualification |
+| POST | `/revenue/opportunities/{id}/research` | operator | Add sourced facts (Research Agent) |
+| POST | `/revenue/opportunities/{id}/advance` | operator | Run one internal step, stopping at the approval boundary |
+| POST | `/revenue/opportunities/{id}/events` | operator | Record a reply, booking, quote request or opt-out with its reference |
+| POST | `/revenue/opportunities/{id}/acceptance` | operator | Record the client's acceptance with its evidence |
+| POST | `/revenue/opportunities/{id}/payments` | operator | Import a PayPal invoice, transaction or dispute record |
+| POST | `/revenue/opportunities/{id}/handoff` | operator | Hand paid work to delivery with the client's authorization reference |
+| POST | `/revenue/opportunities/{id}/close` | operator | Close as lost (`{reason}`) |
+| POST | `/revenue/actions/{id}/release` | operator | Re-check and release an approved action as a ticket |
+| POST | `/revenue/actions/{id}/receipt` | operator | Record the provider's reference for an executed ticket |
+| POST | `/revenue/actions/{id}/verify` | operator | Compare an executed action with the provider's record |
+| POST | `/revenue/actions/{id}/abandon` | operator | Close an action that will not be executed, after a destination check |
+| POST | `/revenue/suppressions` | operator | Add an address or @domain to the suppression list (201) |
+| POST | `/revenue/costs` | operator | Record a direct operating cost with evidence (201) |
+| POST | `/revenue/cycle` | operator | One step for each of at most 25 open opportunities |
+| POST | `/revenue/pause`, `/revenue/resume` | operator | Pause or resume the Revenue Floor (`{reason}`) |
+
+Revenue Floor errors: 400 for an invalid request, 404 for an unknown opportunity or action, 409 when the current
+state does not allow the request. See `docs/REVENUE_OPERATIONS.md`.
 
 ## Approval decision semantics
 

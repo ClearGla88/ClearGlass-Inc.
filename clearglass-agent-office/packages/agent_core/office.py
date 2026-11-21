@@ -50,6 +50,8 @@ from agent_core.workflow import WorkflowEngine, WorkflowError
 from audit_ledger.ledger import AuditLedger
 from memory_vault.vault import MemoryVault
 from policy_engine.engine import ActionRequest, GateDecision, GrantView, MissionView, OfficeState, PolicyEngine
+from revenue_ops.desk import RevenueDesk
+from revenue_ops.skills import REVENUE_HANDLERS
 from tool_registry.registry import ToolRegistry
 from tool_registry.vault import SecretVault
 
@@ -93,7 +95,7 @@ class Office:
         self.policy = self.config.policy
         self.engine = PolicyEngine(self.policy)
         self.tools = ToolRegistry(self.config.tools)
-        for action_type, handler in HANDLERS.items():
+        for action_type, handler in (*HANDLERS.items(), *REVENUE_HANDLERS.items()):
             self.tools.register(action_type, handler)
         self.vault = SecretVault(env)
         self.memory = MemoryVault(self.store, self.clock, self.ids, self.log)
@@ -102,6 +104,7 @@ class Office:
         self.workflows = WorkflowEngine(self)
         self.sandbox = SandboxRunner.from_config(self.base_dir / "config" / "sandbox.json", self.base_dir)
         self.provider: TextProvider = provider or OfflineProvider()
+        self.revenue = RevenueDesk(self)
         self._bootstrap()
 
     # -- audit ------------------------------------------------------------------
@@ -132,6 +135,7 @@ class Office:
         for tool in self.config.tools:  # tools always follow config: config is reviewed, the DB is not
             self.store.put(tool, now)
         if self.store.get(Company, self.config.company.id) is not None:
+            self._provision_new_agents(now)
             return
         company = copy.deepcopy(self.config.company)
         company.created_at = now
@@ -156,6 +160,28 @@ class Office:
             },
         )
         self._seed_knowledge(company)
+
+    def _provision_new_agents(self, now: str) -> None:
+        """Add agents that reviewed config defines but an existing database predates.
+
+        An agent already in the database is never changed here: operators edit agents through
+        the audited API, and those edits win. Only a missing agent is created, with its config grants.
+        """
+        for agent in self.config.agents:
+            if self.store.get(Agent, agent.id) is not None:
+                continue
+            agent = copy.deepcopy(agent)
+            agent.created_at = agent.updated_at = now
+            self.store.put(agent, now)
+            self._write_grants(agent, "config/org.json", self.config.grant_constraints.get(agent.id, {}))
+            self.log(
+                "system.office",
+                "system",
+                "agent.provisioned",
+                agent.id,
+                {"source": "config/org.json", "department": agent.department, "permissions": agent.permissions},
+                "medium",
+            )
 
     def _seed_knowledge(self, company: Company) -> None:
         """Long-term memory the office starts with: reviewed config, recorded as operator-approved."""

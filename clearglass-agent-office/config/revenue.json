@@ -1,0 +1,219 @@
+{
+  "description": "Revenue Floor configuration (packages/revenue_ops). Reviewed config: change it through review, then bump version. It holds published facts and tunable rules only. Owner decisions an offer still lacks are supplied when the operator approves the offer through the authenticated API, and that approval is bound to the digest of the full offer.",
+  "version": "2026.11.19-1",
+  "currency": "CAD",
+  "offers": [
+    {
+      "sku": "quick-audit",
+      "name": "Security Quick-Audit",
+      "summary": "A read-only posture review with a branded findings report.",
+      "scope": [
+        "Attack-surface review",
+        "M365 / identity hygiene",
+        "Prioritized findings report",
+        "30-minute readout"
+      ],
+      "price_cents": 24900,
+      "currency": "CAD",
+      "price_type": "one_time",
+      "published_at": ["store.html#quick-audit", "pricing.html"],
+      "published_checked": "2026-11-19",
+      "assessment": true,
+      "fulfillment_requirements": [
+        "Written authorization from the client for every system in scope, recorded before any review starts",
+        "A named client contact for the 30-minute readout"
+      ]
+    }
+  ],
+  "lead_sources": {
+    "operator_referral": {
+      "label": "Referral or direct contact the owner made",
+      "connector": null,
+      "ref_hint": "Where the contact came from, as a short note"
+    },
+    "inbound_email": {
+      "label": "Inquiry received at the business mailbox",
+      "connector": "gmail",
+      "ref_hint": "Email thread id"
+    },
+    "calendly_booking": {
+      "label": "Booking on the public Calendly event",
+      "connector": "calendly",
+      "ref_hint": "Calendly scheduled event URI"
+    },
+    "existing_customer": {
+      "label": "Existing customer",
+      "connector": null,
+      "ref_hint": "Invoice or engagement reference"
+    }
+  },
+  "consent_bases": {
+    "express": {
+      "label": "Express consent",
+      "law": "CASL s.6(1)(a)",
+      "max_age_days": null,
+      "allows_first_contact": true
+    },
+    "implied_inquiry": {
+      "label": "Implied: inquiry or application in the last six months",
+      "law": "CASL s.10(9)(a), s.10(10)(e)",
+      "max_age_days": 180,
+      "allows_first_contact": true
+    },
+    "implied_purchase": {
+      "label": "Implied: purchase in the last two years",
+      "law": "CASL s.10(9)(a), s.10(10)(a)",
+      "max_age_days": 730,
+      "allows_first_contact": true
+    },
+    "none": {
+      "label": "No consent on record",
+      "law": "CASL s.6(1)(a)",
+      "max_age_days": null,
+      "allows_first_contact": false
+    }
+  },
+  "consent_note": "[LEGAL REVIEW] A working rule set built from the text of S.C. 2010, c. 23, not legal advice. Confirm it with counsel before the first live send. Consent from conspicuous publication (s.10(9)(b)) is not supported because it turns on facts this system cannot check. The age limits are set a few days inside the statutory periods.",
+  "contact_rules": {
+    "max_messages_per_contact_per_30_days": 3,
+    "min_hours_between_messages": 48
+  },
+  "content_policy": {
+    "prohibited_phrases": [
+      "guarantee",
+      "guaranteed",
+      "100%",
+      "risk-free",
+      "risk free",
+      "no risk",
+      "certified",
+      "accredited",
+      "limited time",
+      "act now",
+      "only a few spots",
+      "last chance",
+      "expires today",
+      "urgent",
+      "you have been hacked",
+      "you've been hacked",
+      "trusted by",
+      "our clients include",
+      "award-winning",
+      "#1",
+      "number one",
+      "best in class"
+    ],
+    "note": "Every number in a message must come from the approved offer, the sender identity, or the message's own dates and references. Every link must be the website or booking link in the Revenue settings."
+  },
+  "qualification": {
+    "threshold": 60,
+    "criteria": [
+      {"id": "contact_email", "check": "contact_email_valid", "points": 0, "required": true, "label": "A valid contact email"},
+      {"id": "organization", "check": "organization_named", "points": 0, "required": true, "label": "A named organization"},
+      {"id": "region", "check": "region_in_icp", "points": 25, "required": true, "label": "Region inside the ideal customer profile"},
+      {"id": "stated_need", "check": "stated_need_present", "points": 25, "required": false, "label": "A stated need in their own words"},
+      {"id": "sector", "check": "sector_in_icp", "points": 15, "required": false, "label": "Sector inside the ideal customer profile"},
+      {"id": "size", "check": "employees_in_range", "points": 15, "required": false, "label": "Headcount inside the ideal customer profile"},
+      {"id": "decision_role", "check": "contact_role_present", "points": 10, "required": false, "label": "The contact's role is known"},
+      {"id": "source_evidence", "check": "source_ref_present", "points": 10, "required": false, "label": "The lead's source can be checked"}
+    ]
+  },
+  "cycle": {
+    "max_opportunities_per_cycle": 25
+  },
+  "release_reconcile_after_hours": 24,
+  "connector_inventory": {
+    "checked_at": "2026-11-19",
+    "method": "The Claude connector list plus read-only calls from the build session. A record of that check, not a live status: re-check before relying on it.",
+    "connectors": [
+      {
+        "id": "gmail",
+        "name": "Gmail",
+        "status": "connected",
+        "used_for": ["outreach_email", "proposal_email", "inbound_email lead source"],
+        "can": ["search_threads (read)", "get_thread (read)", "create_draft", "send_message", "reply"],
+        "limits": ["The connected account is not the business mailbox published on the website: it holds no mail addressed to that address."]
+      },
+      {
+        "id": "microsoft_365",
+        "name": "Microsoft 365 (Outlook)",
+        "status": "not_connected",
+        "used_for": [],
+        "can": [],
+        "limits": ["Installed in claude.ai with its connection incomplete. Its tools are not available to any session."]
+      },
+      {
+        "id": "calendly",
+        "name": "Calendly",
+        "status": "connected",
+        "used_for": ["booking link in messages", "calendly_booking lead source"],
+        "can": ["users-get_current_user (read)", "event_types-list_event_types (read)", "meetings-list_events (read)", "scheduling_links-create_single_use_scheduling_link"],
+        "limits": ["One active event type, a 30-minute video meeting.", "Routing forms need a Calendly Teams plan: the read was refused."]
+      },
+      {
+        "id": "paypal",
+        "name": "PayPal",
+        "status": "connected",
+        "used_for": ["invoice", "payment verification", "refunds and disputes"],
+        "can": ["create_invoice (opens a form a person completes)", "send_invoice (opens a form; does not return the invoice id)", "list_invoices (read; statuses DRAFT, SENT, SCHEDULED, PARTIALLY_PAID, PAID, MARKED_AS_PAID, CANCELLED, REFUNDED, UNPAID, PAYMENT_PENDING)", "list_transactions (read; status S, P, V, D; at most 31 days per call)", "list_disputes (read)"],
+        "limits": ["No refund, capture, or payment-link tool.", "No invoice or transaction record existed to observe, so the raw record shape is unverified; payment imports take a normalized record plus the raw record."]
+      },
+      {
+        "id": "stripe",
+        "name": "Stripe",
+        "status": "needs_reconnect",
+        "used_for": [],
+        "can": [],
+        "limits": ["The website's live Payment Links point to Stripe. Payments made through them cannot be checked from here until the connector is reconnected and an import path is built."]
+      },
+      {
+        "id": "hubspot",
+        "name": "HubSpot",
+        "status": "not_connected",
+        "used_for": [],
+        "can": [],
+        "limits": ["No CRM is connected. Revenue Floor opportunity records are the pipeline of record."]
+      },
+      {
+        "id": "square",
+        "name": "Square",
+        "status": "not_connected",
+        "used_for": [],
+        "can": [],
+        "limits": ["Connection incomplete."]
+      },
+      {
+        "id": "finance_plugins",
+        "name": "Finance plugin data warehouses",
+        "status": "unavailable",
+        "used_for": [],
+        "can": [],
+        "limits": ["BigQuery refused the sign-in method; no warehouse holds ClearGlass sales data."]
+      },
+      {
+        "id": "crypto_com",
+        "name": "Crypto.com",
+        "status": "connected",
+        "used_for": [],
+        "can": ["Market data (read)"],
+        "limits": ["Market data only. Not a payment, invoicing, or accounting source."]
+      },
+      {
+        "id": "agentmail",
+        "name": "AgentMail",
+        "status": "connected",
+        "used_for": [],
+        "can": ["Agent-owned inboxes"],
+        "limits": ["No inbox exists. An agent-owned address is not the business sending identity, so it is not used for customer mail."]
+      },
+      {
+        "id": "general_legal",
+        "name": "General Legal",
+        "status": "connected",
+        "used_for": ["counsel review of engagement terms"],
+        "can": ["start_deal", "upload_document", "list_deals (read)"],
+        "limits": ["Opening a matter is the owner's decision, not an agent action."]
+      }
+    ]
+  }
+}

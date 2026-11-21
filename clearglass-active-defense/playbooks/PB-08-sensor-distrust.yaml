@@ -1,0 +1,37 @@
+id: PB-08-sensor-distrust
+version: 1
+owner: security-operations (lab)
+purpose: >-
+  A sensor may be compromised or its telemetry poisoned. Stop its events from authorizing any
+  response, invalidate proposals that relied on it, keep its events as evidence, and escalate.
+  Automatic distrust happens only on a report from an integrity monitor; a burst of failed
+  signatures only recommends it, because forged requests can name any sensor.
+trigger: {kind: signal, ref: sensor_integrity}
+required_evidence:
+  all_of: [sensor_integrity]
+  min_distinct_sensors: 1
+preconditions: []
+authorization_scope: sensors listed in the deployment configuration
+asset_exclusions: [identity, network_control, response_platform, backup, safety_ot]
+approval: {required: false}
+actions:
+  - {id: alert, type: record_alert, description: Record the sensor-integrity alert.}
+  - {id: distrust, type: distrust_sensor, description: Mark the sensor distrusted and invalidate dependent proposals (integrity-monitor trigger only).}
+  - {id: preserve, type: preserve_evidence, description: Snapshot the evidence manifest.}
+  - {id: escalate, type: escalate, description: Flag the case for the sensor owner and an admin.}
+  - {id: notify, type: notify, description: Record the notification.}
+retry: {max_attempts: 1, backoff_seconds: 0}
+idempotency_key_fields: [case_id, playbook_id]
+verification:
+  - The sensor_trust row is false and no proposal awaiting approval cites the sensor's signals.
+failure_paths:
+  on_timeout: Not applicable; every step is local.
+  on_partial: Not applicable; steps run in one database transaction.
+  on_error: The transaction rolls back; an admin distrusts the sensor through the API.
+escalation:
+  - Sensor owner rebuilds the sensor and rotates its key before an admin restores trust.
+evidence_requirements:
+  - Events from the distrusted sensor stay stored, flagged sensor_trusted false.
+notifications:
+  - sensor owner
+  - admin queue

@@ -270,3 +270,40 @@ def test_bounded_runner_uses_minimal_environment(monkeypatch):
     monkeypatch.setenv("CLEARSHIELD_SECRET_PROBE", "leak")
     _, out, _ = authlog.run_command_bounded(["/usr/bin/env"], 5, 65536)
     assert b"CLEARSHIELD_SECRET_PROBE" not in out and b"LC_ALL=C" in out
+
+
+# ------------------------------------------------------------------ rotation gaps
+
+def test_lines_written_just_before_rotation_are_read_from_dot_one(tmp_path):
+    log = tmp_path / "auth.log"
+    log.write_text(line("2026-11-13T11:59:00Z", "Failed password for root from 203.0.113.9 port 1 ssh2"))
+    _, cur, _ = authlog.read_file_source(str(log), None, cfg(), NOW)
+    with open(log, "a") as fh:  # written after the scan, before logrotate
+        fh.write(line("2026-11-13T11:59:10Z", "Failed password for root from 203.0.113.9 port 2 ssh2"))
+    os.replace(log, tmp_path / "auth.log.1")
+    log.write_text(line("2026-11-13T11:59:20Z", "Failed password for root from 203.0.113.9 port 3 ssh2"))
+    ev, _, st = authlog.read_file_source(str(log), cur, cfg(), NOW)
+    assert [e["port"] for e in ev] == [2, 3]
+    assert st["rotated_tail"] == "read" and not st["rotation_gap"]
+    assert authlog.source_findings([st]) == []
+
+
+def test_unfollowable_rotation_is_reported_as_a_gap(tmp_path):
+    log = tmp_path / "auth.log"
+    log.write_text(line("2026-11-13T11:59:00Z", "Failed password for root from 203.0.113.9 port 1 ssh2"))
+    _, cur, _ = authlog.read_file_source(str(log), None, cfg(), NOW)
+    os.unlink(log)  # e.g. compressed immediately
+    (tmp_path / "auth.log.1").write_text("unrelated file with another inode\n")
+    log.write_text(line("2026-11-13T11:59:20Z", "Failed password for root from 203.0.113.9 port 3 ssh2"))
+    ev, _, st = authlog.read_file_source(str(log), cur, cfg(), NOW)
+    assert [e["port"] for e in ev] == [3] and st["rotation_gap"]
+    assert [f["kind"] for f in authlog.source_findings([st])] == ["auth_rotation_gap"]
+
+
+def test_copytruncate_is_reported_as_a_gap(tmp_path):
+    log = tmp_path / "auth.log"
+    log.write_text(line("2026-11-13T11:59:00Z", "Failed password for root from 203.0.113.9 port 1 ssh2") * 3)
+    _, cur, _ = authlog.read_file_source(str(log), None, cfg(), NOW)
+    log.write_text(line("2026-11-13T11:59:20Z", "Failed password for root from 203.0.113.9 port 3 ssh2"))
+    ev, _, st = authlog.read_file_source(str(log), cur, cfg(), NOW)
+    assert [e["port"] for e in ev] == [3] and st["rotation_gap"]

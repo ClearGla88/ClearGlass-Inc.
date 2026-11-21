@@ -94,6 +94,25 @@ jobs:
       - name: Agent-army orchestrator smoke run
         run: python orchestrator.py --request "Audit CI reliability" --format json > "$RUNNER_TEMP/plan.json"
 
+  sentinel-workspace:
+    name: Sentinel workspace core (Node)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+      - name: Syntax check (static files ship without a build step)
+        run: |
+          node --check sentinel-workspace/core.js
+          node --check sentinel-workspace/app.js
+          node --check sentinel-workspace/layout-worker.js
+      - name: Core unit tests (no dependencies)
+        run: node --test tests/sentinel_workspace/core.test.mjs
+
   rust:
     name: Rust (clearglass-agent-crypto)
     runs-on: ubuntu-latest

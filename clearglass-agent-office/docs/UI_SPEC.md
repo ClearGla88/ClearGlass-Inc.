@@ -25,7 +25,7 @@ Contrast: body text `#e6edf5` and dimmed text `#9fb0c3` on `#04070c` both exceed
 
 ## Global shell
 
-- Left rail (top bar on small screens): brand, nine views, pending-approval count, brand line, policy version.
+- Left rail (top bar on small screens): brand, ten views, pending-approval count, brand line, policy version.
 - Top bar: data source (`live api` / `offline snapshot`), auth mode (`dev · no sign-in` / `operator signed in` /
   `locked`), audit chain state and event count, snapshot time, **Emergency stop** (reason required).
 - Banners: emergency stop engaged (rose), offline snapshot or API unreachable (amber).
@@ -40,6 +40,7 @@ Contrast: body text `#e6edf5` and dimmed text `#9fb0c3` on `#04070c` both exceed
 | Mission Control | `/missions` | Mission header (department, priority, deadline, owner), deliverables, constraints, approval rules; tasks laid out by wave; each task expands to its governance trace | New mission (JSON with dependency graph), advance, run daily loop |
 | Collaboration Floor | `/floor` | Threads of handoffs, assignments, escalations, reviews, reports, decisions, meeting summaries; filter by kind; decision records | none (read-only record) |
 | Approval Desk | `/approvals` | Pending: requester, tool, task, why it stopped, exact text, full payload with digest, plans (critical), Risk & Compliance note, pipeline trace; history with every decision and receipt | Approve, Modify (edit parameters), Reject; reason (12+ characters) required for all |
+| Revenue Floor | `/revenue` | One desk per revenue role; select a desk for its task, record, evidence, exact proposed action, approval status, last execution and reference, errors, next step, and usage (not measured); pipeline by stage; records with consent, rubric, research and timeline; released tickets with plain-text email or PayPal fields; money by category; measured results; readiness; offers; sender identity; suppressions; costs; connector inventory | Record a lead, run one step or one cycle, release a ticket, record a receipt, verify, record client events and acceptance, import a PayPal record, hand off, close, abandon, approve an offer, set sender identity, suppress, record a cost, pause and resume |
 | Knowledge Vault | `/vault` | Curation queue; goals, brand, customer context, policies, technical docs, prompts, workflows; past decisions; task memory | Approve or reject proposals with a reason |
 | Simulation Chamber | `/simulations` | Scenario picker (pricing, campaign, incident, rollout) with editable assumptions; results as p10-p90 bands with median marker; recommendation, conditions, disclaimer | Run simulation (seeded), export a Markdown report |
 | Briefing Room | `/briefing` | KPI strip; morning briefing (priorities with scores and reasons, department table, risks, recommended actions); end-of-day report (completed, waiting, medium-tier review, policy outcomes, audit, carry-over); security review with all control tests | Run today's loop |

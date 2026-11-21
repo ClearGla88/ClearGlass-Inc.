@@ -40,3 +40,7 @@ class IntegrityFailure(ClearShieldError):
     """Authenticated data failed verification. Exit code 3."""
 
     exit_code = EXIT_INTEGRITY
+
+
+class RetiredKeyState(IntegrityFailure):
+    """State is authenticated, but with a retired key rather than the active one."""

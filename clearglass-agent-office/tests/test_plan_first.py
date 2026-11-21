@@ -59,7 +59,8 @@ def test_plan_first_mode_is_defined_by_policy(office):
     rules = office.policy.mission_modes["plan_first"]
     assert rules["allowed_levels"] == ("read", "propose")
     assert rules["deny_spend"] is True
-    assert office.policy.version == "2026.11.13-1"
+    # 2026.11.19-1 added the Revenue Floor actions; the plan_first mode itself is unchanged.
+    assert office.policy.version == "2026.11.19-1"
 
 
 def test_plan_first_mission_allows_research_analysis_and_drafts(office):

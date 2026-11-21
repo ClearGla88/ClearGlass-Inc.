@@ -111,4 +111,5 @@ def build_snapshot(office: Office, *, audit_limit: int = 150, message_limit: int
         "tools": [t.to_dict() for t in office.tool_list()],
         "vault": office.vault.describe(office.tool_list()),
         "emergency": halt,
+        "revenue": office.revenue.snapshot(),
     }

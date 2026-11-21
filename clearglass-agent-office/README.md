@@ -2,14 +2,14 @@
 
 **Your company, operated by intelligence.**
 
-A governed headquarters where ClearGlass Inc.'s AI agents work as a company: 35 agents in 7 departments, missions run
+A governed headquarters where ClearGlass Inc.'s AI agents work as a company: 39 agents in 7 departments, missions run
 as dependency graphs, and every action passes a nine-step policy pipeline. Agents draft, research, analyze, review, and
 plan on their own. Anything that sends, publishes, deploys, pays, signs, deletes, or touches credentials stops at the
 Approval Desk until a named human approves that exact payload.
 
 CLEARGLASS: See Through Everything
 
-## Status (verified 2026-11-13)
+## Status (verified 2026-11-20)
 
 | Area | State | Verified by |
 |---|---|---|
@@ -27,13 +27,16 @@ CLEARGLASS: See Through Everything
 | Idempotency keys (replay, conflict, retry after failure) | Runs | `tests/test_governance_controls.py`, `tests/test_api.py` |
 | Plan-first missions (research, analysis and drafts only; every send, publish, record write and spend is denied) | Runs | `tests/test_plan_first.py`, `tests/test_postgres_schema.py` |
 | Plan-first contract check for a revenue plan payload (`office.py plan-check`) | Runs. The stored plan is valid and **not ready**: approval is pending | `tests/test_plan_first.py`, [docs/REVENUE_GATEWAY.md](docs/REVENUE_GATEWAY.md) |
-| Consent and suppression checks, budget reservation ledger, per-action parameter schemas | **Not built.** Required before any live connector; see [docs/REVENUE_GATEWAY.md](docs/REVENUE_GATEWAY.md) | — |
+| Revenue Floor: one governed sales path from an authorized lead to a verified payment and a delivery handoff; seven desks; money kept in separate categories | Runs. Approved emails and invoices are released as tickets a person executes through the connector, then recorded and verified. No live sale yet: offer approval and sender identity wait on the owner | `tests/test_revenue_ops.py`, [docs/REVENUE_OPERATIONS.md](docs/REVENUE_OPERATIONS.md) |
+| Consent (CASL) and suppression checks, per-action parameter schemas, outbound content check | Runs for the Revenue Floor's actions, at request and again at release | `tests/test_revenue_ops.py` |
+| Credential scan of external actions' parameters at the gate | Runs (step 4) | `tests/test_revenue_ops.py` |
+| Budget reservation ledger | **Not built.** No revenue path spends; required before any paid acquisition. See [docs/REVENUE_GATEWAY.md](docs/REVENUE_GATEWAY.md) | — |
 | Workflow engine (DAG, waves, retries, downstream blocking, input references) | Runs | `tests/test_workflow.py` |
 | Daily Operations Loop (8 agents, 4 departments, 1 approval, briefing, end-of-day report) | Runs | `tests/test_daily_loop.py`, CI smoke run |
 | Memory (task memory, operator-approved company memory, secret rejection) | Runs | `tests/test_memory_and_simulation.py` |
 | Simulation Chamber (4 seeded scenario types, sandbox-only) | Runs | `tests/test_memory_and_simulation.py` |
 | FastAPI API (operator/viewer roles, fails closed in production, rate limits) | Runs | `tests/test_api.py` |
-| Console: 9 views, dark-glass UI, server-side action proxy, passphrase sign-in | Builds; checked in Chromium | `npm run build`, Playwright run in this session |
+| Console: 10 views, dark-glass UI, server-side action proxy, passphrase sign-in | Builds; checked in Chromium | `npm run build`, Playwright run in this session |
 | PostgreSQL 16 schema with append-only triggers and integrity checks | Applies to a real server | `tests/test_postgres_schema.py` (CI service container) |
 | External connectors (publish, email, deploy, payments, contracts) | **Dry-run only.** Approved actions produce a receipt; nothing leaves the machine. | `tests/test_approvals.py` |
 | Runtime on PostgreSQL, Redis queue, OIDC sign-in, live connectors | **Not built.** See [docs/ROADMAP.md](docs/ROADMAP.md). | — |
@@ -66,7 +69,7 @@ Other commands: `verify-audit`, `approve <id> --reason ...`, `emergency-stop --r
 
 ```bash
 ruff check . && ruff format --check .
-python -m pytest -rs                                       # 165 tests; 11 more with a PostgreSQL server:
+python -m pytest -rs                                       # 232 tests; 12 more with a PostgreSQL server:
 OFFICE_TEST_PG_URL=postgresql://user:pass@localhost:5432/postgres python -m pytest -rs
 cd apps/web && npm audit --audit-level=high && npm run typecheck && npm run build
 ```
@@ -100,13 +103,15 @@ cd apps/web && npm audit --audit-level=high && npm run typecheck && npm run buil
 | 11 | Security threat model | [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md) |
 | 12 | 30-day implementation roadmap | [docs/ROADMAP.md](docs/ROADMAP.md) |
 | 13 | KPIs | [docs/KPIS.md](docs/KPIS.md) |
+| 14 | Revenue Floor: governed sales path, connector inventory, runbook, status | [docs/REVENUE_OPERATIONS.md](docs/REVENUE_OPERATIONS.md) |
 
 ## Layout
 
 ```
 clearglass-agent-office/
   office.py            CLI: daily-loop, serve, demo, verify-audit, approve, emergency-stop
-  config/              company.json, org.json (7 departments, 35 agents, 12 rooms), policy.json, tools.json,
+  config/              company.json, org.json (7 departments, 39 agents, 12 rooms), policy.json, tools.json,
+                       revenue.json (offer, lead sources, consent and content rules, connector inventory),
                        policy.shadow.json (candidate rules, never enforced), sandbox.json (allow-listed test suites)
   plans/               plan-first payloads awaiting approval, with their decision records and mission templates
   demo/                demo missions and a fictional prospect list
@@ -118,6 +123,7 @@ clearglass-agent-office/
     tool_registry/     tool registry, dry-run connector, secret references
     simulation/        seeded what-if scenarios (no imports from the runtime)
     plan_contract/     strict validator for a plan-first payload (no imports from the runtime)
+    revenue_ops/       Revenue Floor: sales-path rules, message templates, skills, and the RevenueDesk
     ui/                design tokens for the console
   apps/
     api/               FastAPI service
@@ -125,7 +131,7 @@ clearglass-agent-office/
     web/               Next.js console
   infra/               PostgreSQL schema, Dockerfiles, compose stack
   docs/                the deliverables above
-  tests/               176 tests (11 need PostgreSQL)
+  tests/               244 tests (12 need PostgreSQL)
 ```
 
 The brief named the Python packages `agent-core`, `policy-engine`, `memory`, `tools`, and `audit`. They are

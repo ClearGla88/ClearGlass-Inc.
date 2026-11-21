@@ -1,0 +1,87 @@
+# ClearGlass Active Defense CI: lint, the full test suite (ingestion, policy,
+# approvals, executor, evidence, API, real-socket sensors), configuration checks,
+# the end-to-end loopback demo, and a compose-file validation.
+#
+# Security posture: read-only token, no secrets, no deploy, no writes, credentials
+# not persisted. Nothing here touches a real network device: the only isolation
+# adapter is the mock, and every address in the tests is synthetic.
+# Action SHAs are the pins already used in this repository.
+name: Active Defense CI
+
+on:
+  pull_request:
+    paths:
+      - "clearglass-active-defense/**"
+      - ".github/workflows/active-defense-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "clearglass-active-defense/**"
+      - ".github/workflows/active-defense-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: active-defense-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.13"]
+    defaults:
+      run:
+        working-directory: clearglass-active-defense
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install pinned dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Lint
+        run: ruff check .
+      - name: Tests
+        run: python -m pytest
+      - name: Example configuration validates (fresh secrets, never committed)
+        run: |
+          python defense.py init-secrets config/defense.example.yaml
+          python defense.py check-config config/defense.example.yaml
+      - name: End-to-end loopback demonstration
+        run: python defense.py demo --keep "$RUNNER_TEMP/demo"
+      - name: Demo audit chain verifies from the CLI
+        run: python defense.py verify-audit "$RUNNER_TEMP/demo/defense.yaml"
+
+  compose:
+    name: Compose file validates
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: clearglass-active-defense
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - name: docker compose config (placeholder secret files only)
+        run: |
+          mkdir -p secrets
+          for name in sensor-http-01.key sensor-tcp-01.key sensor-file-01.key sensor-edr-01.key \
+                      sensor-flow-01.key sensor-integrity-01.key analyst-1.token approver-1.token \
+                      approver-2.token admin-1.token; do
+            touch "secrets/$name"
+          done
+          docker compose config --quiet

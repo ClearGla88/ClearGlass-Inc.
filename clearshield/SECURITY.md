@@ -63,9 +63,10 @@ A locally stored HMAC key and log cannot establish trustworthy history after the
 | Threat | Control | Residual risk |
 |---|---|---|
 | Unauthorized change to a watched file | SHA-256 plus metadata against the approved baseline | Changes made and reverted between scans are missed; anything outside the watch list is not seen |
-| Repeated failed authentication | Per-address sliding window, configurable | Slow or distributed guessing below the threshold; non-SSH services are not covered |
-| Unexpected listener | Identity diff against the baseline and allowlist, graded by scope | Listeners that open and close between scans; root can hide them |
+| Repeated failed authentication | Per-address sliding window, configurable; the tail of a rotated log is read from `<log>.1` when its inode matches | Slow or distributed guessing below the threshold; non-SSH services are not covered; rotations that can't be followed are reported as `auth_rotation_gap`, not recovered |
+| Unexpected listener | Identity diff against the baseline and allowlist, graded by scope; a different executable on an approved port is reported as `listener_owner_changed` | Listeners that open and close between scans; root can hide them; a replacement installed at the same executable path looks unchanged; ownership can't be checked without permission to attribute |
 | Audit record modified | HMAC tag over every field | None without the key |
+| **Forgery with a retired (leaked) key** | State must carry the active key; one key per segment; a segment keeps its predecessor's key unless that segment ended with a recorded `new_key` rotation; a retired key never signs a later segment; the active segment uses the active key (tested). Fixed 2026-11-19: `1.0.0.dev0` accepted any retired key everywhere | Records written **before** the rotation stay forgeable by whoever holds the old key, by design. Only an off-host checkpoint taken before the leak protects them |
 | Record deleted, inserted, replayed, reordered | Sequence number and previous tag inside the MAC | None without the key |
 | **Newest records truncated** | State records the chain head; off-host checkpoint | **The remaining prefix verifies on its own.** Detected against state (unless state is also rolled back) and against a checkpoint |
 | **State rollback (old log and state restored together)** | Off-host checkpoint only | **Undetectable locally** (demonstrated by `test_full_rollback_passes_locally_but_fails_against_offhost_checkpoint`) |
@@ -92,7 +93,7 @@ The audit log uses HMAC-SHA256: a tag computed with a secret key shared between 
 | Storage | `keys/hmac.key` in the 0700 state directory. Commands refuse to run if it is group/other-readable, owned by someone else, a symlink, or not 32 bytes |
 | Identification | Records carry a key id: the first 16 hex digits of HMAC(key, constant). It does not reveal the key |
 | Backup | **Back the key up offline at `init`** (removable media kept elsewhere). Without it, existing records can never be verified |
-| Rotation | `rotate --new-key` closes the segment with the old key, moves the old key to `keys/retired/<kid>.key`, and starts the next segment with a new key. `verify --all` uses both |
+| Rotation | `rotate --new-key` closes the segment with the old key and writes the new key to `keys/hmac.key.next`. It then moves the old key to `keys/retired/<kid>.key`, renames the new key into place, and starts the next segment with it. A crash at any step leaves a state that the next writing command completes (each step is tested). Retired keys verify only the segments written before the rotation. They are never accepted for state, for the active segment, or for any later segment |
 | Suspected compromise | Rotate the key, export a checkpoint immediately, and treat records written between the compromise and the rotation as untrusted |
 | Loss | Old segments can't be verified. Re-initialize in a new state directory and keep the old one read-only as evidence |
 | Never | Print, log, transmit, or commit the key. The repository is public |
@@ -110,4 +111,8 @@ Prevention or blocking; firewall changes; malware scanning; packet capture or tr
 - IPv6 parsing is tested with fixture tables and with one live `[::1]` listener in CI. No other IPv6 configuration (global addresses, IPv4-mapped sockets on a live kernel) has been tested.
 - Big-endian hosts are untested.
 - The live microphone path was tested with a simulated stream only.
-- A dedicated clean-room implementation has not had an independent security review.
+- Commands other than `verify` check only the final audit record before appending. Tampering in the middle of the log is found by `verify`, so run `verify --all` on a schedule, not only after an incident.
+- `config.json` is not authenticated. A change is reported only as `config_changed_since_baseline` (low), even when the change disables a layer or widens the listener allowlist.
+- `audio-live` uses a blocking read with no watchdog. If a device stalls without raising an error, the command can hang. Untested on hardware.
+- State records and audit records share one HMAC key without a domain-separation prefix. Their field sets differ, so a tag can't be moved between them, but an explicit prefix would be more robust.
+- The 2026-11-19 audit was performed by an AI coding assistant at the owner's request. It is not an independent third-party security review.

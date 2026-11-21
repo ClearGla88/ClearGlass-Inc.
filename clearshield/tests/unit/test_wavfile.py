@@ -142,7 +142,7 @@ def test_zero_length_data(wav):
     summary, findings = analyse(wav(data=b""))
     assert summary["frames_analysed"] == 0
     assert summary["levels"]["silent"] is False and summary["levels"]["rms_dbfs"] is None
-    assert findings == []
+    assert [f["kind"] for f in findings] == ["no_audio_data"]  # neither "silent" nor clean
 
 
 def test_nan_float_samples_counted_and_ignored(wav):

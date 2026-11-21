@@ -1,0 +1,32 @@
+id: PB-01-decoy-interaction
+version: 1
+owner: security-operations (lab)
+purpose: >-
+  Something touched a decoy. Open or update a case, preserve the event, and alert an analyst.
+  A decoy interaction on its own never proposes containment.
+trigger: {kind: signal, ref: decoy_interaction}
+required_evidence:
+  any_of: [decoy_interaction]
+  min_distinct_sensors: 1
+preconditions: []
+authorization_scope: inventoried lab assets and decoys listed in the deployment configuration
+asset_exclusions: [identity, network_control, response_platform, backup, safety_ot]
+approval: {required: false}
+actions:
+  - {id: alert, type: record_alert, description: Record an alert on the case with the signal and identity status.}
+  - {id: preserve, type: preserve_evidence, description: Snapshot the case evidence manifest into the audit log.}
+  - {id: notify, type: notify, description: Record the analyst notification (no outbound channel in this build).}
+retry: {max_attempts: 1, backoff_seconds: 0}
+idempotency_key_fields: [case_id, playbook_id]
+verification:
+  - The case exists, holds the event, and its evidence manifest hash is in the audit log.
+failure_paths:
+  on_timeout: Not applicable; every step is local.
+  on_partial: Not applicable; steps run in one database transaction.
+  on_error: The transaction rolls back and the sensor's retry is deduplicated by event_id.
+escalation:
+  - Analyst reviews the source identity status; unknown or shared sources stay investigate-only.
+evidence_requirements:
+  - Signed raw event body stored with SHA-256 and a collection custody record.
+notifications:
+  - security-operations queue

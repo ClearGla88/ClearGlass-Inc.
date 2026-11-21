@@ -220,3 +220,61 @@ def test_plan_first_mission_mode_is_accepted(db):
             "INSERT INTO missions (id, title, objective, department, owner, workflow_id, created_by, mode)"
             " VALUES ('m3','t','o','eng','eng.lead','w3','op','growth_hack')"
         )
+
+
+def test_revenue_tables_hold_their_invariants(db):
+    """004_revenue_operations.sql: money facts are append-only and counted once, and only a processor
+    record makes money "received"; an offer decision is a human act; one approval drives one action."""
+    import psycopg
+
+    seed(db)
+    money = (
+        "INSERT INTO money_events (event_id, opportunity_id, kind, amount_cents, currency, provider, record_type,"
+        " external_ref, provider_status, verification, evidence, occurred_at, recorded_by)"
+        " VALUES (%s, 'opp_1', %s, 28137, 'CAD', 'paypal', 'invoice', 'INV-1', 'PAID', %s, 'e', now(),"
+        " 'operator.founder')"
+    )
+    with pytest.raises(psycopg.errors.CheckViolation):
+        db.execute(money, ("m1", "payment_received", "operator_attested"))
+    with pytest.raises(psycopg.errors.CheckViolation):
+        db.execute(money, ("m2", "payment_reported", "provider_record"))
+    db.execute(money, ("m3", "payment_received", "provider_record"))
+    with pytest.raises(psycopg.errors.UniqueViolation):
+        db.execute(money, ("m4", "payment_received", "provider_record"))
+    for stmt in ("UPDATE money_events SET amount_cents = 1", "DELETE FROM money_events", "TRUNCATE money_events"):
+        with pytest.raises(psycopg.errors.InsufficientPrivilege):
+            db.execute(stmt)
+
+    decision = (
+        "INSERT INTO offer_decisions (sku, decision, offer, offer_digest, reason, decided_by)"
+        " VALUES ('quick-audit', 'approve', '{}', %s, %s, %s)"
+    )
+    with pytest.raises(psycopg.errors.InsufficientPrivilege):
+        db.execute(decision, (DIGEST, "Approved by the owner for launch.", "eng.lead"))
+    with pytest.raises(psycopg.errors.CheckViolation):
+        db.execute(decision, (DIGEST, "ok", "operator.founder"))
+    db.execute(decision, (DIGEST, "Approved by the owner for launch.", "operator.founder"))
+    with pytest.raises(psycopg.errors.InsufficientPrivilege):
+        db.execute("DELETE FROM offer_decisions")
+
+    with pytest.raises(psycopg.errors.CheckViolation):
+        db.execute(
+            "INSERT INTO suppressions (address, reason, source_ref, recorded_by)"
+            " VALUES ('Alex@Example.com', 'opt-out', 'msg-1', 'operator.founder')"
+        )
+
+    _approval(db, "a1", "high", "approved")
+    db.execute(
+        "INSERT INTO opportunities (id, stage, source, source_ref, contact, consent, created_by)"
+        " VALUES ('opp_1', 'qualified', 'inbound_email', 't-1', '{}', '{}', 'operator.founder')"
+    )
+    action = (
+        "INSERT INTO external_actions (id, opportunity_id, kind, action_type, agent_id, connector, payload,"
+        " payload_digest, record_version, status, approval_id, ticket)"
+        " VALUES (%s, 'opp_1', 'outreach_email', 'outreach.send', 'eng.lead', 'gmail', '{}', %s, 1, %s, 'a1', %s)"
+    )
+    with pytest.raises(psycopg.errors.CheckViolation):
+        db.execute(action, ("e1", DIGEST, "released", None))
+    db.execute(action, ("e2", DIGEST, "released", '{"steps": []}'))
+    with pytest.raises(psycopg.errors.UniqueViolation):
+        db.execute(action, ("e3", DIGEST, "approved", None))

@@ -22,6 +22,14 @@ const ALLOWED: { method: "POST" | "PATCH"; pattern: RegExp }[] = [
   { method: "POST", pattern: /^simulations$/ },
   { method: "POST", pattern: /^emergency-stop(\/release)?$/ },
   { method: "POST", pattern: /^policy\/evaluate$/ },
+  // Revenue Floor: each path is an operator act the API checks again (packages/revenue_ops/desk.py).
+  { method: "POST", pattern: new RegExp(`^revenue/offers/${ID}/decision$`) },
+  { method: "POST", pattern: /^revenue\/(settings|opportunities|suppressions|costs|cycle|pause|resume)$/ },
+  {
+    method: "POST",
+    pattern: new RegExp(`^revenue/opportunities/${ID}/(facts|research|advance|events|acceptance|payments|handoff|close)$`),
+  },
+  { method: "POST", pattern: new RegExp(`^revenue/actions/${ID}/(release|receipt|verify|abandon)$`) },
 ];
 const MAX_BODY = 64 * 1024;
 

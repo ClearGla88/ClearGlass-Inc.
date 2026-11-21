@@ -1,7 +1,8 @@
 """Data models for the ClearGlass Agent Office.
 
-Sixteen record kinds, one dataclass each. They are plain data: behavior lives
-in the office runtime, the policy engine, and the workflow engine. Every model
+One dataclass per record kind (``ALL_MODELS``). They are plain data: behavior lives
+in the office runtime, the policy engine, the workflow engine, and the revenue desk
+(``packages/revenue_ops``). Every model
 round-trips through ``to_dict`` / ``from_dict`` so the same shapes serve the
 SQLite store, the API, and the PostgreSQL schema in ``infra/db/postgres``.
 
@@ -440,6 +441,119 @@ class ShadowDivergence(Record):
     created_at: str = ""
 
 
+@dataclass
+class Opportunity(Record):
+    """One sales opportunity on the Revenue Floor. Mutable; every change is also audited.
+
+    ``content_version`` rises only when a field an outbound message depends on changes
+    (contact, consent, facts, the matched offer). An approval is bound to the version it
+    was requested at, so a changed record needs a fresh approval.
+    """
+
+    KIND: ClassVar[str] = "opportunity"
+    id: str
+    stage: str
+    rehearsal: bool
+    source: str
+    source_ref: str
+    contact: dict[str, Any]
+    consent: dict[str, Any]
+    lead_facts: dict[str, Any] = field(default_factory=dict)
+    offer_sku: str | None = None
+    offer_digest: str | None = None
+    priority: int = 3
+    qualification: dict[str, Any] = field(default_factory=dict)
+    research: dict[str, Any] = field(default_factory=dict)
+    drafts: dict[str, Any] = field(default_factory=dict)
+    terms: dict[str, Any] = field(default_factory=dict)
+    fulfillment: dict[str, Any] = field(default_factory=dict)
+    timeline: list[dict[str, Any]] = field(default_factory=list)
+    flags: list[str] = field(default_factory=list)
+    lost_reason: str | None = None
+    content_version: int = 1
+    created_by: str = ""
+    created_at: str = ""
+    updated_at: str = ""
+
+
+@dataclass
+class ExternalAction(Record):
+    """An outbound action for an opportunity: requested, approved, released as a ticket,
+    executed by a person through a connector, and verified against the provider's record."""
+
+    KIND: ClassVar[str] = "external_action"
+    id: str
+    opportunity_id: str
+    kind: str  # outreach_email | proposal_email | invoice
+    action_type: str
+    agent_id: str
+    connector: str
+    payload: dict[str, Any]
+    payload_digest: str
+    record_version: int
+    status: str = "awaiting_approval"
+    approval_id: str | None = None
+    rehearsal: bool = False
+    ticket: dict[str, Any] | None = None
+    receipt: dict[str, Any] | None = None
+    verification: dict[str, Any] | None = None
+    error: str | None = None
+    created_at: str = ""
+    updated_at: str = ""
+
+
+@dataclass
+class MoneyEvent(Record):
+    """Append-only. One fact about money, with the record that supports it."""
+
+    KIND: ClassVar[str] = "money_event"
+    seq: int
+    event_id: str
+    opportunity_id: str
+    kind: str
+    amount_cents: int
+    currency: str
+    provider: str
+    record_type: str
+    external_ref: str
+    provider_status: str
+    verification: str  # provider_record | operator_receipt | operator_attested | unverified
+    evidence: str
+    raw_digest: str | None
+    rehearsal: bool
+    occurred_at: str
+    recorded_by: str
+    recorded_at: str
+
+
+@dataclass
+class Suppression(Record):
+    """Append-only. An address or @domain that no message may be sent to."""
+
+    KIND: ClassVar[str] = "suppression"
+    seq: int
+    address: str
+    reason: str
+    source_ref: str
+    recorded_by: str
+    recorded_at: str
+
+
+@dataclass
+class OfferDecision(Record):
+    """Append-only. An operator's decision on an offer, bound to the digest of its full content."""
+
+    KIND: ClassVar[str] = "offer_decision"
+    seq: int
+    sku: str
+    decision: str  # approve | reject | retire
+    offer: dict[str, Any]
+    offer_digest: str
+    reason: str
+    decided_by: str
+    decided_at: str
+
+
 ALL_MODELS: tuple[type[Record], ...] = (
     Company,
     Department,
@@ -458,5 +572,10 @@ ALL_MODELS: tuple[type[Record], ...] = (
     Report,
     RiskAssessment,
     ShadowDivergence,
+    Opportunity,
+    ExternalAction,
+    MoneyEvent,
+    Suppression,
+    OfferDecision,
 )
 MODEL_BY_KIND: dict[str, type[Record]] = {m.KIND: m for m in ALL_MODELS}
