@@ -1,16 +1,21 @@
-# Builds the site with Jekyll and deploys it to GitHub Pages.
+# Builds the site from the website files in this repository and deploys it to
+# GitHub Pages.
 #
 # Security posture:
-# - Least privilege per job. The build job runs Jekyll over repository content,
-#   so it gets read-only scopes: `contents: read`, plus `pages: read` for
+# - Least privilege per job. The build job runs the site builder over repository
+#   content, so it gets read-only scopes: `contents: read`, plus `pages: read` for
 #   actions/configure-pages, which looks up the Pages site. Only the deploy job
 #   holds `pages: write` and `id-token: write` (both required by
 #   actions/deploy-pages), and it runs no repository code.
 # - Every action is pinned to a full commit SHA. Each pin is the commit that
-#   the floating tag used before (@v5, @v1, @v3, @v5) resolved to on
-#   2026-11-14, so the build and deploy run the same action code as before.
-#   checkout uses the v6.0.3 pin shared by every other workflow in this repo.
+#   the floating tag used before resolved to on 2026-11-14, so the build and
+#   deploy run the same action code as before. checkout uses the v6.0.3 pin
+#   shared by every other workflow in this repo.
 # - The checkout does not write the token into .git/config.
+# - Only website files are published. The site shares the repository root with
+#   source code, CI files, app projects and office documents; the previous
+#   jekyll-build-pages step copied that whole root into the site (the root has
+#   .nojekyll), so all of it was public. See tools/build_pages_site.py.
 name: Deploy Jekyll with GitHub Pages dependencies preinstalled
 
 on:
@@ -40,11 +45,8 @@ jobs:
           persist-credentials: false
       - name: Setup Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
-      - name: Build with Jekyll
-        uses: actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697 # v1.0.13
-        with:
-          source: ./
-          destination: ./_site
+      - name: Build site (website files only)
+        run: python3 tools/build_pages_site.py --out _site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
 
