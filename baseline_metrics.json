@@ -1,13 +1,13 @@
 {
-  "schema_version": "1.0.0",
-  "brand": "ClearGlassInc Artemis",
+  "schema_version": "1.1.0",
+  "brand": "ClearGlass Inc.",
   "period": {"lookback_days": 90, "start": null, "end": null, "status": "not_collected"},
-  "generated_at": "2026-07-30T00:00:00Z",
+  "generated_at": "2026-11-21T18:00:00Z",
   "data_state": "not_collected",
   "collection_notes": [
-    "No authenticated GBP, GA4, Search Console, CRM, Instagram, TikTok, or LinkedIn export was supplied or available in the repository.",
-    "Null values are deliberate and must not be interpreted as zero.",
-    "Repository observations describe checked-in content, not live-site or account performance."
+    "No Google Business Profile, GA4, Search Console, CRM, Instagram, TikTok or LinkedIn export was supplied. Every account metric below is null on purpose; null is not zero.",
+    "Live-site observations come from tools/local_seo_audit.py run against https://www.clearglassinc.com on 2026-11-21 (read-only GET requests). They describe the public site, not search performance.",
+    "This repository is not the source of the live site: the live sitemap lists 176 URLs and this checkout's sitemap.xml 172; the 17 sitemap URLs found only in this checkout return 404 live; the live homepage differs from index.html here. Site changes made in this repository do not reach www.clearglassinc.com."
   ],
   "sources": {
     "google_business_profile": {"status": "not_collected", "evidence_ref": null, "last_success_at": null},
@@ -33,24 +33,41 @@
     "tiktok": {"followers": null, "follower_growth": null, "engagement_rate": null, "top_posts": [], "location_breakdown": []},
     "linkedin": {"followers": null, "follower_growth": null, "engagement_rate": null, "top_posts": [], "location_breakdown": []}
   },
+  "live_site_observations": {
+    "sitemap_health": {"value": "4 sitemaps, 177 distinct URLs, all 177 return HTTP 200", "observed_at": "2026-11-21", "evidence_ref": "burlington-exposure/audits/2026-11-21-live.json counts"},
+    "server": {"value": "GitHub Pages (Server: GitHub.com); homepage Last-Modified 2026-10-28", "observed_at": "2026-11-21", "evidence_ref": "HTTP response headers for https://www.clearglassinc.com/"},
+    "homepage_title": {"value": "ClearGlass Inc — AI Automation, Cybersecurity & Operational Strategy", "observed_at": "2026-11-21", "evidence_ref": "https://www.clearglassinc.com/ <title>"},
+    "homepage_h1": {"value": "Governed AI systems for high stakes operations.", "observed_at": "2026-11-21", "evidence_ref": "https://www.clearglassinc.com/ <h1>"},
+    "pages_with_burlington_in_title": {"value": ["/seo-authority-hub.html"], "observed_at": "2026-11-21", "evidence_ref": "burlington-exposure/audits/2026-11-21-live.json local_signals"},
+    "pages_with_burlington_in_h1": {"value": ["/ClearGlass-NEXUS-v12-FINAL.html", "/clearglass-nexus.html"], "observed_at": "2026-11-21", "evidence_ref": "burlington-exposure/audits/2026-11-21-live.json local_signals"},
+    "pages_mentioning_burlington": {"value": 54, "observed_at": "2026-11-21", "evidence_ref": "burlington-exposure/audits/2026-11-21-live.json local_signals"},
+    "burlington_targeted_page": {"value": "/seo-authority-hub.html, titled 'Cybersecurity & AI Automation in Burlington, Ontario | ClearGlass Inc.' with H1 'Cybersecurity architecture and governed AI automation.' (no Burlington in the H1 or URL)", "observed_at": "2026-11-21", "evidence_ref": "https://www.clearglassinc.com/seo-authority-hub.html"},
+    "dedicated_burlington_url": {"value": "none; /burlington.html returns 404", "observed_at": "2026-11-21", "evidence_ref": "GET https://www.clearglassinc.com/burlington.html"},
+    "schema_business_name_variants": {"value": {"ClearGlass Inc.": 82, "ClearGlass Inc": 6}, "observed_at": "2026-11-21", "evidence_ref": "burlington-exposure/audits/2026-11-21-live.json nap_variants; the homepage uses 'ClearGlass Inc'"},
+    "schema_business_email_domain": {"value": "icloud.com (a personal mailbox), not the clearglassinc.com domain", "observed_at": "2026-11-21", "evidence_ref": "https://www.clearglassinc.com/ JSON-LD ProfessionalService.email"},
+    "schema_area_served_includes_burlington": {"value": ["/"], "observed_at": "2026-11-21", "evidence_ref": "burlington-exposure/audits/2026-11-21-live.json local_signals"},
+    "canonical_tags_pointing_elsewhere": {"value": ["/procurement-legal-tech.html -> https://clearglassinc.github.io/procurement-legal-tech.html", "/smb.html -> /products/opal-koboi/smb-suite.html", "/apps/command-center/index.html -> /command-center.html"], "observed_at": "2026-11-21", "evidence_ref": "burlington-exposure/audits/2026-11-21-live.json findings"}
+  },
   "repository_observations": {
     "canonical_domain": {"value": "www.clearglassinc.com", "evidence_ref": "CNAME:1"},
-    "homepage_locality_claim": {"value": "Burlington, ON", "evidence_ref": "index.html:246", "verification_scope": "repository_only"},
-    "homepage_schema_types": {"value": ["Organization", "ProfessionalService", "WebSite"], "evidence_ref": "index.html:246", "verification_scope": "repository_only"}
+    "checkout_matches_live_site": {"value": false, "evidence_ref": "burlington-exposure/audits/2026-11-21-checkout.json versus 2026-11-21-live.json"},
+    "checkout_sitemap_urls_without_source_file": {"value": "88 of 173", "evidence_ref": "burlington-exposure/audits/2026-11-21-checkout.json"},
+    "checkout_pages_with_fictional_phone": {"value": 5, "evidence_ref": "burlington-exposure/audits/2026-11-21-checkout.json placeholder-phone; none of the five pages is served live"},
+    "checkout_linkedin_sameas": {"value": "https://www.linkedin.com/company/cleaglassinc (the live homepage uses /company/clearglassinc)", "evidence_ref": "index.html:233"}
   },
   "quality": {
     "complete": false,
     "missing_required_sources": [
-      "google_business_profile",
-      "ga4",
-      "search_console",
       "crm",
+      "ga4",
+      "google_business_profile",
       "instagram",
-      "tiktok",
-      "linkedin"
+      "linkedin",
+      "search_console",
+      "tiktok"
     ],
     "completeness_ratio": 0.0,
     "anomalies": [],
-    "blocking_gaps": ["All external measurement connectors or exports are unavailable."]
+    "blocking_gaps": ["All account exports are unavailable. The owner has to export them; no agent holds the credentials."]
   }
 }

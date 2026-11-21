@@ -4,6 +4,19 @@
 
 > **Target state only.** This document does not assert that Palantir, Google Business Profile (GBP), Google Analytics 4 (GA4), social, CRM, rank-tracking, or production infrastructure is licensed, connected, or provisioned. Every connector starts disabled and read-only; credentials, data agreements, API terms, identity federation, approvers, retention, and rollback owners must be verified before activation.
 
+> **Implemented in this repository (2026-11-21).** Three of this plan's capabilities exist as tested, standard-library tools. Each one reads files or makes read-only GET requests:
+> - `tools/local_seo_audit.py`: the LocalSEOAuditor's checks. Sitemap health, JSON-LD validity, name/phone/email/locality consistency, fictional phone numbers, canonical tags, and Burlington title and H1 signals. Runs against the live site or a checkout.
+> - `tools/geo_grid.py`: grid planning, rank-tracker CSV import, green-cell summaries and matched-cell comparison, with the missing-reason semantics of the `rank_observation` table below.
+> - `tools/exposure_contracts.py`: the "no invented observations" acceptance rule, enforced on the six root JSON contracts in CI.
+>
+> Corrections to this plan:
+> - The Business Profile Q&A API was discontinued on November 3, 2025, so there is no Q&A connector to build.
+> - Business Profile API access needs a profile verified and active for 60+ days plus an approved request.
+> - Geo-grid data must come from a licensed tracker's export. Scraping Maps is prohibited.
+> - www.clearglassinc.com is not built from this repository.
+>
+> Quotes and sources for each: `BURLINGTON_POLICY_FACTS.md` (F9, F11, F16) and `BURLINGTON_EXPOSURE_BASELINE.md`.
+
 ClearGlassInc Artemis will implement the Burlington exposure program as a **governed proposal system**: collect evidence → normalize → analyze → draft → deterministic validation → human approval → execution → immutable audit. Models can propose content, prompts, workflows, heuristics, and routing changes, but cannot approve their own changes, modify goals or policy, expand privileges, publish, message contacts, request reviews, or deploy.
 
 Acceptance requires: schema-valid 90-day imports; no invented observations; tenant/mission/purpose/compartment enforcement before retrieval; typed and allowlisted tools; attributable approval bound to an immutable payload; replayable evaluation evidence; a signed release with a stable rollback; and dashboards that label missing/stale data rather than converting it to zero.
@@ -284,7 +297,7 @@ CI validates JSON/Markdown, schemas, typing, unit/property tests, permission-neg
 
 Geo-grid collection must use an approved vendor/API, fixed versioned grid, locale/device settings, rate limits, and timestamped manifests. Store rank plus missing reason; compare matched cells and disclose sampling/vendor changes. Coordinates are coarsened in broad-access reports. No proxy abuse or manipulation of Maps.
 
-Location pages (`/burlington` first; Oakville/Hamilton/Milton/Dundas only after evidence) require unique verified services, local evidence, canonical metadata, accessible headings, contact details, and truthful LocalBusiness/Organization/Service schema. Do not fabricate offices, case studies, testimonials, or service areas. Generate internal links canonically with `python3 tools/internal_links.py`; preserve Pages requirements. Proposed schema changes receive validator tests and approval before production.
+Location pages (the Burlington page first, rebuilt from the live `/seo-authority-hub.html`; Oakville/Hamilton/Milton/Dundas only after evidence, because near-identical city pages are doorway abuse) require unique verified services, local evidence, canonical metadata, accessible headings, contact details, and truthful LocalBusiness/Organization/Service schema. Do not fabricate offices, case studies, testimonials, or service areas. All page work happens in the repository that publishes www.clearglassinc.com, not this one. If that repository has `tools/internal_links.py`, generate internal links with it; this repository doesn't have it. Proposed schema changes receive validator tests and approval before production. After each release, run `python3 tools/local_seo_audit.py --live https://www.clearglassinc.com` and compare it with the last dated audit in `burlington-exposure/audits/`.
 
 GA4 events use a versioned contract: `local_cta_click`, `phone_click`, `directions_click`, `lead_submit`, and `qualified_local_lead`, with source/medium/campaign/content and coarse city/region dimensions. Never send PII in event names, URLs, or analytics parameters. Server-side conversion records use event IDs for dedupe and record consent status. UTM format: `utm_source`, `utm_medium`, `utm_campaign=burlington_<initiative>_<yyyyq#>`, `utm_content=<asset_id>`.
 

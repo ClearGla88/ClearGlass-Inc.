@@ -12,6 +12,8 @@ The repository was populated by "Add files via upload" commits, and almost every
 
 The website pages (`*.html`, `*.css`, `*.js`, `sitemap*.xml`, `CNAME`, `.nojekyll`) live at the root on purpose. GitHub Pages serves them from there.
 
+Checked 2026-11-21: www.clearglassinc.com is **not** built from this tree. Its sitemap (176 URLs) and homepage differ from the copies here, and the 17 sitemap URLs that exist only here return 404 on the live site. Evidence: `burlington-exposure/audits/2026-11-21-live.md`. Make changes meant for the public site in the repository that publishes it.
+
 **Runs in this tree**
 
 | Component | Files | Verified by |

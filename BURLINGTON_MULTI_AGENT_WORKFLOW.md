@@ -1,6 +1,22 @@
 # ClearGlassInc Artemis — Burlington Multi-Agent Workflow
 
-> **Target-state architecture plus executable offline reference.** This repository does not prove that Palantir, Google, analytics, social, CRM, or rank-tracker infrastructure is provisioned. The included Python runner works without credentials on supplied aggregate JSON and cannot mutate external systems.
+> **Status, corrected 2026-11-21.** The architecture below is a target state. Nothing in this repository shows that Palantir, Google APIs, analytics, social, CRM or a rank tracker is licensed or connected. The runner this document used to cite, `python3 -m bots.burlington_exposure_automation`, does not exist in this repository: there is no `bots/` or `data/` directory. Its tests sit, orphaned, in the CG repository. Only the tools in the next section run today.
+
+## What runs today
+
+Three standard-library tools, tested in Baseline CI. They read files or make read-only GET requests, and none of them writes to an external system.
+
+| Program agent | Agent Office agent that would own it | Tool in this repository today | Human gate |
+|---|---|---|---|
+| ReconEngine | `intel.research`, `growth.campaign-analyst` | `tools/local_seo_audit.py --live` for the public site. Account data (Business Profile, GA4, Search Console, social) comes from manual exports. | Owner exports and supplies account data |
+| StrategyArchitect | `intel.market-analyst`, `growth.brand-strategist` | `tools/exposure_contracts.py` recomputes every `priority_levers.json` score and checks the ranks | Owner approves the lever order |
+| ContentGenerator | `growth.content-writer`, `growth.social-media` | None. Drafts only; there is no publisher. | Editor approves each item |
+| LocalSEOAuditor | `growth.seo` | `tools/local_seo_audit.py` (`--live` for the site, `--root` for a checkout) | Site owner merges fixes in the publishing repository |
+| ReviewAndCitationManager | No dedicated agent. `growth.seo` drafts and the owner sends. | None | Owner sends every request (policy facts F8, F18, F20) |
+| CommunityPartnershipScout | `intel.research` | `local_opportunity_map.json`, checked by `tools/exposure_contracts.py` | Owner approves each recipient and message |
+| GrowthReporter | `growth.campaign-analyst` | `tools/geo_grid.py compare --markdown` and dated audit diffs | Owner reviews the monthly report |
+
+Agent ids come from `clearglass-agent-office/config/org.json`. Running these agents as Agent Office missions needs an owner-approved plan under `clearglass-agent-office/plans/`, and no plan exists for this program. The legacy `agent-office/` kernel is not to be extended. Business Profile Q&A monitoring has been removed from every role: the Q&A API was discontinued on November 3, 2025 (F9). Business Profile API collection waits until a profile has been verified and active for 60+ days and access is approved (F11).
 
 ## System Architecture
 
@@ -69,16 +85,21 @@ Agents have allowlisted read tools, bounded input/output, three attempts, time/c
 
 ## Full-Stack Implementation
 
-Repository runner:
+Commands that run in this repository today:
 
 ```bash
-python3 -m bots.burlington_exposure_automation \
-  --baseline data/seo/burlington_snapshot.example.json \
-  --current data/seo/burlington_snapshot.example.json \
-  --output /tmp/burlington-growth --period 2026_07
+python3 tools/local_seo_audit.py --live https://www.clearglassinc.com --json audit.json --markdown audit.md
 ```
 
-It validates an allowlisted, non-negative aggregate schema; rejects personal/unknown fields and impossible grid counts; writes `BURLINGTON_GROWTH_REPORT_YYYY_MM.md`; and writes a manifest stating `external_mutations: false`. When connectors are absent, source-dependent agents stop as `awaiting_configured_connector` rather than inventing output. Schedule this command using an operator-controlled system timer or approved CI only after runtime, read-only credentials, retention, and workflow security review. The runner needs no network or secrets.
+```bash
+python3 tools/geo_grid.py compare baseline-run.json current-run.json --markdown
+```
+
+```bash
+python3 tools/exposure_contracts.py
+```
+
+`local_seo_audit.py` stays on the audited host and refuses off-host or plain-http redirects. `geo_grid.py` fails closed on ambiguous rank values and refuses to compare runs taken on different grids, keyword sets, thresholds or providers. `exposure_contracts.py` rejects any metric that has a value but no collected source and evidence reference. Before scheduling any of them, check two things: what runs the schedule, and where the outputs are stored.
 
 Representative policy and workflow state:
 

@@ -1,0 +1,677 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-11-21T17:39:25+00:00",
+  "mode": "live",
+  "site": "https://www.clearglassinc.com",
+  "locality": "Burlington",
+  "canonical_nap": {
+    "name": "ClearGlass Inc",
+    "telephone": "+1-289-707-0269",
+    "email": "desmondotieno@icloud.com",
+    "locality": "Burlington",
+    "source": "/ JSON-LD"
+  },
+  "counts": {
+    "sitemaps": 4,
+    "sitemap_urls": 177,
+    "sitemap_urls_available": 177,
+    "pages_audited": 177,
+    "extra_pages_audited": 0,
+    "links_checked": 31,
+    "links_capped": false
+  },
+  "local_signals": {
+    "pages_with_locality_in_title": [
+      "/seo-authority-hub.html"
+    ],
+    "pages_with_locality_in_h1": [
+      "/ClearGlass-NEXUS-v12-FINAL.html",
+      "/clearglass-nexus.html"
+    ],
+    "pages_mentioning_locality": 54,
+    "top_mentions": {
+      "/ClearGlass-NEXUS-v12-FINAL.html": 8,
+      "/clearglass-nexus.html": 8,
+      "/artemis.html": 6,
+      "/side-store.html": 5,
+      "/government.html": 4,
+      "/legal/articles.html": 3,
+      "/legal/directors-resolution.html": 3,
+      "/legal/ip-assignment.html": 3,
+      "/legal/privacy.html": 3,
+      "/legal/terms.html": 3
+    },
+    "pages_with_locality_in_area_served": [
+      "/"
+    ]
+  },
+  "nap_variants": {
+    "names": {
+      "ClearGlass Inc.": 82,
+      "ClearGlass Inc": 6,
+      "ClearGlass Side Store": 1
+    },
+    "telephones": {
+      "+1-289-707-0269": 2
+    },
+    "emails": {
+      "desmondotieno@icloud.com": 2
+    },
+    "localities": {
+      "Burlington": 5
+    }
+  },
+  "summary": {
+    "error": 0,
+    "warning": 86,
+    "info": 0,
+    "by_rule": {
+      "canonical-mismatch": 3,
+      "nap-name-variant": 83
+    }
+  },
+  "findings": [
+    {
+      "rule": "canonical-mismatch",
+      "severity": "warning",
+      "path": "/apps/command-center/index.html",
+      "line": null,
+      "detail": "canonical is https://www.clearglassinc.com/command-center.html"
+    },
+    {
+      "rule": "canonical-mismatch",
+      "severity": "warning",
+      "path": "/procurement-legal-tech.html",
+      "line": null,
+      "detail": "canonical is https://clearglassinc.github.io/procurement-legal-tech.html"
+    },
+    {
+      "rule": "canonical-mismatch",
+      "severity": "warning",
+      "path": "/smb.html",
+      "line": null,
+      "detail": "canonical is https://www.clearglassinc.com/products/opal-koboi/smb-suite.html"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/artemis-fawl/index.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/automap.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/2026-09-15-strategic-chokepoint-sitrep.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/ai-agent-governance-governed-autonomy.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/ai-agent-governance-governed-autonomy.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/ai-agents-insider-threat.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/ai-agents-insider-threat.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/ai-generated-phishing-54-percent-click-rate.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/ai-safety-black-box-activation-analysis-gavel.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/artemis-governed-ai-gtm-visual-growth-engine.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/autonomous-threat-modeling-2026.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/autonomous-threat-modeling-2026.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/books/ledger-of-ashes-excerpt.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/canada-digital-control-architecture-charter.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/canada-multipolar-sovereignty-resilience-strategy.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/canada-strategic-briefing-october-2026.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/canada-strategic-resilience-command-brief-2026.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/canada-us-cross-border-cybersecurity-evidence-controls.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/chatgpt-prompt-shortcuts-supercharge-ai-results.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/clearglass-agentops-microsoft-foundry-future-stack.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/clearglass-command-center-cyber-defense-console.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/clearglass-platform-audit-2026.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/clearglass-platform-audit-2026.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/clearglass-secure-deployment-agent.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/clearglass-secure-deployment-agent.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/clearglass-workplace-surveillance-intelligence-defense-system.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/clearglassinc-0-to-1m-corporate-execution-plan.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/clearglassinc-artemis-full-stack-ai-intelligence-platform-blueprint.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/clearglassinc-artemis-full-stack-ai-intelligence-platform-blueprint.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/clearglassinc-artemis-palantir-self-evolving-ai-intelligence-platform.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/clearglassinc-artemis-resume-builder-self-evolving-intelligence-platform.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/clearglassinc-artemis-resume-builder-self-evolving-intelligence-platform.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/clearglassinc-artemis-self-evolving-ai-intelligence-platform.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/clearglassinc-artemis-self-evolving-ai-intelligence-platform.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/coffee-and-technology-digital-revolution.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/csis-threat-reduction-botnets-canadian-iot-federal-court-2026.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/cybersecurity-architecture-for-agentic-software.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/cybersecurity-architecture-for-agentic-software.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/deepfake-detection-needs-chain-of-custody.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/digital-twin-simulation-tools-storm-adaptive-transit-2026.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/digital-twin-simulation-tools-storm-adaptive-transit-2026.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/ethical-sales-system-100k-revenue-prompt.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/frontier-intelligence-briefing-quantum-gravity-asi-biosecurity.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/frontier-intelligence-briefing-quantum-gravity-asi-biosecurity.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/greenbelt-92-percent-access-beats-process.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/index.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/master-investigator-legal-tech-osint-government-accountability.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/network-orchestration-ai-automation-cybersecurity.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/one-network-two-clocks-canada-us-security-operating-model.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/ontario-accountability-sealed-evidence.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/ontario-influence-environment-august-2026.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/osint-workflow-that-survives-contact-with-reality.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/osint-workflow-that-survives-contact-with-reality.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/post-quantum-security-advisor-clearglass-artemis.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/post-quantum-security-advisor-clearglass-artemis.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/rethinking-security-age-of-ai-cyber-stack.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/shadow-ai-enterprise-security-blind-spot.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/shadow-ai-incident-response-logs-gone.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/telecommunications-legal-briefing-30-july-2026.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/truth-forensics.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/truth-is-an-evidence-graph.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/when-ai-cannot-determine-the-truth.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/zero-trust-is-outdated-adaptive-trust.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/zero-trust-is-outdated-adaptive-trust.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/zero-trust-is-outdated.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/blog/zero-trust-is-outdated.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/clearglass-ultra.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/global-growth-engine.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/legal/accessibility.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/legal/accessibility.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/legal/content-policy.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/legal/content-policy.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/offers/autonomous-threat-modeling.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/offers/guardian-command-nexus-blueprint.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/project-board.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/sats-digital-twin.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/seo-authority-hub.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/side-store.html",
+      "line": null,
+      "detail": "'ClearGlass Side Store' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/side-store.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/side-store.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/store.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/workspace.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    },
+    {
+      "rule": "nap-name-variant",
+      "severity": "warning",
+      "path": "/xenolith.html",
+      "line": null,
+      "detail": "'ClearGlass Inc.' vs canonical 'ClearGlass Inc'"
+    }
+  ]
+}
