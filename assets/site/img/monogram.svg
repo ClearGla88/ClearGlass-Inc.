@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img" aria-labelledby="cg-mark-title">
+  <title id="cg-mark-title">ClearGlass monogram</title>
+  <!-- Original geometric ClearGlass mark: a faceted glass prism inside an
+       instrument ring, with a drawn C and G. No seal, eagle or official
+       insignia. Paths only, so it renders the same without web fonts. -->
+  <defs>
+    <linearGradient id="cg-rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7ceeff"/>
+      <stop offset=".55" stop-color="#aa83ff"/>
+      <stop offset="1" stop-color="#e0647a"/>
+    </linearGradient>
+    <radialGradient id="cg-core" cx=".5" cy=".42" r=".62">
+      <stop offset="0" stop-color="#3a1424"/>
+      <stop offset=".7" stop-color="#1a0a11"/>
+      <stop offset="1" stop-color="#0b080c"/>
+    </radialGradient>
+    <linearGradient id="cg-letter" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c9f7ff"/>
+      <stop offset="1" stop-color="#7ceeff"/>
+    </linearGradient>
+  </defs>
+  <circle cx="80" cy="80" r="77" fill="#0b080c"/>
+  <circle cx="80" cy="80" r="76" fill="none" stroke="url(#cg-rim)" stroke-width="1.6"/>
+  <!-- 72 instrument ticks: circumference 2*pi*70 = 439.82, period 6.109 -->
+  <circle cx="80" cy="80" r="70" fill="none" stroke="#aa83ff" stroke-opacity=".55" stroke-width="4" stroke-dasharray="0.9 5.209"/>
+  <circle cx="80" cy="80" r="64" fill="none" stroke="#7ceeff" stroke-opacity=".35" stroke-width=".8"/>
+  <circle cx="80" cy="80" r="61" fill="url(#cg-core)"/>
+  <!-- cardinal markers -->
+  <path d="M80 6l3 4-3 4-3-4z M80 146l3 4-3 4-3-4z" fill="#e0647a"/>
+  <path d="M6 80l4-3 4 3-4 3z M146 80l4-3 4 3-4 3z" fill="#7ceeff"/>
+  <!-- faceted glass prism -->
+  <path d="M80 37 117.2 58.5v43L80 123 42.8 101.5v-43z" fill="#7ceeff" fill-opacity=".05" stroke="#aa83ff" stroke-opacity=".8" stroke-width="1.1" stroke-linejoin="round"/>
+  <path d="M80 37v86M42.8 58.5l74.4 43M117.2 58.5l-74.4 43" stroke="#aa83ff" stroke-opacity=".22" stroke-width=".8"/>
+  <!-- C: radius 27, open on the right -->
+  <path d="M97.4 100.7A27 27 0 1 1 97.4 59.3" fill="none" stroke="url(#cg-letter)" stroke-width="4.2" stroke-linecap="round"/>
+  <!-- G: radius 14, bar into the centre -->
+  <path d="M89.9 69.5A14 14 0 1 0 93.8 82.4V80H84.5" fill="none" stroke="#f5f0f2" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
