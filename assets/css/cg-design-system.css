@@ -1,0 +1,370 @@
+/* ClearGlass · Neon Glass System (v1.0)
+   ───────────────────────────────────────────────────────────────────────────
+   The shared token layer and global safety net for every page that links
+   /assets/css/cg-design-system.css (about 90 routes). Before this file existed
+   that link was a 404 on all of them, so nothing here can be load-bearing for
+   an existing layout. The rules are written to stay that way:
+
+   1. Tokens are --cg-* custom properties. Names already defined elsewhere keep
+      their values: the --cg-neon-* triplets match ui.css and the radius,
+      spacing, type and motion primitives mirror tokens.css (the source of
+      truth). tests/test_neon_glass_system.py fails if any mirror drifts.
+   2. Global defaults live in @layer cg-defaults. Layered rules lose to every
+      unlayered page rule, so they fill gaps and never override a page.
+   3. The only unlayered global rules are safety rules that must win:
+      reduced motion, the low-power contract from platform.js, pausing motion
+      in hidden tabs, broken-image containment, and the mobile overflow guard.
+   4. Components (.cg-glass, .cg-neon-*, .cg-status-live, .cg-scanline,
+      .cg-grid-bg, .cg-aurora) are opt-in classes. Glass surfaces are in
+      glass.css, buttons in future-buttons.css, entrance motion in
+      cinematic-motion.css.
+
+   Palette rule: one dominant neon (cyan), one secondary (violet), one accent
+   (magenta). Green, amber and red are reserved for status meaning only.
+   Backdrop blur is capped at 18px; glow is for titles, primary actions,
+   live status and key metrics, never body text. */
+
+:root {
+  /* ── surfaces ───────────────────────────────────────────────────────────── */
+  --cg-bg-0: #05070f;                 /* page canvas                       */
+  --cg-bg-1: #0a0e1c;                 /* raised section                    */
+  --cg-bg-2: #111733;                 /* inset / well                      */
+
+  /* ── text (contrast measured on --cg-bg-0) ──────────────────────────────── */
+  --cg-text: #e9eeff;                 /* 16.9:1                            */
+  --cg-text-muted: #a3aed0;           /*  8.9:1                            */
+  --cg-text-dim: #8590b4;             /*  6.0:1, still AA for body text    */
+
+  /* ── neon (comma RGB triplets, same names and values as ui.css) ──────────── */
+  --cg-neon-cyan: 34, 211, 238;
+  --cg-neon-blue: 96, 165, 250;
+  --cg-neon-violet: 167, 139, 250;
+  --cg-neon-magenta: 244, 114, 182;
+  --cg-neon-primary: var(--cg-neon-cyan);
+  --cg-neon-secondary: var(--cg-neon-violet);
+  --cg-neon-accent: var(--cg-neon-magenta);
+
+  /* ── status (meaningful colour only) ─────────────────────────────────────── */
+  --cg-success: 52, 211, 153;
+  --cg-warning: 251, 191, 36;
+  --cg-danger: 255, 92, 108;
+  --cg-info: 96, 165, 250;
+
+  /* ── glow intensity (primary hue; components re-derive for other hues) ──── */
+  --cg-glow-sm: 0 0 4px rgba(var(--cg-neon-primary), .5), 0 0 10px rgba(var(--cg-neon-primary), .22);
+  --cg-glow-md: 0 0 6px rgba(var(--cg-neon-primary), .5), 0 0 18px rgba(var(--cg-neon-primary), .28);
+  --cg-glow-lg: 0 0 8px rgba(var(--cg-neon-primary), .55), 0 0 28px rgba(var(--cg-neon-primary), .3), 0 0 56px rgba(var(--cg-neon-secondary), .16);
+
+  /* ── glass ──────────────────────────────────────────────────────────────── */
+  --cg-glass-bg: rgba(14, 19, 40, .58);
+  --cg-glass-bg-elevated: rgba(20, 26, 54, .74);
+  --cg-glass-bg-solid: rgba(11, 15, 32, .95);       /* no-backdrop fallback */
+  --cg-glass-border: rgba(150, 175, 255, .16);
+  --cg-glass-border-strong: rgba(150, 175, 255, .32);
+  --cg-glass-highlight: inset 0 1px 0 rgba(255, 255, 255, .07);
+  --cg-glass-edge: linear-gradient(90deg, transparent 6%, rgba(var(--cg-neon-primary), .75) 32%, rgba(var(--cg-neon-secondary), .6) 68%, transparent 94%);
+  --cg-blur-sm: 6px;
+  --cg-blur-md: 12px;
+  --cg-blur-lg: 18px;                 /* hard ceiling; see header          */
+
+  /* ── focus ──────────────────────────────────────────────────────────────── */
+  --cg-focus-color: rgb(var(--cg-neon-cyan));
+  --cg-focus-width: 2px;
+  --cg-focus-offset: 3px;
+
+  /* ── radius (mirrors tokens.css) ────────────────────────────────────────── */
+  --cg-r-pill: 999px;
+  --cg-r-lg: 24px;
+  --cg-r-md: 18px;
+  --cg-r-sm: 12px;
+  --cg-r-xs: 10px;
+
+  /* ── spacing (1–6 mirror tokens.css) ────────────────────────────────────── */
+  --cg-sp-1: 4px;
+  --cg-sp-2: 8px;
+  --cg-sp-3: 12px;
+  --cg-sp-4: 16px;
+  --cg-sp-5: 24px;
+  --cg-sp-6: 32px;
+  --cg-sp-7: 48px;
+  --cg-sp-8: 64px;
+
+  /* ── typography (families mirror tokens.css; sizes are fluid) ───────────── */
+  --cg-serif: 'Cormorant Garamond', Georgia, serif;
+  --cg-sans: 'Urbanist', system-ui, -apple-system, sans-serif;
+  --cg-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --cg-fs-xs: .75rem;
+  --cg-fs-sm: .875rem;
+  --cg-fs-base: 1rem;
+  --cg-fs-lg: clamp(1.0625rem, 1rem + .35vw, 1.25rem);
+  --cg-fs-xl: clamp(1.25rem, 1.05rem + 1vw, 1.75rem);
+  --cg-fs-2xl: clamp(1.625rem, 1.2rem + 2.2vw, 2.75rem);
+  --cg-fs-display: clamp(2.125rem, 1.3rem + 4.2vw, 4.5rem);
+
+  /* ── shadow ─────────────────────────────────────────────────────────────── */
+  --cg-shadow-sm: 0 2px 10px rgba(0, 0, 0, .25);
+  --cg-shadow-md: 0 14px 36px -12px rgba(0, 0, 0, .55);
+  --cg-shadow-lg: 0 28px 70px -22px rgba(2, 4, 12, .85);
+
+  /* ── motion (ease/spring/dur mirror tokens.css) ─────────────────────────── */
+  --cg-ease: cubic-bezier(.4, 0, .2, 1);
+  --cg-spring: cubic-bezier(.16, 1, .3, 1);
+  --cg-dur-1: .2s;
+  --cg-dur-2: .35s;
+  --cg-dur-3: .5s;
+  --cg-dur-pulse: 2.4s;
+  --cg-dur-ambient: 14s;
+}
+
+/* ═══ Global defaults · layered, so any page rule wins ══════════════════════ */
+@layer cg-defaults {
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: var(--cg-focus-width) solid var(--cg-focus-color);
+    outline-offset: var(--cg-focus-offset);
+  }
+  :where(pre) { max-width: 100%; overflow-x: auto; }
+  :where(h1, h2, h3, h4, p, li, dd, td, th, figcaption, blockquote) { overflow-wrap: break-word; }
+}
+
+/* ═══ Safety rules · unlayered and deliberately strong ══════════════════════ */
+
+/* Mobile horizontal-scroll guard. Clips decorative layers (glows, rings,
+   streaks) that would otherwise let a phone pan sideways. `clip` keeps
+   position:sticky working; the `hidden` fallback is for pre-2022 engines. */
+@media (max-width: 900px) {
+  html, body { overflow-x: hidden; }
+  @supports (overflow: clip) {
+    html, body { overflow-x: clip; }
+  }
+}
+
+/* A missing image renders its alt text as loose inline text that spills out
+   of round frames. cg-design-system.js tags failed images; opacity keeps the
+   alt text in the accessibility tree while hiding it visually. */
+img[data-cg-img-missing] { opacity: 0 !important; }
+[data-cg-mark-fallback]::after {
+  content: "CG";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font: 700 var(--cg-mark-size, 18px)/1 var(--cg-sans);
+  letter-spacing: .04em;
+  color: #f4fbff;
+  text-shadow: 0 0 10px rgba(var(--cg-neon-primary), .55);
+  background: radial-gradient(circle at 50% 35%, rgba(var(--cg-neon-primary), .28), rgba(var(--cg-neon-secondary), .18) 55%, rgba(5, 7, 15, .9) 100%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* Hidden tab: freeze CSS motion until the visitor comes back. */
+html[data-cg-hidden] *,
+html[data-cg-hidden] *::before,
+html[data-cg-hidden] *::after { animation-play-state: paused !important; }
+
+/* Reduced motion, and the low-power contract platform.js sets on constrained
+   devices (cg-low-power / cg-motion-reduced). Same pattern as brand-system.css:
+   finish animations immediately so animationend handlers still fire. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0s !important;
+    transition-duration: .001ms !important;
+    transition-delay: 0s !important;
+  }
+}
+html.cg-low-power *, html.cg-low-power *::before, html.cg-low-power *::after,
+html.cg-motion-reduced *, html.cg-motion-reduced *::before, html.cg-motion-reduced *::after {
+  animation-duration: .001ms !important;
+  animation-iteration-count: 1 !important;
+}
+
+/* ═══ Components ════════════════════════════════════════════════════════════ */
+
+/* Neon title: white core keeps contrast, colour lives in the glow. */
+.cg-neon-title {
+  color: #f4fbff;
+  text-shadow:
+    0 0 1px rgba(255, 255, 255, .55),
+    0 0 8px rgba(var(--cg-neon-primary), .55),
+    0 0 22px rgba(var(--cg-neon-primary), .3),
+    0 0 46px rgba(var(--cg-neon-secondary), .18);
+}
+.cg-neon-title--gradient {
+  background: linear-gradient(100deg, #f4fbff 0%, rgb(var(--cg-neon-primary)) 38%, rgb(var(--cg-neon-secondary)) 72%, rgb(var(--cg-neon-accent)) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: none;
+  filter: drop-shadow(0 0 14px rgba(var(--cg-neon-primary), .32));
+}
+.cg-neon-metric {
+  font-family: var(--cg-mono);
+  font-variant-numeric: tabular-nums;
+  color: #f4fbff;
+  text-shadow: 0 0 10px rgba(var(--cg-neon-primary), .45);
+}
+
+/* Neon border: a 1px gradient ring drawn with a mask, so it follows the
+   radius and never changes layout. --animated sweeps it (opt-in, small
+   elements only); --live breathes it with opacity. */
+@property --cg-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+.cg-neon-border { position: relative; isolation: isolate; }
+.cg-neon-border::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: conic-gradient(from var(--cg-angle),
+    rgba(var(--cg-neon-primary), .15),
+    rgba(var(--cg-neon-primary), .95) 18%,
+    rgba(var(--cg-neon-secondary), .85) 38%,
+    rgba(var(--cg-neon-accent), .55) 52%,
+    rgba(var(--cg-neon-primary), .15) 70%,
+    rgba(var(--cg-neon-primary), .15));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+  z-index: 1;
+}
+.cg-neon-border--animated::after { animation: cg-angle-sweep 7s linear infinite; }
+.cg-neon-border--live::after { animation: cg-breathe var(--cg-dur-pulse) ease-in-out infinite; }
+@keyframes cg-angle-sweep { to { --cg-angle: 360deg; } }
+@keyframes cg-breathe { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+
+/* Live status: dot plus a transform/opacity pulse ring. */
+.cg-status-live {
+  --_rgb: var(--cg-success);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: .55em;
+  padding-left: 16px;
+  font: 600 var(--cg-fs-xs)/1.2 var(--cg-mono);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgb(var(--_rgb));
+}
+.cg-status-live::before,
+.cg-status-live::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  margin-top: -4px;
+  border-radius: 50%;
+  background: rgb(var(--_rgb));
+}
+.cg-status-live::before { box-shadow: 0 0 8px rgba(var(--_rgb), .8); }
+.cg-status-live::after { animation: cg-ping var(--cg-dur-pulse) var(--cg-ease) infinite; }
+.cg-status-live.is-warning { --_rgb: var(--cg-warning); }
+.cg-status-live.is-danger { --_rgb: var(--cg-danger); }
+.cg-status-live.is-info { --_rgb: var(--cg-info); }
+.cg-status-live.is-idle { --_rgb: 133, 144, 180; }
+.cg-status-live.is-idle::after { animation: none; opacity: 0; }
+@keyframes cg-ping {
+  0% { transform: scale(1); opacity: .6; }
+  80%, 100% { transform: scale(2.8); opacity: 0; }
+}
+
+/* Scanlines: static texture by default. --sweep adds a moving band and
+   clips the host, so keep it off anything that owns a popover. */
+.cg-scanline { position: relative; isolation: isolate; }
+.cg-scanline::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: repeating-linear-gradient(180deg, rgba(255, 255, 255, .03) 0 1px, transparent 1px 3px);
+  pointer-events: none;
+  z-index: 2;
+}
+.cg-scanline--sweep { overflow: hidden; }
+.cg-scanline--sweep::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 28%;
+  background: linear-gradient(180deg, transparent, rgba(var(--cg-neon-primary), .07), transparent);
+  transform: translateY(-100%);
+  animation: cg-sweep 6s linear infinite;
+  pointer-events: none;
+  z-index: 2;
+}
+@keyframes cg-sweep { to { transform: translateY(380%); } }
+
+/* Grid background: a masked layer behind the host's content. */
+.cg-grid-bg { position: relative; isolation: isolate; }
+.cg-grid-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-image:
+    linear-gradient(rgba(var(--cg-neon-primary), .07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--cg-neon-primary), .07) 1px, transparent 1px);
+  background-size: 48px 48px;
+  background-position: center top;
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, #000 25%, transparent 78%);
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, #000 25%, transparent 78%);
+  pointer-events: none;
+}
+
+/* Aurora: two static gradient fields cross-faded with opacity only. No
+   filter blur, no transform, nothing escapes the host's box. */
+.cg-aurora { position: relative; isolation: isolate; }
+.cg-aurora::before,
+.cg-aurora::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.cg-aurora::before {
+  background:
+    radial-gradient(60% 55% at 18% 8%, rgba(var(--cg-neon-primary), .16), transparent 70%),
+    radial-gradient(50% 50% at 86% 22%, rgba(var(--cg-neon-secondary), .14), transparent 70%);
+}
+.cg-aurora::after {
+  background:
+    radial-gradient(55% 50% at 72% 6%, rgba(var(--cg-neon-accent), .1), transparent 70%),
+    radial-gradient(60% 55% at 24% 30%, rgba(var(--cg-neon-secondary), .12), transparent 72%);
+  opacity: 0;
+  animation: cg-aurora-shift var(--cg-dur-ambient) ease-in-out infinite alternate;
+}
+@keyframes cg-aurora-shift { to { opacity: 1; } }
+
+/* ═══ Contrast and colour-scheme preferences ════════════════════════════════ */
+@media (prefers-contrast: more) {
+  .cg-neon-title { text-shadow: none; }
+  .cg-neon-border::after { background: rgb(var(--cg-neon-primary)); }
+  .cg-scanline::after, .cg-grid-bg::before, .cg-aurora::before, .cg-aurora::after { display: none; }
+}
+@media (forced-colors: active) {
+  .cg-neon-title, .cg-neon-metric { text-shadow: none; }
+  .cg-neon-title--gradient { color: CanvasText; background: none; filter: none; }
+  .cg-neon-border::after { background: CanvasText; }
+  .cg-status-live::before, .cg-status-live::after { background: CanvasText; box-shadow: none; }
+  .cg-scanline::after, .cg-scanline--sweep::before, .cg-grid-bg::before,
+  .cg-aurora::before, .cg-aurora::after, [data-cg-mark-fallback]::after { background: none; }
+}
+@media print {
+  .cg-scanline::after, .cg-scanline--sweep::before, .cg-grid-bg::before,
+  .cg-aurora::before, .cg-aurora::after { display: none; }
+  .cg-neon-title, .cg-neon-metric { text-shadow: none; }
+}

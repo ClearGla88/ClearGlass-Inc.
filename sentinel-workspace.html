@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
+<!-- Everything this page needs is served from this origin. No fonts, scripts,
+     analytics or APIs are loaded from anywhere else. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Sentinel Workspace · Evidence-Driven Investigation — ClearGlass Inc.</title>
+<meta name="description" content="Sentinel Workspace is a browser-only investigation tool. Inspect a typed relationship graph, open the evidence behind each link, weigh competing hypotheses, and export a reproducible, citation-checked brief.">
+<link rel="canonical" href="https://www.clearglassinc.com/sentinel-workspace.html">
+<meta property="og:title" content="Sentinel Workspace · Evidence-Driven Investigation">
+<meta property="og:description" content="Graph exploration, evidence inspection, competing hypotheses and reproducible briefs. Runs entirely in the browser; ships with a clearly labelled synthetic training dataset.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.clearglassinc.com/sentinel-workspace.html">
+<meta property="og:site_name" content="ClearGlass Inc.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Sentinel Workspace · Evidence-Driven Investigation — ClearGlass Inc.">
+<meta name="twitter:description" content="Graph exploration, evidence inspection, competing hypotheses and reproducible briefs. Runs entirely in the browser.">
+<meta name="theme-color" content="#07090c">
+<link rel="stylesheet" href="sentinel-workspace/workspace.css">
+<script defer src="sentinel-workspace/core.js"></script>
+<script defer src="sentinel-workspace/app.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to workspace</a>
+<h1 class="sr">Sentinel Workspace — evidence-driven investigation</h1>
+<noscript><p>Sentinel Workspace needs JavaScript. It runs entirely in your browser and sends nothing to a server.</p></noscript>
+<div class="app" id="app" data-mode="explore" data-sheet="closed">
+  <header class="cmd">
+    <div class="brand"><span class="mark" aria-hidden="true"></span><span class="b1">SENTINEL</span><span class="b2">Workspace</span></div>
+    <nav class="modes" id="modes" aria-label="Working mode">
+      <button type="button" data-mode="explore" aria-current="page">Explore</button>
+      <button type="button" data-mode="investigate">Investigate</button>
+      <button type="button" data-mode="compare">Compare</button>
+      <button type="button" data-mode="brief">Brief</button>
+    </nav>
+    <div class="ds" id="dsChip" aria-live="polite">
+      <span class="tag syn" id="dsSynthetic" hidden title="Every record in this dataset is fictional">Synthetic</span>
+      <span class="title" id="dsTitle">No dataset loaded</span>
+      <span class="mono" id="dsMeta"></span>
+    </div>
+    <div class="cmd-actions">
+      <button type="button" class="btn sm desktop-only" id="btnSearch" aria-keyshortcuts="/">Search <span class="mono" aria-hidden="true">/</span></button>
+      <button type="button" class="btn sm" id="btnData">Data</button>
+      <button type="button" class="btn sm quiet" id="btnHandling">Privacy</button>
+      <a class="btn sm quiet lnk" href="sentinel.html">Sentinel Live</a>
+    </div>
+  </header>
+  <div class="strip" id="strip" role="status" aria-live="polite"></div>
+  <div class="banner" id="banner" role="alert" hidden></div>
+
+  <div class="layout" id="layout">
+    <aside class="rail" id="rail" aria-label="Exploration controls">
+      <div class="rail-head">
+        <h2>Explore controls</h2>
+        <button type="button" class="btn sm quiet desktop-only" id="railCollapse" aria-expanded="true" aria-controls="railBody" title="Collapse controls">«</button>
+        <button type="button" class="btn sm mobile-only" id="railClose">Close</button>
+      </div>
+      <div class="rail-body" id="railBody"></div>
+    </aside>
+
+    <main class="main" id="main" tabindex="-1">
+      <section class="view" id="viewExplore" aria-label="Explore">
+        <div class="view-tools">
+          <div class="seg" role="group" aria-label="Representation" id="repSeg">
+            <button type="button" data-rep="graph" aria-pressed="true">Graph</button>
+            <button type="button" data-rep="table" aria-pressed="false">Table</button>
+          </div>
+          <div class="seg" role="group" aria-label="Layout" id="layoutSeg">
+            <button type="button" data-layout="radial" aria-pressed="true">Radial</button>
+            <button type="button" data-layout="force" aria-pressed="false">Force</button>
+            <button type="button" data-layout="hierarchical" aria-pressed="false">Hierarchy</button>
+          </div>
+          <button type="button" class="btn sm" id="btnBack" aria-keyshortcuts="Alt+ArrowLeft" title="Return to the previous selection and view">← Back</button>
+          <button type="button" class="btn sm wide-only" id="btnUndoLayout" title="Undo the last layout change">Undo layout</button>
+          <span class="grow"></span>
+          <button type="button" class="btn sm wide-only" id="btnZoomOut" aria-label="Zoom out">−</button>
+          <button type="button" class="btn sm wide-only" id="btnZoomIn" aria-label="Zoom in">+</button>
+          <button type="button" class="btn sm" id="btnFit">Fit</button>
+          <button type="button" class="btn sm" id="btnLegend" aria-expanded="false" aria-controls="legend">Legend</button>
+        </div>
+        <div class="canvas" id="canvas">
+          <svg id="graph" xmlns="http://www.w3.org/2000/svg" role="group" aria-roledescription="relationship graph" aria-label="Relationship graph. Use arrow keys to move between entities, Enter to select. A table view is available."></svg>
+          <div class="legend" id="legend" hidden></div>
+          <div class="layout-note" id="layoutNote" role="status" hidden></div>
+          <div class="job" id="job" hidden><span id="jobLabel">Layout</span><progress id="jobProgress" max="1" value="0"></progress><button type="button" class="btn sm" id="jobCancel">Cancel</button></div>
+          <div class="state" id="canvasState"><div class="box"><span class="spin" aria-hidden="true"></span><h3>Loading dataset…</h3></div></div>
+        </div>
+        <div class="tables" id="tables" hidden></div>
+      </section>
+      <section class="view" id="viewInvestigate" aria-label="Investigate" hidden><div class="pane" id="investigatePane"></div></section>
+      <section class="view" id="viewCompare" aria-label="Compare" hidden><div class="pane" id="comparePane"></div></section>
+      <section class="view" id="viewBrief" aria-label="Brief" hidden><div class="pane" id="briefPane"></div></section>
+    </main>
+
+    <div class="resizer desktop-only" id="resizer" role="separator" aria-orientation="vertical" aria-label="Resize evidence inspector" aria-controls="inspector" tabindex="0" aria-valuemin="300" aria-valuemax="680" aria-valuenow="380"></div>
+
+    <aside class="inspector" id="inspector" aria-label="Evidence inspector">
+      <div class="sheet-handle mobile-only"><button type="button" id="sheetHandle" aria-label="Inspector size: closed. Activate to expand." aria-controls="inspector"></button></div>
+      <div class="insp-head" id="inspHead"></div>
+      <nav class="insp-nav" id="inspNav" aria-label="Inspector sections"></nav>
+      <div class="insp-body" id="inspBody"></div>
+    </aside>
+  </div>
+
+  <footer class="timeline desktop-only" id="timeline" aria-label="Timeline of observations"></footer>
+
+  <section class="activity" id="activity" aria-label="Jobs and session activity">
+    <div class="activity-bar">
+      <button type="button" class="btn sm quiet" id="activityToggle" aria-expanded="false" aria-controls="activityPanel">Activity <span class="mono" id="activityCount">0</span></button>
+      <span id="activityLast" class="grow"></span>
+      <span class="mono" id="storageState"></span>
+    </div>
+    <div class="activity-panel" id="activityPanel" hidden>
+      <p class="note">Session activity: a record of what you did in this tab. It is UI history, not an application event log or a security audit record, and it is cleared when the page reloads. It never contains dataset content.</p>
+      <ol id="activityList"></ol>
+    </div>
+  </section>
+
+  <nav class="dock mobile-only" id="dock" aria-label="Primary actions">
+    <button type="button" id="dockSearch"><span class="ic" aria-hidden="true">⌕</span>Search</button>
+    <button type="button" id="dockFilters" aria-expanded="false" aria-controls="rail"><span class="ic" aria-hidden="true">≡</span>Filters</button>
+    <button type="button" id="dockFit"><span class="ic" aria-hidden="true">⤢</span>Fit</button>
+    <button type="button" id="dockBack"><span class="ic" aria-hidden="true">←</span>Back</button>
+    <button type="button" id="dockInspector" aria-expanded="false" aria-controls="inspector"><span class="ic" aria-hidden="true">▤</span>Inspector</button>
+  </nav>
+</div>
+
+<dialog id="dlgSearch" aria-labelledby="dlgSearchTitle">
+  <div class="dlg-head"><h2 id="dlgSearchTitle">Search entities, records and sources</h2><button type="button" class="btn sm quiet" data-close>Close</button></div>
+  <div class="dlg-body">
+    <input type="search" id="searchInput" placeholder="Name, domain, address, identifier or excerpt text" autocomplete="off" spellcheck="false" aria-controls="searchResults" aria-describedby="searchHint">
+    <p class="note" id="searchHint">Searches the full dataset, including records hidden by filters. Choosing a hidden entity keeps it visible and marks it.</p>
+    <ul class="search-results" id="searchResults" role="listbox" aria-label="Search results"></ul>
+  </div>
+</dialog>
+
+<dialog id="dlgData" aria-labelledby="dlgDataTitle">
+  <div class="dlg-head"><h2 id="dlgDataTitle">Data</h2><button type="button" class="btn sm quiet" data-close>Close</button></div>
+  <div class="dlg-body" id="dataBody"></div>
+</dialog>
+
+<dialog id="dlgHandling" aria-labelledby="dlgHandlingTitle">
+  <div class="dlg-head"><h2 id="dlgHandlingTitle">Privacy, storage and network</h2><button type="button" class="btn sm quiet" data-close>Close</button></div>
+  <div class="dlg-body" id="handlingBody"></div>
+</dialog>
+
+<dialog id="dlgErrors" aria-labelledby="dlgErrorsTitle">
+  <div class="dlg-head"><h2 id="dlgErrorsTitle">File not loaded</h2><button type="button" class="btn sm quiet" data-close>Close</button></div>
+  <div class="dlg-body" id="errorsBody"></div>
+</dialog>
+
+<dialog id="dlgPrompt" aria-labelledby="dlgPromptTitle">
+  <form method="dialog" id="promptForm">
+    <div class="dlg-head"><h2 id="dlgPromptTitle">—</h2></div>
+    <div class="dlg-body">
+      <p class="note" id="promptNote"></p>
+      <label class="field"><span id="promptLabel">Text</span><textarea id="promptInput" required maxlength="4000"></textarea></label>
+      <div class="row"><span class="grow"></span><button type="button" class="btn" value="cancel" id="promptCancel">Cancel</button><button type="submit" class="btn primary" id="promptOk">Save</button></div>
+    </div>
+  </form>
+</dialog>
+
+<input type="file" id="fileDataset" accept=".json,application/json" hidden>
+<input type="file" id="fileCompare" accept=".json,application/json" hidden>
+<input type="file" id="fileView" accept=".json,application/json" hidden>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

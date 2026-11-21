@@ -1,0 +1,70 @@
+{
+  "id": "clearglass",
+  "name": "ClearGlass Inc.",
+  "product": "ClearGlass Agent Office",
+  "tagline": "Your company, operated by intelligence.",
+  "brand_line": "CLEARGLASS: See Through Everything",
+  "region": "Ontario, Canada",
+  "mission": "Paid cyber and AI-risk advisory for Ontario organizations, backed by public, plain-language thought leadership.",
+  "operator": {
+    "id": "operator.founder",
+    "name": "Founder",
+    "role": "operator",
+    "note": "The only principal that can approve high or critical actions. Agents never hold this role."
+  },
+  "objectives": [
+    {
+      "id": "obj-pipeline",
+      "title": "Build a qualified pipeline of Ontario advisory clients",
+      "metric": "qualified leads in pipeline",
+      "target": 20,
+      "due": "2026-12-31",
+      "target_source": "operator-set target; edit in config/company.json"
+    },
+    {
+      "id": "obj-authority",
+      "title": "Establish ClearGlass as a local authority on cyber and AI risk",
+      "metric": "approved posts published",
+      "target": 24,
+      "due": "2026-12-31",
+      "target_source": "operator-set target; edit in config/company.json"
+    },
+    {
+      "id": "obj-platform",
+      "title": "Run company operations through the governed Agent Office",
+      "metric": "daily loop runs with a verified audit chain",
+      "target": 30,
+      "due": "2026-12-31",
+      "target_source": "operator-set target; edit in config/company.json"
+    },
+    {
+      "id": "obj-zero-unapproved",
+      "title": "Execute no external action without operator approval",
+      "metric": "external actions executed without approval",
+      "target": 0,
+      "due": "ongoing",
+      "target_source": "invariant enforced by the policy engine"
+    }
+  ],
+  "ideal_customer_profile": {
+    "regions": ["Ontario"],
+    "preferred_cities": ["Burlington", "Oakville", "Hamilton", "Milton", "Mississauga", "Toronto"],
+    "sectors": ["healthcare", "legal", "accounting", "financial-services", "manufacturing", "municipal"],
+    "regulated_bonus": true,
+    "employee_range": [10, 250],
+    "note": "Scoring rubric inputs. The rubric is transparent: every point awarded is listed in the output."
+  },
+  "approved_sources": [
+    {"id": "operator-provided", "label": "Lists and notes supplied by the operator"},
+    {"id": "company-website", "label": "A prospect's own public website"},
+    {"id": "public-registry", "label": "Public business registries"}
+  ],
+  "brand_guidelines": [
+    "Plain language. Short sentences. No hype.",
+    "Never invent statistics, client names, results, or quotes.",
+    "Every factual claim needs a source the operator can check; otherwise, phrase it as a question or a recommendation.",
+    "Ontario focus: write for local owners and operators, not for other security vendors.",
+    "No fear-based selling. Explain the risk, the control, and the first step.",
+    "Sign-off line: CLEARGLASS: See Through Everything"
+  ]
+}

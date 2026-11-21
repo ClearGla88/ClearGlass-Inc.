@@ -1,0 +1,38 @@
+{
+  "plan": "clearglassinc-plan-first.json",
+  "note": "Decisions the decision owner makes before the first cycle starts. This file is a record for the audit trail, not an authorization: the operator authorizes the first cycle by creating the plan-first mission through the authenticated API or CLI.",
+  "required_before_first_cycle": [
+    {
+      "id": "primary_decision",
+      "question": "Which segment should receive the first 90-day test: facilities, asset owners, or luxury residential?",
+      "status": "PENDING",
+      "decision": null,
+      "decided_by": null,
+      "decided_at": null
+    },
+    {
+      "id": "qualified_opportunity_definition",
+      "question": "What minimum criteria make a lead worth human sales review?",
+      "status": "PENDING",
+      "decision": null,
+      "decided_by": null,
+      "decided_at": null
+    },
+    {
+      "id": "offer_boundary",
+      "question": "Is the initial offer a paid diagnostic, a retrofit proposal, a maintenance subscription, or all three?",
+      "status": "PENDING",
+      "decision": null,
+      "decided_by": null,
+      "decided_at": null
+    },
+    {
+      "id": "claim_boundary",
+      "question": "Which outcomes (energy savings, HVAC-load reduction, comfort, seal remediation, asset preservation) may ClearGlass claim, and what evidence supports each?",
+      "status": "PENDING",
+      "decision": null,
+      "decided_by": null,
+      "decided_at": null
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+id: PB-07-recovery
+version: 1
+owner: security-operations (lab)
+purpose: >-
+  Reconnect a contained asset. An analyst evidences every recovery criterion, a different
+  approver approves the exact release plan, and the executor removes only the rules this system
+  created, then verifies none remain. A timer never reconnects a host.
+trigger: {kind: operator, ref: analyst}
+required_evidence:
+  min_distinct_sensors: 1
+preconditions: [no_emergency_stop, circuit_closed]
+authorization_scope: containments created by this deployment
+asset_exclusions: [identity, network_control, response_platform, backup, safety_ot]
+approval: {required: true, approver_role: approver, ttl_seconds: 3600, distinct_from_requester: true}
+actions:
+  - {id: propose, type: propose_release, timeout_seconds: 30, description: Write a hash-bound release proposal carrying the evidenced criteria.}
+  - {id: notify, type: notify, description: Record the approver notification.}
+retry: {max_attempts: 3, backoff_seconds: 30}
+idempotency_key_fields: [kind, case_id, target_asset_id, plan_hash]
+verification:
+  - Adapter reports no rule tagged with the isolation key.
+  - Unrelated rules on the device are unchanged.
+failure_paths:
+  on_timeout: Verify adapter state; retry only if rules remain.
+  on_partial: Mark partially_completed and escalate; inspect the device by hand.
+  on_error: Retry with backoff, then mark partially_completed and escalate.
+escalation:
+  - If release cannot be verified, the network team inspects the device and records the outcome.
+compensating_actions:
+  - Re-isolate through a new corroborated case if the host shows new indicators after release.
+recovery_criteria:
+  - {id: root_cause_identified, description: The cause is identified and recorded.}
+  - {id: host_remediated, description: The host is reimaged or remediated.}
+  - {id: credentials_rotated, description: Exposed credentials are rotated.}
+  - {id: monitoring_confirmed, description: Telemetry is flowing and clean since remediation.}
+evidence_requirements:
+  - Each criterion has a written evidence note from the requesting analyst.
+notifications:
+  - approver queue
+  - asset owner from inventory

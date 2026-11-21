@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+/* Tokens: packages/ui/tokens.json is the source of truth (checked by tests/test_ui_tokens.py). */
+:root {
+  --cg-bg: #04070c;
+  --cg-bg-raise: #0a1018;
+  --cg-ink: #e6edf5;
+  --cg-ink-dim: #9fb0c3;
+  --cg-ink-faint: #6b7c90;
+  --cg-line: rgba(148, 178, 210, 0.14);
+  --cg-glass: rgba(160, 200, 240, 0.045);
+  --cg-glass-strong: rgba(160, 200, 240, 0.08);
+  --cg-accent: #67e8f9;
+  --cg-accent-2: #a5b4fc;
+  --cg-ok: #34d399;
+  --cg-warn: #fbbf24;
+  --cg-bad: #fb7185;
+  --cg-info: #7dd3fc;
+  --cg-muted: #64748b;
+  --cg-paused: #c4b5fd;
+  --cg-radius-panel: 14px;
+  --cg-radius-chip: 999px;
+  --cg-blur-glass: 16px;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--cg-bg);
+  --color-raise: var(--cg-bg-raise);
+  --color-ink: var(--cg-ink);
+  --color-dim: var(--cg-ink-dim);
+  --color-faint: var(--cg-ink-faint);
+  --color-line: var(--cg-line);
+  --color-accent: var(--cg-accent);
+  --color-accent2: var(--cg-accent-2);
+  --color-ok: var(--cg-ok);
+  --color-warn: var(--cg-warn);
+  --color-bad: var(--cg-bad);
+  --color-info: var(--cg-info);
+  --color-muted: var(--cg-muted);
+  --color-paused: var(--cg-paused);
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+html,
+body {
+  background: var(--cg-bg);
+  color: var(--cg-ink);
+}
+
+body {
+  min-height: 100dvh;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  background-image:
+    radial-gradient(1200px 600px at 8% -10%, rgba(103, 232, 249, 0.10), transparent 60%),
+    radial-gradient(900px 600px at 105% 110%, rgba(165, 180, 252, 0.10), transparent 60%),
+    linear-gradient(rgba(148, 178, 210, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 178, 210, 0.035) 1px, transparent 1px);
+  background-size: auto, auto, 44px 44px, 44px 44px;
+  background-attachment: fixed;
+}
+
+.glass {
+  background: linear-gradient(180deg, var(--cg-glass-strong), var(--cg-glass));
+  border: 1px solid var(--cg-line);
+  border-radius: var(--cg-radius-panel);
+  backdrop-filter: blur(var(--cg-blur-glass)) saturate(140%);
+  -webkit-backdrop-filter: blur(var(--cg-blur-glass)) saturate(140%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 20px 40px -24px rgba(0, 0, 0, 0.7);
+}
+
+.glass-edge {
+  position: relative;
+}
+.glass-edge::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(103, 232, 249, 0.35), transparent 40%, transparent 60%, rgba(165, 180, 252, 0.3));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cg-ink-faint);
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+:focus-visible {
+  outline: 2px solid var(--cg-accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+}
+.skip-link:focus {
+  left: 16px;
+  top: 12px;
+  z-index: 50;
+  padding: 8px 12px;
+  background: var(--cg-bg-raise);
+  border: 1px solid var(--cg-accent);
+  border-radius: 8px;
+}
+
+@keyframes cg-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(103, 232, 249, 0.55); }
+  50% { box-shadow: 0 0 0 5px rgba(103, 232, 249, 0); }
+}
+.pulse {
+  animation: cg-pulse 2.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse { animation: none; }
+  * { scroll-behavior: auto !important; }
+}
+
+textarea, input, select {
+  background: rgba(4, 7, 12, 0.6);
+  border: 1px solid var(--cg-line);
+  border-radius: 10px;
+  color: var(--cg-ink);
+}
+
+::selection {
+  background: rgba(103, 232, 249, 0.3);
+}

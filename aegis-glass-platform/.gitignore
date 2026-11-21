@@ -1,0 +1,6 @@
+node_modules/
+.next/
+next-env.d.ts
+*.tsbuildinfo
+# Local development database and encrypted blob store (never commit).
+.aegis-data/

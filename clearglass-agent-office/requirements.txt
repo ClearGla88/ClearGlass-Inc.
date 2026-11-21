@@ -1,0 +1,4 @@
+# ClearGlass Agent Office: runtime dependencies for the API.
+# The governed core (packages/) is standard-library only.
+fastapi==0.162.0
+uvicorn==0.54.0

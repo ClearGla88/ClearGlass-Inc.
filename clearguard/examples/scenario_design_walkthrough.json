@@ -1,0 +1,251 @@
+{
+  "schema": "clearguard.scenario/1",
+  "label": "Design walkthrough: refused activation, observation gate, one fall alert, rejected claims, commands",
+  "_comment": "Every input here is synthetic. Nothing in this file came from a device.",
+  "steps": [
+    {
+      "at": "2026-11-16T15:00:00+00:00",
+      "activate": true
+    },
+    {
+      "at": "2026-11-16T15:00:01+00:00",
+      "command": "Guardian, status."
+    },
+    {
+      "at": "2026-11-16T15:00:06+00:00",
+      "observation": {
+        "source_id": "watch-1.platform_fall_detection",
+        "observation_id": "obs-001",
+        "event_time": "2026-11-16T15:00:05+00:00",
+        "receipt_time": "2026-11-16T15:00:05.400000+00:00",
+        "clock_uncertainty_s": 0.5,
+        "measurement": true,
+        "units": "flag",
+        "measurement_uncertainty": 0,
+        "sensor_health": "ok",
+        "permission_state": "granted",
+        "freshness_limit_s": 30,
+        "integrity_status": "unverified",
+        "lineage": [
+          "watch-1.accelerometer"
+        ]
+      }
+    },
+    {
+      "at": "2026-11-16T15:00:06+00:00",
+      "observation": {
+        "source_id": "watch-1.platform_fall_detection",
+        "observation_id": "obs-001",
+        "event_time": "2026-11-16T15:00:05+00:00",
+        "receipt_time": "2026-11-16T15:00:05.400000+00:00",
+        "clock_uncertainty_s": 0.5,
+        "measurement": true,
+        "units": "flag",
+        "measurement_uncertainty": 0,
+        "sensor_health": "ok",
+        "permission_state": "granted",
+        "freshness_limit_s": 30,
+        "integrity_status": "unverified",
+        "lineage": [
+          "watch-1.accelerometer"
+        ]
+      }
+    },
+    {
+      "at": "2026-11-16T15:00:07+00:00",
+      "observation": {
+        "source_id": "watch-1.platform_fall_detection",
+        "observation_id": "obs-002",
+        "event_time": "2026-11-16T15:00:01+00:00",
+        "receipt_time": "2026-11-16T15:00:01.200000+00:00",
+        "clock_uncertainty_s": 0.5,
+        "measurement": true,
+        "units": "flag",
+        "measurement_uncertainty": 0,
+        "sensor_health": "ok",
+        "permission_state": "granted",
+        "freshness_limit_s": 2,
+        "integrity_status": "unverified",
+        "lineage": [
+          "watch-1.accelerometer"
+        ]
+      }
+    },
+    {
+      "at": "2026-11-16T15:00:08+00:00",
+      "observation": {
+        "source_id": "watch-1.platform_fall_detection",
+        "observation_id": "obs-003",
+        "event_time": "2026-11-16T15:00:07+00:00",
+        "receipt_time": "2026-11-16T15:00:07.300000+00:00",
+        "clock_uncertainty_s": 0.5,
+        "measurement": true,
+        "units": "flag",
+        "measurement_uncertainty": 0,
+        "sensor_health": "ok",
+        "permission_state": "revoked",
+        "freshness_limit_s": 30,
+        "integrity_status": "unverified",
+        "lineage": [
+          "watch-1.accelerometer"
+        ]
+      }
+    },
+    {
+      "at": "2026-11-16T15:00:09+00:00",
+      "observation": {
+        "source_id": "watch-1.platform_fall_detection",
+        "observation_id": "obs-004",
+        "event_time": "2026-11-16T15:00:08+00:00",
+        "receipt_time": "2026-11-16T15:00:08.300000+00:00",
+        "clock_uncertainty_s": 0.5,
+        "measurement": "fell",
+        "units": "flag",
+        "measurement_uncertainty": 0,
+        "sensor_health": "ok",
+        "permission_state": "granted",
+        "freshness_limit_s": 30,
+        "integrity_status": "unverified",
+        "lineage": [
+          "watch-1.accelerometer"
+        ]
+      }
+    },
+    {
+      "at": "2026-11-16T15:00:10+00:00",
+      "event": {
+        "event_id": "evt-001",
+        "detector_id": "platform-fall-detection",
+        "category": "device_fall_event",
+        "priority": "WARNING",
+        "created_at": "2026-11-16T15:00:06+00:00",
+        "expires_at": "2026-11-16T15:02:06+00:00",
+        "observation_ids": [
+          "obs-001"
+        ],
+        "observed_facts": [
+          "The watch platform reported a fall event."
+        ],
+        "inferences": [],
+        "unknowns": [
+          "Whether the user is hurt.",
+          "Whether the watch was being worn."
+        ],
+        "alternatives": [
+          "The watch was dropped or knocked."
+        ],
+        "limitations": [
+          "Synthetic input: the platform fall detector is not integrated in this build."
+        ]
+      }
+    },
+    {
+      "at": "2026-11-16T15:00:20+00:00",
+      "event": {
+        "event_id": "evt-002",
+        "detector_id": "platform-fall-detection",
+        "category": "device_fall_event",
+        "priority": "WARNING",
+        "created_at": "2026-11-16T15:00:20+00:00",
+        "expires_at": "2026-11-16T15:02:06+00:00",
+        "observation_ids": [
+          "obs-001"
+        ],
+        "observed_facts": [
+          "The watch platform reported a fall event."
+        ],
+        "inferences": [],
+        "unknowns": [
+          "Whether the user is hurt.",
+          "Whether the watch was being worn."
+        ],
+        "alternatives": [
+          "The watch was dropped or knocked."
+        ],
+        "limitations": [
+          "Synthetic input: the platform fall detector is not integrated in this build."
+        ]
+      }
+    },
+    {
+      "at": "2026-11-16T15:00:25+00:00",
+      "event": {
+        "event_id": "evt-003",
+        "detector_id": "platform-fall-detection",
+        "category": "device_fall_event",
+        "priority": "WARNING",
+        "created_at": "2026-11-16T15:00:25+00:00",
+        "expires_at": "2026-11-16T15:02:06+00:00",
+        "observation_ids": [
+          "obs-001"
+        ],
+        "observed_facts": [
+          "A person was following the user with hostile intent."
+        ],
+        "inferences": [],
+        "unknowns": [
+          "Whether the user is hurt.",
+          "Whether the watch was being worn."
+        ],
+        "alternatives": [
+          "The watch was dropped or knocked."
+        ],
+        "limitations": [
+          "Synthetic input: the platform fall detector is not integrated in this build."
+        ]
+      }
+    },
+    {
+      "at": "2026-11-16T15:00:30+00:00",
+      "event": {
+        "event_id": "evt-004",
+        "detector_id": "platform-fall-detection",
+        "category": "device_fall_event",
+        "priority": "WARNING",
+        "created_at": "2026-11-16T15:00:30+00:00",
+        "expires_at": "2026-11-16T15:02:06+00:00",
+        "observation_ids": [
+          "obs-003"
+        ],
+        "observed_facts": [
+          "The watch platform reported a fall event."
+        ],
+        "inferences": [],
+        "unknowns": [
+          "Whether the user is hurt.",
+          "Whether the watch was being worn."
+        ],
+        "alternatives": [
+          "The watch was dropped or knocked."
+        ],
+        "limitations": [
+          "Synthetic input: the platform fall detector is not integrated in this build."
+        ]
+      }
+    },
+    {
+      "at": "2026-11-16T15:00:35+00:00",
+      "command": "Guardian, why did you alert?"
+    },
+    {
+      "at": "2026-11-16T15:00:40+00:00",
+      "command": "Guardian, add my brother as an emergency contact."
+    },
+    {
+      "at": "2026-11-16T15:00:45+00:00",
+      "command": "Guardian, emergency help."
+    },
+    {
+      "at": "2026-11-16T15:00:50+00:00",
+      "command": "Guardian, cancel escalation."
+    },
+    {
+      "at": "2026-11-16T15:03:00+00:00",
+      "command": "Guardian, repeat the last alert."
+    },
+    {
+      "at": "2026-11-16T15:03:05+00:00",
+      "command": "Guardian, what is unavailable?"
+    }
+  ]
+}

@@ -220,6 +220,7 @@
       "#cg-logo-badge:hover{transform:scale(1.06);border-color:rgba(150,180,255,.95);box-shadow:0 8px 26px rgba(0,0,0,.46),0 0 26px rgba(96,165,250,.6),0 0 44px rgba(167,139,250,.45)}",
       "#cg-logo-badge img{width:100%;height:100%;object-fit:cover;display:block}",
       "#cg-logo-badge:focus-visible{outline:2px solid #a78bfa;outline-offset:3px}",
+      "#cg-logo-badge.cg-logo-fallback{display:grid;place-items:center;line-height:1;text-decoration:none;font:700 17px/1 Urbanist,Inter,system-ui,sans-serif;letter-spacing:.04em;color:#f4fbff;text-shadow:0 0 10px rgba(34,211,238,.55);background:radial-gradient(circle at 50% 35%,rgba(34,211,238,.3),rgba(167,139,250,.2) 55%,rgba(11,12,28,.95))}",
       "@media(max-width:640px){#cg-dock{right:12px;bottom:12px;gap:6px}#cg-logo-badge{width:46px;height:46px}#cg-sales-button{min-height:44px;padding:0 13px;font-size:10.5px}#cg-sales-panel{position:fixed;right:12px;bottom:68px;width:calc(100vw - 24px);max-height:72vh}.cg-sales-foot{grid-template-columns:1fr}}",
       "@media (prefers-reduced-motion:reduce){#cg-dock::before{animation:none;opacity:.7}#cg-sales-button,#cg-sales-offer,#cg-logo-badge{transition:none}}"
     ].join("");
@@ -245,6 +246,16 @@
     img.alt = "ClearGlass logo";
     img.decoding = "async";
     img.loading = "lazy";
+    img.setAttribute("data-cg-owned-fallback", "");
+    // When the logo file is missing, a broken <img> prints its alt text across
+    // the coin. Show a monogram; the link keeps its aria-label.
+    img.addEventListener("error", function () {
+      a.classList.add("cg-logo-fallback");
+      var mono = document.createElement("span");
+      mono.setAttribute("aria-hidden", "true");
+      mono.textContent = "CG";
+      if (img.parentNode) img.parentNode.replaceChild(mono, img);
+    });
 
     a.appendChild(img);
     dock.appendChild(a);

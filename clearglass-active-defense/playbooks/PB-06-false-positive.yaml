@@ -1,0 +1,31 @@
+id: PB-06-false-positive
+version: 1
+owner: security-operations (lab)
+purpose: >-
+  An analyst finds a case is a false positive. Cancel pending isolation proposals and queued
+  isolations, record the finding, and close the case. If containment is already applied it
+  stays until a PB-07 release is approved.
+trigger: {kind: operator, ref: analyst}
+required_evidence:
+  min_distinct_sensors: 1
+preconditions: []
+authorization_scope: cases in this deployment
+asset_exclusions: [identity, network_control, response_platform, backup, safety_ot]
+approval: {required: false}
+actions:
+  - {id: cancel, type: cancel_pending, description: Cancel isolation proposals awaiting approval and queued isolation actions.}
+  - {id: alert, type: record_alert, description: Record the false-positive finding on the case.}
+retry: {max_attempts: 1, backoff_seconds: 0}
+idempotency_key_fields: [case_id, playbook_id]
+verification:
+  - No isolation proposal awaits approval and no isolation action is queued for the case.
+failure_paths:
+  on_timeout: Not applicable; every step is local.
+  on_partial: Not applicable; steps run in one database transaction.
+  on_error: The transaction rolls back; the analyst retries.
+escalation:
+  - Detection engineer reviews the rule that fired and records a tuning decision.
+evidence_requirements:
+  - The analyst's rationale is stored on the case and in the audit log.
+notifications:
+  - detection engineering queue
