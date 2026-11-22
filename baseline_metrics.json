@@ -7,7 +7,7 @@
   "collection_notes": [
     "No Google Business Profile, GA4, Search Console, CRM, Instagram, TikTok or LinkedIn export was supplied. Every account metric below is null on purpose; null is not zero.",
     "Live-site observations come from tools/local_seo_audit.py run against https://www.clearglassinc.com on 2026-11-21 (read-only GET requests). They describe the public site, not search performance.",
-    "This repository is not the source of the live site: the live sitemap lists 176 URLs and this checkout's sitemap.xml 172; the 17 sitemap URLs found only in this checkout return 404 live; the live homepage differs from index.html here. Site changes made in this repository do not reach www.clearglassinc.com."
+    "This repository is not the source of the live site. The live sitemap lists 176 URLs; this checkout's sitemap.xml listed 172, then 84 after main pruned it on 2026-11-21. All 8 URLs listed only in this checkout return 404 live. Merges to main at 18:54 UTC on 2026-11-21, including fixes to two canonical tags, had not reached the live site by about 22:45 UTC (Last-Modified still 2026-10-28). Site changes made in this repository do not reach www.clearglassinc.com."
   ],
   "sources": {
     "google_business_profile": {"status": "not_collected", "evidence_ref": null, "last_success_at": null},
@@ -51,9 +51,10 @@
   "repository_observations": {
     "canonical_domain": {"value": "www.clearglassinc.com", "evidence_ref": "CNAME:1"},
     "checkout_matches_live_site": {"value": false, "evidence_ref": "burlington-exposure/audits/2026-11-21-checkout.json versus 2026-11-21-live.json"},
-    "checkout_sitemap_urls_without_source_file": {"value": "88 of 173", "evidence_ref": "burlington-exposure/audits/2026-11-21-checkout.json"},
+    "checkout_sitemap_urls_without_source_file": {"value": "0 of 84 after main pruned the sitemaps on 2026-11-21 (88 of 173 before the prune)", "evidence_ref": "burlington-exposure/audits/2026-11-21-checkout.json; commit 95fa0ed for the pre-prune audit"},
+    "checkout_canonical_fixes_not_live": {"value": "main fixed the canonical tags on procurement-legal-tech.html and smb.html on 2026-11-21; the live pages still served the old tags at about 22:45 UTC", "evidence_ref": "git diff of main for those files; GET https://www.clearglassinc.com/procurement-legal-tech.html and /smb.html"},
     "checkout_pages_with_fictional_phone": {"value": 5, "evidence_ref": "burlington-exposure/audits/2026-11-21-checkout.json placeholder-phone; none of the five pages is served live"},
-    "checkout_linkedin_sameas": {"value": "https://www.linkedin.com/company/cleaglassinc (the live homepage uses /company/clearglassinc)", "evidence_ref": "index.html:233"}
+    "checkout_homepage_local_signals": {"value": "the rebuilt index.html declares only the name 'ClearGlass Inc.' in structured data (no phone, email, address or areaServed) and never mentions Burlington", "evidence_ref": "index.html JSON-LD; burlington-exposure/audits/2026-11-21-checkout.json local_signals"}
   },
   "quality": {
     "complete": false,

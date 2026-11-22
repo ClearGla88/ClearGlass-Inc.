@@ -1,23 +1,23 @@
 {
   "schema_version": "1.0.0",
-  "generated_at": "2026-11-21T17:38:25+00:00",
+  "generated_at": "2026-11-21T22:37:05+00:00",
   "mode": "checkout",
   "site": "https://www.clearglassinc.com",
   "locality": "Burlington",
   "canonical_nap": {
     "name": "ClearGlass Inc.",
-    "telephone": "+1-289-707-0269",
-    "email": "desmond@clearglassinc.com",
-    "locality": "Burlington",
+    "telephone": null,
+    "email": null,
+    "locality": null,
     "source": "index.html JSON-LD"
   },
   "counts": {
     "sitemaps": 4,
-    "sitemap_urls": 173,
-    "sitemap_urls_available": 85,
-    "pages_audited": 85,
-    "extra_pages_audited": 74,
-    "links_checked": 17,
+    "sitemap_urls": 84,
+    "sitemap_urls_available": 84,
+    "pages_audited": 84,
+    "extra_pages_audited": 75,
+    "links_checked": 106,
     "links_capped": false
   },
   "local_signals": {
@@ -25,692 +25,46 @@
       "seo-authority-hub.html"
     ],
     "pages_with_locality_in_h1": [
-      "ClearGlass-NEXUS-v12-FINAL.html",
       "clearglass-nexus.html"
     ],
-    "pages_mentioning_locality": 24,
+    "pages_mentioning_locality": 22,
     "top_mentions": {
-      "ClearGlass-NEXUS-v12-FINAL.html": 8,
       "clearglass-nexus.html": 8,
       "side-store.html": 5,
       "government.html": 4,
       "guardian.html": 3,
       "procurement-legal-tech.html": 3,
       "seo-authority-hub.html": 3,
-      "index.html": 2,
       "smb-cyber-trust-kit.html": 2,
-      "tax.html": 2
+      "tax.html": 2,
+      "artemis-iv.html": 1,
+      "authority-network.html": 1
     },
-    "pages_with_locality_in_area_served": [
-      "index.html"
-    ]
+    "pages_with_locality_in_area_served": []
   },
   "nap_variants": {
     "names": {
       "ClearGlass Inc.": 11,
-      "ClearGlass Inc": 5,
+      "ClearGlass Inc": 4,
       "ClearGlass Side Store": 1
     },
-    "telephones": {
-      "+1-289-707-0269": 3
-    },
-    "emails": {
-      "desmond@clearglassinc.com": 3
-    },
+    "telephones": {},
+    "emails": {},
     "localities": {
-      "Burlington": 5
+      "Burlington": 3
     }
   },
   "summary": {
     "error": 0,
-    "warning": 110,
+    "warning": 106,
     "info": 0,
     "by_rule": {
-      "canonical-mismatch": 3,
-      "internal-link-unavailable": 8,
-      "nap-name-variant": 6,
-      "placeholder-phone": 5,
-      "sitemap-url-unavailable": 88
+      "internal-link-unavailable": 96,
+      "nap-name-variant": 5,
+      "placeholder-phone": 5
     }
   },
   "findings": [
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/apps/command-center/index.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/artemis-fawl/index.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/agentic-ai-business-operating-model.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/ai-agent-governance-governed-autonomy.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/ai-agents-digital-workforce-small-business.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/ai-agents-insider-threat.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/ai-generated-phishing-54-percent-click-rate.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/ai-safety-black-box-activation-analysis-gavel.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/almach-scalp-engine.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/artemis-governed-ai-gtm-visual-growth-engine.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/autonomous-threat-modeling-2026.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/blue-brain-project-digital-brain-simulation.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/canada-digital-control-architecture-charter.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/chatgpt-prompt-shortcuts-supercharge-ai-results.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/clearglass-agentops-microsoft-foundry-future-stack.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/clearglass-command-center-cyber-defense-console.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/clearglass-platform-audit-2026.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/clearglass-secure-deployment-agent.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/clearglass-workplace-surveillance-intelligence-defense-system.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/clearglassinc-0-to-1m-corporate-execution-plan.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/clearglassinc-artemis-full-stack-ai-intelligence-platform-blueprint.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/clearglassinc-artemis-palantir-self-evolving-ai-intelligence-platform.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/clearglassinc-artemis-resume-builder-self-evolving-intelligence-platform.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/clearglassinc-artemis-self-evolving-ai-intelligence-platform.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/coffee-and-technology-digital-revolution.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/cybersecurity-architecture-for-agentic-software.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/digital-twin-simulation-tools-storm-adaptive-transit-2026.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/ethical-sales-system-100k-revenue-prompt.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/frontier-intelligence-briefing-quantum-gravity-asi-biosecurity.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/graph-topology-multi-agent-research-workflow.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/greenbelt-92-percent-access-beats-process.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/index.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/master-investigator-legal-tech-osint-government-accountability.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/network-orchestration-ai-automation-cybersecurity.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/ontario-accountability-sealed-evidence.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/ontario-influence-environment-august-2026.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/osint-workflow-that-survives-contact-with-reality.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/post-quantum-security-advisor-clearglass-artemis.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/resume-builder.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/rethinking-security-age-of-ai-cyber-stack.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/shadow-ai-enterprise-security-blind-spot.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/shadow-ai-incident-response-logs-gone.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/telecommunications-legal-briefing-30-july-2026.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/us-army-hades-me-11b-osint-dossier.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/zero-trust-is-outdated-adaptive-trust.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/blog/zero-trust-is-outdated.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/checkout/index.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/docs/guardian_command_nexus_spec.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/investors/index.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/legal/accessibility.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/legal/ai-liability.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/legal/articles.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/legal/banking-resolution.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/legal/bylaws.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/legal/content-policy.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/legal/directors-resolution.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/legal/index.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/legal/ip-assignment.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/legal/legal-council.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/legal/nda.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/legal/privacy.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/legal/share-subscription.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/legal/terms.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/offers/autonomous-threat-modeling.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/offers/guardian-command-nexus-blueprint.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/offers/hardening-sprint.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/offers/index.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/offers/phipa-readiness-checklist.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/offers/phipa-readiness.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/offers/security-quick-audit-methodology.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/offers/security-quick-audit-sample-report.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/offers/security-quick-audit.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/opal/index.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/operations/client-onboarding.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/operations/federal-supplier-handoff.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/operations/hubspot-handoff.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/operations/ontario-incorporation-handoff.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/operations/procurement-readiness.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/operations/stripe-handoff.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/products/advanced-secure-systems-engineering.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/products/opal-koboi/artemis-iv-core.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/products/opal-koboi/artemis-vi.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/products/opal-koboi/guardian.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/products/opal-koboi/index.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/products/opal-koboi/revenue-engine.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/products/opal-koboi/smb-suite.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/streaming-growth-command-center/index.html",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "sitemap-url-unavailable",
-      "severity": "warning",
-      "path": "/offers/",
-      "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live)"
-    },
-    {
-      "rule": "canonical-mismatch",
-      "severity": "warning",
-      "path": "ClearGlass-NEXUS-v12-FINAL.html",
-      "line": null,
-      "detail": "canonical is https://www.clearglassinc.com/clearglass-nexus.html"
-    },
-    {
-      "rule": "canonical-mismatch",
-      "severity": "warning",
-      "path": "procurement-legal-tech.html",
-      "line": null,
-      "detail": "canonical is https://clearglassinc.github.io/procurement-legal-tech.html"
-    },
-    {
-      "rule": "canonical-mismatch",
-      "severity": "warning",
-      "path": "smb.html",
-      "line": null,
-      "detail": "canonical is https://www.clearglassinc.com/products/opal-koboi/smb-suite.html"
-    },
     {
       "rule": "placeholder-phone",
       "severity": "warning",
@@ -745,13 +99,6 @@
       "path": "clearglass-prometheus-v10.html",
       "line": 3669,
       "detail": "fictional number '555-0100'"
-    },
-    {
-      "rule": "nap-name-variant",
-      "severity": "warning",
-      "path": "index.html",
-      "line": null,
-      "detail": "'ClearGlass Inc' vs canonical 'ClearGlass Inc.'"
     },
     {
       "rule": "nap-name-variant",
@@ -791,6 +138,20 @@
     {
       "rule": "internal-link-unavailable",
       "severity": "warning",
+      "path": "/apps/command-center/index.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, business-productivity-suite.html, global-growth-engine.html, products.html, side-store.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/artemis-fawl/index.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from air-control.html, artemis-2040.html, artemis-ai-cyber-intelligence-platform.html, artemis-os.html, artemis-self-evolving-platform.html and 2 more"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
       "path": "/artemis/environmental/risk.py",
       "line": null,
       "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from environmental-cyber-risk.html"
@@ -800,7 +161,322 @@
       "severity": "warning",
       "path": "/blog/",
       "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from index.html, clearglass-ultra.html, seo-authority-hub.html"
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from clearglass-ultra.html, seo-authority-hub.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/agentic-ai-business-operating-model.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/ai-agent-governance-governed-autonomy.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from ai-operator.html, authority-network.html, conduit.html, percival-os.html, xenolith.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/ai-agents-digital-workforce-small-business.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/ai-agents-insider-threat.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, bluedesk.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/ai-generated-phishing-54-percent-click-rate.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/ai-safety-black-box-activation-analysis-gavel.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/almach-scalp-engine.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/artemis-governed-ai-gtm-visual-growth-engine.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/autonomous-threat-modeling-2026.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from advanced-features-tools-systems.html, authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/blue-brain-project-digital-brain-simulation.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/canada-digital-control-architecture-charter.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/chatgpt-prompt-shortcuts-supercharge-ai-results.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/clearglass-agentops-microsoft-foundry-future-stack.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, conduit.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/clearglass-command-center-cyber-defense-console.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, cyber-defense-console.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/clearglass-platform-audit-2026.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/clearglass-secure-deployment-agent.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/clearglass-workplace-surveillance-intelligence-defense-system.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/clearglassinc-0-to-1m-corporate-execution-plan.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/clearglassinc-artemis-full-stack-ai-intelligence-platform-blueprint.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/clearglassinc-artemis-palantir-self-evolving-ai-intelligence-platform.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from advanced-features-tools-systems.html, authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/clearglassinc-artemis-resume-builder-self-evolving-intelligence-platform.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/clearglassinc-artemis-self-evolving-ai-intelligence-platform.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from artemis-os.html, artemis-self-evolving-platform.html, authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/coffee-and-technology-digital-revolution.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/cybersecurity-architecture-for-agentic-software.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from agentmesh.html, authority-network.html, conduit.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/digital-twin-simulation-tools-storm-adaptive-transit-2026.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, sats-digital-twin.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/ethical-sales-system-100k-revenue-prompt.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, revenue-engine.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/frontier-intelligence-briefing-quantum-gravity-asi-biosecurity.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, intelligence.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/graph-topology-multi-agent-research-workflow.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/greenbelt-92-percent-access-beats-process.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/index.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, conduit.html, seo-authority-hub.html, ultra-glass.html, web-design.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/master-investigator-legal-tech-osint-government-accountability.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, procurement-legal-tech.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/network-orchestration-ai-automation-cybersecurity.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/ontario-accountability-sealed-evidence.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/ontario-influence-environment-august-2026.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/osint-workflow-that-survives-contact-with-reality.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, conduit.html, flowsint.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/post-quantum-security-advisor-clearglass-artemis.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/resume-builder.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/rethinking-security-age-of-ai-cyber-stack.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/shadow-ai-enterprise-security-blind-spot.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/shadow-ai-incident-response-logs-gone.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/telecommunications-legal-briefing-30-july-2026.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/us-army-hades-me-11b-osint-dossier.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/zero-trust-is-outdated-adaptive-trust.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/blog/zero-trust-is-outdated.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/checkout/index.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, seo-authority-hub.html, workspace-email.html, workspace-migration.html, workspace-security.html and 1 more"
     },
     {
       "rule": "internal-link-unavailable",
@@ -826,6 +502,13 @@
     {
       "rule": "internal-link-unavailable",
       "severity": "warning",
+      "path": "/docs/guardian_command_nexus_spec.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from artemis.html, authority-network.html, intelligence-platform.html, minerals.html, xenolith.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
       "path": "/investors/",
       "line": null,
       "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from artemis-os.html, banking-law-advisor.html"
@@ -833,9 +516,289 @@
     {
       "rule": "internal-link-unavailable",
       "severity": "warning",
+      "path": "/investors/index.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
       "path": "/legal/",
       "line": null,
-      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from index.html, artemis-os.html, banking-law-advisor.html, corporate-legal-advisor.html, government.html and 3 more"
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from artemis-os.html, banking-law-advisor.html, corporate-legal-advisor.html, government.html, procurement-legal-tech.html and 2 more"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/legal/accessibility.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, workspace-email.html, workspace-migration.html, workspace-security.html, workspace-vs.html and 1 more"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/legal/ai-liability.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, banking-law-advisor.html, corporate-legal-advisor.html, procurement-legal-tech.html, tax.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/legal/articles.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/legal/banking-resolution.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, banking-law-advisor.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/legal/bylaws.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/legal/content-policy.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, workspace-email.html, workspace-migration.html, workspace-security.html, workspace-vs.html and 1 more"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/legal/directors-resolution.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/legal/index.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from aegis.html, artemis-os.html, authority-network.html, banking-law-advisor.html, corporate-legal-advisor.html and 3 more"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/legal/ip-assignment.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/legal/legal-council.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, banking-law-advisor.html, procurement-legal-tech.html, tax.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/legal/nda.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, government.html, procurement-legal-tech.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/legal/privacy.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, banking-law-advisor.html, content-shield.html, corporate-legal-advisor.html, minerals.html and 8 more"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/legal/share-subscription.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/legal/terms.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, banking-law-advisor.html, corporate-legal-advisor.html, minerals.html, procurement-legal-tech.html and 7 more"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/offers/",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from seo-authority-hub.html, smb-cyber-trust-kit.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/offers/autonomous-threat-modeling.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/offers/guardian-command-nexus-blueprint.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, revenue-engine.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/offers/hardening-sprint.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, conduit.html, smb-cyber-trust-kit.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/offers/index.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from CG-os.html, advanced-features-tools-systems.html, aegis.html, agentmesh.html, ai-operator.html and 38 more"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/offers/phipa-readiness-checklist.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, clearpulse-architecture.html, clearpulse.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/offers/phipa-readiness.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, clearpulse-architecture.html, clearpulse.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/offers/security-quick-audit-methodology.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, smb-cyber-trust-kit.html, smb.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/offers/security-quick-audit-sample-report.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, seo-authority-hub.html, smb-cyber-trust-kit.html, smb.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/offers/security-quick-audit.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from artemis-blue-team.html, attack-prompt-core.html, authority-network.html, bluedesk-mobile.html, bluedesk.html and 10 more"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/opal/index.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, web-design.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/operations/client-onboarding.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/operations/federal-supplier-handoff.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, counter-uas-commercialization-os.html, government.html, minerals-platform.html, procurement-legal-tech.html and 2 more"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/operations/hubspot-handoff.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/operations/ontario-incorporation-handoff.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/operations/procurement-readiness.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, counter-uas-commercialization-os.html, government.html, minerals-platform.html, procurement-legal-tech.html and 2 more"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/operations/stripe-handoff.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/products/advanced-secure-systems-engineering.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, business-productivity-suite.html, global-growth-engine.html, pricing.html, store.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/products/opal-koboi/artemis-iv-core.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/products/opal-koboi/artemis-vi.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/products/opal-koboi/guardian.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/products/opal-koboi/index.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/products/opal-koboi/revenue-engine.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/products/opal-koboi/smb-suite.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, smb.html"
+    },
+    {
+      "rule": "internal-link-unavailable",
+      "severity": "warning",
+      "path": "/streaming-growth-command-center/index.html",
+      "line": null,
+      "detail": "no source file in this checkout (the deployed site may still serve it; confirm with --live); linked from authority-network.html, smb.html"
     },
     {
       "rule": "internal-link-unavailable",

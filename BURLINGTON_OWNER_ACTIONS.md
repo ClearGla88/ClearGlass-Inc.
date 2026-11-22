@@ -6,11 +6,12 @@ Evidence for every claim below: `burlington-exposure/audits/2026-11-21-live.md`,
 
 ## What the 2026-11-21 check changed
 
-1. **This repository does not publish www.clearglassinc.com.** The live site is served by GitHub Pages, but its sitemap (176 URLs) and homepage differ from the copies here. The 17 sitemap URLs that exist only in this repository's `sitemap.xml` all return 404 live. Edits made here never reach the public site.
+1. **This repository does not publish www.clearglassinc.com.** The live site is served by GitHub Pages, but its sitemap (176 URLs) and homepage differ from the copies here. All 8 URLs listed only in this repository's 84-URL sitemap return 404 live. The decisive test: `main` merged fixes to two canonical tags at 18:54 UTC on 2026-11-21, and about four hours later the live pages still showed the old tags and a Last-Modified date of 2026-10-28. Edits made here don't reach the public site.
 2. **The live site is healthy.** All 177 sitemap URLs return 200. There are no structured-data parse errors and no phone or locality conflicts.
 3. **Burlington is barely on the site.** One live page has Burlington in its title: `/seo-authority-hub.html`. Its H1 doesn't mention Burlington and its URL names an SEO tactic, not a service. `/burlington.html` returns 404.
 4. **The name and email are inconsistent.** The homepage's structured data says "ClearGlass Inc". The other 82 uses say "ClearGlass Inc.". The business email in the live structured data is a personal iCloud address.
 5. **No Business Profile is on record.** No profile, analytics or social export exists, so every performance number in the plan is still null. That's correct: nothing has been measured yet.
+6. **This repository's rebuilt homepage has no Burlington signal.** Its structured data carries only the name "ClearGlass Inc.": no phone, email, address or service area. Its text never mentions Burlington. The live homepage lists Burlington in its service area and mentions it 6 times. If this rebuild is ever published as it stands, the homepage's local signal goes away. Supply the locality and service area through `website/site_config.py` before that happens.
 
 ## Actions
 

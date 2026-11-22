@@ -12,7 +12,7 @@ The repository was populated by "Add files via upload" commits, and almost every
 
 The website pages (`*.html`, `*.css`, `*.js`, `sitemap*.xml`, `CNAME`, `.nojekyll`) live at the root on purpose. GitHub Pages serves them from there.
 
-Checked 2026-11-21: www.clearglassinc.com is **not** built from this tree. Its sitemap (176 URLs) and homepage differ from the copies here, and the 17 sitemap URLs that exist only here return 404 on the live site. Evidence: `burlington-exposure/audits/2026-11-21-live.md`. Make changes meant for the public site in the repository that publishes it.
+Checked 2026-11-21: www.clearglassinc.com is **not** built from this tree. The live `sitemap.xml` lists 176 URLs; this tree's lists 84 after the prune merged that day. All 8 URLs listed only here return 404 live. Merges to `main` at 18:54 UTC that day had still not reached the live site at about 22:45 UTC: Last-Modified was still 2026-10-28, and the old canonical tags that `main` fixed on `procurement-legal-tech.html` and `smb.html` were still live. Evidence: `burlington-exposure/audits/2026-11-21-live.md`. Make changes meant for the public site in the repository that publishes it.
 
 **Runs in this tree**
 

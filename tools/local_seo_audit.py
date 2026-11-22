@@ -629,8 +629,11 @@ def render_markdown(report: dict[str, Any], per_rule: int = 12) -> str:
         "",
         "## Canonical NAP record",
         "",
-        f"Source: {nap.get('source')}. Name: {nap.get('name')}. Phone: {nap.get('telephone')}. "
-        f"Email: {nap.get('email')}. Locality: {nap.get('locality')}.",
+        f"- Source: {nap.get('source')}",
+        f"- Name: {nap.get('name') or 'not declared'}",
+        f"- Phone: {nap.get('telephone') or 'not declared'}",
+        f"- Email: {nap.get('email') or 'not declared'}",
+        f"- Locality: {nap.get('locality') or 'not declared'}",
         "",
         "## Local signals",
         "",
