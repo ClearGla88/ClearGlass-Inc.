@@ -1,0 +1,369 @@
+<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<SelfServiceWeb.BusinessObjects.Orders.Receipt>" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head runat="server">
+    <title>Receipt</title>
+	<link href="../../Content/receipt.css" rel="Stylesheet"/>
+	<style type="text/css">
+body 
+{
+ font-family: Arial;
+}
+div#divReceiptContainer
+{
+ width: 826px;
+ border: none;
+ margin: 10px;
+ padding: 10px;
+ background-color: #eee;
+}
+div#divReceipt 
+{
+ width: 800px;
+ margin: 0;
+ border: 3px solid navy;
+ text-align: center;
+ padding: 10px;
+ background-color: #fff;
+}
+div#divButtons 
+{
+ width: 800px;
+ margin: 10px;
+ text-align: center;
+}
+div#divLogo
+{
+ float:left;
+ margin:10px;
+}
+div#divCompany
+{
+ float:left;
+ font-size:24pt;
+ font-weight:bold;
+ color:#060;
+ margin:10px 10px 10px 20px;
+}
+div#divTitle 
+{
+ float:right;
+ font-size:32pt;
+ font-weight:bold;
+ color:#060;
+ margin:10px 20px 10px 10px;
+}
+div#divAddress
+{
+ float:left;
+ font-size:12pt;
+ color:#000;
+ margin:0px 10px 10px 30px;
+ text-align:left;
+}
+div#divInfo 
+{
+ padding:0;
+ float:right;
+ margin:10px;
+ width: 400px;
+}
+div.divCust
+{
+ font-size: 12pt;
+ font-weight:bold;
+ text-align: left;
+ margin:10px;
+ display:block;
+ border: 1px solid black;
+ padding: 10px;
+ width:720px;
+}
+.CustDetails 
+{
+ font-size:10pt;
+ font-weight:normal;
+ text-align:left;
+}
+div.divInfoItem_top,div.divInfoValue_top,div.divInfoItem_next,div.divInfoValue_next
+{
+ float:left;
+ font-size:14px;
+ height:16px;
+ padding:2px;
+ border:1px solid black;
+}
+div.divInfoItem_top,div.divInfoItem_next
+{
+ width:170px;
+ border-right:none;
+ text-align:right;
+}
+div.divInfoValue_top, div.divInfoValue_next
+{
+ width:200px;
+ text-align:left;
+}
+div.divInfoItem_next, div.divInfoValue_next
+{
+ border-top:none;
+}
+div.divOrder
+{
+ font-size: 12pt;
+ text-align: left;
+ margin:10px;
+ display:block;
+ border: 1px solid black;
+ padding: 10px 10px 20px 10px;
+ width:720px;
+ min-height: 250px; 
+}
+div.divItem_ItemHeader, div.divItem_DescHeader, div.divItem_CostHeader, div.divItem_QtyHeader, div.divItem_TotalHeader, 
+ div.divItem_ItemValue, div.divItem_DescValue, div.divItem_CostValue, div.divItem_QtyValue, div.divItem_TotalValue
+{
+ float:left;
+ font-size:14px;
+ height:16px;
+ padding:2px;
+ border:1px solid black;
+}
+div.divItem_ItemHeader, div.divItem_DescHeader, div.divItem_ItemValue, div.divItem_DescValue
+{
+ text-align: left;
+}
+div.divItem_CostHeader, div.divItem_QtyHeader, div.divItem_TotalHeader, 
+ div.divItem_CostValue, div.divItem_QtyValue, div.divItem_TotalValue
+{
+ text-align: right;
+}
+div.divItem_ItemHeader, div.divItem_DescHeader, div.divItem_CostHeader, div.divItem_QtyHeader, div.divItem_TotalHeader 
+{
+ font-weight:bold;
+ border-bottom:3px solid black;
+ margin:10px 0 0 0;
+}
+div.div.divItem_TotalHeader, div.divItem_TotalValue 
+{
+ clear:right;
+}
+div.divItem_DescHeader, div.divItem_CostHeader, div.divItem_QtyHeader, div.divItem_TotalHeader, 
+ div.divItem_DescValue, div.divItem_CostValue, div.divItem_QtyValue, div.divItem_TotalValue 
+{
+ border-left:none;
+}
+div.divItem_ItemValue, div.divItem_DescValue, div.divItem_CostValue, div.divItem_QtyValue, div.divItem_TotalValue
+{
+ font-weight:normal;
+ border-top:none;
+ margin:0 0 10px 0;
+}
+div.divItem_ItemHeader, div.divItem_ItemValue
+{
+ width:150px;
+ margin-left:10px;
+}
+div.divItem_DescHeader, div.divItem_DescValue
+{
+ width:200px;
+}
+div.divItem_CostHeader, div.divItem_CostValue
+{
+ width:100px;
+}
+div.divItem_QtyHeader, div.divItem_QtyValue
+{
+ width:100px;
+}
+div.divItem_TotalHeader, div.divItem_TotalValue
+{
+ width:120px;
+}
+
+div#divTotal
+{
+ padding:0;
+ float:right;
+ margin:0;
+ width: 300px;
+}
+div.divTotalItem_top,div.divTotalValue_top,div.divTotalItem_next,div.divTotalValue_next
+{
+ margin:0;
+ float:left;
+ font-size:14px;
+ height:16px;
+ padding:2px;
+ border:1px solid black;
+}
+div.emptyDiv
+{
+    margin:0;
+ float:left;
+ font-size:14px;
+ height:16px;
+ padding:2px;
+ width:150px;
+}
+div.divTotalItem_top,div.divTotalItem_next
+{
+ width:150px;
+ border-right:none;
+ text-align:right;
+}
+div.divTotalValue_top, div.divTotalValue_next
+{
+ width:120px;
+ text-align:right;
+}
+div.divTotalItem_next, div.divTotalValue_next
+{
+ border-top:none;
+}
+
+div#divPaid
+{
+ position:absolute;
+ left: 380px;
+ top: 280px;
+ padding:0;
+ margin:0;
+ width: 200px;
+}
+  .orderItem{
+    border-collapse: collapse;
+    border: 1px solid black;
+    font-family: Arial;
+    font-size:13px;
+  }
+  .orderItem td{
+    border: 1px solid black;
+    padding: 0px 10px 0px 10px;
+  }
+  .orderItem th{
+    border: 1px solid black;
+    padding: 0px 10px 0px 10px;
+  }
+  tabel td
+  {
+      
+  }
+</style>
+
+</head>
+<body>
+   <div id="divReceiptContainer">
+    <div id="divReceipt">
+        <div id="divLogo"><img src="http://old.halton.ca/App_Themes/assets/halton-logo.png" alt="halton" /></div>
+        <div id="divCompany"></div>
+        <div id="divTitle">RECEIPT</div>
+        <div style="clear:both"></div>
+        <div id="divAddress">
+            1151 Bronte Road<br />
+            Oakville  ON L6M 3L1<br />
+			Dial 311 or 905-825-6000<br />
+			Toll free 1-866-442-5866 <br />
+            <a href="http://www.halton.ca/" target="_blank">http://www.halton.ca</a>
+            </div>
+        <div id="divInfo">
+            <div class="divInfoItem_top"><b>Registration Date:</b></div>
+            <div class="divInfoValue_top"><span id="lblDate">10/14/2024 11:02:11 AM</span></div>
+            <div class="divInfoItem_next"><b> Reference:</b></div>
+            <div class="divInfoValue_next"><span id="lblOrderID">FOODONLINE_converted-1722103422</span></div>
+        </div>
+        <div style="clear:both"></div>
+        <div class="divCust">
+            Contact Details:
+            <p><span id="lblCustomer" class="CustDetails">
+			Desmond Odhiambo
+			<br/> 1423 Treeland st<br/>Burlington&nbsp;&nbsp;L7r 5b4
+			</span></p>
+        </div>
+        <div class="divOrder">
+            <div style="clear:both"><b>Registration Details:</b></div>
+            <table style="width:96%; margin: 10px" class="orderItem">
+				<thead>
+					<tr>
+					<th align="left" style="width:20%; height: 20px;">Event Type</th>
+					<th align="left">Event</th>
+					<th align="right" style="width:13%;height: 20px;">Cost</th>
+					<th align="right" style="width:13%;height: 20px;">Number of Participants</th>
+					<th align="right" style="width:13%;height: 20px;">Total</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr><td style="height: 20px;">
+						Examination only</td><td style="height: 20px;">9:00am - Halton Regional Admin Building</td>
+						<td align="right" style="height: 20px;">$ 8.85</td>
+						<td align="right" style="height: 20px;">1</td>
+						<td align="right" style="height: 20px;">$ 8.85</td>
+						</tr>
+				</tbody>
+			</table>
+            <div style="clear:both"></div>
+            <table width="96.5%" style="margin: 10px 0px 10px 10px">
+                <tr>
+                    <td style="width:590px;height:16px" valign="bottom"></td>
+                    <td style="width:270px;height:16px">
+                        <table class="orderItem">
+							<tr>
+								<td style="width:190px;height:20px;" align="right"><b>Subtotal:</b></td>
+								<td align="right" style="width:80px;height:20px;"><span id="lblSubTotal">$ 8.85</span></td>
+							</tr>
+							<tr>
+								<td style="width:190px;height:20px;" align="right"><b>H.S.T.:</b></td>
+								<td align="right" style="width:80px;height:20px;"><span id="lblHST">$ 1.15</span></td>
+							</tr>
+							<tr>
+								<td style="width:190px;height:20px;" align="right"><b>Total:</b></td>
+								<td align="right" style="width:80px;height:20px;"><span id="lblTotal">$ 10.00</span></td>
+							</tr>                
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td valign="bottom" style="height:20px;font-size:12px">Please note no refunds will be given to any cancellation less than 24 hours prior to the start of the course or exam session.<br />
+Please allow 10 business days for refunds to be processed. </td>
+                    <td>
+                    <table class="orderItem">
+                            
+                        <tr>
+                    <td style="width:190px;height:20px;" align="right"><b>Paid by Credit Card:</b></td>
+                    <td  align="right" style="width:80px;height:20px;"><span id="Span1">$ 10.00</span></td>
+                </tr>
+                <tr>
+                    <td style="width:190px;height:20px;" align="right"><b>Amount Outstanding:</b></td>
+                    <td align="right" style="width:80px;height:20px;"><span id="Span2">$ 0.00</span></td>
+                </tr>
+                </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td style="font-size:12px">GST/HST Registration No: 12360 9950 RT0001</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td style="font-size:12px">Read Halton Region's <a href="https://www.halton.ca/Privacy">Privacy Statement</a></td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
